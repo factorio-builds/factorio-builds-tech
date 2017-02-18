@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Add a build
+
+    form.form-horizontal(method='POST')
+      input(type='hidden', name='_csrf', value=_csrf)
+      .form-group
+        label(class='col-sm-2 control-label', for='name') Name
+        .col-sm-8
+          input.form-control(type='text', name='name', id='name', autofocus=true)
+      .form-group
+        label(class='col-sm-2 control-label', for='category') Category
+        .col-sm-8
+          select.form-control(type='text', name='category', id='category')
+            each val, index in categoryList
+              option(value=val.slug)= val.name
+      .form-group
+        label(class='col-sm-2 control-label', for='desc') Description
+        .col-sm-8
+          textarea.form-control(name='desc', id='desc', rows='7')
+      .form-group
+        .col-sm-offset-2.col-sm-8
+          button.btn.btn-primary(type='submit')
+            i.fa.fa-plus
+            | Create
+          button.btn.btn-info(type='button')
+            i.fa.fa-newspaper-o
+            | Preview

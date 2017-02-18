@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+  .page-header
+    h3 Builds
+
+  p The list of builds
+
+  each build, index in builds
+    h4
+      a(href='builds/' + build._id)= build.name
+    div(class='badge')= build.category
+    p= build.desc
