@@ -1,5 +1,5 @@
 mixin publish-build
-  if build
+  if build && user && build.ownedBy.toString() === user._id.toString()
     if build.draft
       a.pull-right(href='/builds/' + build._id + '/publish', class='btn btn-success') Publish build
     else
