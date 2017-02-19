@@ -92,3 +92,43 @@ exports.getEdit = (req, res) => {
     title: 'Edit Build'
   });
 };
+
+/**
+ * Helper method to publish and unpublish.
+ */
+function publishPublish(req, res, publish) {
+  Build.findOne({ _id: req.params.id }, (err, build) => {
+    if (err) { return next(err); }
+
+    // Build doesn't belong to the user
+    if (build.ownedBy.toString() != req.user._id.toString()) {
+      req.flash('errors', { msg: 'You aren\'t allowed to perform that action' });
+      return res.redirect('back');
+    }
+
+    build.draft = !publish;
+
+    build.save((err) => {
+      if (err) { return next(err); }
+      const message = build.name + (publish ? ' is now published.' : ' is now a draft.');
+      req.flash('success', { msg: message });
+      return res.redirect('/builds/' + build._id);
+    });
+  });
+}
+
+/**
+ * GET /builds/x/publish
+ * Publish a build.
+ */
+exports.getPublish = (req, res) => {
+  publishPublish(req, res, true);
+};
+
+/**
+ * GET /builds/x/unpublish
+ * Publish a build.
+ */
+exports.getUnpublish = (req, res) => {
+  publishPublish(req, res, false);
+};

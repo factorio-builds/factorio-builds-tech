@@ -3,6 +3,15 @@ extends ../layout
 block content
   .page-header
     a(href='/builds') &#8592; Back to builds
+
+    if build.draft
+
+      a.pull-right(href='/builds/' + build._id + '/publish', class='btn btn-success') Publish build
+
+    else
+
+      a.pull-right(href='/builds/' + build._id + '/unpublish', class='btn btn-danger') Revert to draft
+
     h3
       div= build.name
     if build.draft

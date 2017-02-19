@@ -141,6 +141,8 @@ app.get('/builds/new', buildController.getCreate);
 app.post('/builds/new', buildController.postCreate);
 app.get('/builds/:id', buildController.getShow);
 app.get('/builds/:id/edit', buildController.getEdit);
+app.get('/builds/:id/publish', buildController.getPublish);
+app.get('/builds/:id/unpublish', buildController.getUnpublish);
 
 /**
  * API examples routes.
