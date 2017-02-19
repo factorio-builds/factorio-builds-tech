@@ -60,6 +60,7 @@ exports.getCreate = (req, res) => {
 exports.postCreate = (req, res, next) => {
   const build = new Build({
     name: req.body.name,
+    draft: req.body.draft,
     desc: req.body.desc,
     category: req.body.category,
     createdBy: req.user._id,
@@ -69,8 +70,13 @@ exports.postCreate = (req, res, next) => {
 
   build.save((err) => {
     if (err) { return next(err); }
+    if (build.draft) {
+      req.flash('info', { msg: build.name + ' was created as a draft.' });
+      return res.redirect('/builds/' + build._id);
+    }
+
     req.flash('success', { msg: build.name + ' successfully created!' });
-    res.redirect('/builds');
+    return res.redirect('/builds');
   });
 
   console.log(build);

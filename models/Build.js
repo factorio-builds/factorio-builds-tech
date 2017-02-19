@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const buildSchema = new mongoose.Schema({
+  draft: { type: Boolean, default: false },
   name: { type: String },
   image: { type: String },
   desc: { type: String },
