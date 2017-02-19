@@ -12,6 +12,8 @@ block content
 
       a.pull-right(href='/builds/' + build._id + '/unpublish', class='btn btn-danger') Revert to draft
 
+    a.pull-right(href='/builds/' + build._id + '/edit', class='btn btn-info') Edit build
+
     h3
       div= build.name
     if build.draft

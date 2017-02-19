@@ -19,6 +19,7 @@ const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
+const methodOverride = require('method-override')
 
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -112,6 +113,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use(methodOverride('_method'))
 
 /**
  * Primary app routes.
@@ -141,6 +143,7 @@ app.get('/builds/new', buildController.getCreate);
 app.post('/builds/new', buildController.postCreate);
 app.get('/builds/:id', buildController.getShow);
 app.get('/builds/:id/edit', buildController.getEdit);
+app.put('/builds/:id', buildController.putUpdate);
 app.get('/builds/:id/publish', buildController.getPublish);
 app.get('/builds/:id/unpublish', buildController.getUnpublish);
 

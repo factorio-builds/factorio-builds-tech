@@ -3,29 +3,39 @@ extends ../layout
 block content
   .page-header
     a(href='/builds') &#8592; Back to builds
-    h3 Add a build
+    h3
+      if build
+        | Edit build
+      else
+        | Add a build
 
-    form.form-horizontal(method='POST')
+    form.form-horizontal(method='POST' action=build ? '/builds/' + build._id + '/?_method=PUT' : false)
       input(type='hidden', name='_csrf', value=_csrf)
       .form-group
         label(class='col-sm-2 control-label', for='name') Name
         .col-sm-8
-          input.form-control(type='text', name='name', id='name', autofocus=true)
+          input.form-control(type='text', name='name', id='name', autofocus=true, value=build ? build.name : false)
       .form-group
         label(class='col-sm-2 control-label', for='category') Category
         .col-sm-8
           select.form-control(type='text', name='category', id='category')
             each val, index in categoryList
-              option(value=val.slug)= val.name
+              option(value=val.slug, selected=build ? build.category === val.slug : false)= val.name
       .form-group
         label(class='col-sm-2 control-label', for='desc') Description
         .col-sm-8
-          textarea.form-control(name='desc', id='desc', rows='7')
+          textarea.form-control(name='desc', id='desc', rows='7')= build ? build.desc : ''
       .form-group
         .col-sm-offset-2.col-sm-8
           button.btn.btn-primary(type='submit')
-            i.fa.fa-plus
-            | Create
-          button.btn.btn-info(type='submit', name='draft', value='true')
-            i.fa.fa-newspaper-o
-            | Preview
+            if build
+              i.fa.fa-pencil
+              | Edit Build
+            else
+              i.fa.fa-plus
+              | Add build
+
+          if !build
+            button.btn.btn-info(type='submit', name='draft', value='true')
+              i.fa.fa-newspaper-o
+              | Preview

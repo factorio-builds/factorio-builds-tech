@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const Build = require('../models/Build');
 const passport = require('passport');
 
+const categoryList = [
+  { slug: 'balancers', name: 'Balancers' },
+  { slug: 'layouts', name: 'Layouts' }
+];
+
 Promise.promisifyAll(mongoose);
 
 /**
@@ -46,10 +51,7 @@ exports.getShow = (req, res) => {
 exports.getCreate = (req, res) => {
   res.render('build/form', {
     title: 'Create Build',
-    categoryList: [
-      { slug: 'balancers', name: 'Balancers' },
-      { slug: 'layouts', name: 'Layouts' }
-    ]
+    categoryList: categoryList
   });
 };
 
@@ -88,8 +90,44 @@ exports.postCreate = (req, res, next) => {
  * Build edit page.
  */
 exports.getEdit = (req, res) => {
-  res.render('build/form', {
-    title: 'Edit Build'
+  Promise.props({
+    title: 'Edit Build',
+    categoryList: categoryList,
+    build: Build.findOne({_id: req.params.id}).execAsync()
+  })
+  .then(function(results) {
+    res.render('build/form', results);
+  })
+  .catch(function(err) {
+    res.send(500);
+  });
+};
+
+/**
+ * PUT /builds/x
+ * Update a build.
+ */
+exports.putUpdate = (req, res) => {
+  Build.findOne({ _id: req.params.id }, (err, build) => {
+    if (err) { return next(err); }
+
+    // Build doesn't belong to the user
+    if (build.ownedBy.toString() != req.user._id.toString()) {
+      req.flash('errors', { msg: 'You aren\'t allowed to perform that action' });
+      return res.redirect('back');
+    }
+
+    build.name = req.body.name;
+    build.category = req.body.category;
+    build.desc = req.body.desc;
+    build.updatedBy = req.user._id;
+
+    build.save((err) => {
+      if (err) { return next(err); }
+      const message = build.name + ' was updated.';
+      req.flash('success', { msg: message });
+      return res.redirect('/builds/' + build._id);
+    });
   });
 };
 
