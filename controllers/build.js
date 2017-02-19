@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const mongoose = require('mongoose');
 const Build = require('../models/Build');
 const passport = require('passport');
+const _ = require ('lodash');
 
 const categoryList = [
   { slug: 'balancers', name: 'Balancers' },
@@ -50,6 +51,14 @@ exports.getShow = (req, res) => {
       build: Build.findOne({_id: req.params.id}).execAsync()
     })
     .then(function(results) {
+      // TODO: this can probably be written much more cleanly
+      const userId = _.get(req, 'user._id') ? _.get(req, 'user._id').toString() : 0;
+
+      if (results.build.draft && results.build.ownedBy.toString() !== userId) {
+        delete results.build;
+        results.cantSeeDraft = true;
+      }
+
       res.render('build/show', results);
     })
     .catch(function(err) {
@@ -109,6 +118,15 @@ exports.getEdit = (req, res) => {
     build: Build.findOne({_id: req.params.id}).execAsync()
   })
   .then(function(results) {
+    // TODO: this can probably be written much more cleanly
+    const userId = _.get(req, 'user._id') ? _.get(req, 'user._id').toString() : 0;
+
+    // Build doesn't belong to the user
+    if (results.build.ownedBy.toString() != userId) {
+      req.flash('errors', { msg: 'You aren\'t allowed to perform that action' });
+      return res.redirect('/builds/' + results.build._id);
+    }
+
     res.render('build/form', results);
   })
   .catch(function(err) {

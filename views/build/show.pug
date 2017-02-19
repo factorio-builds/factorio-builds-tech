@@ -4,23 +4,28 @@ block content
   .page-header
     a(href='/builds') &#8592; Back to builds
 
-    if build.draft
-
-      a.pull-right(href='/builds/' + build._id + '/publish', class='btn btn-success') Publish build
-
-    else
-
-      a.pull-right(href='/builds/' + build._id + '/unpublish', class='btn btn-danger') Revert to draft
-
-    a.pull-right(href='/builds/' + build._id + '/edit', class='btn btn-info') Edit build
+    if build
+      if build.draft
+        a.pull-right(href='/builds/' + build._id + '/publish', class='btn btn-success') Publish build
+      else
+        a.pull-right(href='/builds/' + build._id + '/unpublish', class='btn btn-danger') Revert to draft
+      a.pull-right(href='/builds/' + build._id + '/edit', class='btn btn-info') Edit build
 
     h3
-      div= build.name
-    if build.draft
+      if build
+        div= build.name
+      else
+        div Unpublished build
+
+    if build && build.draft
       small
         i.fa.fa-newspaper-o
         | Draft
 
-  div(class='badge')= build.category
+  if cantSeeDraft
+    div This build exists, but the owner did not publish.
 
-  p= build.desc
+  if build
+    div(class='badge')= build.category
+
+    p= build.desc
