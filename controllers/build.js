@@ -15,9 +15,22 @@ Promise.promisifyAll(mongoose);
  * Build list page.
  */
 exports.getIndex = (req, res) => {
+  let query = {
+    $or: [
+      { draft: { $exists: false } }
+    ]
+  };
+
+  if (req.user) {
+    query.$or.push({ draft: { $exists: true }, ownedBy: req.user._id });
+  }
+
   Promise.props({
       title: 'Build',
-      builds: Build.find().execAsync()
+      builds: Build
+        .find(query)
+        .sort('-draft')
+        .execAsync()
     })
     .then(function(results) {
       res.render('build/index', results);
