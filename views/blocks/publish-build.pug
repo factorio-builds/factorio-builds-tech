@@ -1,0 +1,6 @@
+mixin publish-build
+  if build
+    if build.draft
+      a.pull-right(href='/builds/' + build._id + '/publish', class='btn btn-success') Publish build
+    else
+      a.pull-right(href='/builds/' + build._id + '/unpublish', class='btn btn-danger') Revert to draft

@@ -1,15 +1,13 @@
 extends ../layout
+include ../blocks/edit-build
+include ../blocks/publish-build
 
 block content
   .page-header
     a(href='/builds') &#8592; Back to builds
 
-    if build
-      if build.draft
-        a.pull-right(href='/builds/' + build._id + '/publish', class='btn btn-success') Publish build
-      else
-        a.pull-right(href='/builds/' + build._id + '/unpublish', class='btn btn-danger') Revert to draft
-      a.pull-right(href='/builds/' + build._id + '/edit', class='btn btn-info') Edit build
+    +publish-build
+    +edit-build
 
     h3
       if build
