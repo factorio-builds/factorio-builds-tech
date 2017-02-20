@@ -1,11 +1,26 @@
+.toggle-search {
+  cursor: pointer;
+}
+
 .search-input {
+  display: none;
   padding: 28px 20px;
+
+  &.active {
+    display: inline-block;
+  }
 }
 
 .search-results {
+  display: none;
   margin-top: 20px;
-  display: flex;
   flex-direction: column;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+
+  &.active {
+    display: flex;
+  }
 }
 
 .search-result {
@@ -14,11 +29,13 @@
   padding: 0;
   margin: 0;
   display: flex;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
 
   & + & {
     border-top: 1px solid #eee;
+  }
+
+  &:hover {
+    text-decoration: none;
   }
 
   &:hover &__inner {
@@ -47,5 +64,6 @@
   &__meta {
     margin-top: 5px;
     color: #aaa;
+    text-align: center;
   }
 }

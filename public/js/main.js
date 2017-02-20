@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+  var $toggleSearch = $('.toggle-search');
   var $search = $('.search-input');
   var $results = $('.search-results');
 
@@ -7,6 +8,11 @@ $(document).ready(function() {
   $(document).ready(function() {
     var client = algoliasearch('C0VEZQ8DEQ', '75938b40b5ad140ce81b4d25a8788115');
     var index = client.initIndex('builds');
+
+    $toggleSearch.on('click', function () {
+      $search.addClass('active');
+      $results.addClass('active');
+    });
 
     $search.keyup(function() {
       if ($search.val().trim()) {
