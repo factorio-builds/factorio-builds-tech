@@ -27,7 +27,7 @@ exports.getIndex = (req, res) => {
   }
 
   Promise.props({
-      title: 'Build',
+      title: 'Builds',
       builds: Build
         .find(query)
         .sort('-draft')
@@ -47,7 +47,7 @@ exports.getIndex = (req, res) => {
  */
 exports.getShow = (req, res) => {
   Promise.props({
-      title: 'Build',
+      title: 'Builds',
       build: Build.findOne({_id: req.params.id}).execAsync()
     })
     .then(function(results) {
@@ -72,7 +72,7 @@ exports.getShow = (req, res) => {
  */
 exports.getCreate = (req, res) => {
   res.render('build/form', {
-    title: 'Create Build',
+    title: 'Builds',
     categoryList: categoryList
   });
 };
@@ -113,7 +113,7 @@ exports.postCreate = (req, res, next) => {
  */
 exports.getEdit = (req, res) => {
   Promise.props({
-    title: 'Edit Build',
+    title: 'Builds',
     categoryList: categoryList,
     build: Build.findOne({_id: req.params.id}).execAsync()
   })
