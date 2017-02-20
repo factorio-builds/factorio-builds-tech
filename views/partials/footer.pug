@@ -1,8 +1,17 @@
-footer
-  .container.text-center
-    p.pull-left © 2017 Factorio Builds, All Rights Reserved
-    ul.pull-right.list-inline
-      li
-        a(href='https://github.com/veksen/factorio-builds') GitHub Project
-      li
-        a(href='https://github.com/veksen/factorio-builds/issues') Issues
+footer.footer
+  .footer__main
+    .container.text-center
+      p.pull-left © 2017 Factorio Builds, All Rights Reserved
+      ul.pull-right.list-inline
+        li
+          a(href='https://github.com/veksen/factorio-builds') GitHub Project
+        li
+          a(href='https://github.com/veksen/factorio-builds/issues') Issues
+
+  .footer__sub
+    .container
+      ul.pull-left.list-inline
+        li(class=(path == 'contact') ? 'active' : undefined)
+          a(href='/contact') Contact
+        li
+          a(href='/status') Status
