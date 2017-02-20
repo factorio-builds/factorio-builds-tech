@@ -89,7 +89,6 @@ exports.getDrafts = (req, res) => {
  * Build list page by type.
  */
 exports.getIndexByType = (req, res) => {
-  console.log(req.params.type);
   let query = {
     category: req.params.type,
     $or: [
@@ -187,9 +186,6 @@ exports.postCreate = (req, res, next) => {
     req.flash('success', { msg: build.name + ' successfully created!' });
     return res.redirect('/builds');
   });
-
-  console.log(build);
-  console.log(req.user);
 };
 
 /**
