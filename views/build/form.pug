@@ -15,8 +15,16 @@ block content
         label(class='col-sm-2 control-label', for='name') Name
         .col-sm-8
           input.form-control(type='text', name='name', id='name', autofocus=true, value=build ? build.name : false)
+      if build && build.image
+        .form-group
+          .col-sm-offset-2.col-sm-8
+            img(src='/images/' + build.image, class='img-responsive')
       .form-group
-        label(class='col-sm-2 control-label', for='photo') Photo
+        label(class='col-sm-2 control-label', for='photo')
+          if build && build.image
+            | Change photo
+          else
+            | Photo
         .col-sm-8
           input(type='file', name='photo', id='photo', style='padding: 6px 0')
       .form-group
