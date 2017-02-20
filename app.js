@@ -153,7 +153,6 @@ app.get('/my-builds', buildController.getDrafts);
 app.get('/builds', buildController.getIndex);
 app.get('/builds/type/:type', buildController.getIndexByType);
 app.get('/builds/new', buildController.getCreate);
-app.post('/builds/new', buildController.postCreate);
 app.post('/builds/new', upload.single('photo'), buildController.postCreate);
 app.get('/builds/:id', buildController.getShow);
 app.get('/builds/:id/edit', buildController.getEdit);

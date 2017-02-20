@@ -9,8 +9,8 @@ block content
       else
         | Add a build
 
-    form.form-horizontal(method='POST', enctype='multipart/form-data', action=build ? '/builds/' + build._id + '/?_method=PUT' : false)
-      input(type='hidden', name='_csrf', value=_csrf)
+    form.form-horizontal(method='POST', enctype='multipart/form-data', action=build ? '/builds/' + build._id + '/?_method=PUT' : '/builds/new')
+      //- input(type='hidden', name='_csrf', value=_csrf)
       .form-group
         label(class='col-sm-2 control-label', for='name') Name
         .col-sm-8
