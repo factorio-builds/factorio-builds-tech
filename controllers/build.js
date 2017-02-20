@@ -44,6 +44,33 @@ exports.getIndex = (req, res) => {
 };
 
 /**
+ * GET /my-builds
+ * Build my-builds page.
+ */
+exports.getDrafts = (req, res) => {
+  let query = {
+    ownedBy: req.user._id
+  };
+
+  Promise.props({
+    title: 'Builds',
+    builds: Build
+      .find(query)
+      .sort('-draft')
+      .sort('-created')
+      .execAsync()
+  })
+  .then(function(results) {
+    let groupSize = Math.floor(results.builds.length/3);
+    results.builds = _.chunk(results.builds, groupSize);
+    res.render('build/index', results);
+  })
+  .catch(function(err) {
+    res.send(500);
+  });
+};
+
+/**
  * GET /builds/type/x
  * Build list page by type.
  */
