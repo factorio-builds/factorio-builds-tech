@@ -15,11 +15,16 @@ html
     include partials/sub-header
 
     .container
+      input.search-input.form-control(type='search', placeholder='Search...')
+      div.search-results
+
+    .container
       include partials/flash
       block content
 
     include partials/footer
 
+    script(src='https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js')
     script(src='/js/lib/jquery-2.2.4.min.js')
     script(src='/js/lib/bootstrap.min.js')
     script(src='/js/main.js')
