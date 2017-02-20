@@ -173,8 +173,7 @@ exports.postCreate = (req, res, next) => {
     if (err) { return next(err); }
 
     // saving the index to Algolia
-    build.objectID = build._id;
-    index.addObject(build, (err, content) => {
+    index.addObject(build, build._id, (err, content) => {
       if(err) console.log(err);
     });
 
