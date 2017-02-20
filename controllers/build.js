@@ -4,6 +4,11 @@ const Build = require('../models/Build');
 const passport = require('passport');
 const _ = require ('lodash');
 
+const algoliasearch = require('algoliasearch');
+
+const algolia = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
+const index = algolia.initIndex('builds');
+
 const categoryList = [
   { slug: 'balancers', name: 'Balancers' },
   { slug: 'layouts', name: 'Layouts' }
@@ -26,6 +31,9 @@ exports.getIndex = (req, res) => {
   Promise.props({
     path: 'builds',
     title: 'Builds',
+    // allBuilds: Build
+    //   .find(query)
+    //   .execAsync(),
     builds: Build
       .find(query)
       .execAsync()
@@ -33,6 +41,14 @@ exports.getIndex = (req, res) => {
   .then(function(results) {
     let groupSize = Math.floor(results.builds.length/3);
     results.builds = _.chunk(results.builds, groupSize);
+
+    // _.each(results.allBuilds, function (build) {
+    //   build.objectID = build._id;
+    //   index.saveObject(build, function(err, content) {
+    //     if(err) console.log(err);
+    //   });
+    // });
+
     res.render('build/index', results);
   })
   .catch(function(err) {
@@ -155,6 +171,13 @@ exports.postCreate = (req, res, next) => {
 
   build.save((err) => {
     if (err) { return next(err); }
+
+    // saving the index to Algolia
+    build.objectID = build._id;
+    index.addObject(build, (err, content) => {
+      if(err) console.log(err);
+    });
+
     if (build.draft) {
       req.flash('info', { msg: build.name + ' was created as a draft.' });
       return res.redirect('/builds/' + build._id);
@@ -222,6 +245,13 @@ exports.putUpdate = (req, res) => {
     build.save((err) => {
       if (err) { return next(err); }
       const message = build.name + ' was updated.';
+
+      // saving the index to Algolia
+      build.objectID = build._id;
+      index.saveObject(build, function(err, content) {
+        if(err) console.log(err);
+      });
+
       req.flash('success', { msg: message });
       return res.redirect('/builds/' + build._id);
     });
