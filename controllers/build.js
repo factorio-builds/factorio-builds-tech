@@ -34,6 +34,8 @@ exports.getIndex = (req, res) => {
         .execAsync()
     })
     .then(function(results) {
+      let groupSize = Math.floor(results.builds.length/3);
+      results.builds = _.chunk(results.builds, groupSize);
       res.render('build/index', results);
     })
     .catch(function(err) {
@@ -66,6 +68,8 @@ exports.getIndexByType = (req, res) => {
         .execAsync()
     })
     .then(function(results) {
+      let groupSize = Math.floor(results.builds.length/3);
+      results.builds = _.chunk(results.builds, groupSize);
       res.render('build/index', results);
     })
     .catch(function(err) {

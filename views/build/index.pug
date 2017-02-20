@@ -6,13 +6,19 @@ block content
 
   p The list of builds
 
-  each build, index in builds
-    h4
-      div
-        a(href='/builds/' + build._id)= build.name
-      if build.draft
-        small
-          i.fa.fa-newspaper-o
-          | Draft
-    div(class='badge')= build.category
-    p= build.desc
+  .row
+    each chunk, index in builds
+      .col-md-4.col-sm-12
+        each build, index in chunk
+          h4
+            div
+              a(href='/builds/' + build._id)= build.name
+            if build.draft
+              small
+                i.fa.fa-newspaper-o
+                | Draft
+          if build.image
+            div(class='build__image')
+              img(src='/images/' + build.image, class='img-responsive')
+          div(class='badge')= build.category
+          p= build.desc
