@@ -24,6 +24,10 @@ block content
     div This build exists, but the owner did not publish.
 
   if build
+    if build.image
+      div(class='build__image')
+        img(src='/images/' + build.image)
+
     div(class='badge')= build.category
 
     p= build.desc

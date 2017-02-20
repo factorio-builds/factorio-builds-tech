@@ -85,13 +85,13 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.path === '/api/upload') {
+//     next();
+//   } else {
+//     lusca.csrf()(req, res, next);
+//   }
+// });
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
@@ -113,6 +113,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use('/images', express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 }));
 app.use(methodOverride('_method'))
 
 /**
@@ -141,9 +142,10 @@ app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userControl
 app.get('/builds', buildController.getIndex);
 app.get('/builds/new', buildController.getCreate);
 app.post('/builds/new', buildController.postCreate);
+app.post('/builds/new', upload.single('photo'), buildController.postCreate);
 app.get('/builds/:id', buildController.getShow);
 app.get('/builds/:id/edit', buildController.getEdit);
-app.put('/builds/:id', buildController.putUpdate);
+app.put('/builds/:id', upload.single('photo'), buildController.putUpdate);
 app.get('/builds/:id/publish', buildController.getPublish);
 app.get('/builds/:id/unpublish', buildController.getUnpublish);
 

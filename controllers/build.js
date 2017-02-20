@@ -153,6 +153,10 @@ exports.putUpdate = (req, res) => {
     build.desc = req.body.desc;
     build.updatedBy = req.user._id;
 
+    if (req.file) {
+      build.image = req.file.filename;
+    }
+
     build.save((err) => {
       if (err) { return next(err); }
       const message = build.name + ' was updated.';

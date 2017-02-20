@@ -9,12 +9,16 @@ block content
       else
         | Add a build
 
-    form.form-horizontal(method='POST' action=build ? '/builds/' + build._id + '/?_method=PUT' : false)
+    form.form-horizontal(method='POST', enctype='multipart/form-data', action=build ? '/builds/' + build._id + '/?_method=PUT' : false)
       input(type='hidden', name='_csrf', value=_csrf)
       .form-group
         label(class='col-sm-2 control-label', for='name') Name
         .col-sm-8
           input.form-control(type='text', name='name', id='name', autofocus=true, value=build ? build.name : false)
+      .form-group
+        label(class='col-sm-2 control-label', for='photo') Photo
+        .col-sm-8
+          input(type='file', name='photo', id='photo', style='padding: 6px 0')
       .form-group
         label(class='col-sm-2 control-label', for='category') Category
         .col-sm-8
