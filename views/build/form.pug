@@ -9,45 +9,52 @@ block content
       else
         | Add a build
 
-    form.form-horizontal(method='POST', enctype='multipart/form-data', action=build ? '/builds/' + build._id + '/?_method=PUT' : '/builds/new')
-      //- input(type='hidden', name='_csrf', value=_csrf)
-      .form-group
-        label(class='col-sm-2 control-label', for='name') Name
-        .col-sm-8
-          input.form-control(type='text', name='name', id='name', autofocus=true, value=build ? build.name : false)
-      if build && build.image
+    if user
+      form.form-horizontal(method='POST', enctype='multipart/form-data', action=build ? '/builds/' + build._id + '/?_method=PUT' : '/builds/new')
+        //- input(type='hidden', name='_csrf', value=_csrf)
+        .form-group
+          label(class='col-sm-2 control-label', for='name') Name
+          .col-sm-8
+            input.form-control(type='text', name='name', id='name', autofocus=true, value=build ? build.name : false)
+        if build && build.image
+          .form-group
+            .col-sm-offset-2.col-sm-8
+              img(src='/images/' + build.image, class='img-responsive')
+        .form-group
+          label(class='col-sm-2 control-label', for='photo')
+            if build && build.image
+              | Change image
+            else
+              | Image
+          .col-sm-8
+            input(type='file', name='photo', id='photo', style='padding: 6px 0')
+        .form-group
+          label(class='col-sm-2 control-label', for='category') Category
+          .col-sm-8
+            select.form-control(type='text', name='category', id='category')
+              each val, index in categoryList
+                option(value=val.slug, selected=build ? build.category === val.slug : false)= val.name
+        .form-group
+          label(class='col-sm-2 control-label', for='desc') Description
+          .col-sm-8
+            textarea.form-control(name='desc', id='desc', rows='7')= build ? build.desc : ''
         .form-group
           .col-sm-offset-2.col-sm-8
-            img(src='/images/' + build.image, class='img-responsive')
-      .form-group
-        label(class='col-sm-2 control-label', for='photo')
-          if build && build.image
-            | Change image
-          else
-            | Image
-        .col-sm-8
-          input(type='file', name='photo', id='photo', style='padding: 6px 0')
-      .form-group
-        label(class='col-sm-2 control-label', for='category') Category
-        .col-sm-8
-          select.form-control(type='text', name='category', id='category')
-            each val, index in categoryList
-              option(value=val.slug, selected=build ? build.category === val.slug : false)= val.name
-      .form-group
-        label(class='col-sm-2 control-label', for='desc') Description
-        .col-sm-8
-          textarea.form-control(name='desc', id='desc', rows='7')= build ? build.desc : ''
-      .form-group
-        .col-sm-offset-2.col-sm-8
-          button.btn.btn-primary(type='submit')
-            if build
-              i.fa.fa-pencil
-              | Edit Build
-            else
-              i.fa.fa-plus
-              | Add build
+            button.btn.btn-primary(type='submit')
+              if build
+                i.fa.fa-pencil
+                | Edit Build
+              else
+                i.fa.fa-plus
+                | Add build
 
-          if !build
-            button.btn.btn-info(type='submit', name='draft', value='true')
-              i.fa.fa-newspaper-o
-              | Preview
+            if !build
+              button.btn.btn-info(type='submit', name='draft', value='true')
+                i.fa.fa-newspaper-o
+                | Preview
+
+    else
+      p You must be logged in to create a build.
+
+      a.btn.btn-primary(href='/signup') Create an account
+      a.btn.btn-info(href='/login') Log in
