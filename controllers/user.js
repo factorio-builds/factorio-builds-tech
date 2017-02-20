@@ -13,6 +13,7 @@ exports.getLogin = (req, res) => {
     return res.redirect('/');
   }
   res.render('account/login', {
+    path: 'user',
     title: 'Login'
   });
 };
@@ -65,6 +66,7 @@ exports.getSignup = (req, res) => {
     return res.redirect('/');
   }
   res.render('account/signup', {
+    path: 'user',
     title: 'Create Account'
   });
 };
@@ -115,6 +117,7 @@ exports.postSignup = (req, res, next) => {
  */
 exports.getAccount = (req, res) => {
   res.render('account/profile', {
+    path: 'user',
     title: 'Account Management'
   });
 };
@@ -230,6 +233,7 @@ exports.getReset = (req, res, next) => {
         return res.redirect('/forgot');
       }
       res.render('account/reset', {
+        path: 'user',
         title: 'Password Reset'
       });
     });
@@ -306,6 +310,7 @@ exports.getForgot = (req, res) => {
     return res.redirect('/');
   }
   res.render('account/forgot', {
+    path: 'user',
     title: 'Forgot Password'
   });
 };

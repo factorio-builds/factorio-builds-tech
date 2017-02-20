@@ -11,11 +11,11 @@
         | Factorio Builds
     .collapse.navbar-collapse
       ul.nav.navbar-nav
-        li(class=(title == 'Home') ? 'active' : undefined)
+        li(class=(path == 'home') ? 'active' : undefined)
           a(href='/') Home
-        li(class=(title == 'Builds') ? 'active' : undefined)
+        li(class=(path == 'builds') ? 'active' : undefined)
           a(href='/builds') Builds
-        li(class=(title == 'Contact') ? 'active' : undefined)
+        li(class=(path == 'contact') ? 'active' : undefined)
           a(href='/contact') Contact
         li
           a(href='/status') Status
@@ -27,7 +27,7 @@
           li(class=(title == 'Create Account') ? 'active' : undefined)
             a(href='/signup') Create Account
         else
-          li.dropdown(class=(title == 'Account Management') ? 'active' : undefined)
+          li.dropdown(class=(path == 'user') ? 'active' : undefined)
             a.dropdown-toggle(href='#', data-toggle='dropdown')
               if user.profile.picture
                 img(src=user.profile.picture)

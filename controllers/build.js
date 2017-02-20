@@ -27,6 +27,7 @@ exports.getIndex = (req, res) => {
   }
 
   Promise.props({
+    path: 'builds',
     title: 'Builds',
     builds: Build
       .find(query)
@@ -53,6 +54,7 @@ exports.getDrafts = (req, res) => {
   };
 
   Promise.props({
+    path: 'user',
     title: 'Builds',
     builds: Build
       .find(query)
@@ -87,6 +89,7 @@ exports.getIndexByType = (req, res) => {
   }
 
   Promise.props({
+    path: 'builds',
     title: 'Builds',
     type: req.params.type,
     builds: Build
@@ -110,6 +113,7 @@ exports.getIndexByType = (req, res) => {
  */
 exports.getShow = (req, res) => {
   Promise.props({
+      path: 'builds',
       title: 'Builds',
       build: Build.findOne({_id: req.params.id}).execAsync()
     })
@@ -135,6 +139,7 @@ exports.getShow = (req, res) => {
  */
 exports.getCreate = (req, res) => {
   res.render('build/form', {
+    path: 'builds',
     title: 'Builds',
     categoryList: categoryList
   });
@@ -176,6 +181,7 @@ exports.postCreate = (req, res, next) => {
  */
 exports.getEdit = (req, res) => {
   Promise.props({
+    path: 'builds',
     title: 'Builds',
     categoryList: categoryList,
     build: Build.findOne({_id: req.params.id}).execAsync()
