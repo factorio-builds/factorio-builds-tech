@@ -11,8 +11,6 @@
         | Factorio Builds
     .collapse.navbar-collapse
       ul.nav.navbar-nav
-        li(class=(path == 'home') ? 'active' : undefined)
-          a(href='/') Home
         li(class=(path == 'builds') ? 'active' : undefined)
           a(href='/builds') Builds
         li(class=(path == 'contact') ? 'active' : undefined)
@@ -50,5 +48,5 @@
       ul.nav.navbar-nav.navbar-right
         li
           a.toggle-search
-            | Search&nbsp;
+            span.visible-md-inline-block.visible-lg-inline-block Search&nbsp;
             i.fa.fa-search
