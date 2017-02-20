@@ -168,6 +168,10 @@ exports.postCreate = (req, res, next) => {
     ownedBy: req.user._id
   });
 
+  if (req.file) {
+    build.image = req.file.filename;
+  }
+
   build.save((err) => {
     if (err) { return next(err); }
 
