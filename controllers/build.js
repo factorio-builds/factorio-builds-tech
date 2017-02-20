@@ -18,20 +18,16 @@ Promise.promisifyAll(mongoose);
 exports.getIndex = (req, res) => {
   let query = {
     $or: [
+      { draft: false },
       { draft: { $exists: false } }
     ]
   };
-
-  if (req.user) {
-    query.$or.push({ draft: { $exists: true }, ownedBy: req.user._id });
-  }
 
   Promise.props({
     path: 'builds',
     title: 'Builds',
     builds: Build
       .find(query)
-      .sort('-draft')
       .execAsync()
   })
   .then(function(results) {
@@ -77,16 +73,14 @@ exports.getDrafts = (req, res) => {
  * Build list page by type.
  */
 exports.getIndexByType = (req, res) => {
+  console.log(req.params.type);
   let query = {
     category: req.params.type,
     $or: [
+      { draft: false },
       { draft: { $exists: false } }
     ]
   };
-
-  if (req.user) {
-    query.$or.push({ draft: { $exists: true }, ownedBy: req.user._id });
-  }
 
   Promise.props({
     path: 'builds',
@@ -94,11 +88,10 @@ exports.getIndexByType = (req, res) => {
     type: req.params.type,
     builds: Build
       .find(query)
-      .sort('-draft')
       .execAsync()
   })
   .then(function(results) {
-    let groupSize = Math.floor(results.builds.length/3);
+    let groupSize = Math.ceil(results.builds.length/3);
     results.builds = _.chunk(results.builds, groupSize);
     res.render('build/index', results);
   })
