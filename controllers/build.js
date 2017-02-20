@@ -173,9 +173,11 @@ exports.postCreate = (req, res, next) => {
     if (err) { return next(err); }
 
     // saving the index to Algolia
-    index.addObject(build, build._id, (err, content) => {
-      if(err) console.log(err);
-    });
+    if (!build.draft) {
+      index.addObject(build, build._id, (err, content) => {
+        if(err) console.log(err);
+      });
+    }
 
     if (build.draft) {
       req.flash('info', { msg: build.name + ' was created as a draft.' });
@@ -246,10 +248,19 @@ exports.putUpdate = (req, res) => {
       const message = build.name + ' was updated.';
 
       // saving the index to Algolia
-      build.objectID = build._id;
-      index.saveObject(build, function(err, content) {
-        if(err) console.log(err);
-      });
+      if (!build.draft) {
+        build.objectID = build._id;
+        index.saveObject(build, function(err, content) {
+          if(err) console.log(err);
+        });
+      }
+
+      // or remove it if it's a draft
+      if (build.draft) {
+        index.deleteObject(build._id, function(err, content) {
+          if(err) console.log(err);
+        });
+      }
 
       req.flash('success', { msg: message });
       return res.redirect('/builds/' + build._id);
