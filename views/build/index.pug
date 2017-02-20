@@ -9,7 +9,7 @@ block content
   each build, index in builds
     h4
       div
-        a(href='builds/' + build._id)= build.name
+        a(href='/builds/' + build._id)= build.name
       if build.draft
         small
           i.fa.fa-newspaper-o
