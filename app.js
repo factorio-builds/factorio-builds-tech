@@ -21,7 +21,17 @@ const sass = require('node-sass-middleware');
 const multer = require('multer');
 const methodOverride = require('method-override')
 
-const upload = multer({ dest: path.join(__dirname, 'uploads') });
+const upload = multer({
+  dest: path.join(__dirname, 'uploads'),
+  fileFilter: function (req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/ ||
+        !file.mimetype.match(/image\/(jpg|jpeg|gif)$/))) {
+      return cb(new Error('Only image files are allowed!'));
+    }
+
+    cb(null, true);
+  }
+});
 
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
