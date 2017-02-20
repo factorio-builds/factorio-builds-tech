@@ -27,20 +27,20 @@ exports.getIndex = (req, res) => {
   }
 
   Promise.props({
-      title: 'Builds',
-      builds: Build
-        .find(query)
-        .sort('-draft')
-        .execAsync()
-    })
-    .then(function(results) {
-      let groupSize = Math.floor(results.builds.length/3);
-      results.builds = _.chunk(results.builds, groupSize);
-      res.render('build/index', results);
-    })
-    .catch(function(err) {
-      res.send(500);
-    });
+    title: 'Builds',
+    builds: Build
+      .find(query)
+      .sort('-draft')
+      .execAsync()
+  })
+  .then(function(results) {
+    let groupSize = Math.floor(results.builds.length/3);
+    results.builds = _.chunk(results.builds, groupSize);
+    res.render('build/index', results);
+  })
+  .catch(function(err) {
+    res.send(500);
+  });
 };
 
 /**
@@ -60,21 +60,21 @@ exports.getIndexByType = (req, res) => {
   }
 
   Promise.props({
-      title: 'Builds',
-      type: req.params.type,
-      builds: Build
-        .find(query)
-        .sort('-draft')
-        .execAsync()
-    })
-    .then(function(results) {
-      let groupSize = Math.floor(results.builds.length/3);
-      results.builds = _.chunk(results.builds, groupSize);
-      res.render('build/index', results);
-    })
-    .catch(function(err) {
-      res.send(500);
-    });
+    title: 'Builds',
+    type: req.params.type,
+    builds: Build
+      .find(query)
+      .sort('-draft')
+      .execAsync()
+  })
+  .then(function(results) {
+    let groupSize = Math.floor(results.builds.length/3);
+    results.builds = _.chunk(results.builds, groupSize);
+    res.render('build/index', results);
+  })
+  .catch(function(err) {
+    res.send(500);
+  });
 };
 
 /**
