@@ -113,24 +113,24 @@ exports.getIndexByType = (req, res) => {
  */
 exports.getShow = (req, res) => {
   Promise.props({
-      path: 'builds',
-      title: 'Builds',
-      build: Build.findOne({_id: req.params.id}).execAsync()
-    })
-    .then(function(results) {
-      // TODO: this can probably be written much more cleanly
-      const userId = _.get(req, 'user._id') ? _.get(req, 'user._id').toString() : 0;
+    path: 'builds',
+    title: 'Builds',
+    build: Build.findOne({_id: req.params.id}).execAsync()
+  })
+  .then(function(results) {
+    // TODO: this can probably be written much more cleanly
+    const userId = _.get(req, 'user._id') ? _.get(req, 'user._id').toString() : 0;
 
-      if (results.build.draft && results.build.ownedBy.toString() !== userId) {
-        delete results.build;
-        results.cantSeeDraft = true;
-      }
+    if (results.build.draft && results.build.ownedBy.toString() !== userId) {
+      delete results.build;
+      results.cantSeeDraft = true;
+    }
 
-      res.render('build/show', results);
-    })
-    .catch(function(err) {
-      res.send(500);
-    });
+    res.render('build/show', results);
+  })
+  .catch(function(err) {
+    res.send(500);
+  });
 };
 
 /**
