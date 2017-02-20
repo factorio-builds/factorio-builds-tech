@@ -1,0 +1,9 @@
+if title === 'Builds'
+  .navbar.navbar-inverse(style='border-radius: 0')
+    .container
+      .collapse.navbar-collapse(style='padding: 0')
+        ul.nav.navbar-nav
+          li(class=(type == 'balancers') ? 'active' : undefined)
+            a(href='/builds/type/balancers') Balancers
+          li(class=(type == 'layouts') ? 'active' : undefined)
+            a(href='/builds/type/layouts') Layouts

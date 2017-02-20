@@ -42,6 +42,38 @@ exports.getIndex = (req, res) => {
 };
 
 /**
+ * GET /builds/type/x
+ * Build list page by type.
+ */
+exports.getIndexByType = (req, res) => {
+  let query = {
+    category: req.params.type,
+    $or: [
+      { draft: { $exists: false } }
+    ]
+  };
+
+  if (req.user) {
+    query.$or.push({ draft: { $exists: true }, ownedBy: req.user._id });
+  }
+
+  Promise.props({
+      title: 'Builds',
+      type: req.params.type,
+      builds: Build
+        .find(query)
+        .sort('-draft')
+        .execAsync()
+    })
+    .then(function(results) {
+      res.render('build/index', results);
+    })
+    .catch(function(err) {
+      res.send(500);
+    });
+};
+
+/**
  * GET /builds
  * Build single page.
  */
