@@ -2,7 +2,10 @@ extends ../layout
 
 block content
   .page-header
-    h3 Builds
+    if category
+      h3 #{category} Builds
+    else
+      h3 Builds
 
   p The list of builds
 

@@ -105,6 +105,7 @@ exports.getIndexByType = (req, res) => {
     path: 'builds',
     title: 'Builds',
     type: req.params.type,
+    category: _.find(categoryList, { slug: req.params.type }).name,
     builds: Build
       .find(query)
       .execAsync()
