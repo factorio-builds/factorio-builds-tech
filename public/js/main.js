@@ -10,7 +10,7 @@ $(document).ready(function() {
     var index = client.initIndex('builds');
 
     $toggleSearch.on('click', function () {
-      $search.addClass('active');
+      $search.addClass('active').focus();
       $results.addClass('active');
     });
 
