@@ -10,9 +10,12 @@ const algoliasearch = require('algoliasearch');
 const algolia = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
 const index = algolia.initIndex('builds');
 
+// Maybe this should be extracted to a model?
 const categoryList = [
   { slug: 'balancers', name: 'Balancers' },
-  { slug: 'layouts', name: 'Layouts' }
+  { slug: 'smelting', name: 'Smelting' },
+  { slug: 'trains', name: 'Trains' },
+  { slug: 'production', name: 'Production' }
 ];
 
 Promise.promisifyAll(mongoose);
