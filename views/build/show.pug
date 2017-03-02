@@ -31,3 +31,9 @@ block content
     div(class='badge')= build.category
 
     p= build.desc
+
+    if blueprints
+      h4 Blueprint
+
+      each blueprint, index in blueprints
+        pre= blueprint.hash

@@ -1,4 +1,5 @@
 extends ../layout
+include blueprint
 
 block content
   .page-header
@@ -38,6 +39,7 @@ block content
           label(class='col-sm-2 control-label', for='desc') Description
           .col-sm-8
             textarea.form-control(name='desc', id='desc', rows='7')= build ? build.desc : ''
+        +blueprint
         .form-group
           .col-sm-offset-2.col-sm-8
             button.btn.btn-primary(type='submit')

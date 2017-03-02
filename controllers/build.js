@@ -1,6 +1,7 @@
 const Promise = require('bluebird');
 const mongoose = require('mongoose');
 const Build = require('../models/Build');
+const Blueprint = require('../models/Blueprint');
 const passport = require('passport');
 const _ = require ('lodash');
 
@@ -123,7 +124,8 @@ exports.getShow = (req, res) => {
   Promise.props({
     path: 'builds',
     title: 'Builds',
-    build: Build.findOne({_id: req.params.id}).execAsync()
+    build: Build.findOne({_id: req.params.id}).execAsync(),
+    blueprints: Blueprint.find({build: req.params.id}).execAsync()
   })
   .then(function(results) {
     // TODO: this can probably be written much more cleanly
@@ -168,12 +170,26 @@ exports.postCreate = (req, res, next) => {
     ownedBy: req.user._id
   });
 
+  const blueprint = new Blueprint({
+    name: req.body.name,
+    order: 0,
+    desc: null,
+    hash: req.body.blueprint_hash,
+    build: null // to be filled during the build save
+  });
+
   if (req.file) {
     build.image = req.file.filename;
   }
 
   build.save((err) => {
     if (err) { return next(err); }
+
+    // TODO: bulletproof this
+    blueprint.build = build._id;
+    blueprint.save((err) => {
+      if (err) { return next(err); }
+    });
 
     // saving the index to Algolia
     if (!build.draft) {
@@ -246,6 +262,31 @@ exports.putUpdate = (req, res) => {
     build.save((err) => {
       if (err) { return next(err); }
       const message = build.name + ' was updated.';
+
+      // TODO: this should be extracted
+      Blueprint.findOne({ build: req.params.id }).then((err, blueprint) => {
+        if (err) { return next(err); }
+
+        if (blueprint) {
+          blueprint.hash = req.body.blueprint_hash;
+
+          blueprint.save((err) => {
+            if (err) { return next(err); }
+          });
+        } else {
+          const blueprint = new Blueprint({
+            name: req.body.name,
+            order: 0,
+            desc: null,
+            hash: req.body.blueprint_hash,
+            build: build._id
+          });
+
+          blueprint.save((err) => {
+            if (err) { return next(err); }
+          });
+        }
+      });
 
       // saving the index to Algolia
       if (!build.draft) {
