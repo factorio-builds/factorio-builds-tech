@@ -4,39 +4,28 @@ $(document).ready(function() {
   var $search = $('.search-input');
   var $results = $('.search-results');
 
+  var client = algoliasearch('C0VEZQ8DEQ', '75938b40b5ad140ce81b4d25a8788115');
+  var index = client.initIndex('builds');
 
-  $(document).ready(function() {
-    var client = algoliasearch('C0VEZQ8DEQ', '75938b40b5ad140ce81b4d25a8788115');
-    var index = client.initIndex('builds');
-
-    var doSearch = function () {
-      if ($search.val().trim()) {
-        index.search($search.val(), {
-          hitsPerPage: 10,
-          facets: '*'
-        }, searchCallback);
-      } else {
-        $results.empty();
-      }
+  var doSearch = function () {
+    if ($search.val().trim()) {
+      index.search($search.val(), {
+        hitsPerPage: 10,
+        facets: '*'
+      }, searchCallback);
+    } else {
+      $results.empty();
     }
+  }
 
-    $toggleSearch.on('click', function () {
-      $search.addClass('active').focus();
-      $results.addClass('active');
-    });
-
-    $search.on('keyup', _.debounce(doSearch, 250)).focus();
-  });
-
-  function searchCallback(err, content) {
+  var searchCallback = function (err, content) {
     if (err) {
       console.error(err);
+
       return;
     }
 
     $results.empty();
-
-    console.log(content);
 
     for (var i = 0; i < content.hits.length; i++) {
       var template = '';
@@ -52,5 +41,12 @@ $(document).ready(function() {
 
     $results.append('<div class="search-result__meta">' + content.nbHits + ' results in ' + content.processingTimeMS + ' ms</div>');
   };
+
+  $toggleSearch.on('click', function () {
+    $search.addClass('active').focus();
+    $results.addClass('active');
+  });
+
+  $search.on('keyup', _.debounce(doSearch, 250)).focus();
 
 });
