@@ -9,12 +9,7 @@ $(document).ready(function() {
     var client = algoliasearch('C0VEZQ8DEQ', '75938b40b5ad140ce81b4d25a8788115');
     var index = client.initIndex('builds');
 
-    $toggleSearch.on('click', function () {
-      $search.addClass('active').focus();
-      $results.addClass('active');
-    });
-
-    $search.keyup(function() {
+    var doSearch = function () {
       if ($search.val().trim()) {
         index.search($search.val(), {
           hitsPerPage: 10,
@@ -23,7 +18,14 @@ $(document).ready(function() {
       } else {
         $results.empty();
       }
-    }).focus();
+    }
+
+    $toggleSearch.on('click', function () {
+      $search.addClass('active').focus();
+      $results.addClass('active');
+    });
+
+    $search.on('keyup', _.debounce(doSearch, 250)).focus();
   });
 
   function searchCallback(err, content) {
