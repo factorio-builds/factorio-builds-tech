@@ -1,0 +1,38 @@
+.build-item {
+  $block: &;
+  display: block;
+  padding: 10px;
+  background: #eee;
+  border: 1px solid darken(#eee, 15%);
+
+  &:hover {
+    background: #4d90fc;
+    color: #fff;
+    text-decoration: none;
+
+    .badge {
+      background: #fff;
+      color: #4d90fc;
+    }
+
+    #{$block}__categories {
+      border-color: #fff;
+    }
+  }
+
+  & + & {
+    margin-top: 10px;
+  }
+
+  &__title {
+    margin-top: 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid;
+  }
+
+  &__categories {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid #4d90fc;
+  }
+}
