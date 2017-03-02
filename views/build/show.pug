@@ -12,6 +12,7 @@ block content
     h3
       if build
         div= build.name
+        div(class='badge')= build.category
       else
         div Unpublished build
 
@@ -27,13 +28,15 @@ block content
     if build.image
       div(class='build__image')
         img(src='/images/' + build.image)
+    else
+      p No image.
 
-    div(class='badge')= build.category
+    h4 Description
+    p= build.desc || 'N/A'
 
-    p= build.desc
-
-    if blueprints
-      h4 Blueprint
-
+    h4 Blueprint
+    if blueprints.length
       each blueprint, index in blueprints
         pre= blueprint.hash
+    else
+      p N/A
