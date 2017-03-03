@@ -79,11 +79,11 @@ block content
     h3 Linked Accounts
   .form-horizontal
     .form-group
-      .col-sm-offset-3.col-sm-4
-        if user.instagram
-          p: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
-        else
-          p: a(href='/auth/instagram') Link your Instagram account
+      //- .col-sm-offset-3.col-sm-4
+      //-   if user.instagram
+      //-     p: a.text-danger(href='/account/unlink/instagram') Unlink your Instagram account
+      //-   else
+      //-     p: a(href='/auth/instagram') Link your Instagram account
       .col-sm-offset-3.col-sm-4
         if user.google
           p: a.text-danger(href='/account/unlink/google') Unlink your Google account
@@ -104,8 +104,8 @@ block content
           p: a.text-danger(href='/account/unlink/github') Unlink your GitHub account
         else
           p: a(href='/auth/github') Link your GitHub account
-      .col-sm-offset-3.col-sm-4
-        if user.linkedin
-          p: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
-        else
-          p: a(href='/auth/linkedin') Link your LinkedIn account
+      //- .col-sm-offset-3.col-sm-4
+      //-   if user.linkedin
+      //-     p: a.text-danger(href='/account/unlink/linkedin') Unlink your LinkedIn account
+      //-   else
+      //-     p: a(href='/auth/linkedin') Link your LinkedIn account
