@@ -1,6 +1,7 @@
 const async = require('async');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const mailgun = require('nodemailer-mailgun-transport');
 const passport = require('passport');
 const User = require('../models/User');
 
@@ -277,17 +278,20 @@ exports.postReset = (req, res, next) => {
         });
     },
     function sendResetPasswordEmail(user, done) {
-      const transporter = nodemailer.createTransport({
-        service: 'SendGrid',
-        auth: {
-          user: process.env.SENDGRID_USER,
-          pass: process.env.SENDGRID_PASSWORD
-        }
-      });
+      const transporter = nodemailer.createTransport(
+        mailgun({
+          auth: {
+            api_key: process.env.MAILGUN_KEY,
+            domain: process.env.MAILGUN_DOMAIN
+          }
+        })
+      );
       const mailOptions = {
         to: user.email,
-        from: 'hackathon@starter.com',
-        subject: 'Your Hackathon Starter password has been changed',
+        from: process.env.MAIL_NOREPLY,
+        sender: process.env.MAIL_NOREPLY,
+        replyTo: process.env.MAIL_NOREPLY,
+        subject: 'Your Factorio-Builds password has been changed',
         text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
       };
       transporter.sendMail(mailOptions, (err) => {
@@ -352,17 +356,20 @@ exports.postForgot = (req, res, next) => {
       });
     },
     function sendForgotPasswordEmail(token, user, done) {
-      const transporter = nodemailer.createTransport({
-        service: 'SendGrid',
-        auth: {
-          user: process.env.SENDGRID_USER,
-          pass: process.env.SENDGRID_PASSWORD
-        }
-      });
+      const transporter = nodemailer.createTransport(
+        mailgun({
+          auth: {
+            api_key: process.env.MAILGUN_KEY,
+            domain: process.env.MAILGUN_DOMAIN
+          }
+        })
+      );
       const mailOptions = {
         to: user.email,
-        from: 'hackathon@starter.com',
-        subject: 'Reset your password on Hackathon Starter',
+        from: process.env.MAIL_NOREPLY,
+        sender: process.env.MAIL_NOREPLY,
+        replyTo: process.env.MAIL_NOREPLY,
+        subject: 'Reset your password on Factorio-Builds',
         text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
           Please click on the following link, or paste this into your browser to complete the process:\n\n
           http://${req.headers.host}/reset/${token}\n\n

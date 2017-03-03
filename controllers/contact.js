@@ -1,12 +1,14 @@
 const nodemailer = require('nodemailer');
+const mailgun = require('nodemailer-mailgun-transport');
 
-const transporter = nodemailer.createTransport({
-  service: 'SendGrid',
-  auth: {
-    user: process.env.SENDGRID_USER,
-    pass: process.env.SENDGRID_PASSWORD
-  }
-});
+const transporter = nodemailer.createTransport(
+  mailgun({
+    auth: {
+      api_key: process.env.MAILGUN_KEY,
+      domain: process.env.MAILGUN_DOMAIN
+    }
+  })
+);
 
 /**
  * GET /contact
@@ -36,10 +38,17 @@ exports.postContact = (req, res) => {
   }
 
   const mailOptions = {
-    to: 'your@email.com',
-    from: `${req.body.name} <${req.body.email}>`,
-    subject: 'Contact Form | Hackathon Starter',
-    text: req.body.message
+    to: process.env.MAIL_TO,
+    from: `${req.body.name} <${process.env.MAIL_NOREPLY}>`,
+    sender: process.env.MAIL_NOREPLY,
+    // TODO: fix me, reply to doesn't seem to be working
+    replyTo: `${req.body.name} <${req.body.email}>`,
+    subject: 'Contact Form | Factorio-Builds',
+    text: `${req.body.email} wrote: ${req.body.message}`,
+    // TODO: fix me, setting reply to through headers doesn't seem to be working either
+    headers: {
+      'Reply-To': `${req.body.name} <${req.body.email}>`
+    }
   };
 
   transporter.sendMail(mailOptions, (err) => {
