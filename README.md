@@ -1,4 +1,4 @@
-### Factorio Builds
+# Factorio Builds
 
 [![Build Status](https://travis-ci.org/veksen/factorio-builds.svg?branch=master)](https://travis-ci.org/veksen/factorio-builds)
 
