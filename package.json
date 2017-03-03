@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec 'test/**/*.js'"
   },
   "dependencies": {
     "algoliasearch": "^3.21.1",
