@@ -10,6 +10,8 @@ const algoliasearch = require('algoliasearch');
 const algolia = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_ADMIN_KEY);
 const index = algolia.initIndex('builds');
 
+const splitArrayIntoGroups = require('../helpers/array').splitArrayIntoGroups;
+
 // Maybe this should be extracted to a model?
 const categoryList = [
   { slug: 'balancers', name: 'Balancers' },
@@ -43,8 +45,7 @@ exports.getIndex = (req, res) => {
       .execAsync()
   })
   .then(function(results) {
-    let groupSize = Math.floor(results.builds.length/3);
-    results.builds = _.chunk(results.builds, groupSize);
+    results.builds = splitArrayIntoGroups(results.builds, 3);
 
     // _.each(results.allBuilds, function (build) {
     //   build.objectID = build._id;
@@ -79,8 +80,7 @@ exports.getDrafts = (req, res) => {
       .execAsync()
   })
   .then(function(results) {
-    let groupSize = Math.floor(results.builds.length/3);
-    results.builds = _.chunk(results.builds, groupSize);
+    results.builds = splitArrayIntoGroups(results.builds, 3);
     res.render('build/index', results);
   })
   .catch(function(err) {
@@ -111,8 +111,7 @@ exports.getIndexByType = (req, res) => {
       .execAsync()
   })
   .then(function(results) {
-    let groupSize = Math.ceil(results.builds.length/3);
-    results.builds = _.chunk(results.builds, groupSize);
+    results.builds = splitArrayIntoGroups(results.builds, 3);
     res.render('build/index', results);
   })
   .catch(function(err) {
