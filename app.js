@@ -226,7 +226,7 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
 /**
  * OAuth authorization routes. (API examples)
  */
-app.get('/auth/foursquare', passport.authorize('foursquare'));
+// app.get('/auth/foursquare', passport.authorize('foursquare'));
 // app.get('/auth/foursquare/callback', passport.authorize('foursquare', { failureRedirect: '/api' }), (req, res) => {
 //   res.redirect('/api/foursquare');
 // });
