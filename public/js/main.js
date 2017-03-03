@@ -49,4 +49,11 @@ $(document).ready(function() {
 
   $search.on('keyup', _.debounce(doSearch, 250)).focus();
 
+
+  // Submit forms on Ctrl/Command + Enter
+  $(document).keydown(function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.which == 13)
+      $('form').submit();
+  });
+
 });
