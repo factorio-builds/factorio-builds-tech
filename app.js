@@ -52,11 +52,13 @@ const app = express();
  */
 const Raven = require('raven');
 
-Raven.config(process.env.RAVEN_DSN, {
-  environment: process.env.APP_ENV
-}).install();
-app.use(Raven.requestHandler());
-app.use(Raven.errorHandler());
+if (process.env.RAVEN_DSN) {
+  Raven.config(process.env.RAVEN_DSN, {
+    environment: process.env.APP_ENV
+  }).install();
+  app.use(Raven.requestHandler());
+  app.use(Raven.errorHandler());
+}
 
 /**
  * Connect to MongoDB.
