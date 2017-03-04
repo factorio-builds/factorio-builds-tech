@@ -2,7 +2,7 @@
  * API examples routes.
  */
 
-const apiController = require('../controllers/api');
+// const apiController = require('../controllers/api');
 
 module.exports = (app) => {
   // app.get('/api', apiController.getApi);
