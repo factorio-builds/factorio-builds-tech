@@ -57,3 +57,36 @@ $(document).ready(function() {
   });
 
 });
+
+var setupImagesList = function () {
+  $('.build-item__image img').each(function (i, img) {
+    var $img = $(img);
+
+    // max height also assigned by CSS to the container
+    // to avoid a flicker on pageload
+    var maxHeight = 500;
+
+    if ($img.height() > maxHeight) {
+      var diff = $img.height() - maxHeight;
+      var halfenDiff = diff / 2;
+
+      $img.css({
+        position: 'relative',
+        top: -halfenDiff + 'px'
+      });
+    } else {
+      $img.css({
+        position: '',
+        top: ''
+      });
+    }
+  });
+}
+
+$(window).on('load', function () {
+  setupImagesList();
+});
+
+$(document).on('resize', function () {
+  _.debounce(100, setupImagesList());
+});

@@ -35,4 +35,9 @@
     padding-top: 5px;
     border-top: 1px solid #4d90fc;
   }
+
+  &__image {
+    max-height: 500px;
+    overflow: hidden;
+  }
 }
