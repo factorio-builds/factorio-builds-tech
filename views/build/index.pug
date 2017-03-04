@@ -1,4 +1,5 @@
 extends ../layout
+include _build-list
 
 block content
   .page-header
@@ -9,19 +10,4 @@ block content
 
   p The list of builds
 
-  .row
-    each chunk, index in builds
-      .col-md-4.col-sm-12
-        each build, index in chunk
-          a(class='build-item', href='/builds/' + build._id)
-            h4(class='build-item__title')
-              div= build.name
-              if build.draft
-                small
-                  i.fa.fa-newspaper-o
-                  | Draft
-            if build.image
-              div(class='build-item__image')
-                img(src='/images/' + build.image, class='img-responsive')
-            div(class='build-item__categories')
-              div(class='badge')= build.category
+  +build-list
