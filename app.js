@@ -48,6 +48,15 @@ exports.upload = upload;
 const app = express();
 
 /**
+ * Setup Raven/Sentry
+ */
+const Raven = require('raven');
+
+Raven.config(process.env.RAVEN_DSN).install();
+app.use(Raven.requestHandler());
+app.use(Raven.errorHandler());
+
+/**
  * Connect to MongoDB.
  */
 mongoose.Promise = global.Promise;
