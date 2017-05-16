@@ -19,18 +19,18 @@ const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
-const methodOverride = require('method-override')
+const methodOverride = require('method-override');
 
 const upload = multer({
   dest: path.join(__dirname, 'uploads'),
-  fileFilter: function (req, file, cb) {
+  fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/ ||
         !file.mimetype.match(/image\/(jpg|jpeg|gif)$/))) {
       return cb(new Error('Only image files are allowed!'));
     }
 
     cb(null, true);
-  }
+  },
 });
 
 exports.upload = upload;
@@ -38,8 +38,8 @@ exports.upload = upload;
 /**
  * Load environment variables from .env file, where API keys and passwords are configured.
  */
- if (!process.env.TRAVIS) {
-    dotenv.load({ path: '.env' });
+if (!process.env.TRAVIS) {
+  dotenv.load({ path: '.env' });
 }
 
 /**
@@ -54,7 +54,7 @@ const Raven = require('raven');
 
 if (process.env.RAVEN_DSN) {
   Raven.config(process.env.RAVEN_DSN, {
-    environment: process.env.APP_ENV
+    environment: process.env.APP_ENV,
   }).install();
   app.use(Raven.requestHandler());
   app.use(Raven.errorHandler());
@@ -80,7 +80,7 @@ app.use(expressStatusMonitor());
 app.use(compression());
 app.use(sass({
   src: path.join(__dirname, 'public'),
-  dest: path.join(__dirname, 'public')
+  dest: path.join(__dirname, 'public'),
 }));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -92,8 +92,8 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    autoReconnect: true
-  })
+    autoReconnect: true,
+  }),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -127,7 +127,7 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 app.use('/images', express.static(path.join(__dirname, 'uploads'), { maxAge: 31557600000 }));
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 /*
  * Include routes.
@@ -146,7 +146,8 @@ app.use(errorHandler());
  * Start Express server.
  */
 app.listen(app.get('port'), () => {
-  console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env')); 
+  console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
+
   console.log('  Press CTRL-C to stop\n');
 });
 
