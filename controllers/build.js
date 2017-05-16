@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Build = require('../models/Build');
 const Blueprint = require('../models/Blueprint');
 const passport = require('passport');
-const _ = require ('lodash');
+const _ = require('lodash');
 
 const algoliasearch = require('algoliasearch');
 
@@ -17,7 +17,7 @@ const categoryList = [
   { slug: 'balancers', name: 'Balancers' },
   { slug: 'smelting', name: 'Smelting' },
   { slug: 'trains', name: 'Trains' },
-  { slug: 'production', name: 'Production' }
+  { slug: 'production', name: 'Production' },
 ];
 
 Promise.promisifyAll(mongoose);
@@ -27,11 +27,11 @@ Promise.promisifyAll(mongoose);
  * Build list page.
  */
 exports.getIndex = (req, res) => {
-  let query = {
+  const query = {
     $or: [
       { draft: false },
-      { draft: { $exists: false } }
-    ]
+      { draft: { $exists: false } },
+    ],
   };
 
   Promise.props({
@@ -42,9 +42,9 @@ exports.getIndex = (req, res) => {
     //   .execAsync(),
     builds: Build
       .find(query)
-      .execAsync()
+      .execAsync(),
   })
-  .then(function(results) {
+  .then((results) => {
     results.builds = splitArrayIntoGroups(results.builds, 3);
 
     // _.each(results.allBuilds, function (build) {
@@ -56,7 +56,7 @@ exports.getIndex = (req, res) => {
 
     res.render('build/index', results);
   })
-  .catch(function(err) {
+  .catch((err) => {
     res.send(500);
   });
 };
@@ -66,8 +66,8 @@ exports.getIndex = (req, res) => {
  * Build my-builds page.
  */
 exports.getDrafts = (req, res) => {
-  let query = {
-    ownedBy: req.user._id
+  const query = {
+    ownedBy: req.user._id,
   };
 
   Promise.props({
@@ -77,13 +77,13 @@ exports.getDrafts = (req, res) => {
       .find(query)
       .sort('-draft')
       .sort('-created')
-      .execAsync()
+      .execAsync(),
   })
-  .then(function(results) {
+  .then((results) => {
     results.builds = splitArrayIntoGroups(results.builds, 3);
     res.render('build/index', results);
   })
-  .catch(function(err) {
+  .catch((err) => {
     res.send(500);
   });
 };
@@ -93,12 +93,12 @@ exports.getDrafts = (req, res) => {
  * Build list page by type.
  */
 exports.getIndexByType = (req, res) => {
-  let query = {
+  const query = {
     category: req.params.type,
     $or: [
       { draft: false },
-      { draft: { $exists: false } }
-    ]
+      { draft: { $exists: false } },
+    ],
   };
 
   Promise.props({
@@ -108,13 +108,13 @@ exports.getIndexByType = (req, res) => {
     category: _.find(categoryList, { slug: req.params.type }).name,
     builds: Build
       .find(query)
-      .execAsync()
+      .execAsync(),
   })
-  .then(function(results) {
+  .then((results) => {
     results.builds = splitArrayIntoGroups(results.builds, 3);
     res.render('build/index', results);
   })
-  .catch(function(err) {
+  .catch((err) => {
     res.send(500);
   });
 };
@@ -127,10 +127,10 @@ exports.getShow = (req, res) => {
   Promise.props({
     path: 'builds',
     title: 'Builds',
-    build: Build.findOne({_id: req.params.id}).execAsync(),
-    blueprints: Blueprint.find({build: req.params.id}).execAsync()
+    build: Build.findOne({ _id: req.params.id }).execAsync(),
+    blueprints: Blueprint.find({ build: req.params.id }).execAsync(),
   })
-  .then(function(results) {
+  .then((results) => {
     // TODO: this can probably be written much more cleanly
     const userId = _.get(req, 'user._id') ? _.get(req, 'user._id').toString() : 0;
 
@@ -141,7 +141,7 @@ exports.getShow = (req, res) => {
 
     res.render('build/show', results);
   })
-  .catch(function(err) {
+  .catch((err) => {
     res.send(500);
   });
 };
@@ -154,7 +154,7 @@ exports.getCreate = (req, res) => {
   res.render('build/form', {
     path: 'builds',
     title: 'Builds',
-    categoryList: categoryList
+    categoryList,
   });
 };
 
@@ -170,7 +170,7 @@ exports.postCreate = (req, res, next) => {
     category: req.body.category,
     createdBy: req.user._id,
     updatedBy: req.user._id,
-    ownedBy: req.user._id
+    ownedBy: req.user._id,
   });
 
   const blueprint = new Blueprint({
@@ -178,7 +178,7 @@ exports.postCreate = (req, res, next) => {
     order: 0,
     desc: null,
     hash: req.body.blueprint_hash,
-    build: null // to be filled during the build save
+    build: null, // to be filled during the build save
   });
 
   if (req.file) {
@@ -197,16 +197,16 @@ exports.postCreate = (req, res, next) => {
     // saving the index to Algolia
     if (!build.draft) {
       index.addObject(build, build._id, (err, content) => {
-        if(err) console.log(err);
+        if (err) console.log(err);
       });
     }
 
     if (build.draft) {
-      req.flash('info', { msg: build.name + ' was created as a draft.' });
-      return res.redirect('/builds/' + build._id);
+      req.flash('info', { msg: `${build.name} was created as a draft.` });
+      return res.redirect(`/builds/${build._id}`);
     }
 
-    req.flash('success', { msg: build.name + ' successfully created!' });
+    req.flash('success', { msg: `${build.name} successfully created!` });
     return res.redirect('/builds');
   });
 };
@@ -219,22 +219,22 @@ exports.getEdit = (req, res) => {
   Promise.props({
     path: 'builds',
     title: 'Builds',
-    categoryList: categoryList,
-    build: Build.findOne({_id: req.params.id}).execAsync()
+    categoryList,
+    build: Build.findOne({ _id: req.params.id }).execAsync(),
   })
-  .then(function(results) {
+  .then((results) => {
     // TODO: this can probably be written much more cleanly
     const userId = _.get(req, 'user._id') ? _.get(req, 'user._id').toString() : 0;
 
     // Build doesn't belong to the user
     if (results.build.ownedBy.toString() != userId) {
       req.flash('errors', { msg: 'You aren\'t allowed to perform that action' });
-      return res.redirect('/builds/' + results.build._id);
+      return res.redirect(`/builds/${results.build._id}`);
     }
 
     res.render('build/form', results);
   })
-  .catch(function(err) {
+  .catch((err) => {
     res.send(500);
   });
 };
@@ -264,7 +264,7 @@ exports.putUpdate = (req, res) => {
 
     build.save((err) => {
       if (err) { return next(err); }
-      const message = build.name + ' was updated.';
+      const message = `${build.name} was updated.`;
 
       // TODO: this should be extracted
       Blueprint.findOne({ build: req.params.id }).then((err, blueprint) => {
@@ -282,7 +282,7 @@ exports.putUpdate = (req, res) => {
             order: 0,
             desc: null,
             hash: req.body.blueprint_hash,
-            build: build._id
+            build: build._id,
           });
 
           blueprint.save((err) => {
@@ -294,20 +294,20 @@ exports.putUpdate = (req, res) => {
       // saving the index to Algolia
       if (!build.draft) {
         build.objectID = build._id;
-        index.saveObject(build, function(err, content) {
-          if(err) console.log(err);
+        index.saveObject(build, (err, content) => {
+          if (err) console.log(err);
         });
       }
 
       // or remove it if it's a draft
       if (build.draft) {
-        index.deleteObject(build._id, function(err, content) {
-          if(err) console.log(err);
+        index.deleteObject(build._id, (err, content) => {
+          if (err) console.log(err);
         });
       }
 
       req.flash('success', { msg: message });
-      return res.redirect('/builds/' + build._id);
+      return res.redirect(`/builds/${build._id}`);
     });
   });
 };
@@ -331,7 +331,7 @@ function publishPublish(req, res, publish) {
       if (err) { return next(err); }
       const message = build.name + (publish ? ' is now published.' : ' is now a draft.');
       req.flash('success', { msg: message });
-      return res.redirect('/builds/' + build._id);
+      return res.redirect(`/builds/${build._id}`);
     });
   });
 }

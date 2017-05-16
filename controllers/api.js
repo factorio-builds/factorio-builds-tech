@@ -1,4 +1,4 @@
-'use strict';
+
 
 const async = require('async');
 const request = require('request');
@@ -19,8 +19,8 @@ const foursquare = require('node-foursquare')({
   secrets: {
     clientId: process.env.FOURSQUARE_ID,
     clientSecret: process.env.FOURSQUARE_SECRET,
-    redirectUrl: process.env.FOURSQUARE_REDIRECT_URL
-  }
+    redirectUrl: process.env.FOURSQUARE_REDIRECT_URL,
+  },
 });
 
 /**
@@ -29,7 +29,7 @@ const foursquare = require('node-foursquare')({
  */
 exports.getApi = (req, res) => {
   res.render('api/index', {
-    title: 'API Examples'
+    title: 'API Examples',
   });
 };
 
@@ -54,7 +54,7 @@ exports.getFoursquare = (req, res, next) => {
       foursquare.Users.getCheckins('self', null, token.accessToken, (err, results) => {
         callback(err, results);
       });
-    }
+    },
   },
   (err, results) => {
     if (err) { return next(err); }
@@ -62,7 +62,7 @@ exports.getFoursquare = (req, res, next) => {
       title: 'Foursquare API',
       trendingVenues: results.trendingVenues,
       venueDetail: results.venueDetail,
-      userCheckins: results.userCheckins
+      userCheckins: results.userCheckins,
     });
   });
 };
@@ -77,14 +77,14 @@ exports.getTumblr = (req, res, next) => {
     consumer_key: process.env.TUMBLR_KEY,
     consumer_secret: process.env.TUMBLR_SECRET,
     token: token.accessToken,
-    token_secret: token.tokenSecret
+    token_secret: token.tokenSecret,
   });
   client.posts('mmosdotcom.tumblr.com', { type: 'photo' }, (err, data) => {
     if (err) { return next(err); }
     res.render('api/tumblr', {
       title: 'Tumblr API',
       blog: data.blog,
-      photoset: data.posts[0].photos
+      photoset: data.posts[0].photos,
     });
   });
 };
@@ -100,7 +100,7 @@ exports.getFacebook = (req, res, next) => {
     if (err) { return next(err); }
     res.render('api/facebook', {
       title: 'Facebook API',
-      profile: results
+      profile: results,
     });
   });
 };
@@ -119,7 +119,7 @@ exports.getScraping = (req, res, next) => {
     });
     res.render('api/scraping', {
       title: 'Web Scraping',
-      links
+      links,
     });
   });
 };
@@ -134,7 +134,7 @@ exports.getGithub = (req, res, next) => {
     if (err) { return next(err); }
     res.render('api/github', {
       title: 'GitHub API',
-      repo
+      repo,
     });
   });
 };
@@ -145,7 +145,7 @@ exports.getGithub = (req, res, next) => {
  */
 exports.getAviary = (req, res) => {
   res.render('api/aviary', {
-    title: 'Aviary API'
+    title: 'Aviary API',
   });
 };
 
@@ -156,7 +156,7 @@ exports.getAviary = (req, res) => {
 exports.getNewYorkTimes = (req, res, next) => {
   const query = {
     'list-name': 'young-adult',
-    'api-key': process.env.NYT_KEY
+    'api-key': process.env.NYT_KEY,
   };
   request.get({ url: 'http://api.nytimes.com/svc/books/v2/lists', qs: query }, (err, request, body) => {
     if (err) { return next(err); }
@@ -166,7 +166,7 @@ exports.getNewYorkTimes = (req, res, next) => {
     const books = JSON.parse(body).results;
     res.render('api/nyt', {
       title: 'New York Times API',
-      books
+      books,
     });
   });
 };
@@ -178,7 +178,7 @@ exports.getNewYorkTimes = (req, res, next) => {
 exports.getLastfm = (req, res, next) => {
   const lastfm = new LastFmNode({
     api_key: process.env.LASTFM_KEY,
-    secret: process.env.LASTFM_SECRET
+    secret: process.env.LASTFM_SECRET,
   });
   async.parallel({
     artistInfo: (done) => {
@@ -190,8 +190,8 @@ exports.getLastfm = (req, res, next) => {
           },
           error: (err) => {
             done(err);
-          }
-        }
+          },
+        },
       });
     },
     artistTopTracks: (done) => {
@@ -203,8 +203,8 @@ exports.getLastfm = (req, res, next) => {
           },
           error: (err) => {
             done(err);
-          }
-        }
+          },
+        },
       });
     },
     artistTopAlbums: (done) => {
@@ -216,10 +216,10 @@ exports.getLastfm = (req, res, next) => {
           },
           error: (err) => {
             done(err);
-          }
-        }
+          },
+        },
       });
-    }
+    },
   },
   (err, results) => {
     if (err) { return next(err); }
@@ -231,11 +231,11 @@ exports.getLastfm = (req, res, next) => {
       stats: results.artistInfo.artist.stats,
       similar: results.artistInfo.artist.similar.artist,
       topAlbums: results.artistTopAlbums,
-      topTracks: results.artistTopTracks
+      topTracks: results.artistTopTracks,
     };
     res.render('api/lastfm', {
       title: 'Last.fm API',
-      artist
+      artist,
     });
   });
 };
@@ -250,13 +250,13 @@ exports.getTwitter = (req, res, next) => {
     consumer_key: process.env.TWITTER_KEY,
     consumer_secret: process.env.TWITTER_SECRET,
     access_token: token.accessToken,
-    access_token_secret: token.tokenSecret
+    access_token_secret: token.tokenSecret,
   });
   T.get('search/tweets', { q: 'nodejs since:2013-01-01', geocode: '40.71448,-74.00598,5mi', count: 10 }, (err, reply) => {
     if (err) { return next(err); }
     res.render('api/twitter', {
       title: 'Twitter API',
-      tweets: reply.statuses
+      tweets: reply.statuses,
     });
   });
 };
@@ -280,7 +280,7 @@ exports.postTwitter = (req, res, next) => {
     consumer_key: process.env.TWITTER_KEY,
     consumer_secret: process.env.TWITTER_SECRET,
     access_token: token.accessToken,
-    access_token_secret: token.tokenSecret
+    access_token_secret: token.tokenSecret,
   });
   T.post('statuses/update', { status: req.body.tweet }, (err) => {
     if (err) { return next(err); }
@@ -324,7 +324,7 @@ exports.getSteam = (req, res, next) => {
         }
         done(err, body);
       });
-    }
+    },
   },
   (err, results) => {
     if (err) { return next(err); }
@@ -332,7 +332,7 @@ exports.getSteam = (req, res, next) => {
       title: 'Steam Web API',
       ownedGames: results.ownedGames.response.games,
       playerAchievemments: results.playerAchievements.playerstats,
-      playerSummary: results.playerSummaries.response.players[0]
+      playerSummary: results.playerSummaries.response.players[0],
     });
   });
 };
@@ -344,7 +344,7 @@ exports.getSteam = (req, res, next) => {
 exports.getStripe = (req, res) => {
   res.render('api/stripe', {
     title: 'Stripe API',
-    publishableKey: process.env.STRIPE_PKEY
+    publishableKey: process.env.STRIPE_PKEY,
   });
 };
 
@@ -359,7 +359,7 @@ exports.postStripe = (req, res) => {
     amount: 395,
     currency: 'usd',
     source: stripeToken,
-    description: stripeEmail
+    description: stripeEmail,
   }, (err) => {
     if (err && err.type === 'StripeCardError') {
       req.flash('errors', { msg: 'Your card has been declined.' });
@@ -376,7 +376,7 @@ exports.postStripe = (req, res) => {
  */
 exports.getTwilio = (req, res) => {
   res.render('api/twilio', {
-    title: 'Twilio API'
+    title: 'Twilio API',
   });
 };
 
@@ -398,7 +398,7 @@ exports.postTwilio = (req, res, next) => {
   const message = {
     to: req.body.number,
     from: '+13472235148',
-    body: req.body.message
+    body: req.body.message,
   };
   twilio.sendMessage(message, (err, responseData) => {
     if (err) { return next(err.message); }
@@ -413,7 +413,7 @@ exports.postTwilio = (req, res, next) => {
  */
 exports.getClockwork = (req, res) => {
   res.render('api/clockwork', {
-    title: 'Clockwork SMS API'
+    title: 'Clockwork SMS API',
   });
 };
 
@@ -425,7 +425,7 @@ exports.postClockwork = (req, res, next) => {
   const message = {
     To: req.body.telephone,
     From: 'Hackathon',
-    Content: 'Hello from the Hackathon Starter'
+    Content: 'Hello from the Hackathon Starter',
   };
   clockwork.sendSms(message, (err, responseData) => {
     if (err) { return next(err.errDesc); }
@@ -445,7 +445,7 @@ exports.getLinkedin = (req, res, next) => {
     if (err) { return next(err); }
     res.render('api/linkedin', {
       title: 'LinkedIn API',
-      profile: $in
+      profile: $in,
     });
   });
 };
@@ -478,7 +478,7 @@ exports.getInstagram = (req, res, next) => {
       ig.user_self_media_recent((err, medias) => {
         done(err, medias);
       });
-    }
+    },
   }, (err, results) => {
     if (err) { return next(err); }
     res.render('api/instagram', {
@@ -486,7 +486,7 @@ exports.getInstagram = (req, res, next) => {
       usernames: results.searchByUsername,
       userById: results.searchByUserId,
       popularImages: results.popularImages,
-      myRecentMedia: results.myRecentMedia
+      myRecentMedia: results.myRecentMedia,
     });
   });
 };
@@ -499,25 +499,25 @@ exports.getPayPal = (req, res, next) => {
   paypal.configure({
     mode: 'sandbox',
     client_id: process.env.PAYPAL_ID,
-    client_secret: process.env.PAYPAL_SECRET
+    client_secret: process.env.PAYPAL_SECRET,
   });
 
   const paymentDetails = {
     intent: 'sale',
     payer: {
-      payment_method: 'paypal'
+      payment_method: 'paypal',
     },
     redirect_urls: {
       return_url: process.env.PAYPAL_RETURN_URL,
-      cancel_url: process.env.PAYPAL_CANCEL_URL
+      cancel_url: process.env.PAYPAL_CANCEL_URL,
     },
     transactions: [{
       description: 'Hackathon Starter',
       amount: {
         currency: 'USD',
-        total: '1.99'
-      }
-    }]
+        total: '1.99',
+      },
+    }],
   };
 
   paypal.payment.create(paymentDetails, (err, payment) => {
@@ -527,7 +527,7 @@ exports.getPayPal = (req, res, next) => {
     for (let i = 0; i < links.length; i++) {
       if (links[i].rel === 'approval_url') {
         res.render('api/paypal', {
-          approvalUrl: links[i].href
+          approvalUrl: links[i].href,
         });
       }
     }
@@ -544,7 +544,7 @@ exports.getPayPalSuccess = (req, res) => {
   paypal.payment.execute(paymentId, paymentDetails, (err) => {
     res.render('api/paypal', {
       result: true,
-      success: !err
+      success: !err,
     });
   });
 };
@@ -557,7 +557,7 @@ exports.getPayPalCancel = (req, res) => {
   req.session.paymentId = null;
   res.render('api/paypal', {
     result: true,
-    canceled: true
+    canceled: true,
   });
 };
 
@@ -570,7 +570,7 @@ exports.getLob = (req, res, next) => {
     if (err) { return next(err); }
     res.render('api/lob', {
       title: 'Lob API',
-      routes: routes.data[0].routes
+      routes: routes.data[0].routes,
     });
   });
 };
@@ -582,7 +582,7 @@ exports.getLob = (req, res, next) => {
 
 exports.getFileUpload = (req, res) => {
   res.render('api/upload', {
-    title: 'File Upload'
+    title: 'File Upload',
   });
 };
 
@@ -601,7 +601,7 @@ exports.getPinterest = (req, res, next) => {
     if (err) { return next(err); }
     res.render('api/pinterest', {
       title: 'Pinterest API',
-      boards: body.data
+      boards: body.data,
     });
   });
 };
@@ -627,7 +627,7 @@ exports.postPinterest = (req, res, next) => {
     board: req.body.board,
     note: req.body.note,
     link: req.body.link,
-    image_url: req.body.image_url
+    image_url: req.body.image_url,
   };
 
   request.post('https://api.pinterest.com/v1/pins/', { qs: { access_token: token.accessToken }, form: formData }, (err, request, body) => {
@@ -643,6 +643,6 @@ exports.postPinterest = (req, res, next) => {
 
 exports.getGoogleMaps = (req, res) => {
   res.render('api/google-maps', {
-    title: 'Google Maps API'
+    title: 'Google Maps API',
   });
 };

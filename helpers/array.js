@@ -1,5 +1,5 @@
 exports.splitArrayIntoGroups = (array, n) => {
-  let output = [];
+  const output = [];
 
   // initiate n empty arrays
   for (let i = 0; i < n; i++) {
@@ -15,4 +15,4 @@ exports.splitArrayIntoGroups = (array, n) => {
   }
 
   return output;
-}
+};

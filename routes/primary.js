@@ -27,4 +27,4 @@ module.exports = (app) => {
   app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
   app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
   app.get('/my-builds', buildController.getDrafts);
-}
+};

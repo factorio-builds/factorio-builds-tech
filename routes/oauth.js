@@ -4,7 +4,7 @@
 
 const passport = require('passport');
 
- module.exports = (app) => {
+module.exports = (app) => {
   // app.get('/auth/instagram', passport.authenticate('instagram'));
   // app.get('/auth/instagram/callback', passport.authenticate('instagram', { failureRedirect: '/login' }), (req, res) => {
   //   res.redirect(req.session.returnTo || '/');
@@ -49,4 +49,4 @@ const passport = require('passport');
   // app.get('/auth/pinterest/callback', passport.authorize('pinterest', { failureRedirect: '/login' }), (req, res) => {
   //   res.redirect('/api/pinterest');
   // });
-}
+};

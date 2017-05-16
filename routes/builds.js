@@ -15,4 +15,4 @@ module.exports = (app) => {
   app.put('/builds/:id', upload.single('photo'), buildController.putUpdate);
   app.get('/builds/:id/publish', buildController.getPublish);
   app.get('/builds/:id/unpublish', buildController.getUnpublish);
-}
+};

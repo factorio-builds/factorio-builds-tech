@@ -5,9 +5,9 @@ const transporter = nodemailer.createTransport(
   mailgun({
     auth: {
       api_key: process.env.MAILGUN_KEY,
-      domain: process.env.MAILGUN_DOMAIN
-    }
-  })
+      domain: process.env.MAILGUN_DOMAIN,
+    },
+  }),
 );
 
 /**
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport(
 exports.getContact = (req, res) => {
   res.render('contact', {
     path: 'contact',
-    title: 'Contact'
+    title: 'Contact',
   });
 };
 
@@ -47,8 +47,8 @@ exports.postContact = (req, res) => {
     text: `${req.body.email} wrote: ${req.body.message}`,
     // TODO: fix me, setting reply to through headers doesn't seem to be working either
     headers: {
-      'Reply-To': `${req.body.name} <${req.body.email}>`
-    }
+      'Reply-To': `${req.body.name} <${req.body.email}>`,
+    },
   };
 
   transporter.sendMail(mailOptions, (err) => {

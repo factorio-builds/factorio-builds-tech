@@ -11,11 +11,11 @@ Promise.promisifyAll(mongoose);
  * Home page.
  */
 exports.index = (req, res) => {
-  let query = {
+  const query = {
     $or: [
       { draft: false },
-      { draft: { $exists: false } }
-    ]
+      { draft: { $exists: false } },
+    ],
   };
 
   Promise.props({
@@ -23,14 +23,14 @@ exports.index = (req, res) => {
     title: 'Home',
     builds: Build
       .find(query)
-      .execAsync()
+      .execAsync(),
   })
-  .then(function(results) {
+  .then((results) => {
     results.builds = splitArrayIntoGroups(results.builds, 3);
 
     res.render('home', results);
   })
-  .catch(function(err) {
+  .catch((err) => {
     res.send(500);
   });
 };

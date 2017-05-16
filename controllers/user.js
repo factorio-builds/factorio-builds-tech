@@ -15,7 +15,7 @@ exports.getLogin = (req, res) => {
   }
   res.render('account/login', {
     path: 'user',
-    title: 'Login'
+    title: 'Login',
   });
 };
 
@@ -68,7 +68,7 @@ exports.getSignup = (req, res) => {
   }
   res.render('account/signup', {
     path: 'user',
-    title: 'Create Account'
+    title: 'Create Account',
   });
 };
 
@@ -91,7 +91,7 @@ exports.postSignup = (req, res, next) => {
 
   const user = new User({
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
   });
 
   User.findOne({ email: req.body.email }, (err, existingUser) => {
@@ -119,7 +119,7 @@ exports.postSignup = (req, res, next) => {
 exports.getAccount = (req, res) => {
   res.render('account/profile', {
     path: 'user',
-    title: 'Account Management'
+    title: 'Account Management',
   });
 };
 
@@ -235,7 +235,7 @@ exports.getReset = (req, res, next) => {
       }
       res.render('account/reset', {
         path: 'user',
-        title: 'Password Reset'
+        title: 'Password Reset',
       });
     });
 };
@@ -282,9 +282,9 @@ exports.postReset = (req, res, next) => {
         mailgun({
           auth: {
             api_key: process.env.MAILGUN_KEY,
-            domain: process.env.MAILGUN_DOMAIN
-          }
-        })
+            domain: process.env.MAILGUN_DOMAIN,
+          },
+        }),
       );
       const mailOptions = {
         to: user.email,
@@ -292,13 +292,13 @@ exports.postReset = (req, res, next) => {
         sender: process.env.MAIL_NOREPLY,
         replyTo: process.env.MAIL_NOREPLY,
         subject: 'Your Factorio-Builds password has been changed',
-        text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`
+        text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`,
       };
       transporter.sendMail(mailOptions, (err) => {
         req.flash('success', { msg: 'Success! Your password has been changed.' });
         done(err);
       });
-    }
+    },
   ], (err) => {
     if (err) { return next(err); }
     res.redirect('/');
@@ -315,7 +315,7 @@ exports.getForgot = (req, res) => {
   }
   res.render('account/forgot', {
     path: 'user',
-    title: 'Forgot Password'
+    title: 'Forgot Password',
   });
 };
 
@@ -360,9 +360,9 @@ exports.postForgot = (req, res, next) => {
         mailgun({
           auth: {
             api_key: process.env.MAILGUN_KEY,
-            domain: process.env.MAILGUN_DOMAIN
-          }
-        })
+            domain: process.env.MAILGUN_DOMAIN,
+          },
+        }),
       );
       const mailOptions = {
         to: user.email,
@@ -373,13 +373,13 @@ exports.postForgot = (req, res, next) => {
         text: `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\n
           Please click on the following link, or paste this into your browser to complete the process:\n\n
           http://${req.headers.host}/reset/${token}\n\n
-          If you did not request this, please ignore this email and your password will remain unchanged.\n`
+          If you did not request this, please ignore this email and your password will remain unchanged.\n`,
       };
       transporter.sendMail(mailOptions, (err) => {
         req.flash('info', { msg: `An e-mail has been sent to ${user.email} with further instructions.` });
         done(err);
       });
-    }
+    },
   ], (err) => {
     if (err) { return next(err); }
     res.redirect('/forgot');

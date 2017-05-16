@@ -34,4 +34,4 @@ module.exports = (app) => {
   // app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
   // app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
   // app.get('/api/google-maps', apiController.getGoogleMaps);
-}
+};
