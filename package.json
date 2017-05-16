@@ -10,7 +10,9 @@
   "license": "MIT",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha --reporter spec 'test/**/*.js'"
+    "test": "mocha --reporter spec 'test/**/*.js'",
+    "eslint": "npm run lint",
+    "lint": "./node_modules/.bin/eslint **/**.js --ignore-path .gitignore"
   },
   "dependencies": {
     "algoliasearch": "^3.21.1",
