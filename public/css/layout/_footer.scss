@@ -1,8 +1,11 @@
 .footer {
-  position: absolute;
-  bottom: 0;
   width: 100%;
   line-height: 45px;
+
+  @media screen and (min-width: 480px) {
+    position: absolute;
+    bottom: 0;
+  }
 
   p, ul {
     margin-bottom: 0;
@@ -22,6 +25,30 @@
 
     a {
       color: #999;
+    }
+  }
+
+  &__credits {
+    @media screen and (min-width: 480px) {
+      float: left;
+    }
+  }
+
+  &__project {
+    @media screen and (min-width: 480px) {
+      float: right;
+    }
+  }
+
+  &__project {
+    @media screen and (min-width: 480px) {
+      float: right;
+    }
+  }
+
+  &__links {
+    @media screen and (min-width: 480px) {
+      float: left;
     }
   }
 }
