@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport(
       api_key: process.env.MAILGUN_KEY,
       domain: process.env.MAILGUN_DOMAIN,
     },
-  }),
+  })
 );
 
 /**

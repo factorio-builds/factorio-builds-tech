@@ -284,7 +284,7 @@ exports.postReset = (req, res, next) => {
             api_key: process.env.MAILGUN_KEY,
             domain: process.env.MAILGUN_DOMAIN,
           },
-        }),
+        })
       );
       const mailOptions = {
         to: user.email,
@@ -362,7 +362,7 @@ exports.postForgot = (req, res, next) => {
             api_key: process.env.MAILGUN_KEY,
             domain: process.env.MAILGUN_DOMAIN,
           },
-        }),
+        })
       );
       const mailOptions = {
         to: user.email,
