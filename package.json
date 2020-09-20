@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next",
-    "format": "prettier --write {components,icons,interfaces,pages,types,utils}/{**,**/**}/*.{js,ts,tsx}",
+    "format": "prettier --write {components,icons,interfaces,pages,styles,types,utils}/{**,**/**}/*.{js,ts,tsx}",
     "start": "next start",
     "type-check": "tsc"
   },
