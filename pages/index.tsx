@@ -1,20 +1,24 @@
-import Link from "next/link"
+import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
+import ListBuild from "../components/ListBuild"
+import { IBuild } from "../types"
+import { mockedBuilds } from "../utils/mock-builds-data"
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <h1>Hello Next.js 👋</h1>
-    <p>
-      <Link href="/about">
-        <a>About</a>
-      </Link>
-    </p>
-    <p>
-      <Link href="/builds">
-        <a>Builds</a>
-      </Link>
-    </p>
-  </Layout>
-)
+interface IIndexPageProps {
+  builds: IBuild[]
+}
+
+const IndexPage: React.FC<IIndexPageProps> = (props) => {
+  return (
+    <Layout title="Home | Next.js + TypeScript Example">
+      <ListBuild items={props.builds} />
+    </Layout>
+  )
+}
+
+export const getStaticProps: GetStaticProps = async () => {
+  const builds: IBuild[] = mockedBuilds
+  return { props: { builds } }
+}
 
 export default IndexPage
