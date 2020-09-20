@@ -1,23 +1,23 @@
 import { GetStaticProps } from "next"
 import Link from "next/link"
 
-import { User } from "../../interfaces"
-import { mockedUsers } from "../../utils/mock-users-data"
+import { IBuild } from "../../types"
+import { mockedBuilds } from "../../utils/mock-builds-data"
 import Layout from "../../components/Layout"
-import List from "../../components/List"
+import ListBuild from "../../components/ListBuild"
 
-type Props = {
-  items: User[]
+interface IProps {
+  items: IBuild[]
 }
 
-const WithStaticProps = ({ items }: Props) => (
-  <Layout title="Users List | Next.js + TypeScript Example">
-    <h1>Users List</h1>
+const WithStaticProps: React.FC<IProps> = ({ items }) => (
+  <Layout title="Builds List | Next.js + TypeScript Example">
+    <h1>Builds List</h1>
     <p>
       Example fetching data from inside <code>getStaticProps()</code>.
     </p>
-    <p>You are currently on: /users</p>
-    <List items={items} />
+    <p>You are currently on: /builds</p>
+    <ListBuild items={items} />
     <p>
       <Link href="/">
         <a>Go home</a>
@@ -30,7 +30,7 @@ export const getStaticProps: GetStaticProps = async () => {
   // Example for including static props in a Next.js function component page.
   // Don't forget to include the respective types for any props passed into
   // the component.
-  const items: User[] = mockedUsers
+  const items: IBuild[] = mockedBuilds
   return { props: { items } }
 }
 

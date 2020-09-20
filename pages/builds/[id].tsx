@@ -1,16 +1,16 @@
 import { GetStaticProps, GetStaticPaths } from "next"
 
-import { User } from "../../interfaces"
-import { mockedUsers } from "../../utils/mock-users-data"
+import { IBuild } from "../../types"
+import { mockedBuilds } from "../../utils/mock-builds-data"
 import Layout from "../../components/Layout"
-import ListDetail from "../../components/ListDetail"
+import ListDetailBuild from "../../components/ListDetailBuild"
 
-type Props = {
-  item?: User
+interface IProps {
+  item?: IBuild
   errors?: string
 }
 
-const StaticPropsDetail = ({ item, errors }: Props) => {
+const StaticPropsDetail = ({ item, errors }: IProps) => {
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -24,10 +24,10 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
   return (
     <Layout
       title={`${
-        item ? item.name : "User Detail"
+        item ? item.name : "Build Detail"
       } | Next.js + TypeScript Example`}
     >
-      {item && <ListDetail item={item} />}
+      {item && <ListDetailBuild item={item} />}
     </Layout>
   )
 }
@@ -36,8 +36,8 @@ export default StaticPropsDetail
 
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on users
-  const paths = mockedUsers.map((user) => ({
-    params: { id: user.id.toString() },
+  const paths = mockedBuilds.map((build) => ({
+    params: { id: build.id },
   }))
 
   // We'll pre-render only these paths at build time.
@@ -51,7 +51,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const id = params?.id
-    const item = mockedUsers.find((data) => data.id === Number(id))
+    const item = mockedBuilds.find((data) => data.id === id)
     // By returning { props: item }, the StaticPropsDetail component
     // will receive `item` as a prop at build time
     return { props: { item } }
