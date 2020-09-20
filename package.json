@@ -5,19 +5,23 @@
   "scripts": {
     "build": "next build",
     "dev": "next",
-    "format": "prettier --write {components,interfaces,pages,utils}/{**,**/**}/*.{js,ts,tsx}",
+    "format": "prettier --write {components,icons,interfaces,pages,types,utils}/{**,**/**}/*.{js,ts,tsx}",
     "start": "next start",
     "type-check": "tsc"
   },
   "dependencies": {
+    "classnames": "^2.2.6",
     "next": "latest",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "styled-components": "^5.2.0"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.10",
     "@types/node": "^12.12.21",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
+    "@types/styled-components": "^5.1.3",
     "prettier": "^2.1.2",
     "typescript": "4.0"
   }
