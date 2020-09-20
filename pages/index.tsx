@@ -9,7 +9,7 @@ import { mockedBuilds } from "../utils/mock-builds-data"
 const IndexPage: React.FC = () => {
   const builds = useSelector((store: IStoreState) => store.builds)
   return (
-    <Layout title="Home | Next.js + TypeScript Example">
+    <Layout>
       <ListBuild items={builds} />
     </Layout>
   )

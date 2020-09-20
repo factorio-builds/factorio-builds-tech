@@ -12,13 +12,10 @@ interface ILayoutProps {
   title?: string
 }
 
-const Layout: React.FC<ILayoutProps> = ({
-  children,
-  title = "This is the default title",
-}) => (
+const Layout: React.FC<ILayoutProps> = ({ children, title }) => (
   <>
     <Head>
-      <title>{title}</title>
+      <title>{["Factorio Builds", title].filter(Boolean).join(" | ")}</title>
       <meta charSet="utf-8" />
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
