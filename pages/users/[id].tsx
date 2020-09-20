@@ -37,7 +37,7 @@ export default StaticPropsDetail
 export const getStaticPaths: GetStaticPaths = async () => {
   // Get the paths we want to pre-render based on users
   const paths = mockedUsers.map((user) => ({
-    params: { id: user.id.toString() },
+    params: { id: user.id },
   }))
 
   // We'll pre-render only these paths at build time.
@@ -51,7 +51,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const id = params?.id
-    const item = mockedUsers.find((data) => data.id === Number(id))
+    const item = mockedUsers.find((data) => data.id === id)
     // By returning { props: item }, the StaticPropsDetail component
     // will receive `item` as a prop at build time
     return { props: { item } }
