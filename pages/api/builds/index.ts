@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { mockedBuilds } from "../../../utils/mock-data"
+import { mockedBuilds } from "../../../utils/mock-builds-data"
 
 const handler = (_req: NextApiRequest, res: NextApiResponse) => {
   try {
