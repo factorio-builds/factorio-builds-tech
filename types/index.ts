@@ -24,3 +24,8 @@ export interface IBuild {
   tileable: boolean
   categories: ECategory[]
 }
+
+export interface IUser {
+  id: number
+  name: string
+}

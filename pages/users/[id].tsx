@@ -1,12 +1,12 @@
 import { GetStaticProps, GetStaticPaths } from "next"
 
-import { User } from "../../interfaces"
+import { IUser } from "../../types"
 import { mockedUsers } from "../../utils/mock-users-data"
 import Layout from "../../components/Layout"
 import ListDetail from "../../components/ListDetail"
 
 type Props = {
-  item?: User
+  item?: IUser
   errors?: string
 }
 
