@@ -4,9 +4,9 @@ export enum EFilterType {
 }
 
 export enum EState {
-  "EARLY_GAME",
-  "MID_GAME",
-  "LATE_GAME",
+  "EARLY_GAME" = "EARLY_GAME",
+  "MID_GAME" = "MID_GAME",
+  "LATE_GAME" = "LATE_GAME",
 }
 
 export enum ECategory {
