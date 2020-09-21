@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { createStore, applyMiddleware, Action, Store } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
-import { IBuild } from "./types"
+import { IBuild } from "../types"
 
 let store: Store<IStoreState, Action> | undefined
 

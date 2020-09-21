@@ -2,7 +2,7 @@ import { GetStaticProps } from "next"
 import { useSelector } from "react-redux"
 import Layout from "../components/Layout"
 import ListBuild from "../components/ListBuild"
-import { IStoreState } from "../store"
+import { IStoreState } from "../redux/store"
 import { IBuild } from "../types"
 import { mockedBuilds } from "../utils/mock-builds-data"
 
