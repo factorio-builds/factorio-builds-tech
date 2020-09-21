@@ -1,4 +1,5 @@
 import { IBuild } from "../../types"
+import { mockedBuilds } from "../../utils/mock-builds-data"
 import { IPayloadAction } from "../store"
 
 export interface IStoreBuildsState {
@@ -6,12 +7,13 @@ export interface IStoreBuildsState {
 }
 
 export const initialBuildsState: IStoreBuildsState = {
-  items: [],
+  items: mockedBuilds,
 }
 
 type TSetBuildsAction = IPayloadAction<"SET_BUILDS", IBuild[]>
+type TCreateBuildAction = IPayloadAction<"CREATE_BUILD", IBuild>
 
-export type TBuildsAction = TSetBuildsAction
+export type TBuildsAction = TSetBuildsAction | TCreateBuildAction
 
 const setBuilds = (
   state: IStoreBuildsState,
@@ -23,6 +25,16 @@ const setBuilds = (
   }
 }
 
+const createBuild = (
+  state: IStoreBuildsState,
+  payload: TCreateBuildAction["payload"]
+) => {
+  return {
+    ...state,
+    items: [...state.items, payload],
+  }
+}
+
 export const buildsReducer = (
   state = initialBuildsState,
   action: TBuildsAction
@@ -30,6 +42,8 @@ export const buildsReducer = (
   switch (action.type) {
     case "SET_BUILDS":
       return setBuilds(state, action.payload)
+    case "CREATE_BUILD":
+      return createBuild(state, action.payload)
     default:
       return state
   }

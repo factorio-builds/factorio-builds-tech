@@ -1,8 +1,13 @@
+import { useRouter } from "next/router"
 import { Form, Formik, Field } from "formik"
+import { useDispatch } from "react-redux"
 import Layout from "../../components/Layout"
 import { ECategory, EState } from "../../types"
 
 const BuildsCreatePage: React.FC = () => {
+  const router = useRouter()
+  const dispatch = useDispatch()
+
   return (
     <Layout title="Create a build">
       <h2>Create a build</h2>
@@ -15,8 +20,8 @@ const BuildsCreatePage: React.FC = () => {
           categories: [],
         }}
         onSubmit={(values) => {
-          console.log("TODO: handle submit")
-          console.log(values)
+          dispatch({ type: "CREATE_BUILD", payload: values })
+          router.push("/")
         }}
       >
         {() => (
