@@ -7,7 +7,7 @@ import { IBuild } from "../types"
 import { mockedBuilds } from "../utils/mock-builds-data"
 
 const IndexPage: React.FC = () => {
-  const builds = useSelector((store: IStoreState) => store.builds)
+  const builds = useSelector((store: IStoreState) => store.builds.items)
   return (
     <Layout>
       <BuildCardList items={builds} />
@@ -20,7 +20,9 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       initialReduxState: {
-        builds,
+        builds: {
+          items: builds,
+        },
       },
     },
   }

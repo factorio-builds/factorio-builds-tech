@@ -1,44 +1,38 @@
 import { useMemo } from "react"
-import { createStore, applyMiddleware, Action, Store } from "redux"
+import {
+  combineReducers,
+  createStore,
+  applyMiddleware,
+  Action,
+  Store,
+} from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
-import { IBuild } from "../types"
+import {
+  buildsReducer,
+  initialBuildsState,
+  IStoreBuildsState,
+  TBuildsAction,
+} from "./reducers/builds"
 
-interface IPayloadAction<T, P> extends Action<T> {
+export interface IPayloadAction<T, P> extends Action<T> {
   payload: P
 }
 
 let store: Store<IStoreState, TAction> | undefined
 
 export interface IStoreState {
-  builds: IBuild[]
+  builds: IStoreBuildsState
 }
 
 const initialState: IStoreState = {
-  builds: [],
+  builds: initialBuildsState,
 }
 
-type TSetBuildsAction = IPayloadAction<"SET_BUILDS", IBuild[]>
+type TAction = TBuildsAction
 
-type TAction = TSetBuildsAction
-
-const setBuilds = (
-  state: IStoreState,
-  payload: TSetBuildsAction["payload"]
-) => {
-  return {
-    ...state,
-    builds: payload,
-  }
-}
-
-const reducer = (state = initialState, action: TAction): IStoreState => {
-  switch (action.type) {
-    case "SET_BUILDS":
-      return setBuilds(state, action.payload)
-    default:
-      return state
-  }
-}
+const reducer = combineReducers({
+  builds: buildsReducer,
+})
 
 function initStore(preloadedState = initialState) {
   return createStore<IStoreState, TAction, {}, {}>(
