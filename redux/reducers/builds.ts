@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid"
 import { IBuild } from "../../types"
 import { mockedBuilds } from "../../utils/mock-builds-data"
 import { IPayloadAction } from "../store"
@@ -31,7 +32,7 @@ const createBuild = (
 ) => {
   return {
     ...state,
-    items: [...state.items, payload],
+    items: [...state.items, { ...payload, id: uuidv4() }],
   }
 }
 

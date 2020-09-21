@@ -10,12 +10,8 @@ interface IBuildCardListProps {
 const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => (
   <SC.BuildCardListWrapper>
     {items.map((item) => (
-      <SC.Item>
-        <BuildCard
-          key={item.id}
-          name={item.name}
-          categories={item.categories}
-        />
+      <SC.Item key={item.id}>
+        <BuildCard name={item.name} categories={item.categories} />
       </SC.Item>
     ))}
   </SC.BuildCardListWrapper>
