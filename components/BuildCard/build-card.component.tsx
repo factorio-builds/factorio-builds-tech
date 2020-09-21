@@ -14,7 +14,7 @@ function BuildCard({ name, categories = [] }: IBuildCardProps): JSX.Element {
         <SC.Title>{name}</SC.Title>
         <SC.Categories>
           {categories.map((category) => {
-            return <SC.CategoryPill>{category}</SC.CategoryPill>
+            return <SC.CategoryPill key={category}>{category}</SC.CategoryPill>
           })}
         </SC.Categories>
       </SC.Content>
