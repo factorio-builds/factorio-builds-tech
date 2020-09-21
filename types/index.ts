@@ -10,10 +10,10 @@ export enum EState {
 }
 
 export enum ECategory {
-  "BALANCER",
-  "SMELTING",
-  "TRAINS",
-  "PRODUCTION",
+  "BALANCER" = "BALANCER",
+  "SMELTING" = "SMELTING",
+  "TRAINS" = "TRAINS",
+  "PRODUCTION" = "PRODUCTION",
 }
 
 export interface IBuild {
