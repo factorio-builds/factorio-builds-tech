@@ -3,7 +3,11 @@ import { createStore, applyMiddleware, Action, Store } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import { IBuild } from "../types"
 
-let store: Store<IStoreState, Action> | undefined
+interface IPayloadAction<T, P> extends Action<T> {
+  payload: P
+}
+
+let store: Store<IStoreState, TAction> | undefined
 
 export interface IStoreState {
   builds: IBuild[]
@@ -13,21 +17,31 @@ const initialState: IStoreState = {
   builds: [],
 }
 
-// TODO: type me
-const reducer = (state = initialState, action: any) => {
+type TSetBuildsAction = IPayloadAction<"SET_BUILDS", IBuild[]>
+
+type TAction = TSetBuildsAction
+
+const setBuilds = (
+  state: IStoreState,
+  payload: TSetBuildsAction["payload"]
+) => {
+  return {
+    ...state,
+    builds: payload,
+  }
+}
+
+const reducer = (state = initialState, action: TAction): IStoreState => {
   switch (action.type) {
     case "SET_BUILDS":
-      return {
-        ...state,
-        builds: action.builds,
-      }
+      return setBuilds(state, action.payload)
     default:
       return state
   }
 }
 
 function initStore(preloadedState = initialState) {
-  return createStore<IStoreState, Action, {}, {}>(
+  return createStore<IStoreState, TAction, {}, {}>(
     reducer,
     preloadedState,
     composeWithDevTools(applyMiddleware())
