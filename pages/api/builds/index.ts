@@ -6,10 +6,14 @@ const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
     await db.sequelize.authenticate()
     console.log("Connection has been established successfully.")
 
-    const builds = await db.builds.findAll().catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
+    const builds = await db.builds
+      .findAll({
+        attributes: ["id", "owner_id", "name", "metadata"],
+      })
+      .catch((error) => {
+        console.error(error)
+        throw new Error("Cannot find build data")
+      })
 
     res.status(200).json(builds)
   } catch (err) {
