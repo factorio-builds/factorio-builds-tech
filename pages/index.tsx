@@ -1,10 +1,9 @@
-// import { GetStaticProps } from "next"
+import { GetStaticProps } from "next"
 import { useSelector } from "react-redux"
 import Layout from "../components/Layout"
 import BuildCardList from "../components/BuildCardList"
 import { IStoreState } from "../redux/store"
-// import { IBuild } from "../types"
-// import { mockedBuilds } from "../utils/mock-builds-data"
+import { IBuild } from "../types"
 
 const IndexPage: React.FC = () => {
   const builds = useSelector((store: IStoreState) => store.builds.items)
@@ -15,18 +14,20 @@ const IndexPage: React.FC = () => {
   )
 }
 
-// TODO: restore once API is set up
-// export const getStaticProps: GetStaticProps = async () => {
-//   const builds: IBuild[] = mockedBuilds
-//   return {
-//     props: {
-//       initialReduxState: {
-//         builds: {
-//           items: builds,
-//         },
-//       },
-//     },
-//   }
-// }
+export const getStaticProps: GetStaticProps = async () => {
+  const builds: IBuild[] = await fetch(
+    "http://localhost:3000/api/builds"
+  ).then((res) => res.json())
+
+  return {
+    props: {
+      initialReduxState: {
+        builds: {
+          items: builds,
+        },
+      },
+    },
+  }
+}
 
 export default IndexPage

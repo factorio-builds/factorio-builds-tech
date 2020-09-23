@@ -1,13 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { mockedBuilds } from "../../../utils/mock-builds-data"
+import db from "../../../db/models"
 
-const handler = (_req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
   try {
-    if (!Array.isArray(mockedBuilds)) {
-      throw new Error("Cannot find build data")
-    }
+    await db.sequelize.authenticate()
+    console.log("Connection has been established successfully.")
 
-    res.status(200).json(mockedBuilds)
+    const builds = await db.builds.findAll().catch((error) => {
+      console.error(error)
+      throw new Error("Cannot find build data")
+    })
+
+    res.status(200).json(builds)
   } catch (err) {
     res.status(500).json({ statusCode: 500, message: err.message })
   }

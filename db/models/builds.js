@@ -1,6 +1,6 @@
 "use strict"
 const { Model } = require("sequelize")
-const { users } = require("./users")
+// const { users } = require("./users")
 
 module.exports = (sequelize, DataTypes) => {
   class builds extends Model {
@@ -17,17 +17,18 @@ module.exports = (sequelize, DataTypes) => {
   builds.init(
     {
       name: DataTypes.STRING,
-      ownerId: DataTypes.UUID,
+      // ownerId: DataTypes.UUID,
       blueprint: DataTypes.TEXT,
-      blueprintJson: DataTypes.JSONB,
+      json: DataTypes.JSONB,
       metadata: DataTypes.JSONB,
     },
     {
       sequelize,
       modelName: "builds",
+      underscored: true,
     }
   )
 
-  builds.belongsTo(users)
+  // builds.belongsTo(users)
   return builds
 }
