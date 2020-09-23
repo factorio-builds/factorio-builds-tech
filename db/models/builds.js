@@ -1,23 +1,23 @@
 "use strict"
 const { Model } = require("sequelize")
-// const { users } = require("./users")
 
 module.exports = (sequelize, DataTypes) => {
   class builds extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
-      console.dir(models)
+      this.belongsTo(models.users, {
+        foreignKey: "owner_id",
+        targetKey: "id",
+        onDelete: "SET NULL",
+      })
     }
   }
   builds.init(
     {
       name: DataTypes.STRING,
-      // ownerId: DataTypes.UUID,
+      ownerId: {
+        field: "owner_id",
+        type: DataTypes.UUID,
+      },
       blueprint: DataTypes.TEXT,
       json: DataTypes.JSONB,
       metadata: DataTypes.JSONB,
@@ -29,6 +29,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   )
 
-  // builds.belongsTo(users)
   return builds
 }
