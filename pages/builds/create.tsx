@@ -20,8 +20,14 @@ const BuildsCreatePage: React.FC = () => {
           categories: [],
         }}
         onSubmit={(values) => {
-          dispatch({ type: "CREATE_BUILD", payload: values })
-          router.push("/")
+          fetch("http://localhost:3000/api/builds", {
+            method: "POST",
+            body: JSON.stringify(values),
+          }).then((res) => {
+            console.log(res)
+            dispatch({ type: "CREATE_BUILD", payload: values })
+            router.push("/")
+          })
         }}
       >
         {() => (
@@ -54,6 +60,7 @@ const BuildsCreatePage: React.FC = () => {
                 Game state
               </label>
               <Field as="select" id="state" name="state">
+                <option value={-1}>-- select --</option>
                 {Object.keys(EState).map((state) => {
                   return <option value={state}>{state.toLowerCase()}</option>
                 })}
