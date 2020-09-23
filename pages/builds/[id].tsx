@@ -4,6 +4,7 @@ import { IBuild } from "../../types"
 import { mockedBuilds } from "../../utils/mock-builds-data"
 import Layout from "../../components/Layout"
 import ListDetailBuild from "../../components/ListDetailBuild"
+import db from "../../db/models"
 
 interface IProps {
   item?: IBuild
@@ -35,14 +36,30 @@ const StaticPropsDetail = ({ item, errors }: IProps) => {
 export default StaticPropsDetail
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // Get the paths we want to pre-render based on users
-  const paths = mockedBuilds.map((build) => ({
-    params: { id: build.id },
-  }))
+  try {
+    await db.sequelize.authenticate()
+    console.log("Connection has been established successfully.")
 
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false }
+    const builds = await db.builds
+      .findAll({
+        attributes: ["id"],
+      })
+      .catch((error) => {
+        console.error(error)
+        throw new Error("Cannot find build data")
+      })
+
+    // Get the paths we want to pre-render based on users
+    const paths = builds.map((build) => ({
+      params: { id: build.id },
+    }))
+
+    // We'll pre-render only these paths at build time.
+    // { fallback: false } means other routes should 404.
+    return { paths, fallback: false }
+  } catch (err) {
+    throw err
+  }
 }
 
 // This function gets called at build time on server-side.
@@ -51,9 +68,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   try {
     const id = params?.id
-    const item = mockedBuilds.find((data) => data.id === id)
-    // By returning { props: item }, the StaticPropsDetail component
-    // will receive `item` as a prop at build time
+
+    const item: IBuild = await fetch(
+      "http://localhost:3000/api/builds/" + id
+    ).then((res) => res.json())
+
     return { props: { item } }
   } catch (err) {
     return { props: { errors: err.message } }

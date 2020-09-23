@@ -18,6 +18,10 @@ export const Title = styled.h3`
   font-weight: 400;
   font-size: 18px;
   margin: 0 0 8px;
+
+  a {
+    color: #fff;
+  }
 `
 
 export const Categories = styled.div`
