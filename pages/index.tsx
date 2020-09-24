@@ -1,8 +1,8 @@
-import { GetStaticProps } from "next"
+import { GetServerSideProps } from "next"
 import { useSelector } from "react-redux"
 import Layout from "../components/Layout"
 import BuildCardList from "../components/BuildCardList"
-import { IStoreState } from "../redux/store"
+import { initializeStore, IStoreState } from "../redux/store"
 import { IBuild } from "../types"
 
 const IndexPage: React.FC = () => {
@@ -14,20 +14,20 @@ const IndexPage: React.FC = () => {
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
+  const reduxStore = initializeStore()
+  const { dispatch } = reduxStore
+
   const builds: IBuild[] = await fetch(
     "http://localhost:3000/api/builds"
   ).then((res) => res.json())
 
-  return {
-    props: {
-      initialReduxState: {
-        builds: {
-          items: builds,
-        },
-      },
-    },
-  }
+  dispatch({
+    type: "SET_BUILDS",
+    payload: builds,
+  })
+
+  return { props: { initialReduxState: reduxStore.getState() } }
 }
 
 export default IndexPage
