@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { v4 as uuidv4 } from "uuid"
 import db from "../../../db/models"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,9 +9,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case "GET":
         {
+          // @ts-ignore
           const build = await db.builds
             .findByPk(req.query.id)
 
+            // @ts-ignore
             .catch((error) => {
               console.error(error)
               throw new Error("Cannot find build data")
