@@ -4,12 +4,12 @@ import { IBuild } from "../../types"
 import Layout from "../../components/Layout"
 import ListDetailBuild from "../../components/ListDetailBuild"
 
-interface IProps {
+interface IBuildsPageProps {
   item?: IBuild
   errors?: string
 }
 
-const StaticPropsDetail = ({ item, errors }: IProps) => {
+const BuildsPage = ({ item, errors }: IBuildsPageProps) => {
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -31,7 +31,7 @@ const StaticPropsDetail = ({ item, errors }: IProps) => {
   )
 }
 
-export default StaticPropsDetail
+export default BuildsPage
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {

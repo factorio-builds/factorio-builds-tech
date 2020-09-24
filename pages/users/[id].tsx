@@ -5,12 +5,12 @@ import { mockedUsers } from "../../utils/mock-users-data"
 import Layout from "../../components/Layout"
 import ListDetail from "../../components/ListDetail"
 
-type Props = {
+interface IUsersPageProps {
   item?: IUser
   errors?: string
 }
 
-const StaticPropsDetail = ({ item, errors }: Props) => {
+const UsersPage = ({ item, errors }: IUsersPageProps) => {
   if (errors) {
     return (
       <Layout title="Error | Next.js + TypeScript Example">
@@ -32,7 +32,7 @@ const StaticPropsDetail = ({ item, errors }: Props) => {
   )
 }
 
-export default StaticPropsDetail
+export default UsersPage
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {

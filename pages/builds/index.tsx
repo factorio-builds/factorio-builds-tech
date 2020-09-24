@@ -6,16 +6,13 @@ import Layout from "../../components/Layout"
 import ListBuild from "../../components/ListBuild"
 import { initializeStore } from "../../redux/store"
 
-interface IProps {
+interface IBuildsIndexPageProps {
   items: IBuild[]
 }
 
-const WithStaticProps: React.FC<IProps> = ({ items }) => (
+const BuildsIndexPage: React.FC<IBuildsIndexPageProps> = ({ items }) => (
   <Layout title="Builds List | Next.js + TypeScript Example">
     <h1>Builds List</h1>
-    <p>
-      Example fetching data from inside <code>getStaticProps()</code>.
-    </p>
     <p>You are currently on: /builds</p>
     <ListBuild items={items} />
     <p>
@@ -42,4 +39,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { items: builds } }
 }
 
-export default WithStaticProps
+export default BuildsIndexPage

@@ -6,16 +6,13 @@ import { mockedUsers } from "../../utils/mock-users-data"
 import Layout from "../../components/Layout"
 import List from "../../components/List"
 
-type Props = {
+interface IUsersIndexPage {
   items: IUser[]
 }
 
-const WithStaticProps = ({ items }: Props) => (
+const UsersIndexPage = ({ items }: IUsersIndexPage) => (
   <Layout title="Users List | Next.js + TypeScript Example">
     <h1>Users List</h1>
-    <p>
-      Example fetching data from inside <code>getStaticProps()</code>.
-    </p>
     <p>You are currently on: /users</p>
     <List items={items} />
     <p>
@@ -31,4 +28,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { items } }
 }
 
-export default WithStaticProps
+export default UsersIndexPage
