@@ -1,21 +1,18 @@
-import { GetStaticProps } from "next"
+import { GetServerSideProps } from "next"
 import Link from "next/link"
 
 import { IBuild } from "../../types"
-import { mockedBuilds } from "../../utils/mock-builds-data"
 import Layout from "../../components/Layout"
 import ListBuild from "../../components/ListBuild"
+import { initializeStore } from "../../redux/store"
 
-interface IProps {
+interface IBuildsIndexPageProps {
   items: IBuild[]
 }
 
-const WithStaticProps: React.FC<IProps> = ({ items }) => (
+const BuildsIndexPage: React.FC<IBuildsIndexPageProps> = ({ items }) => (
   <Layout title="Builds List | Next.js + TypeScript Example">
     <h1>Builds List</h1>
-    <p>
-      Example fetching data from inside <code>getStaticProps()</code>.
-    </p>
     <p>You are currently on: /builds</p>
     <ListBuild items={items} />
     <p>
@@ -26,12 +23,20 @@ const WithStaticProps: React.FC<IProps> = ({ items }) => (
   </Layout>
 )
 
-export const getStaticProps: GetStaticProps = async () => {
-  // Example for including static props in a Next.js function component page.
-  // Don't forget to include the respective types for any props passed into
-  // the component.
-  const items: IBuild[] = mockedBuilds
-  return { props: { items } }
+export const getServerSideProps: GetServerSideProps = async () => {
+  const reduxStore = initializeStore()
+  const { dispatch } = reduxStore
+
+  const builds: IBuild[] = await fetch(
+    "http://localhost:3000/api/builds"
+  ).then((res) => res.json())
+
+  dispatch({
+    type: "SET_BUILDS",
+    payload: builds,
+  })
+
+  return { props: { items: builds } }
 }
 
-export default WithStaticProps
+export default BuildsIndexPage

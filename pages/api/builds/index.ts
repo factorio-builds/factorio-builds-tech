@@ -10,10 +10,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (req.method) {
       case "GET":
         {
+          // @ts-ignore
           const builds = await db.builds
             .findAll({
               attributes: ["id", "owner_id", "name", "metadata"],
             })
+            // @ts-ignore
             .catch((error) => {
               console.error(error)
               throw new Error("Cannot find build data")
@@ -24,6 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break
       case "POST": {
         const body = JSON.parse(req.body)
+        // @ts-ignore
         const build = await db.builds.create({
           id: uuidv4(),
           name: body.name,
