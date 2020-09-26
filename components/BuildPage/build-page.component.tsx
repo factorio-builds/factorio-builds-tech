@@ -5,7 +5,7 @@ import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Layout from "../Layout"
 import { IBuild } from "../../types"
 import Caret from "../../icons/caret"
-import { decodeBlueprint } from "../../utils/blueprint"
+import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import * as SC from "./build-page.styles"
 
 interface IBuildPageProps {
@@ -41,6 +41,13 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
     return build.blueprint
   }, [build.blueprint, blueprintFormat])
+
+  const itemsCount = useMemo(() => {
+    if (!isBook(blueprintJSON)) {
+      return getCountPerItem(blueprintJSON.blueprint)
+    }
+    return {}
+  }, [build.blueprint])
 
   const formatDate = (isoString: string) => {
     return format(parseISO(isoString), "yyyy-MM-dd")
@@ -80,7 +87,22 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             </AsideGroup>
             <AsideGroup title="Categories">{build.metadata.type}</AsideGroup>
             <AsideGroup title="Game state">{build.metadata.state}</AsideGroup>
-            <AsideGroup title="Required items">required items...</AsideGroup>
+            <AsideGroup title="Required items">
+              {!isBook(blueprintJSON) ? (
+                <>
+                  {Object.keys(itemsCount).map((itemName) => {
+                    const count = itemsCount[itemName]
+                    return (
+                      <div key={itemName}>
+                        {count} {itemName}
+                      </div>
+                    )
+                  })}
+                </>
+              ) : (
+                "Book not supported"
+              )}
+            </AsideGroup>
           </SC.Aside>
           <SC.Main>
             <SC.MainTitle>Description</SC.MainTitle>

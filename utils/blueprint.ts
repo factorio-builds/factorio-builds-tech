@@ -3,16 +3,16 @@ import { TextDecoder } from "text-encoding"
 import {
   IDecodedBlueprintData,
   IDecodedBlueprintBookData,
-  IBlueprintBook,
   IBlueprint,
 } from "../types"
 
 const utf8Decoder = new TextDecoder("utf-8")
 
-function isBook(
+export function isBook(
   decodedObject: IDecodedBlueprintData | IDecodedBlueprintBookData
-) {
-  if ((decodedObject as IDecodedBlueprintBookData).blueprint_book) {
+): decodedObject is IDecodedBlueprintBookData {
+  const book = decodedObject as IDecodedBlueprintBookData
+  if (book.blueprint_book !== undefined) {
     return true
   }
 
@@ -24,14 +24,22 @@ function isBook(
 // will look at this later
 export function decodeBlueprint(
   blueprintString: string
-): IBlueprint | IBlueprintBook {
+): IDecodedBlueprintData | IDecodedBlueprintBookData {
   const versionlessString = blueprintString.substr(1)
   const compressed = Buffer.from(versionlessString, "base64")
-  const decodedObject = JSON.parse(utf8Decoder.decode(pako.inflate(compressed)))
+  const decodedObject = JSON.parse(
+    utf8Decoder.decode(pako.inflate(compressed))
+  ) as IDecodedBlueprintData | IDecodedBlueprintBookData
 
-  if (isBook(decodedObject)) {
-    return decodedObject.blueprint_book as IBlueprintBook
-  }
+  return decodedObject
+}
 
-  return decodedObject.blueprint as IBlueprint
+export function getCountPerItem(blueprint: IBlueprint) {
+  return blueprint.entities.reduce((acc, curr) => {
+    const count = acc[curr.name] || 0
+    return {
+      ...acc,
+      [curr.name]: count + 1,
+    }
+  }, {} as { [name: string]: number })
 }
