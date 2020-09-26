@@ -20,7 +20,7 @@ if (config.use_env_variable) {
   )
 }
 
-;["builds", "users"].forEach((modelName) => {
+;["build", "user"].forEach((modelName) => {
   const model = require("./" + modelName)(sequelize, Sequelize.DataTypes)
 
   db[model.name] = model

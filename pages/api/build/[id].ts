@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { v4 as uuidv4 } from "uuid"
 import db from "../../../db/models"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -11,35 +10,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       case "GET":
         {
           // @ts-ignore
-          const builds = await db.builds
-            .findAll({
-              attributes: ["id", "owner_id", "name", "metadata"],
+          const build = await db.build
+            .findByPk(req.query.id, {
+              // @ts-ignore
+              include: [{ model: db.user, as: "owner" }],
             })
+
             // @ts-ignore
             .catch((error) => {
               console.error(error)
               throw new Error("Cannot find build data")
             })
-
-          res.status(200).json(builds)
+          res.status(200).json(build)
         }
         break
       case "POST": {
-        const body = JSON.parse(req.body)
-        // @ts-ignore
-        const build = await db.builds.create({
-          id: uuidv4(),
-          name: body.name,
-          blueprint: body.blueprint,
-          json: {},
-          metadata: {
-            state: body.state.toLowerCase(),
-            type: body.categories.length ? body.categories : [],
-            something: false,
-          },
-        })
-
-        res.status(200).json(build)
+        res.status(400).json({})
         break
       }
     }

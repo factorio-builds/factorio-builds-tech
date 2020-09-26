@@ -64,7 +64,7 @@ const BuildsPage = ({ build, errors }: IBuildsPageProps) => {
         </SC.Heading>
         <SC.Content>
           <SC.Aside>
-            <AsideGroup>by "author"</AsideGroup>
+            <AsideGroup>by {build.owner.name}</AsideGroup>
             <AsideGroup>
               <SC.AsideSubGroup>
                 published on <b>{formatDate(build.createdAt)}</b>
@@ -122,7 +122,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const id = params?.id
 
     const build: IBuild = await fetch(
-      "http://localhost:3000/api/builds/" + id
+      "http://localhost:3000/api/build/" + id
     ).then((res) => res.json())
 
     if (!build) throw new Error("Build not found")

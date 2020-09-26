@@ -25,6 +25,7 @@ export interface IBuild {
   categories: ECategory[]
   createdAt: string
   updatedAt: string
+  owner: IUser
 }
 
 export interface IUser {

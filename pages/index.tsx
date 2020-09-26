@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const { dispatch } = reduxStore
 
   const builds: IBuild[] = await fetch(
-    "http://localhost:3000/api/builds"
+    "http://localhost:3000/api/build"
   ).then((res) => res.json())
 
   dispatch({

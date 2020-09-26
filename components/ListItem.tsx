@@ -8,7 +8,7 @@ interface IListItemProps {
 }
 
 const ListItem: React.FC<IListItemProps> = ({ data }) => (
-  <Link href="/users/[id]" as={`/users/${data.id}`}>
+  <Link href="/user/[id]" as={`/user/${data.id}`}>
     <a>
       {data.id}: {data.name}
     </a>
