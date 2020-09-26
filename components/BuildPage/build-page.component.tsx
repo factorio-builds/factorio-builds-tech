@@ -35,8 +35,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   const blueprintData = useMemo(() => {
     if (blueprintFormat === "json") {
-      // TODO: format
-      return JSON.stringify(blueprintJSON)
+      return JSON.stringify(blueprintJSON, null, 1)
     }
 
     return build.blueprint
