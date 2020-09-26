@@ -67,7 +67,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
         </SC.Heading>
         <SC.Content>
           <SC.Aside>
-            <AsideGroup>by "author"</AsideGroup>
+            <AsideGroup>by {build.owner.name}</AsideGroup>
             <AsideGroup>
               <SC.AsideSubGroup>
                 published on <b>{formatDate(build.createdAt)}</b>
