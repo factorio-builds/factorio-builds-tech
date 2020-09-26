@@ -8,6 +8,9 @@ export const mockedBuilds: IBuild[] = [
     state: EState.EARLY_GAME,
     categories: [ECategory.BALANCER],
     tileable: false,
+    metadata: {},
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "2",
@@ -16,6 +19,9 @@ export const mockedBuilds: IBuild[] = [
     state: EState.MID_GAME,
     categories: [ECategory.BALANCER],
     tileable: false,
+    metadata: {},
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "3",
@@ -24,6 +30,9 @@ export const mockedBuilds: IBuild[] = [
     state: EState.EARLY_GAME,
     categories: [ECategory.PRODUCTION],
     tileable: true,
+    metadata: {},
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
   {
     id: "4",
@@ -32,5 +41,8 @@ export const mockedBuilds: IBuild[] = [
     state: EState.LATE_GAME,
     categories: [ECategory.PRODUCTION],
     tileable: true,
+    metadata: {},
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   },
 ]
