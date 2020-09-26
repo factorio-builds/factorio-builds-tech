@@ -10,10 +10,13 @@
     "type-check": "tsc"
   },
   "dependencies": {
+    "@types/pako": "^1.0.1",
+    "@types/text-encoding": "^0.0.35",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
     "formik": "^2.1.5",
     "next": "latest",
+    "pako": "^1.0.11",
     "pg": "^8.3.3",
     "pg-hstore": "^2.3.3",
     "react": "^16.12.0",
@@ -23,6 +26,7 @@
     "redux-devtools-extension": "^2.13.8",
     "sequelize": "^6.3.5",
     "styled-components": "^5.2.0",
+    "text-encoding": "^0.7.0",
     "uuid": "^8.3.0",
     "yup": "^0.29.3"
   },

@@ -99,14 +99,42 @@ export const BlueprintData = styled.textarea`
   word-wrap: break-word;
   max-height: 400px;
   overflow-y: scroll;
-  margin-top: 8px;
+  margin-top: 12px;
   background: transparent;
   border: none;
   width: 100%;
 `
 
+export const TogglerWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
 export const Toggler = styled.div`
   user-select: none;
-  pointer-events: none;
-  font-weight: 700;
+  position: relative;
+  cursor: pointer;
+
+  &::after {
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    right: 0;
+    content: "";
+    background: transparent;
+  }
+
+  &:hover::after {
+    height: 1px;
+    background: #000;
+  }
+
+  &.is-selected {
+    font-weight: 700;
+  }
+
+  &.is-selected::after {
+    height: 3px;
+    background: #000;
+  }
 `
