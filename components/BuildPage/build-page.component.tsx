@@ -1,9 +1,11 @@
-import React, { useState } from "react"
+import cx from "classnames"
+import React, { useMemo, useState } from "react"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 
 import Layout from "../Layout"
 import { IBuild } from "../../types"
 import Caret from "../../icons/caret"
+import { decodeBlueprint } from "../../utils/blueprint"
 import * as SC from "./build-page.styles"
 
 interface IBuildPageProps {
@@ -21,10 +23,24 @@ const AsideGroup: React.FC<{ title?: string }> = (props) => {
 
 function BuildPage({ build }: IBuildPageProps): JSX.Element {
   const [blueprintExpanded, setBlueprintExpanded] = useState(false)
+  const [blueprintFormat, setBlueprintFormat] = useState<"base64" | "json">(
+    "base64"
+  )
 
   const toggleExpandBlueprint = () => {
     setBlueprintExpanded((expanded) => !expanded)
   }
+
+  const blueprintJSON = decodeBlueprint(build.blueprint)
+
+  const blueprintData = useMemo(() => {
+    if (blueprintFormat === "json") {
+      // TODO: format
+      return JSON.stringify(blueprintJSON)
+    }
+
+    return build.blueprint
+  }, [build.blueprint, blueprintFormat])
 
   const formatDate = (isoString: string) => {
     return format(parseISO(isoString), "yyyy-MM-dd")
@@ -86,9 +102,26 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
             {blueprintExpanded && (
               <SC.Blueprint>
-                <SC.Toggler>base64</SC.Toggler>
+                <SC.TogglerWrapper>
+                  <SC.Toggler
+                    className={cx({
+                      "is-selected": blueprintFormat === "base64",
+                    })}
+                    onClick={() => setBlueprintFormat("base64")}
+                  >
+                    base64
+                  </SC.Toggler>
+                  <SC.Toggler
+                    className={cx({
+                      "is-selected": blueprintFormat === "json",
+                    })}
+                    onClick={() => setBlueprintFormat("json")}
+                  >
+                    json
+                  </SC.Toggler>
+                </SC.TogglerWrapper>
                 <SC.BlueprintData
-                  value={build.blueprint}
+                  value={blueprintData}
                   rows={5}
                   readOnly
                   onClick={(e) => e.currentTarget.select()}
