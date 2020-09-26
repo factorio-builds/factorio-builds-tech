@@ -18,7 +18,7 @@ function BuildCard({
     <SC.BuildCardWrapper>
       <SC.Content>
         <SC.Title>
-          <Link href={`/builds/${id}`}>{name}</Link>
+          <Link href={`/build/${id}`}>{name}</Link>
         </SC.Title>
         <SC.Categories>
           {categories.map((category) => {

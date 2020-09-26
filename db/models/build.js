@@ -2,16 +2,17 @@
 const { Model } = require("sequelize")
 
 module.exports = (sequelize, DataTypes) => {
-  class builds extends Model {
+  class build extends Model {
     static associate(models) {
-      this.belongsTo(models.users, {
+      this.belongsTo(models.user, {
         foreignKey: "owner_id",
         targetKey: "id",
         onDelete: "SET NULL",
+        as: "owner",
       })
     }
   }
-  builds.init(
+  build.init(
     {
       name: DataTypes.STRING,
       ownerId: {
@@ -24,10 +25,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "builds",
+      modelName: "build",
       underscored: true,
     }
   )
 
-  return builds
+  return build
 }
