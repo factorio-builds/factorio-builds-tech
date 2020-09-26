@@ -1,4 +1,5 @@
 import { IBuild, EState, ECategory } from "../types"
+import { mockedUsers } from "./mock-users-data"
 
 export const mockedBuilds: IBuild[] = [
   {
@@ -12,6 +13,7 @@ export const mockedBuilds: IBuild[] = [
     metadata: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    owner: mockedUsers[0],
   },
   {
     id: "2",
@@ -23,6 +25,7 @@ export const mockedBuilds: IBuild[] = [
     metadata: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    owner: mockedUsers[0],
   },
   {
     id: "3",
@@ -34,6 +37,7 @@ export const mockedBuilds: IBuild[] = [
     metadata: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    owner: mockedUsers[1],
   },
   {
     id: "4",
@@ -45,5 +49,6 @@ export const mockedBuilds: IBuild[] = [
     metadata: {},
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    owner: mockedUsers[0],
   },
 ]
