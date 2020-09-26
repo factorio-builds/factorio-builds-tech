@@ -23,6 +23,8 @@ export interface IBuild {
   state: EState
   tileable: boolean
   categories: ECategory[]
+  createdAt: string
+  updatedAt: string
 }
 
 export interface IUser {

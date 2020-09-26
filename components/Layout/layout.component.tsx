@@ -1,18 +1,17 @@
 import React, { ReactNode } from "react"
 import Head from "next/head"
 import Container from "../Container"
-import Filters from "../Filters"
 import Header from "../Header"
-import SearchInput from "../SearchInput"
 import Sidebar from "../Sidebar"
 import * as SC from "./layout.styles"
 
 interface ILayoutProps {
   children?: ReactNode
+  sidebar?: ReactNode
   title?: string
 }
 
-const Layout: React.FC<ILayoutProps> = ({ children, title }) => (
+const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => (
   <>
     <Head>
       <title>{["Factorio Builds", title].filter(Boolean).join(" | ")}</title>
@@ -21,10 +20,7 @@ const Layout: React.FC<ILayoutProps> = ({ children, title }) => (
     </Head>
     <Header />
     <Container>
-      <Sidebar>
-        <SearchInput />
-        <Filters />
-      </Sidebar>
+      <Sidebar>{sidebar}</Sidebar>
       <SC.Content>{children}</SC.Content>
     </Container>
   </>
