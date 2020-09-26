@@ -19,6 +19,7 @@ export enum ECategory {
 export interface IBuild {
   id: string
   blueprint: string
+  metadata: any
   name: string
   state: EState
   tileable: boolean

@@ -1,16 +1,13 @@
-import cx from "classnames"
-import { useState } from "react"
-import { GetServerSideProps } from "next"
+import React, { useState } from "react"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 
-import { IBuild } from "../../../types"
-import Layout from "../../../components/Layout"
-import Caret from "../../../icons/caret"
-import * as SC from "./[id].styles"
+import Layout from "../Layout"
+import { IBuild } from "../../types"
+import Caret from "../../icons/caret"
+import * as SC from "./build-page.styles"
 
-interface IBuildsPageProps {
-  build?: IBuild
-  errors?: string
+interface IBuildPageProps {
+  build: IBuild
 }
 
 const AsideGroup: React.FC<{ title?: string }> = (props) => {
@@ -22,21 +19,11 @@ const AsideGroup: React.FC<{ title?: string }> = (props) => {
   )
 }
 
-const BuildsPage = ({ build, errors }: IBuildsPageProps) => {
+function BuildPage({ build }: IBuildPageProps): JSX.Element {
   const [blueprintExpanded, setBlueprintExpanded] = useState(false)
 
   const toggleExpandBlueprint = () => {
     setBlueprintExpanded((expanded) => !expanded)
-  }
-
-  if (errors || !build) {
-    return (
-      <Layout title="Error | Next.js + TypeScript Example">
-        <p>
-          <span style={{ color: "red" }}>Error:</span> {errors}
-        </p>
-      </Layout>
-    )
   }
 
   const formatDate = (isoString: string) => {
@@ -115,20 +102,4 @@ const BuildsPage = ({ build, errors }: IBuildsPageProps) => {
   )
 }
 
-export default BuildsPage
-
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  try {
-    const id = params?.id
-
-    const build: IBuild = await fetch(
-      "http://localhost:3000/api/builds/" + id
-    ).then((res) => res.json())
-
-    if (!build) throw new Error("Build not found")
-
-    return { props: { build } }
-  } catch (err) {
-    return { props: { errors: err.message } }
-  }
-}
+export default BuildPage
