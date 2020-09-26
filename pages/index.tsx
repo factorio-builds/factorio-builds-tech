@@ -2,13 +2,22 @@ import { GetServerSideProps } from "next"
 import { useSelector } from "react-redux"
 import Layout from "../components/Layout"
 import BuildCardList from "../components/BuildCardList"
+import Filters from "../components/Filters"
+import SearchInput from "../components/SearchInput"
 import { initializeStore, IStoreState } from "../redux/store"
 import { IBuild } from "../types"
 
 const IndexPage: React.FC = () => {
   const builds = useSelector((store: IStoreState) => store.builds.items)
   return (
-    <Layout>
+    <Layout
+      sidebar={
+        <>
+          <SearchInput />
+          <Filters />
+        </>
+      }
+    >
       <BuildCardList items={builds} />
     </Layout>
   )
