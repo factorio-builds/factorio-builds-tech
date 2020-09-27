@@ -45,35 +45,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     if (!build) throw new Error("Build not found")
 
-    // Let's fix up the types so we're returning exactly what we've been asked for from a typescript standpoint
-    const metadata: IMetadata = {
-      tileable: build.metadata.tileable,
-      area: build.metadata.area,
-      state: EState.EARLY_GAME,
-      categories: [ECategory.BALANCER],
-    }
-
-    const owner: IUser = {
-      id: build.owner.id,
-      name: build.owner.name,
-    }
-
-    const buildInt: IBuild = {
-      id: build.id,
-      name: build.name,
-      blueprint: build.blueprint,
-      createdAt: build.createdAt.toISOString(),
-      updatedAt: build.updatedAt.toISOString(),
-      metadata: metadata,
-      owner: owner,
-    }
-
-    const response: IBuildsPageProps = {
-      build: buildInt,
-    }
-
     return {
-      props: response,
+      props: { build: JSON.parse(JSON.stringify(build)) },
     }
   } catch (err) {
     return { props: { errors: err.message } }

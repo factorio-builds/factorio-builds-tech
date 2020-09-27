@@ -85,7 +85,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               </SC.AsideSubGroup>
             </AsideGroup>
             <AsideGroup title="Categories">
-              {build.metadata.categories}
+              {build.metadata.categories.map((category) => (
+                <div>{category}</div>
+              ))}
             </AsideGroup>
             <AsideGroup title="Game state">{build.metadata.state}</AsideGroup>
             <AsideGroup title="Required items">
