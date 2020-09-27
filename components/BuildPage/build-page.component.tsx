@@ -84,7 +84,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                 <br />({formatSince(build.updatedAt)})
               </SC.AsideSubGroup>
             </AsideGroup>
-            <AsideGroup title="Categories">{build.metadata.type}</AsideGroup>
+            <AsideGroup title="Categories">
+              {build.metadata.categories}
+            </AsideGroup>
             <AsideGroup title="Game state">{build.metadata.state}</AsideGroup>
             <AsideGroup title="Required items">
               {!isBook(blueprintJSON) ? (
@@ -108,6 +110,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
             <SC.MainContent>
               <p>ID: {build.id}</p>
+              // TODO kenperkins: should this be build.description?
               <p>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 Distinctio, cum beatae voluptate deleniti error suscipit
