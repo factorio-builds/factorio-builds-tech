@@ -62,8 +62,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       id: build.id,
       name: build.name,
       blueprint: build.blueprint,
-      createdAt: build.createdAt.toString(),
-      updatedAt: build.updatedAt.toString(),
+      createdAt: build.createdAt.toISOString(),
+      updatedAt: build.updatedAt.toISOString(),
       metadata: metadata,
       owner: owner,
     }
