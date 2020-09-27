@@ -1,9 +1,8 @@
 import { GetServerSideProps } from "next"
 import db from "../../db/models"
-import { ECategory, IBuild, EState, IUser, IMetadata } from "../../types"
+import { IBuild } from "../../types"
 import Layout from "../../components/Layout"
 import BuildPage from "../../components/BuildPage"
-import { isEmptyChildren } from "formik"
 
 interface IBuildsPageProps {
   build?: IBuild
