@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       name: DataTypes.STRING,
       blueprint: DataTypes.TEXT,
+      description: DataTypes.TEXT,
       json: DataTypes.JSONB,
       metadata: DataTypes.JSONB,
     },
