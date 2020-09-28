@@ -8,7 +8,7 @@ function Header(): JSX.Element {
     <SC.HeaderWrapper>
       <Container>
         <Link href="/">my blueprints</Link>
-        <Link href="/builds/create">
+        <Link href="/build/create">
           <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
         </Link>
       </Container>

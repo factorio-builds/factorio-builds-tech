@@ -8,7 +8,7 @@ interface IListItemBuildProps {
 }
 
 const ListItemBuild: React.FC<IListItemBuildProps> = ({ data }) => (
-  <Link href="/builds/[id]" as={`/builds/${data.id}`}>
+  <Link href="/build/[id]" as={`/build/${data.id}`}>
     <a>
       {data.id}: {data.name}
     </a>

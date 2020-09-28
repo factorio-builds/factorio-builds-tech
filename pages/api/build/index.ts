@@ -26,6 +26,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break
       case "POST": {
         const body = JSON.parse(req.body)
+
+        // @ts-ignore
+        const owner = await db.user
+          .findByPk("8358cfb0-2675-4651-a9c2-0d7cf57d6110")
+          // @ts-ignore
+          .catch((error) => {
+            console.error(error)
+            throw new Error("Cannot find user data")
+          })
+
         // @ts-ignore
         const build = await db.build.create({
           id: uuidv4(),
@@ -37,6 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             type: body.categories.length ? body.categories : [],
             something: false,
           },
+          owner: owner,
         })
 
         res.status(200).json(build)

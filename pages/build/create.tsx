@@ -20,7 +20,7 @@ const BuildsCreatePage: React.FC = () => {
           categories: [],
         }}
         onSubmit={(values) => {
-          fetch("http://localhost:3000/api/build", {
+          fetch("/api/build", {
             method: "POST",
             body: JSON.stringify(values),
           }).then((res) => {
