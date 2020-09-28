@@ -14,6 +14,7 @@ export enum ECategory {
   "SMELTING" = "SMELTING",
   "TRAINS" = "TRAINS",
   "PRODUCTION" = "PRODUCTION",
+  "ENERGY" = "ENERGY",
 }
 
 export interface IMetadata {
@@ -25,6 +26,7 @@ export interface IMetadata {
 
 export interface IBuild {
   id: string
+  description: string
   blueprint: string
   metadata: IMetadata
   name: string

@@ -99,7 +99,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                       <div key={itemName}>
                         {count}{" "}
                         <img
-                          src={`https://d3s5hh02rbjbr5.cloudfront.net/img/icons/small/${itemName}.png`}
+                          src={`https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${itemName}.png`}
                         ></img>
                       </div>
                     )
@@ -114,15 +114,8 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             <SC.MainTitle>Description</SC.MainTitle>
 
             <SC.MainContent>
+              <p>{build.description}</p>
               <p>ID: {build.id}</p>
-              // TODO kenperkins: should this be build.description?
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Distinctio, cum beatae voluptate deleniti error suscipit
-                adipisci veniam laboriosam numquam animi et perspiciatis
-                repellendus eveniet. Excepturi assumenda nam sapiente ullam
-                illo?
-              </p>
             </SC.MainContent>
 
             <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
