@@ -16,14 +16,18 @@ export enum ECategory {
   "PRODUCTION" = "PRODUCTION",
 }
 
+export interface IMetadata {
+  tileable: boolean
+  area: number
+  state: EState
+  categories: ECategory[]
+}
+
 export interface IBuild {
   id: string
   blueprint: string
-  metadata: any
+  metadata: IMetadata
   name: string
-  state: EState
-  tileable: boolean
-  categories: ECategory[]
   createdAt: string
   updatedAt: string
   owner: IUser
