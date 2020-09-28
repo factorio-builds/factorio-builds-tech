@@ -63,7 +63,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       } | Next.js + TypeScript Example`}
       sidebar={
         <SC.BuildImage>
-          <img src="/mock-image.png" alt="Sample image" />
+          <img src="/img/mock-image.png" alt="Sample image" />
         </SC.BuildImage>
       }
     >
@@ -97,7 +97,10 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                     const count = itemsCount[itemName]
                     return (
                       <div key={itemName}>
-                        {count} {itemName}
+                        {count}{" "}
+                        <img
+                          src={`https://d3s5hh02rbjbr5.cloudfront.net/img/icons/small/${itemName}.png`}
+                        ></img>
                       </div>
                     )
                   })}
