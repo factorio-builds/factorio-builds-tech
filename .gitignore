@@ -19,6 +19,7 @@
 # misc
 .DS_Store
 *.pem
+public/img/icons
 
 # debug
 npm-debug.log*
