@@ -16,7 +16,9 @@ const BuildsCreatePage: React.FC = () => {
         initialValues={{
           name: "",
           blueprint: "",
+          description: "",
           state: undefined,
+          tileable: false,
           categories: [],
         }}
         onSubmit={(values) => {
@@ -44,12 +46,42 @@ const BuildsCreatePage: React.FC = () => {
 
             <div>
               <label
+                htmlFor="description"
+                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
+              >
+                Description
+              </label>
+              <Field
+                as="textarea"
+                id="description"
+                name="description"
+                rows="5"
+              />
+            </div>
+
+            <div>
+              <label
                 htmlFor="blueprint"
                 style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
               >
                 Blueprint
               </label>
               <Field as="textarea" id="blueprint" name="blueprint" rows="5" />
+            </div>
+
+            <div>
+              <label
+                htmlFor="tileable"
+                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
+              >
+                Tileable
+              </label>
+              <Field
+                type="checkbox"
+                id="tileable"
+                name="tileable"
+                value="tileable"
+              />
             </div>
 
             <div>

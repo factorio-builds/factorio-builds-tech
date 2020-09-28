@@ -41,14 +41,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           id: uuidv4(),
           name: body.name,
           blueprint: body.blueprint,
+          description: body.description,
           json: {},
           metadata: {
             state: body.state.toLowerCase(),
-            type: body.categories.length ? body.categories : [],
-            something: false,
+            categories: body.categories.length ? body.categories : [],
+            tileable: body.tileable,
           },
-          owner: owner,
         })
+
+        await build.setOwner(owner)
 
         res.status(200).json(build)
         break
