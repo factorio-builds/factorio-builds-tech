@@ -1,5 +1,6 @@
 import cx from "classnames"
 import React, { useMemo, useState } from "react"
+import ReactMarkdown from "react-markdown"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 
 import Layout from "../Layout"
@@ -114,7 +115,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             <SC.MainTitle>Description</SC.MainTitle>
 
             <SC.MainContent>
-              <p>{build.description}</p>
+              <ReactMarkdown source={build.description} />
               <p>ID: {build.id}</p>
             </SC.MainContent>
 
