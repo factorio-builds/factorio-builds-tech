@@ -10,7 +10,7 @@ interface IFormValues {
   name: string
   blueprint: string
   description: string
-  state: EState | null
+  state: EState | -1
   tileable: boolean
   categories: ECategory[]
   image: File | null
@@ -26,7 +26,7 @@ const BuildsCreatePage: React.FC = () => {
         name: "",
         blueprint: "",
         description: "",
-        state: null,
+        state: -1,
         tileable: false,
         categories: [],
         image: null,
