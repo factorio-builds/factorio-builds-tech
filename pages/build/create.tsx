@@ -1,38 +1,58 @@
 import { useRouter } from "next/router"
 import { Form, Formik, Field } from "formik"
+import React from "react"
 import { useDispatch } from "react-redux"
 import Layout from "../../components/Layout"
 import { ECategory, EState } from "../../types"
+import ImageUpload from "../../components/ImageUpload"
+
+interface IFormValues {
+  name: string
+  blueprint: string
+  description: string
+  state: EState | null
+  tileable: boolean
+  categories: ECategory[]
+  image: File | null
+}
 
 const BuildsCreatePage: React.FC = () => {
   const router = useRouter()
   const dispatch = useDispatch()
 
   return (
-    <Layout title="Create a build">
-      <h2>Create a build</h2>
+    <Formik<IFormValues>
+      initialValues={{
+        name: "",
+        blueprint: "",
+        description: "",
+        state: null,
+        tileable: false,
+        categories: [],
+        image: null,
+      }}
+      onSubmit={(values) => {
+        fetch("http://localhost:3000/api/build", {
+          method: "POST",
+          body: JSON.stringify(values),
+        }).then((res) => {
+          console.log(res)
+          dispatch({ type: "CREATE_BUILD", payload: values })
+          router.push("/")
+        })
+      }}
+    >
+      {(formikProps) => (
+        <Layout
+          title="Create a build"
+          sidebar={
+            <ImageUpload
+              onChange={(file) => formikProps.setFieldValue("image", file)}
+            />
+          }
+        >
+          <h2>Create a build</h2>
 
-      <Formik
-        initialValues={{
-          name: "",
-          blueprint: "",
-          description: "",
-          state: undefined,
-          tileable: false,
-          categories: [],
-        }}
-        onSubmit={(values) => {
-          fetch("/api/build", {
-            method: "POST",
-            body: JSON.stringify(values),
-          }).then((res) => {
-            console.log(res)
-            dispatch({ type: "CREATE_BUILD", payload: values })
-            router.push("/")
-          })
-        }}
-      >
-        {() => (
           <Form>
             <div>
               <label
@@ -120,9 +140,9 @@ const BuildsCreatePage: React.FC = () => {
               <button>save</button>
             </div>
           </Form>
-        )}
-      </Formik>
-    </Layout>
+        </Layout>
+      )}
+    </Formik>
   )
 }
 
