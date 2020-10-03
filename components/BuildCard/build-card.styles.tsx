@@ -6,6 +6,7 @@ export const BuildCardWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   background: #555;
+  cursor: pointer;
 `
 
 export const BackgroundImage = styled.img`

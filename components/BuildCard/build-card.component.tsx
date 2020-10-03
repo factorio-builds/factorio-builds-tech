@@ -17,19 +17,21 @@ function BuildCard({
   id,
 }: IBuildCardProps): JSX.Element {
   return (
-    <SC.BuildCardWrapper>
-      <SC.BackgroundImage src={image} alt="" />
-      <SC.Content>
-        <SC.Title>
-          <Link href={`/build/${id}`}>{name}</Link>
-        </SC.Title>
-        <SC.Categories>
-          {categories.map((category) => {
-            return <SC.CategoryPill key={category}>{category}</SC.CategoryPill>
-          })}
-        </SC.Categories>
-      </SC.Content>
-    </SC.BuildCardWrapper>
+    <Link href={`/build/${id}`}>
+      <SC.BuildCardWrapper>
+        <SC.BackgroundImage src={image} alt="" />
+        <SC.Content>
+          <SC.Title>{name}</SC.Title>
+          <SC.Categories>
+            {categories.map((category) => {
+              return (
+                <SC.CategoryPill key={category}>{category}</SC.CategoryPill>
+              )
+            })}
+          </SC.Categories>
+        </SC.Content>
+      </SC.BuildCardWrapper>
+    </Link>
   )
 }
 
