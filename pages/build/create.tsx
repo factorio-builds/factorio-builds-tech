@@ -109,7 +109,11 @@ const BuildsCreatePage: React.FC = () => {
               <Field as="select" id="state" name="state">
                 <option value={-1}>-- select --</option>
                 {Object.keys(EState).map((state) => {
-                  return <option value={state}>{state.toLowerCase()}</option>
+                  return (
+                    <option key={state} value={state}>
+                      {state.toLowerCase()}
+                    </option>
+                  )
                 })}
               </Field>
             </div>
@@ -117,7 +121,7 @@ const BuildsCreatePage: React.FC = () => {
             <div style={{ fontWeight: 700, marginTop: "8px" }}>Categories</div>
             {Object.keys(ECategory).map((category) => {
               return (
-                <div>
+                <div key={category}>
                   <label htmlFor={`category-${category}`}>
                     {category.toLowerCase()}
                   </label>
