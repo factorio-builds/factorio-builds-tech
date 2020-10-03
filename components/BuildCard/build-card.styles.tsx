@@ -1,14 +1,24 @@
 import styled from "styled-components"
 
 export const BuildCardWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   background: #555;
-  height: 200px;
+  cursor: pointer;
+`
+
+export const BackgroundImage = styled.img`
+  display: block;
+  width: 100%;
 `
 
 export const Content = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   padding: 32px 16px 16px;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
   color: #fff;

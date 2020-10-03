@@ -33,6 +33,13 @@ export interface IBuild {
   createdAt: string
   updatedAt: string
   owner: IUser
+  image: IImage
+}
+
+export interface IImage {
+  src: string
+  width: number
+  height: number
 }
 
 export interface IUser {

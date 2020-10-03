@@ -7,6 +7,7 @@ import Layout from "../Layout"
 import { IBuild } from "../../types"
 import Caret from "../../icons/caret"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
+import { mockedImages } from "../../utils/mock-images-data"
 import * as SC from "./build-page.styles"
 
 interface IBuildPageProps {
@@ -64,7 +65,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       } | Next.js + TypeScript Example`}
       sidebar={
         <SC.BuildImage>
-          <img src="/img/mock-image.png" alt="Sample image" />
+          <img src={mockedImages[0].src} alt="Sample image" />
         </SC.BuildImage>
       }
     >
