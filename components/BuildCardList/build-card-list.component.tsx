@@ -9,11 +9,12 @@ interface IBuildCardListProps {
 
 const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => (
   <SC.BuildCardListWrapper>
-    {items.map((item) => (
-      <SC.Item key={item.id}>
+    {[...items, ...items].map((item, index) => (
+      <SC.Item key={item.id + index}>
         <BuildCard
           name={item.name}
           categories={item.metadata.categories}
+          image={`/img/mock-image-${(index % 4) + 1}.jpg`}
           id={item.id}
         />
       </SC.Item>

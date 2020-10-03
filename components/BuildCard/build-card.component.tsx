@@ -6,16 +6,19 @@ import Link from "next/link"
 interface IBuildCardProps {
   name: IBuild["name"]
   categories: IMetadata["categories"]
+  image: string
   id: IBuild["id"]
 }
 
 function BuildCard({
   name,
   categories = [],
+  image,
   id,
 }: IBuildCardProps): JSX.Element {
   return (
     <SC.BuildCardWrapper>
+      <SC.BackgroundImage src={image} alt="" />
       <SC.Content>
         <SC.Title>
           <Link href={`/build/${id}`}>{name}</Link>

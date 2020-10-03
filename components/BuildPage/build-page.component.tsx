@@ -64,7 +64,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       } | Next.js + TypeScript Example`}
       sidebar={
         <SC.BuildImage>
-          <img src="/img/mock-image.png" alt="Sample image" />
+          <img src="/img/mock-image-1.jpg" alt="Sample image" />
         </SC.BuildImage>
       }
     >
