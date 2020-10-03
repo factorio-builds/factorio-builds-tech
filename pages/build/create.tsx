@@ -10,7 +10,7 @@ interface IFormValues {
   name: string
   blueprint: string
   description: string
-  state: EState | null
+  state: EState | -1
   tileable: boolean
   categories: ECategory[]
   image: File | null
@@ -26,7 +26,7 @@ const BuildsCreatePage: React.FC = () => {
         name: "",
         blueprint: "",
         description: "",
-        state: null,
+        state: -1,
         tileable: false,
         categories: [],
         image: null,
@@ -96,12 +96,7 @@ const BuildsCreatePage: React.FC = () => {
               >
                 Tileable
               </label>
-              <Field
-                type="checkbox"
-                id="tileable"
-                name="tileable"
-                value="tileable"
-              />
+              <Field type="checkbox" id="tileable" name="tileable" />
             </div>
 
             <div>
@@ -114,7 +109,11 @@ const BuildsCreatePage: React.FC = () => {
               <Field as="select" id="state" name="state">
                 <option value={-1}>-- select --</option>
                 {Object.keys(EState).map((state) => {
-                  return <option value={state}>{state.toLowerCase()}</option>
+                  return (
+                    <option key={state} value={state}>
+                      {state.toLowerCase()}
+                    </option>
+                  )
                 })}
               </Field>
             </div>
@@ -122,7 +121,7 @@ const BuildsCreatePage: React.FC = () => {
             <div style={{ fontWeight: 700, marginTop: "8px" }}>Categories</div>
             {Object.keys(ECategory).map((category) => {
               return (
-                <div>
+                <div key={category}>
                   <label htmlFor={`category-${category}`}>
                     {category.toLowerCase()}
                   </label>
