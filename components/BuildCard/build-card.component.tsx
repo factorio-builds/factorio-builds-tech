@@ -5,6 +5,7 @@ import Link from "next/link"
 
 interface IBuildCardProps {
   name: IBuild["name"]
+  isBook: boolean
   categories: IMetadata["categories"]
   image: string
   id: IBuild["id"]
@@ -12,6 +13,7 @@ interface IBuildCardProps {
 
 function BuildCard({
   name,
+  isBook,
   categories = [],
   image,
   id,
@@ -21,7 +23,10 @@ function BuildCard({
       <SC.BuildCardWrapper>
         <SC.BackgroundImage src={image} alt="" />
         <SC.Content>
-          <SC.Title>{name}</SC.Title>
+          <SC.Title>
+            {isBook && <SC.Book src="/img/blueprint-book.png" />}
+            {name}
+          </SC.Title>
           <SC.Categories>
             {categories.map((category) => {
               return (

@@ -25,13 +25,21 @@ export const Content = styled.div`
 `
 
 export const Title = styled.h3`
+  display: flex;
+  align-items: center;
   font-weight: 400;
   font-size: 18px;
+  min-height: 28px;
   margin: 0 0 8px;
 
   a {
     color: #fff;
   }
+`
+
+export const Book = styled.img`
+  height: 28px;
+  margin-right: 4px;
 `
 
 export const Categories = styled.div`

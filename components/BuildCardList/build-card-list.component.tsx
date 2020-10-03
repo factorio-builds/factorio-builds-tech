@@ -39,6 +39,8 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => {
               <BuildCard
                 name={item.name}
                 categories={item.metadata.categories}
+                // @ts-ignore
+                isBook={item.isBook}
                 image={item.image.src}
                 id={item.id}
               />
