@@ -1,6 +1,7 @@
 import * as React from "react"
 import BuildCard from "../BuildCard"
 import { IBuild } from "../../types"
+import { mockedImages } from "../../utils/mock-images-data"
 import * as SC from "./build-card-list.styles"
 
 interface IBuildCardListProps {
@@ -14,7 +15,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => (
         <BuildCard
           name={item.name}
           categories={item.metadata.categories}
-          image={`/img/mock-image-${(index % 4) + 1}.jpg`}
+          image={mockedImages[index % 4].src}
           id={item.id}
         />
       </SC.Item>

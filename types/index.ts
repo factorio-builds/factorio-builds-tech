@@ -35,6 +35,12 @@ export interface IBuild {
   owner: IUser
 }
 
+export interface IImage {
+  src: string
+  width: number
+  height: number
+}
+
 export interface IUser {
   id: string
   name: string
