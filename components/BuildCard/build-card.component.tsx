@@ -1,11 +1,11 @@
 import React from "react"
-import { IBuild } from "../../types"
+import { IBuild, IMetadata } from "../../types"
 import * as SC from "./build-card.styles"
 import Link from "next/link"
 
 interface IBuildCardProps {
   name: IBuild["name"]
-  categories: IBuild["categories"]
+  categories: IMetadata["categories"]
   id: IBuild["id"]
 }
 
