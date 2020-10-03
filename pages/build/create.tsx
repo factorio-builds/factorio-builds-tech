@@ -96,12 +96,7 @@ const BuildsCreatePage: React.FC = () => {
               >
                 Tileable
               </label>
-              <Field
-                type="checkbox"
-                id="tileable"
-                name="tileable"
-                value="tileable"
-              />
+              <Field type="checkbox" id="tileable" name="tileable" />
             </div>
 
             <div>
