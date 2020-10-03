@@ -21,4 +21,9 @@ export const mockedImages: IImage[] = [
     width: 1890,
     height: 1608,
   },
+  {
+    src: "/img/mock-image-5.jpg",
+    width: 640,
+    height: 454,
+  },
 ]
