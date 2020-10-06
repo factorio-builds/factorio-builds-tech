@@ -2,6 +2,7 @@ import { useRouter } from "next/router"
 import { Form, Formik, Field } from "formik"
 import React from "react"
 import { useDispatch } from "react-redux"
+import * as Yup from "yup"
 import Layout from "../../components/Layout"
 import { ECategory, EState } from "../../types"
 import ImageUpload from "../../components/ImageUpload"
@@ -16,21 +17,51 @@ interface IFormValues {
   image: File | null
 }
 
+const FILE_SIZE = 160 * 1024
+const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
+
+const initialValues: IFormValues = {
+  name: "",
+  blueprint: "",
+  description: "",
+  state: -1,
+  tileable: false,
+  categories: [],
+  image: null,
+}
+
+const BuildSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
+  blueprint: Yup.string().required("Required"),
+  description: Yup.string(),
+  state: Yup.string().oneOf(Object.keys(EState), "Required"),
+  tileable: Yup.boolean(),
+  categories: Yup.array(),
+  image: Yup.mixed()
+    .required("A file is required")
+    .test(
+      "fileSize",
+      "File too large",
+      (value) => value && value.size <= FILE_SIZE
+    )
+    .test(
+      "fileFormat",
+      "Unsupported Format",
+      (value) => value && SUPPORTED_FORMATS.includes(value.type)
+    ),
+})
+
 const BuildCreatePage: React.FC = () => {
   const router = useRouter()
   const dispatch = useDispatch()
 
   return (
     <Formik<IFormValues>
-      initialValues={{
-        name: "",
-        blueprint: "",
-        description: "",
-        state: -1,
-        tileable: false,
-        categories: [],
-        image: null,
-      }}
+      initialValues={initialValues}
+      validationSchema={BuildSchema}
       onSubmit={(values) => {
         fetch("http://localhost:3000/api/build", {
           method: "POST",
@@ -62,6 +93,7 @@ const BuildCreatePage: React.FC = () => {
                 Name
               </label>
               <Field id="name" name="name" />
+              <div style={{ color: "#f00" }}>{formikProps.errors.name}</div>
             </div>
 
             <div>
@@ -77,6 +109,9 @@ const BuildCreatePage: React.FC = () => {
                 name="description"
                 rows="5"
               />
+              <div style={{ color: "#f00" }}>
+                {formikProps.errors.description}
+              </div>
             </div>
 
             <div>
@@ -87,6 +122,9 @@ const BuildCreatePage: React.FC = () => {
                 Blueprint
               </label>
               <Field as="textarea" id="blueprint" name="blueprint" rows="5" />
+              <div style={{ color: "#f00" }}>
+                {formikProps.errors.blueprint}
+              </div>
             </div>
 
             <div>
@@ -97,6 +135,7 @@ const BuildCreatePage: React.FC = () => {
                 Tileable
               </label>
               <Field type="checkbox" id="tileable" name="tileable" />
+              <div style={{ color: "#f00" }}>{formikProps.errors.tileable}</div>
             </div>
 
             <div>
@@ -116,6 +155,7 @@ const BuildCreatePage: React.FC = () => {
                   )
                 })}
               </Field>
+              <div style={{ color: "#f00" }}>{formikProps.errors.state}</div>
             </div>
 
             <div style={{ fontWeight: 700, marginTop: "8px" }}>Categories</div>
@@ -134,6 +174,7 @@ const BuildCreatePage: React.FC = () => {
                 </div>
               )
             })}
+            <div style={{ color: "#f00" }}>{formikProps.errors.categories}</div>
 
             <div style={{ marginTop: "16px" }}>
               <button>save</button>
