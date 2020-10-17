@@ -1,44 +1,44 @@
 import React from "react"
 import { EFilterType, EState, ECategory } from "../../types"
-import Checkbox from "../Checkbox"
+import FilterCheckbox from "../FilterCheckbox"
 import * as SC from "./filters.styles"
 
 function Filters(): JSX.Element {
   return (
     <SC.FiltersWrapper>
       filter builds
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.STATE}
         name={EState.EARLY_GAME}
         text="Early-game"
       />
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.STATE}
         name={EState.MID_GAME}
         text="Mid-game"
       />
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.STATE}
         name={EState.LATE_GAME}
         text="Late-game"
       />
       <SC.Separator />
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.CATEGORY}
         name={ECategory.BALANCER}
         text="Balancer"
       />
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.CATEGORY}
         name={ECategory.SMELTING}
         text="Smelting"
       />
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.CATEGORY}
         name={ECategory.TRAINS}
         text="Trains"
       />
-      <Checkbox
+      <FilterCheckbox
         filterType={EFilterType.CATEGORY}
         name={ECategory.PRODUCTION}
         text="Production"

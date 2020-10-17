@@ -6,6 +6,9 @@ import * as Yup from "yup"
 import Layout from "../../components/Layout"
 import { ECategory, EState } from "../../types"
 import ImageUpload from "../../components/ImageUpload"
+import Input from "../Input"
+import Stacker from "../Stacker"
+import InputGroup from "../InputGroup"
 
 interface IFormValues {
   name: string
@@ -85,96 +88,69 @@ const BuildCreatePage: React.FC = () => {
           <h2>Create a build</h2>
 
           <Form>
-            <div>
-              <label
-                htmlFor="name"
-                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
-              >
-                Name
-              </label>
-              <Field id="name" name="name" />
-              <div style={{ color: "#f00" }}>{formikProps.errors.name}</div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="description"
-                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
-              >
-                Description
-              </label>
+            <Stacker>
               <Field
-                as="textarea"
-                id="description"
-                name="description"
-                rows="5"
+                name="name"
+                label="Name"
+                type="text"
+                required
+                component={Input}
               />
-              <div style={{ color: "#f00" }}>
-                {formikProps.errors.description}
-              </div>
-            </div>
 
-            <div>
-              <label
-                htmlFor="blueprint"
-                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
-              >
-                Blueprint
-              </label>
-              <Field as="textarea" id="blueprint" name="blueprint" rows="5" />
-              <div style={{ color: "#f00" }}>
-                {formikProps.errors.blueprint}
-              </div>
-            </div>
+              <Field
+                name="description"
+                label="Description"
+                type="textarea"
+                rows="5"
+                component={Input}
+              />
 
-            <div>
-              <label
-                htmlFor="tileable"
-                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
-              >
-                Tileable
-              </label>
-              <Field type="checkbox" id="tileable" name="tileable" />
-              <div style={{ color: "#f00" }}>{formikProps.errors.tileable}</div>
-            </div>
+              <Field
+                name="blueprint"
+                label="Blueprint"
+                type="textarea"
+                rows="5"
+                required
+                component={Input}
+              />
 
-            <div>
-              <label
-                htmlFor="state"
-                style={{ display: "block", fontWeight: 700, marginTop: "8px" }}
+              <Field
+                name="tileable"
+                label="Tileable"
+                type="checkbox"
+                component={Input}
+              />
+
+              <Field
+                name="state"
+                label="Game state"
+                type="select"
+                required
+                component={Input}
+                options={Object.keys(EState).map((state) => ({
+                  label: state,
+                  value: state,
+                }))}
+              />
+
+              <InputGroup
+                legend="Categories"
+                error={formikProps.errors.categories}
               >
-                Game state
-              </label>
-              <Field as="select" id="state" name="state">
-                <option value={-1}>-- select --</option>
-                {Object.keys(EState).map((state) => {
+                {Object.keys(ECategory).map((category) => {
                   return (
-                    <option key={state} value={state}>
-                      {state.toLowerCase()}
-                    </option>
+                    <Field
+                      name="categories"
+                      label={category.toLowerCase()}
+                      type="checkbox"
+                      value={category}
+                      inline={true}
+                      component={Input}
+                    />
                   )
                 })}
-              </Field>
-              <div style={{ color: "#f00" }}>{formikProps.errors.state}</div>
-            </div>
-
-            <div style={{ fontWeight: 700, marginTop: "8px" }}>Categories</div>
-            {Object.keys(ECategory).map((category) => {
-              return (
-                <div key={category}>
-                  <label htmlFor={`category-${category}`}>
-                    {category.toLowerCase()}
-                  </label>
-                  <Field
-                    type="checkbox"
-                    id={`category-${category}`}
-                    name="categories"
-                    value={category}
-                  />
-                </div>
-              )
-            })}
-            <div style={{ color: "#f00" }}>{formikProps.errors.categories}</div>
+              </InputGroup>
+            </Stacker>
 
             <div style={{ marginTop: "16px" }}>
               <button>save</button>
