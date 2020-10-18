@@ -1,10 +1,11 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 import SearchIcon from "../../icons/search-icon"
 
 export const SearchInputWrapper = styled.div`
   display: flex;
   background: #fff;
-  color: #424242;
+  color: ${COLOR.GREY300};
   font-size: 17px;
   padding: 12px 16px;
   cursor: pointer;
@@ -19,7 +20,7 @@ export const SearchInputWrapper = styled.div`
 `
 
 export const StyledSearchIcon = styled(SearchIcon)`
-  fill: #424242;
+  fill: ${COLOR.GREY300};
   width: 14px;
   flex: 0 0 14px;
   height: auto;
@@ -29,7 +30,7 @@ export const SearchInput = styled.input`
   margin-left: 14px;
   border: 0;
   background: transparent;
-  color: #424242;
+  color: ${COLOR.GREY300};
   flex: 1 0 auto;
 
   &:focus {

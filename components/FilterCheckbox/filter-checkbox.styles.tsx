@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 
 export const Square = styled.div`
   box-sizing: border-box;
@@ -8,7 +9,7 @@ export const Square = styled.div`
   border: 2px solid #fff;
 
   &.is-checked {
-    background: #8fcd5b;
+    background: ${COLOR.SUCCESS};
   }
 `
 

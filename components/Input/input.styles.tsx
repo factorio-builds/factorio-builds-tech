@@ -1,8 +1,9 @@
 import styled, { css } from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 
 const BaseInput = css`
   padding: 5px 14px;
-  border: 2px solid #424242;
+  border: 2px solid ${COLOR.GREY300};
   font-size: 18px;
   line-height: 24px;
   line-height: 1.8;
@@ -17,7 +18,7 @@ const BaseInput = css`
   }
 
   .is-error & {
-    border-color: #f24439 !important;
+    border-color: ${COLOR.DANGER} !important;
   }
 
   &:focus {
