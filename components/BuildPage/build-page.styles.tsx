@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 
 export const Wrapper = styled.div`
   margin-left: -34px;
@@ -22,7 +23,7 @@ export const Heading = styled.div`
 
 export const Title = styled.h2`
   font-size: 28px;
-  color: #424242;
+  color: ${COLOR.GREY300};
 `
 
 export const Content = styled.div`

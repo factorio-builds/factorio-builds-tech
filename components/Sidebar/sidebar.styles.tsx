@@ -1,7 +1,7 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 
 export const SidebarWrapper = styled.div`
-  background: #eee;
   width: 300px;
   flex: 0 0 300px;
   padding: 20px 20px 20px 0;
@@ -15,7 +15,7 @@ export const SidebarContent = styled.div`
 
 export const SidebarBG = styled.div`
   position: absolute;
-  background: #f2f0f4;
+  background: ${COLOR.PURPLE900};
   top: 0;
   bottom: 0;
   right: 0;

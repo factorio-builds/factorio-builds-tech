@@ -1,13 +1,7 @@
 import * as React from "react"
 import ReactSelect, { Props as ReactSelectProps } from "react-select"
 import { FieldProps } from "formik"
-
-const COLOR = {
-  DANGER: "#f24439",
-  FOCUSED: "#aad1ff",
-  SELECTED: "#4299ff",
-  GREY: "#424242",
-}
+import { COLOR } from "../../design/tokens/color"
 
 interface ISelect extends ReactSelectProps, FieldProps {
   id: string
@@ -38,7 +32,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             lineHeight: 1.8,
             padding: "1px 13px",
             border: "2px solid",
-            borderColor: `${error ? COLOR.DANGER : COLOR.GREY} !important`,
+            borderColor: `${error ? COLOR.DANGER : COLOR.GREY300} !important`,
             borderRadius: 0,
             boxShadow: state.isFocused ? focusedShadow : "none",
             transition: "none",
@@ -62,7 +56,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
           ...provided,
           marginTop: "-2px",
           border: "2px solid",
-          borderColor: COLOR.GREY,
+          borderColor: COLOR.GREY300,
           borderTop: "none",
           borderRadius: 0,
           padding: "6px",
@@ -72,7 +66,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         }),
         dropdownIndicator: (provided) => ({
           ...provided,
-          color: COLOR.GREY,
+          color: COLOR.GREY300,
           paddingRight: 0,
         }),
         input: (provided) => ({

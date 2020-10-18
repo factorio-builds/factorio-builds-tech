@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 
 export const Square = styled.div`
   position: relative;
@@ -6,7 +7,7 @@ export const Square = styled.div`
   background: #fff;
   width: 34px;
   height: 34px;
-  border: 2px solid #424242;
+  border: 2px solid ${COLOR.GREY300};
 
   &::after {
     content: "";
@@ -48,16 +49,16 @@ export const CheckboxWrapper = styled.div`
   }
 
   &:focus-within ${Square} {
-    box-shadow: 0 0 0 3px #aad1ff;
+    box-shadow: 0 0 0 3px ${COLOR.FOCUSED};
     outline: none;
   }
 
   &.is-checked ${Square}::after {
-    background: #8fcd5b;
+    background: ${COLOR.SUCCESS};
   }
 
   .is-error ${Square} {
-    border-color: #f24439 !important;
+    border-color: ${COLOR.DANGER} !important;
   }
 `
 

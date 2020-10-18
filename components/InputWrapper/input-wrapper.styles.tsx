@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
 
 export const StyledInputWrapper = styled.div`
   display: flex;
@@ -15,7 +16,7 @@ export const Label = styled.label`
 export const ErrorMessage = styled.div`
   display: flex;
   align-items: center;
-  color: #f24439;
+  color: ${COLOR.DANGER};
   font-size: 18px;
   font-weight: 400;
   line-height: 1.4;
