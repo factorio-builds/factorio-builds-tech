@@ -34,6 +34,16 @@ export function decodeBlueprint(
   return decodedObject
 }
 
+export function isValidBlueprint(blueprintString: string): boolean {
+  try {
+    decodeBlueprint(blueprintString)
+
+    return true
+  } catch {
+    return false
+  }
+}
+
 export function getCountPerItem(blueprint: IBlueprint) {
   return blueprint.entities.reduce((acc, curr) => {
     const count = acc[curr.name] || 0

@@ -9,6 +9,7 @@ import ImageUpload from "../../components/ImageUpload"
 import Input from "../Input"
 import Stacker from "../Stacker"
 import InputGroup from "../InputGroup"
+import { isValidBlueprint } from "../../utils/blueprint"
 
 interface IFormValues {
   name: string
@@ -38,7 +39,14 @@ const BuildSchema = Yup.object().shape({
     .min(2, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
-  blueprint: Yup.string().required("Required"),
+  blueprint: Yup.string()
+    .required("Required")
+    .test("valid", "Invalid blueprint string", (blueprint) => {
+      if (!blueprint) {
+        return false
+      }
+      return isValidBlueprint(blueprint)
+    }),
   description: Yup.string(),
   state: Yup.string().oneOf(Object.keys(EState), "Required"),
   tileable: Yup.boolean(),
