@@ -13,6 +13,12 @@ import {
   IStoreBuildsState,
   TBuildsAction,
 } from "./reducers/builds"
+import {
+  filtersReducer,
+  initialFiltersState,
+  IStoreFiltersState,
+  TFiltersAction,
+} from "./reducers/filters"
 
 export interface IPayloadAction<T, P> extends Action<T> {
   payload: P
@@ -22,16 +28,19 @@ let store: Store<IStoreState, TAction> | undefined
 
 export interface IStoreState {
   builds: IStoreBuildsState
+  filters: IStoreFiltersState
 }
 
 const initialState: IStoreState = {
   builds: initialBuildsState,
+  filters: initialFiltersState,
 }
 
-type TAction = TBuildsAction
+type TAction = TBuildsAction | TFiltersAction
 
 const reducer = combineReducers({
   builds: buildsReducer,
+  filters: filtersReducer,
 })
 
 function initStore(preloadedState = initialState) {

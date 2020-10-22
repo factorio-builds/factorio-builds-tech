@@ -43,6 +43,11 @@ function Filters(): JSX.Element {
         name={ECategory.PRODUCTION}
         text="Production"
       />
+      <FilterCheckbox
+        filterType={EFilterType.CATEGORY}
+        name={ECategory.ENERGY}
+        text="Energy"
+      />
     </SC.FiltersWrapper>
   )
 }

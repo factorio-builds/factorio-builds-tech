@@ -1,5 +1,7 @@
 import cx from "classnames"
-import React, { useState } from "react"
+import React from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { IStoreState } from "../../redux/store"
 import { ECategory, EFilterType, EState } from "../../types"
 import * as SC from "./filter-checkbox.styles"
 
@@ -10,10 +12,21 @@ interface IFilterCheckboxProps {
 }
 
 function FilterCheckbox(props: IFilterCheckboxProps): JSX.Element {
-  const [checked, setChecked] = useState(false)
+  const checked = useSelector(
+    // TODO: fix types
+    // @ts-ignore
+    (store: IStoreState) => store.filters[props.filterType][props.name]
+  )
+  const dispatch = useDispatch()
 
   function toggleChecked(): void {
-    setChecked((prevState) => !prevState)
+    dispatch({
+      type: "TOGGLE_FILTER",
+      payload: {
+        type: props.filterType,
+        name: props.name,
+      },
+    })
   }
 
   return (

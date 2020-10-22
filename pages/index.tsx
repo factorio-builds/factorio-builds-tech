@@ -8,9 +8,13 @@ import { initializeStore, IStoreState } from "../redux/store"
 import { IBuild } from "../types"
 import db from "../db/models"
 import { decodeBlueprint, isBook } from "../utils/blueprint"
+import { filteredBuildsSelector } from "../redux/selectors/builds"
 
 const IndexPage: React.FC = () => {
-  const builds = useSelector((store: IStoreState) => store.builds.items)
+  const filteredBuilds = useSelector((store: IStoreState) =>
+    filteredBuildsSelector(store)
+  )
+
   return (
     <Layout
       sidebar={
@@ -20,7 +24,7 @@ const IndexPage: React.FC = () => {
         </>
       }
     >
-      <BuildCardList items={builds} />
+      <BuildCardList items={filteredBuilds} />
     </Layout>
   )
 }
