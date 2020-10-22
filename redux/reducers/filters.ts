@@ -1,19 +1,23 @@
 import { ECategory, EFilterType, EState } from "../../types"
 import { IPayloadAction } from "../store"
 
+export interface IStoreStateFilters {
+  [EState.EARLY_GAME]: boolean
+  [EState.MID_GAME]: boolean
+  [EState.LATE_GAME]: boolean
+}
+
+export interface IStoreCategoryFilters {
+  [ECategory.BALANCER]: boolean
+  [ECategory.SMELTING]: boolean
+  [ECategory.TRAINS]: boolean
+  [ECategory.PRODUCTION]: boolean
+  [ECategory.ENERGY]: boolean
+}
+
 export interface IStoreFiltersState {
-  [EFilterType.STATE]: {
-    [EState.EARLY_GAME]: boolean
-    [EState.MID_GAME]: boolean
-    [EState.LATE_GAME]: boolean
-  }
-  [EFilterType.CATEGORY]: {
-    [ECategory.BALANCER]: boolean
-    [ECategory.SMELTING]: boolean
-    [ECategory.TRAINS]: boolean
-    [ECategory.PRODUCTION]: boolean
-    [ECategory.ENERGY]: boolean
-  }
+  [EFilterType.STATE]: IStoreStateFilters
+  [EFilterType.CATEGORY]: IStoreCategoryFilters
 }
 
 export const initialFiltersState: IStoreFiltersState = {
