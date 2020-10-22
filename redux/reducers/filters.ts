@@ -16,11 +16,13 @@ export interface IStoreCategoryFilters {
 }
 
 export interface IStoreFiltersState {
+  query: string
   [EFilterType.STATE]: IStoreStateFilters
   [EFilterType.CATEGORY]: IStoreCategoryFilters
 }
 
 export const initialFiltersState: IStoreFiltersState = {
+  query: "",
   [EFilterType.STATE]: {
     [EState.EARLY_GAME]: false,
     [EState.MID_GAME]: false,
@@ -39,6 +41,7 @@ type TFilterPayload =
   | { type: EFilterType.STATE; name: EState }
   | { type: EFilterType.CATEGORY; name: ECategory }
 
+type TSetQueryAction = IPayloadAction<"SET_QUERY", string>
 type TToggleFilterAction = IPayloadAction<"TOGGLE_FILTER", TFilterPayload>
 type TToggleFilterStateAction = IPayloadAction<"TOGGLE_FILTER_STATE", EState>
 type TToggleCategoryStateAction = IPayloadAction<
@@ -47,9 +50,20 @@ type TToggleCategoryStateAction = IPayloadAction<
 >
 
 export type TFiltersAction =
+  | TSetQueryAction
   | TToggleFilterAction
   | TToggleFilterStateAction
   | TToggleCategoryStateAction
+
+const setQuery = (
+  state: IStoreFiltersState,
+  payload: TSetQueryAction["payload"]
+): IStoreFiltersState => {
+  return {
+    ...state,
+    query: payload,
+  }
+}
 
 const toggleFilter = (
   state: IStoreFiltersState,
@@ -97,6 +111,8 @@ export const filtersReducer = (
   action: TFiltersAction
 ): IStoreFiltersState => {
   switch (action.type) {
+    case "SET_QUERY":
+      return setQuery(state, action.payload)
     case "TOGGLE_FILTER":
       return toggleFilter(state, action.payload)
     case "TOGGLE_FILTER_STATE":

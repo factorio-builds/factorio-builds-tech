@@ -1,8 +1,16 @@
 import { createSelector } from "reselect"
 import { ECategory, EState, IBuild } from "../../types"
-import { IStoreCategoryFilters, IStoreStateFilters } from "../reducers/filters"
+import {
+  IStoreCategoryFilters,
+  IStoreFiltersState,
+  IStoreStateFilters,
+} from "../reducers/filters"
 import { IStoreState } from "../store"
-import { filtersCategorySelector, filtersStateSelector } from "./filters"
+import {
+  filtersCategorySelector,
+  filtersQuerySelector,
+  filtersStateSelector,
+} from "./filters"
 
 // mappers not ideal, but necessary until DB is typed
 const categoryMap = {
@@ -65,13 +73,30 @@ const filteredBuildsByCategory = (
   })
 }
 
+const filteredBuildsByQuery = (
+  builds: IBuild[],
+  query: IStoreFiltersState["query"]
+) => {
+  if (!query.trim()) {
+    return builds
+  }
+
+  return builds.filter((build) => {
+    const queryToLower = query.trim().toLowerCase()
+    const nameToLower = build.name.toLowerCase()
+    return nameToLower.includes(queryToLower)
+  })
+}
+
 export const filteredBuildsSelector = createSelector(
   buildsSelector,
+  filtersQuerySelector,
   filtersStateSelector,
   filtersCategorySelector,
-  (builds, filtersState, filtersCategory) => {
+  (builds, filtersQuery, filtersState, filtersCategory) => {
     let filteredBuilds = builds
 
+    filteredBuilds = filteredBuildsByQuery(filteredBuilds, filtersQuery)
     filteredBuilds = filteredBuildsByState(filteredBuilds, filtersState)
     filteredBuilds = filteredBuildsByCategory(filteredBuilds, filtersCategory)
 
