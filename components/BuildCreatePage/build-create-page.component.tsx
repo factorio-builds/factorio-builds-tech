@@ -34,7 +34,7 @@ const initialValues: IFormValues = {
   image: null,
 }
 
-const BuildSchema = Yup.object().shape({
+const validation = {
   name: Yup.string()
     .min(2, "Too Short!")
     .max(50, "Too Long!")
@@ -63,7 +63,17 @@ const BuildSchema = Yup.object().shape({
       "Unsupported Format",
       (value) => value && SUPPORTED_FORMATS.includes(value.type)
     ),
-})
+}
+
+// TODO: validate image
+const validate = (fieldName: keyof IFormValues) => async (value: string) => {
+  try {
+    await validation[fieldName].validate(value)
+    return
+  } catch (err) {
+    return err.message
+  }
+}
 
 const BuildCreatePage: React.FC = () => {
   const router = useRouter()
@@ -72,7 +82,6 @@ const BuildCreatePage: React.FC = () => {
   return (
     <Formik<IFormValues>
       initialValues={initialValues}
-      validationSchema={BuildSchema}
       onSubmit={(values) => {
         fetch("http://localhost:3000/api/build", {
           method: "POST",
@@ -103,6 +112,7 @@ const BuildCreatePage: React.FC = () => {
                 type="text"
                 required
                 component={Input}
+                validate={validate("name")}
               />
 
               <Field
@@ -111,6 +121,7 @@ const BuildCreatePage: React.FC = () => {
                 type="textarea"
                 rows="5"
                 component={Input}
+                validate={validate("description")}
               />
 
               <Field
@@ -120,6 +131,7 @@ const BuildCreatePage: React.FC = () => {
                 rows="5"
                 required
                 component={Input}
+                validate={validate("blueprint")}
               />
 
               <Field
@@ -127,6 +139,7 @@ const BuildCreatePage: React.FC = () => {
                 label="Tileable"
                 type="checkbox"
                 component={Input}
+                validate={validate("tileable")}
               />
 
               <Field
@@ -139,6 +152,7 @@ const BuildCreatePage: React.FC = () => {
                   label: state,
                   value: state,
                 }))}
+                validate={validate("state")}
               />
 
               <InputGroup
@@ -154,6 +168,7 @@ const BuildCreatePage: React.FC = () => {
                       value={category}
                       inline={true}
                       component={Input}
+                      validate={validate("categories")}
                     />
                   )
                 })}
