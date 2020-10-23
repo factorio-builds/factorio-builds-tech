@@ -17,13 +17,29 @@ export const Heading = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 21px 34px;
+  padding: 34px 34px;
   background: linear-gradient(268.31deg, #f2f0f4 30.66%, #dad6e1 100%), #e5e2ea;
+
+  h1 {
+    margin: 0;
+  }
+`
+
+export const HeadingSmall = styled.small`
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: ${COLOR.GREY500};
 `
 
 export const Title = styled.h2`
   font-size: 28px;
   color: ${COLOR.GREY300};
+`
+
+export const Book = styled.img`
+  height: 24px;
+  margin-right: 4px;
 `
 
 export const Content = styled.div`

@@ -36,6 +36,10 @@ export interface IBuild {
   image: IImage
 }
 
+export interface IBuildWithJson extends IBuild {
+  json: IDecodedBlueprintBookData | IDecodedBlueprintData
+}
+
 export interface IImage {
   src: string
   width: number
@@ -89,9 +93,13 @@ export interface IBlueprint {
   icons: Array<IBlueprintIcon>
   entities: Array<IBlueprintEntity>
   item: string
+  label: string
   version: number
 }
 
 export interface IBlueprintBook {
-  blueprints: IBlueprint[]
+  blueprints: Array<{
+    blueprint: IBlueprint
+    index: number
+  }>
 }

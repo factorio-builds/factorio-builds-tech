@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 
 import Layout from "../Layout"
-import { IBuild } from "../../types"
+import { IBuildWithJson } from "../../types"
 import Caret from "../../icons/caret"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import { mockedImages } from "../../utils/mock-images-data"
@@ -23,7 +23,7 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
 }
 
 interface IBuildPageProps {
-  build: IBuild
+  build: IBuildWithJson
 }
 
 const AsideGroup: React.FC<{ title?: string }> = (props) => {
@@ -99,6 +99,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Heading>
           <h1>{build.name}</h1>
+          {isBook(blueprintJSON) && (
+            <SC.HeadingSmall>
+              <SC.Book src="/img/blueprint-book.png" /> Blueprint book
+            </SC.HeadingSmall>
+          )}
         </SC.Heading>
         <SC.Content>
           <SC.Aside>
@@ -119,23 +124,27 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               ))}
             </AsideGroup>
             <AsideGroup title="Game state">{build.metadata.state}</AsideGroup>
-            <AsideGroup title="Required items">
-              {!isBook(blueprintJSON) ? (
-                <>
-                  {sortedRequiredItems.map((item) => {
-                    return (
-                      <RequiredItem
-                        key={item.name}
-                        itemName={item.name}
-                        count={item.count}
-                      />
-                    )
-                  })}
-                </>
-              ) : (
-                "Book not supported"
-              )}
-            </AsideGroup>
+            {!isBook(blueprintJSON) && (
+              <AsideGroup title="Required items">
+                {sortedRequiredItems.map((item) => {
+                  return (
+                    <RequiredItem
+                      key={item.name}
+                      itemName={item.name}
+                      count={item.count}
+                    />
+                  )
+                })}
+              </AsideGroup>
+            )}
+
+            {isBook(blueprintJSON) && (
+              <AsideGroup title="Blueprints">
+                {blueprintJSON.blueprint_book.blueprints.map((bp, index) => {
+                  return <div key={index}>{bp.blueprint.label}</div>
+                })}
+              </AsideGroup>
+            )}
           </SC.Aside>
           <SC.Main>
             <SC.MainTitle>Description</SC.MainTitle>
