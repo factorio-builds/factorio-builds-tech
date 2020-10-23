@@ -58,6 +58,16 @@ export const AsideSubGroup = styled.div`
   }
 `
 
+export const StyledRequiredItem = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+export const IconImg = styled.img`
+  width: 20px;
+  margin: 0 5px;
+`
+
 export const Main = styled.main`
   flex: 1 1 auto;
 `
