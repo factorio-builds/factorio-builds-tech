@@ -96,10 +96,19 @@ export const filteredBuildsSelector = createSelector(
   (builds, filtersQuery, filtersState, filtersCategory) => {
     let filteredBuilds = builds
 
+    const msStart = new Date().getMilliseconds()
+
     filteredBuilds = filteredBuildsByQuery(filteredBuilds, filtersQuery)
     filteredBuilds = filteredBuildsByState(filteredBuilds, filtersState)
     filteredBuilds = filteredBuildsByCategory(filteredBuilds, filtersCategory)
 
-    return filteredBuilds
+    const msEnd = new Date().getMilliseconds()
+
+    return {
+      builds: filteredBuilds,
+      count: filteredBuilds.length,
+      totalCount: builds.length,
+      lookupTime: msEnd - msStart,
+    }
   }
 )
