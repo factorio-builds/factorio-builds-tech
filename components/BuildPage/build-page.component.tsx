@@ -10,6 +10,18 @@ import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import { mockedImages } from "../../utils/mock-images-data"
 import * as SC from "./build-page.styles"
 
+const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
+  const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${props.itemName}.png`
+
+  return (
+    <SC.StyledRequiredItem>
+      {props.count}
+      <SC.IconImg src={iconSrc} />
+      {props.itemName.replace(/-/g, " ")}
+    </SC.StyledRequiredItem>
+  )
+}
+
 interface IBuildPageProps {
   build: IBuild
 }
@@ -58,6 +70,21 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
   }
 
+  const sortedRequiredItems = useMemo(() => {
+    return Object.keys(itemsCount)
+      .map((itemName) => {
+        return {
+          count: itemsCount[itemName],
+          name: itemName,
+        }
+      })
+      .sort((a, b) => {
+        if (a.count === b.count) return 0
+
+        return a.count < b.count ? 1 : -1
+      })
+  }, [itemsCount])
+
   return (
     <Layout
       title={`${
@@ -95,15 +122,13 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             <AsideGroup title="Required items">
               {!isBook(blueprintJSON) ? (
                 <>
-                  {Object.keys(itemsCount).map((itemName) => {
-                    const count = itemsCount[itemName]
+                  {sortedRequiredItems.map((item) => {
                     return (
-                      <div key={itemName}>
-                        {count}{" "}
-                        <img
-                          src={`https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${itemName}.png`}
-                        ></img>
-                      </div>
+                      <RequiredItem
+                        key={item.name}
+                        itemName={item.name}
+                        count={item.count}
+                      />
                     )
                   })}
                 </>
