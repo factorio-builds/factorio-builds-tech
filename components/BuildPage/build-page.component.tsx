@@ -70,6 +70,17 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
   }
 
+  const formatGameState = (gameState: string) => {
+    switch (gameState) {
+      case "early_game":
+        return "Early-game"
+      case "mid_game":
+        return "Mid-game"
+      case "late_game":
+        return "Late-game"
+    }
+  }
+
   const sortedRequiredItems = useMemo(() => {
     return Object.keys(itemsCount)
       .map((itemName) => {
@@ -123,7 +134,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                 <div>{category}</div>
               ))}
             </AsideGroup>
-            <AsideGroup title="Game state">{build.metadata.state}</AsideGroup>
+            <AsideGroup title="Game state">
+              {formatGameState(build.metadata.state)}
+            </AsideGroup>
             {!isBook(blueprintJSON) && (
               <AsideGroup title="Required items">
                 {sortedRequiredItems.map((item) => {
