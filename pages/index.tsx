@@ -1,6 +1,7 @@
 import { GetServerSideProps } from "next"
 import { useSelector } from "react-redux"
 import Layout from "../components/Layout"
+import BuildListLookupStats from "../components/BuildListLookupStats"
 import BuildCardList from "../components/BuildCardList"
 import Filters from "../components/Filters"
 import SearchInput from "../components/SearchInput"
@@ -24,7 +25,12 @@ const IndexPage: React.FC = () => {
         </>
       }
     >
-      <BuildCardList items={filteredBuilds} />
+      <BuildListLookupStats
+        count={filteredBuilds.count}
+        totalCount={filteredBuilds.totalCount}
+        lookupTime={filteredBuilds.lookupTime}
+      />
+      <BuildCardList items={filteredBuilds.builds} />
     </Layout>
   )
 }
