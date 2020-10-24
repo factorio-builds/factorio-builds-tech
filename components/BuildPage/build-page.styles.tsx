@@ -18,7 +18,7 @@ export const HeadingSmall = styled.small`
   display: flex;
   align-items: center;
   font-weight: 700;
-  color: ${COLOR.GREY500};
+  color: ${COLOR.PURPLE500};
 `
 
 export const Title = styled.h2`
