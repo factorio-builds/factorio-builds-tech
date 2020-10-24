@@ -12,7 +12,7 @@ interface IBuildsIndexPageProps {
 }
 
 const BuildsIndexPage: React.FC<IBuildsIndexPageProps> = ({ items }) => (
-  <Layout title="Builds List | Next.js + TypeScript Example">
+  <Layout title="Builds">
     <h1>Builds List</h1>
     <p>You are currently on: /build</p>
     <ListBuild items={items} />
