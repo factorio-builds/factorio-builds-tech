@@ -21,11 +21,6 @@ export const HeadingSmall = styled.small`
   color: ${COLOR.PURPLE500};
 `
 
-export const Title = styled.h2`
-  font-size: 28px;
-  color: ${COLOR.GREY300};
-`
-
 export const Book = styled.img`
   height: 24px;
   margin-right: 4px;
