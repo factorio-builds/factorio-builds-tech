@@ -7,14 +7,14 @@ export const BuildListLookupStatWrapper = styled.div`
 `
 
 export const LookupTime = styled.div`
-  color: #a9a9a9;
+  color: ${COLOR.PURPLE500};
 `
 
 export const Count = styled.div`
-  color: ${COLOR.GREY300};
+  color: ${COLOR.PURPLE700};
 `
 
 export const SortedBy = styled.div`
   font-size: 13px;
-  color: ${COLOR.GREY300};
+  color: ${COLOR.PURPLE700};
 `

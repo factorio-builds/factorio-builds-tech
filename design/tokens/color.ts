@@ -22,4 +22,12 @@ export const COLOR = {
 
   SUCCESS: "#8FCD5B",
   DANGER: "#F24439",
+
+  // new sort me
+  HEADER: "#150F1E",
+  SUBHEADER: "#392951",
+  SIDEBAR: "#241A34",
+  BACKGROUND: "#150F1E",
+  LINK: "#28D8FF",
+  CODE: "#241A34",
 }

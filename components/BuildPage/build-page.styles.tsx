@@ -13,18 +13,7 @@ export const BuildImage = styled.div`
   }
 `
 
-export const Heading = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 34px 34px;
-  background: linear-gradient(268.31deg, #f2f0f4 30.66%, #dad6e1 100%), #e5e2ea;
-
-  h1 {
-    margin: 0;
-  }
-`
-
+// TODO: move?
 export const HeadingSmall = styled.small`
   display: flex;
   align-items: center;
@@ -56,8 +45,8 @@ export const Aside = styled.aside`
 export const AsideGroup = styled.section`
   & + & {
     margin-top: 8px;
-    border-top: 1px solid #cfcfcf;
-    padding: 8px 0;
+    border-top: 1px solid #877599;
+    padding-top: 8px;
   }
 `
 
@@ -92,12 +81,10 @@ export const MainTitle = styled.h3`
   font-weight: 700;
   margin-top: 0;
   font-size: 16px;
-  color: #000;
 `
 
 export const MainContent = styled.div`
   font-size: 16px;
-  color: #424242;
 
   > ::first-child {
     margin-top: 0;
@@ -111,14 +98,14 @@ export const MainContent = styled.div`
 export const ExpandBlueprint = styled.button`
   background: none;
   border: none;
-  color: #67469b;
+  color: ${COLOR.LINK};
   padding: 0;
   font-size: 16px;
 `
 
 export const Blueprint = styled.div`
   margin-top: 10px;
-  background: #eeeeee;
+  background: ${COLOR.CODE};
   padding: 16px;
 `
 
@@ -128,6 +115,7 @@ export const BlueprintData = styled.textarea`
   overflow-y: scroll;
   margin-top: 12px;
   background: transparent;
+  color: ${COLOR.PURPLE900};
   border: none;
   width: 100%;
 `
@@ -153,7 +141,7 @@ export const Toggler = styled.div`
 
   &:hover::after {
     height: 1px;
-    background: #000;
+    background: ${COLOR.PURPLE900};
   }
 
   &.is-selected {
@@ -162,6 +150,6 @@ export const Toggler = styled.div`
 
   &.is-selected::after {
     height: 3px;
-    background: #000;
+    background: ${COLOR.PURPLE900};
   }
 `

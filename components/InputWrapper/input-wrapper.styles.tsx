@@ -7,7 +7,7 @@ export const StyledInputWrapper = styled.div`
 `
 
 export const Label = styled.label`
-  color: #231f20;
+  color: ${COLOR.PURPLE900};
   font-size: 18px;
   line-height: 1.8;
   font-weight: 700;

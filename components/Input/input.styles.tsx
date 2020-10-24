@@ -8,6 +8,7 @@ const BaseInput = css`
   line-height: 24px;
   line-height: 1.8;
   font-weight: 400;
+  outline: 3px solid #fff;
 
   &:hover {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);

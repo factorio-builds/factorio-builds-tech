@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { transparentize } from "polished"
 
 export const BuildCardWrapper = styled.div`
   position: relative;
@@ -19,8 +20,12 @@ export const Content = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 32px 16px 16px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+  padding: 64px 16px 16px;
+  background: linear-gradient(
+    180deg,
+    ${transparentize(1, "#150F1F")} 0%,
+    #20182e 75%
+  );
   color: #fff;
 `
 

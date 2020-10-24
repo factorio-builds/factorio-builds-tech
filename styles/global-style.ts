@@ -1,7 +1,10 @@
 import { createGlobalStyle } from "styled-components"
+import { COLOR } from "../design/tokens/color"
 
 export const GlobalStyle = createGlobalStyle`
   body {
+    background: ${COLOR.BACKGROUND};
+    color: ${COLOR.PURPLE900};
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
       "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
