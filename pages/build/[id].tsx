@@ -12,7 +12,7 @@ interface IBuildsPageProps {
 const BuildsPage = ({ build, errors }: IBuildsPageProps) => {
   if (errors || !build) {
     return (
-      <Layout title="Error | Next.js + TypeScript Example">
+      <Layout title="Error">
         <p>
           <span style={{ color: "red" }}>Error:</span> {errors}
         </p>

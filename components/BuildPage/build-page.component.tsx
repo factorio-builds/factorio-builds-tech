@@ -98,9 +98,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   return (
     <Layout
-      title={`${
-        build ? build.name : "Build Detail"
-      } | Next.js + TypeScript Example`}
+      title={build.name}
       subheader={
         <>
           <h1>{build.name}</h1>

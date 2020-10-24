@@ -13,7 +13,7 @@ interface IUsersPageProps {
 const UsersPage = ({ item, errors }: IUsersPageProps) => {
   if (errors) {
     return (
-      <Layout title="Error | Next.js + TypeScript Example">
+      <Layout title="Error">
         <p>
           <span style={{ color: "red" }}>Error:</span> {errors}
         </p>

@@ -11,7 +11,7 @@ interface IUsersIndexPage {
 }
 
 const UsersIndexPage = ({ items }: IUsersIndexPage) => (
-  <Layout title="Users List | Next.js + TypeScript Example">
+  <Layout title="Users">
     <h1>Users List</h1>
     <p>You are currently on: /users</p>
     <List items={items} />
