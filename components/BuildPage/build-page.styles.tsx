@@ -18,12 +18,7 @@ export const HeadingSmall = styled.small`
   display: flex;
   align-items: center;
   font-weight: 700;
-  color: ${COLOR.GREY500};
-`
-
-export const Title = styled.h2`
-  font-size: 28px;
-  color: ${COLOR.GREY300};
+  color: ${COLOR.PURPLE500};
 `
 
 export const Book = styled.img`
@@ -45,7 +40,7 @@ export const Aside = styled.aside`
 export const AsideGroup = styled.section`
   & + & {
     margin-top: 8px;
-    border-top: 1px solid #877599;
+    border-top: 1px solid ${COLOR.PURPLE500};
     padding-top: 8px;
   }
 `
