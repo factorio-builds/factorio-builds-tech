@@ -40,7 +40,7 @@ export const Aside = styled.aside`
 export const AsideGroup = styled.section`
   & + & {
     margin-top: 8px;
-    border-top: 1px solid #877599;
+    border-top: 1px solid ${COLOR.PURPLE500};
     padding-top: 8px;
   }
 `
