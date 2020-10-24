@@ -15,7 +15,7 @@ export const SidebarContent = styled.div`
 
 export const SidebarBG = styled.div`
   position: absolute;
-  background: ${COLOR.PURPLE900};
+  background: ${COLOR.SIDEBAR};
   top: 0;
   bottom: 0;
   right: 0;

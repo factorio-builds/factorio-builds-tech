@@ -36,6 +36,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             borderRadius: 0,
             boxShadow: state.isFocused ? focusedShadow : "none",
             transition: "none",
+            outline: "3px solid #fff",
             "&:hover": {
               boxShadow: state.isFocused
                 ? focusedShadow
@@ -90,11 +91,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             : state.isFocused
             ? `${COLOR.FOCUSED} !important`
             : "none",
-          color: state.isSelected
-            ? "#fff !important"
-            : state.isFocused
-            ? "#000"
-            : provided.color,
+          color: state.isSelected ? "#fff !important" : "#000",
           "&:hover": {
             background: COLOR.FOCUSED,
             color: "#000",

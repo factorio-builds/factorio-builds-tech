@@ -101,6 +101,16 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       title={`${
         build ? build.name : "Build Detail"
       } | Next.js + TypeScript Example`}
+      subheader={
+        <>
+          <h1>{build.name}</h1>
+          {isBook(blueprintJSON) && (
+            <SC.HeadingSmall>
+              <SC.Book src="/img/blueprint-book.png" /> Blueprint book
+            </SC.HeadingSmall>
+          )}
+        </>
+      }
       sidebar={
         <SC.BuildImage>
           <img src={mockedImages[0].src} alt="Sample image" />
@@ -108,20 +118,12 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       }
     >
       <SC.Wrapper>
-        <SC.Heading>
-          <h1>{build.name}</h1>
-          {isBook(blueprintJSON) && (
-            <SC.HeadingSmall>
-              <SC.Book src="/img/blueprint-book.png" /> Blueprint book
-            </SC.HeadingSmall>
-          )}
-        </SC.Heading>
         <SC.Content>
           <SC.Aside>
             <AsideGroup>by {build.owner.name}</AsideGroup>
             <AsideGroup>
               <SC.AsideSubGroup>
-                published on <b>{formatDate(build.createdAt)}</b>
+                published on <b>{formatDate(build?.createdAt)}</b>
                 <br />({formatSince(build.createdAt)})
               </SC.AsideSubGroup>
               <SC.AsideSubGroup>

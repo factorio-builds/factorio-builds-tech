@@ -1,15 +1,27 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
+import Logo from "../../icons/logo"
 import { ContainerWrapper as Container } from "../Container/container.styles"
 
 export const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
-  background: #8fce5b;
+  background: ${COLOR.HEADER};
+  border-bottom: 3px solid ${COLOR.SUBHEADER};
   height: 74px;
   padding: 0 20px;
 
   ${Container} {
     align-items: center;
+  }
+`
+
+export const StyledLogo = styled(Logo)`
+  height: 40px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
   }
 `
 
