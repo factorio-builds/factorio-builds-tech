@@ -18,7 +18,7 @@
     "pg": "^8.4.1",
     "pg-hstore": "^2.3.3",
     "polished": "^4.0.3",
-    "react": "^16.12.0",
+    "react": "^17.0.1",
     "react-dom": "^16.12.0",
     "react-dropzone": "^11.2.0",
     "react-markdown": "^4.3.1",
