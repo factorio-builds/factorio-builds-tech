@@ -4,17 +4,18 @@ import Link from "next/link"
 import { IUser } from "../../types"
 import { mockedUsers } from "../../utils/mock-users-data"
 import Layout from "../../components/Layout"
-import List from "../../components/List"
 
 interface IUsersIndexPage {
-  items: IUser[]
+  users: IUser[]
 }
 
-const UsersIndexPage = ({ items }: IUsersIndexPage) => (
+const UsersIndexPage = ({ users }: IUsersIndexPage) => (
   <Layout title="Users">
     <h1>Users List</h1>
     <p>You are currently on: /users</p>
-    <List items={items} />
+    {users.map((user, index) => (
+      <div key={index}>{user.name}</div>
+    ))}
     <p>
       <Link href="/">
         <a>Go home</a>
@@ -24,8 +25,8 @@ const UsersIndexPage = ({ items }: IUsersIndexPage) => (
 )
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const items: IUser[] = mockedUsers
-  return { props: { items } }
+  const users: IUser[] = mockedUsers
+  return { props: { users } }
 }
 
 export default UsersIndexPage
