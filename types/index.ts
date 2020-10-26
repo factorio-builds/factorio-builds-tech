@@ -96,6 +96,7 @@ export interface IBlueprint {
   entities: Array<IBlueprintEntity>
   item: string
   label: string
+  description?: string
   version: number
 }
 
@@ -104,4 +105,7 @@ export interface IBlueprintBook {
     blueprint: IBlueprint
     index: number
   }>
+  label: string
+  description?: string
+  version: number
 }
