@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import { Form, Formik, Field } from "formik"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import * as Yup from "yup"
 import Layout from "../../components/Layout"
@@ -9,7 +9,11 @@ import ImageUpload from "../../components/ImageUpload"
 import Input from "../Input"
 import Stacker from "../Stacker"
 import InputGroup from "../InputGroup"
-import { isValidBlueprint } from "../../utils/blueprint"
+import {
+  decodeBlueprint,
+  isBook,
+  isValidBlueprint,
+} from "../../utils/blueprint"
 
 interface IFormValues {
   name: string
@@ -78,6 +82,8 @@ const validate = (fieldName: keyof IFormValues) => async (value: string) => {
 const BuildCreatePage: React.FC = () => {
   const router = useRouter()
   const dispatch = useDispatch()
+  const [canInit, setCanInit] = useState(false)
+  const [init, setInit] = useState(false)
 
   return (
     <Formik<IFormValues>
@@ -93,94 +99,153 @@ const BuildCreatePage: React.FC = () => {
         })
       }}
     >
-      {(formikProps) => (
-        <Layout
-          title="Create a build"
-          sidebar={
-            <ImageUpload
-              onChange={(file) => formikProps.setFieldValue("image", file)}
-            />
+      {(formikProps) => {
+        useEffect(() => {
+          const isValid = isValidBlueprint(formikProps.values.blueprint)
+
+          if (isValid && formikProps.touched.blueprint) {
+            setCanInit(true)
           }
-        >
-          <h2>Create a build</h2>
+        }, [formikProps.touched.blueprint, formikProps.values.blueprint])
 
-          <Form>
-            <Stacker>
-              <Field
-                name="name"
-                label="Name"
-                type="text"
-                required
-                component={Input}
-                validate={validate("name")}
+        function preFillForm(): void {
+          setInit(true)
+
+          const json = decodeBlueprint(formikProps.values.blueprint)
+          console.log(json)
+
+          const bp = isBook(json) ? json.blueprint_book : json.blueprint
+
+          formikProps.setFieldValue("name", bp.label)
+          formikProps.setFieldValue("description", bp.description || "")
+
+          // TODO: guess metadata from blueprint content
+        }
+
+        function handleOnKeyPress(
+          e: React.KeyboardEvent<HTMLTextAreaElement>
+        ): void {
+          if (e.key === "Enter" && canInit) {
+            preFillForm()
+          }
+        }
+
+        return (
+          <Layout
+            title="Create a build"
+            sidebar={
+              <ImageUpload
+                onChange={(file) => formikProps.setFieldValue("image", file)}
               />
+            }
+          >
+            <h2>Create a build</h2>
 
-              <Field
-                name="description"
-                label="Description"
-                type="textarea"
-                rows="5"
-                component={Input}
-                validate={validate("description")}
-              />
+            <Form>
+              {!init && (
+                <Stacker>
+                  <Field
+                    name="blueprint"
+                    label="Blueprint"
+                    type="textarea"
+                    rows="5"
+                    required
+                    component={Input}
+                    validate={validate("blueprint")}
+                    onKeyPress={handleOnKeyPress}
+                  />
 
-              <Field
-                name="blueprint"
-                label="Blueprint"
-                type="textarea"
-                rows="5"
-                required
-                component={Input}
-                validate={validate("blueprint")}
-              />
+                  <div style={{ marginTop: "16px" }}>
+                    <button
+                      type="button"
+                      disabled={!canInit}
+                      onClick={preFillForm}
+                    >
+                      continue
+                    </button>
+                  </div>
+                </Stacker>
+              )}
 
-              <Field
-                name="tileable"
-                label="Tileable"
-                type="checkbox"
-                component={Input}
-                validate={validate("tileable")}
-              />
+              {init && (
+                <Stacker>
+                  <Field
+                    name="name"
+                    label="Name"
+                    type="text"
+                    required
+                    component={Input}
+                    validate={validate("name")}
+                  />
 
-              <Field
-                name="state"
-                label="Game state"
-                type="select"
-                required
-                component={Input}
-                options={Object.keys(EState).map((state) => ({
-                  label: state,
-                  value: state,
-                }))}
-                validate={validate("state")}
-              />
+                  <Field
+                    name="description"
+                    label="Description"
+                    type="textarea"
+                    rows="5"
+                    component={Input}
+                    validate={validate("description")}
+                  />
 
-              <InputGroup
-                legend="Categories"
-                error={formikProps.errors.categories}
-              >
-                {Object.keys(ECategory).map((category) => {
-                  return (
-                    <Field
-                      name="categories"
-                      label={category.toLowerCase()}
-                      type="checkbox"
-                      value={category}
-                      inline={true}
-                      component={Input}
-                      validate={validate("categories")}
-                    />
-                  )
-                })}
-              </InputGroup>
-            </Stacker>
+                  <Field
+                    name="blueprint"
+                    label="Blueprint"
+                    type="textarea"
+                    rows="5"
+                    required
+                    component={Input}
+                    validate={validate("blueprint")}
+                  />
 
-            <div style={{ marginTop: "16px" }}>
-              <button>save</button>
-            </div>
-          </Form>
-        </Layout>
-      )}
+                  <Field
+                    name="tileable"
+                    label="Tileable"
+                    type="checkbox"
+                    component={Input}
+                    validate={validate("tileable")}
+                  />
+
+                  <Field
+                    name="state"
+                    label="Game state"
+                    type="select"
+                    required
+                    component={Input}
+                    options={Object.keys(EState).map((state) => ({
+                      label: state,
+                      value: state,
+                    }))}
+                    validate={validate("state")}
+                  />
+
+                  <InputGroup
+                    legend="Categories"
+                    error={formikProps.errors.categories}
+                  >
+                    {Object.keys(ECategory).map((category) => {
+                      return (
+                        <Field
+                          name="categories"
+                          label={category.toLowerCase()}
+                          type="checkbox"
+                          value={category}
+                          inline={true}
+                          component={Input}
+                          validate={validate("categories")}
+                        />
+                      )
+                    })}
+                  </InputGroup>
+
+                  <div style={{ marginTop: "16px" }}>
+                    <button>save</button>
+                  </div>
+                </Stacker>
+              )}
+            </Form>
+          </Layout>
+        )
+      }}
     </Formik>
   )
 }
