@@ -7,9 +7,10 @@ import Filters from "../components/Filters"
 import SearchInput from "../components/SearchInput"
 import { initializeStore, IStoreState } from "../redux/store"
 import { IBuild } from "../types"
-import db from "../db/models"
 import { decodeBlueprint, isBook } from "../utils/blueprint"
 import { filteredBuildsSelector } from "../redux/selectors/builds"
+import { connectDB } from "../db"
+import { Build } from "../db/entities/build.entity"
 
 const IndexPage: React.FC = () => {
   const filteredBuilds = useSelector((store: IStoreState) =>
@@ -39,16 +40,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const reduxStore = initializeStore()
   const { dispatch } = reduxStore
 
-  // @ts-ignore
-  const builds: IBuild[] = await db.build
-    .findAll({
-      attributes: ["id", "owner_id", "name", "blueprint", "metadata"],
-    })
-    // @ts-ignore
-    .catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
+  const connection = await connectDB()
+
+  const buildsRepository = connection!.getRepository(Build)
+  const builds = await buildsRepository.find().catch((error) => {
+    console.error(error)
+    throw new Error("Cannot find build data")
+  })
 
   const deserializedBuilds: IBuild[] = JSON.parse(JSON.stringify(builds))
 

@@ -1,11 +1,12 @@
 import { GetServerSideProps } from "next"
-import db from "../../db/models"
-import { IBuild } from "../../types"
+import { connectDB } from "../../db"
+import { Build } from "../../db/entities/build.entity"
+import { IBuildWithJson } from "../../types"
 import Layout from "../../components/Layout"
 import BuildPage from "../../components/BuildPage"
 
 interface IBuildsPageProps {
-  build?: IBuild
+  build?: IBuildWithJson
   errors?: string
 }
 
@@ -29,14 +30,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
 
-    // @ts-ignore
-    const build = await db.build
-      .findByPk(id, {
-        // @ts-ignore
-        include: [{ model: db.user, as: "owner" }],
-      })
+    const connection = await connectDB()
 
-      // @ts-ignore
+    const buildsRepository = connection!.getRepository(Build)
+    const build = await buildsRepository
+      .findOne(id as string)
+      // TODO: reproduce with TypeORM
+      // .findByPk(req.query.id, {
+      //   // @ts-ignore
+      //   include: [{ model: db.user, as: "owner" }],
+      // })
       .catch((error) => {
         console.error(error)
         throw new Error("Cannot find build data")

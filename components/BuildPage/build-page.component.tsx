@@ -118,14 +118,19 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Content>
           <SC.Aside>
-            <AsideGroup>by {build.owner.name}</AsideGroup>
+            {/* TODO: restore me */}
+            {/* <AsideGroup>by {build.owner.name}</AsideGroup> */}
             <AsideGroup>
               <SC.AsideSubGroup>
+                {/* @ts-ignore */}
                 published on <b>{formatDate(build?.createdAt)}</b>
+                {/* @ts-ignore */}
                 <br />({formatSince(build.createdAt)})
               </SC.AsideSubGroup>
               <SC.AsideSubGroup>
+                {/* @ts-ignore */}
                 edited on <b>{formatDate(build.updatedAt)}</b>
+                {/* @ts-ignore */}
                 <br />({formatSince(build.updatedAt)})
               </SC.AsideSubGroup>
             </AsideGroup>

@@ -1,22 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import db from "../../../db/models"
+import { connectDB } from "../../../db"
+import { Build } from "../../../db/entities/build.entity"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    await db.sequelize.authenticate()
+    const connection = await connectDB()
     console.log("Connection has been established successfully.")
 
     switch (req.method) {
       case "GET":
         {
-          // @ts-ignore
-          const build = await db.build
-            .findByPk(req.query.id, {
-              // @ts-ignore
-              include: [{ model: db.user, as: "owner" }],
-            })
-
-            // @ts-ignore
+          const buildsRepository = connection!.getRepository(Build)
+          const build = await buildsRepository
+            .findOne(req.query.id as string)
+            // TODO: reproduce with TypeORM
+            // .findByPk(req.query.id, {
+            //   // @ts-ignore
+            //   include: [{ model: db.user, as: "owner" }],
+            // })
             .catch((error) => {
               console.error(error)
               throw new Error("Cannot find build data")

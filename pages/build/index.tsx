@@ -5,7 +5,8 @@ import { IBuild } from "../../types"
 import Layout from "../../components/Layout"
 import ListBuild from "../../components/ListBuild"
 import { initializeStore } from "../../redux/store"
-import db from "../../db/models"
+import { connectDB } from "../../db"
+import { Build } from "../../db/entities/build.entity"
 
 interface IBuildsIndexPageProps {
   items: IBuild[]
@@ -28,19 +29,18 @@ export const getServerSideProps: GetServerSideProps = async () => {
   const reduxStore = initializeStore()
   const { dispatch } = reduxStore
 
-  // @ts-ignore
-  const builds: IBuild[] = await db.build
-    .findAll({
-      attributes: ["id", "owner_id", "name", "metadata"],
-    })
-    // @ts-ignore
-    .catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
+  const connection = await connectDB()
+  const buildsRepository = connection!.getRepository(Build)
+
+  const builds = await buildsRepository.find().catch((error) => {
+    console.error(error)
+    throw new Error("Cannot find build data")
+  })
 
   dispatch({
     type: "SET_BUILDS",
+    // TODO: fix type
+    // @ts-ignore
     payload: builds,
   })
 
