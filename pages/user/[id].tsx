@@ -3,15 +3,14 @@ import { GetServerSideProps } from "next"
 import { IUser } from "../../types"
 import { mockedUsers } from "../../utils/mock-users-data"
 import Layout from "../../components/Layout"
-import ListDetail from "../../components/ListDetail"
 
 interface IUsersPageProps {
-  item?: IUser
+  user?: IUser
   errors?: string
 }
 
-const UsersPage = ({ item, errors }: IUsersPageProps) => {
-  if (errors) {
+const UsersPage = ({ user, errors }: IUsersPageProps) => {
+  if (errors || !user) {
     return (
       <Layout title="Error">
         <p>
@@ -21,15 +20,7 @@ const UsersPage = ({ item, errors }: IUsersPageProps) => {
     )
   }
 
-  return (
-    <Layout
-      title={`${
-        item ? item.name : "User Detail"
-      } | Next.js + TypeScript Example`}
-    >
-      {item && <ListDetail item={item} />}
-    </Layout>
-  )
+  return <Layout title={user.name}>{user.name}</Layout>
 }
 
 export default UsersPage
@@ -37,8 +28,8 @@ export default UsersPage
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
-    const item = mockedUsers.find((data) => data.id === id)
-    return { props: { item } }
+    const user = mockedUsers.find((data) => data.id === id)
+    return { props: { user } }
   } catch (err) {
     return { props: { errors: err.message } }
   }
