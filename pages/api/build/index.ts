@@ -1,43 +1,39 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { v4 as uuidv4 } from "uuid"
-import db from "../../../db/models"
+import { connectDB } from "../../../db"
+import { Build } from "../../../db/entities/build.entity"
+// import { User } from "../../../db/entities/user.entity"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    await db.sequelize.authenticate()
+    const connection = await connectDB()
+    const buildsRepository = connection!.getRepository(Build)
+    // const userRepository = connection!.getRepository(User)
     console.log("Connection has been established successfully.")
 
     switch (req.method) {
       case "GET":
         {
-          // @ts-ignore
-          const build = await db.build
-            .findAll({
-              attributes: ["id", "owner_id", "name", "metadata"],
-            })
-            // @ts-ignore
-            .catch((error) => {
-              console.error(error)
-              throw new Error("Cannot find build data")
-            })
+          const builds = await buildsRepository.find().catch((error) => {
+            console.error(error)
+            throw new Error("Cannot find build data")
+          })
 
-          res.status(200).json(build)
+          res.status(200).json(builds)
         }
         break
       case "POST": {
         const body = JSON.parse(req.body)
 
-        // @ts-ignore
-        const owner = await db.user
-          .findByPk("8358cfb0-2675-4651-a9c2-0d7cf57d6110")
-          // @ts-ignore
-          .catch((error) => {
-            console.error(error)
-            throw new Error("Cannot find user data")
-          })
+        // TODO: restore
+        // const owner = await userRepository
+        //   .findOne("8358cfb0-2675-4651-a9c2-0d7cf57d6110")
+        //   .catch((error) => {
+        //     console.error(error)
+        //     throw new Error("Cannot find user data")
+        //   })
 
-        // @ts-ignore
-        const build = await db.build.create({
+        const build = buildsRepository.create({
           id: uuidv4(),
           name: body.name,
           blueprint: body.blueprint,
@@ -49,8 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             tileable: body.tileable,
           },
         })
-
-        await build.setOwner(owner)
+        buildsRepository.save(build)
 
         res.status(200).json(build)
         break

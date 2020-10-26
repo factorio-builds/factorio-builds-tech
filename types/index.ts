@@ -30,8 +30,8 @@ export interface IBuild {
   blueprint: string
   metadata: IMetadata
   name: string
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
   owner: IUser
   image: IImage
 }
@@ -49,6 +49,8 @@ export interface IImage {
 export interface IUser {
   id: string
   name: string
+  created_at: string
+  updated_at: string
 }
 
 // Blueprint data types from https://github.com/BlooperDB/factorio-render
