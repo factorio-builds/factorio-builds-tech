@@ -26,7 +26,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         break
       case "POST": {
-        res.status(400).json({})
+        const buildsRepository = connection!.getRepository(Build)
+        const build = await buildsRepository
+          .findOne(req.query.id as string)
+          .catch((error) => {
+            console.error(error)
+            throw new Error("Cannot find build data")
+          })
+
+        if (!build) {
+          throw new Error("Cannot find build data")
+        }
+
+        const body = JSON.parse(req.body)
+
+        build.name = body.name
+        build.blueprint = body.blueprint
+        build.description = body.description
+        build.metadata = {
+          ...build.metadata,
+          state: body.state.toLowerCase(),
+          categories: body.categories.length ? body.categories : [],
+          tileable: body.tileable,
+        }
+
+        await buildsRepository.save(build)
+
+        res.status(200).json(build)
         break
       }
     }

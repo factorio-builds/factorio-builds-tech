@@ -1,8 +1,8 @@
 import React from "react"
-import BuildCreatePage from "../../components/BuildCreatePage"
+import BuildFormPage from "../../components/BuildFormPage"
 
 const BuildsCreatePage: React.FC = () => {
-  return <BuildCreatePage />
+  return <BuildFormPage type="CREATE" />
 }
 
 export default BuildsCreatePage
