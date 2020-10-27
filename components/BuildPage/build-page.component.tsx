@@ -1,13 +1,12 @@
-import cx from "classnames"
 import React, { useMemo, useState } from "react"
 import ReactMarkdown from "react-markdown"
+import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
-
-import Layout from "../Layout"
-import { IBuildWithJson } from "../../types"
 import Caret from "../../icons/caret"
+import { IBuildWithJson } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import { mockedImages } from "../../utils/mock-images-data"
+import Layout from "../Layout"
 import * as SC from "./build-page.styles"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {

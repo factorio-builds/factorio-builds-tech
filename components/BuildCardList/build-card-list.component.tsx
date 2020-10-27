@@ -1,8 +1,8 @@
 import * as React from "react"
-import BuildCard from "../BuildCard"
+import { useDistributeToColumn } from "../../hooks/useDistributeToColumn"
 import { IBuild } from "../../types"
 import { mockedImages } from "../../utils/mock-images-data"
-import { useDistributeToColumn } from "../../hooks/useDistributeToColumn"
+import BuildCard from "../BuildCard"
 import * as SC from "./build-card-list.styles"
 import { COLS, GUTTER } from "./design-tokens"
 

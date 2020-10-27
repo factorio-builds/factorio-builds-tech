@@ -1,10 +1,10 @@
 import React from "react"
 import { useUID } from "react-uid"
 import { FieldProps } from "formik"
-import * as SC from "./input.styles"
-import InputWrapper from "../InputWrapper"
 import Checkbox from "../Checkbox"
+import InputWrapper from "../InputWrapper"
 import Select from "../Select"
+import * as SC from "./input.styles"
 
 interface IInputProps extends FieldProps {
   label: string

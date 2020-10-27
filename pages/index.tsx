@@ -1,16 +1,16 @@
-import { GetServerSideProps } from "next"
 import { useSelector } from "react-redux"
-import Layout from "../components/Layout"
-import BuildListLookupStats from "../components/BuildListLookupStats"
+import { GetServerSideProps } from "next"
 import BuildCardList from "../components/BuildCardList"
+import BuildListLookupStats from "../components/BuildListLookupStats"
 import Filters from "../components/Filters"
+import Layout from "../components/Layout"
 import SearchInput from "../components/SearchInput"
+import { connectDB } from "../db"
+import { Build } from "../db/entities/build.entity"
+import { filteredBuildsSelector } from "../redux/selectors/builds"
 import { initializeStore, IStoreState } from "../redux/store"
 import { IBuild } from "../types"
 import { decodeBlueprint, isBook } from "../utils/blueprint"
-import { filteredBuildsSelector } from "../redux/selectors/builds"
-import { connectDB } from "../db"
-import { Build } from "../db/entities/build.entity"
 
 const IndexPage: React.FC = () => {
   const filteredBuilds = useSelector((store: IStoreState) =>

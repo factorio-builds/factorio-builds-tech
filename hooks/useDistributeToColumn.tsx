@@ -39,7 +39,7 @@ export function useDistributeToColumn(
   const colWidth =
     containerWidth / colCount - (gutter * (colCount - 1)) / colCount
 
-  const columns = Array.from({ length: colCount }, () => new Array())
+  const columns = Array.from({ length: colCount }, () => [])
 
   // TODO: memoize
   items.forEach((item) => {

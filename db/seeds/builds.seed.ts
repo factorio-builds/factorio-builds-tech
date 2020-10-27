@@ -1,5 +1,5 @@
-import { Factory, Seeder } from "typeorm-seeding"
 import { Connection } from "typeorm"
+import { Factory, Seeder } from "typeorm-seeding"
 import { Build } from "../entities/build.entity"
 import { builds } from "./data/builds"
 

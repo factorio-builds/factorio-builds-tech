@@ -1,6 +1,6 @@
-import cx from "classnames"
 import React, { useCallback, useState } from "react"
 import { useDropzone } from "react-dropzone"
+import cx from "classnames"
 import * as SC from "./image-upload.styles"
 
 interface IImageUploadProps {

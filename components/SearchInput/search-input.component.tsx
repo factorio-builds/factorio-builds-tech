@@ -1,6 +1,6 @@
-import cx from "classnames"
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import cx from "classnames"
 import { useDebouncedEffect } from "../../hooks/useDebouncedEffect"
 import { IStoreState } from "../../redux/store"
 import * as SC from "./search-input.styles"
