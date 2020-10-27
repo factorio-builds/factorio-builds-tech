@@ -13,8 +13,12 @@ export const initialBuildsState: IStoreBuildsState = {
 
 type TSetBuildsAction = IPayloadAction<"SET_BUILDS", IBuild[]>
 type TCreateBuildAction = IPayloadAction<"CREATE_BUILD", IBuild>
+type TUpdateBuildAction = IPayloadAction<"UPDATE_BUILD", IBuild>
 
-export type TBuildsAction = TSetBuildsAction | TCreateBuildAction
+export type TBuildsAction =
+  | TSetBuildsAction
+  | TCreateBuildAction
+  | TUpdateBuildAction
 
 const setBuilds = (
   state: IStoreBuildsState,
@@ -36,6 +40,22 @@ const createBuild = (
   }
 }
 
+const updateBuild = (
+  state: IStoreBuildsState,
+  payload: TCreateBuildAction["payload"]
+) => {
+  return {
+    ...state,
+    items: state.items.map((item) => {
+      if (item.id === payload.id) {
+        return payload
+      }
+
+      return item
+    }),
+  }
+}
+
 export const buildsReducer = (
   state = initialBuildsState,
   action: TBuildsAction
@@ -45,6 +65,8 @@ export const buildsReducer = (
       return setBuilds(state, action.payload)
     case "CREATE_BUILD":
       return createBuild(state, action.payload)
+    case "UPDATE_BUILD":
+      return updateBuild(state, action.payload)
     default:
       return state
   }

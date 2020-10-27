@@ -1,3 +1,4 @@
+import Link from "next/link"
 import styled from "styled-components"
 import { COLOR } from "../../design/tokens/color"
 
@@ -66,6 +67,12 @@ export const StyledRequiredItem = styled.div`
 export const IconImg = styled.img`
   width: 20px;
   margin: 0 5px;
+`
+
+export const EditBuild = styled.span`
+  cursor: pointer;
+  color: ${COLOR.LINK};
+  border-bottom: 1px solid ${COLOR.LINK};
 `
 
 export const Main = styled.main`

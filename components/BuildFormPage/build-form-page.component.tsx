@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"
 import { Form, Formik, Field } from "formik"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
-import { ECategory, EState } from "../../types"
+import { ECategory, EState, IBuild } from "../../types"
 import {
   decodeBlueprint,
   isBook,
@@ -28,7 +28,7 @@ interface IFormValues {
 const FILE_SIZE = 160 * 1024
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
 
-const initialValues: IFormValues = {
+const baseInitialValues: IFormValues = {
   name: "",
   blueprint: "",
   description: "",
@@ -36,6 +36,22 @@ const initialValues: IFormValues = {
   tileable: false,
   categories: [],
   image: null,
+}
+
+const createInitialValues = (build?: IBuild): IFormValues => {
+  if (!build) {
+    return baseInitialValues
+  }
+
+  return {
+    name: build.name,
+    blueprint: build.blueprint,
+    description: build.description,
+    state: build.metadata.state,
+    tileable: build.metadata.tileable,
+    categories: build.metadata.categories,
+    image: null,
+  }
 }
 
 const validation = {
@@ -79,24 +95,51 @@ const validate = (fieldName: keyof IFormValues) => async (value: string) => {
   }
 }
 
-const BuildCreatePage: React.FC = () => {
+interface IBuildFormPageCreating {
+  type: "CREATE"
+  build?: undefined
+}
+
+interface IBuildFormPageEditing {
+  type: "EDIT"
+  build: IBuild
+}
+
+type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing
+
+const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [canInit, setCanInit] = useState(false)
   const [init, setInit] = useState(false)
 
+  const initialValues = createInitialValues(props.build)
+
   return (
     <Formik<IFormValues>
       initialValues={initialValues}
       onSubmit={(values) => {
-        fetch("http://localhost:3000/api/build", {
+        const endpoint =
+          props.type === "EDIT" ? `build/${props.build.id}` : `build`
+        fetch(`http://localhost:3000/api/${endpoint}`, {
           method: "POST",
           body: JSON.stringify(values),
-        }).then((res) => {
-          console.log(res)
-          dispatch({ type: "CREATE_BUILD", payload: values })
-          router.push("/")
         })
+          .then((res) => res.json())
+          .then((res) => {
+            if (props.type === "EDIT") {
+              dispatch({
+                type: "EDIT_BUILD",
+                payload: { ...values, id: res.id },
+              })
+            } else {
+              dispatch({
+                type: "CREATE_BUILD",
+                payload: values,
+              })
+            }
+            router.push("/")
+          })
       }}
     >
       {(formikProps) => {
@@ -139,10 +182,10 @@ const BuildCreatePage: React.FC = () => {
               />
             }
           >
-            <h2>Create a build</h2>
+            <h2>{props.type === "CREATE" ? "Create a build" : "Edit build"}</h2>
 
             <Form>
-              {!init && (
+              {!init && props.type === "CREATE" && (
                 <Stacker>
                   <Field
                     name="blueprint"
@@ -167,7 +210,7 @@ const BuildCreatePage: React.FC = () => {
                 </Stacker>
               )}
 
-              {init && (
+              {(init || props.type === "EDIT") && (
                 <Stacker>
                   <Field
                     name="name"
@@ -250,4 +293,4 @@ const BuildCreatePage: React.FC = () => {
   )
 }
 
-export default BuildCreatePage
+export default BuildFormPage

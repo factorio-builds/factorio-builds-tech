@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
+import Link from "next/link"
 import Caret from "../../icons/caret"
 import { IBuildWithJson } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
@@ -117,6 +118,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Content>
           <SC.Aside>
+            <AsideGroup>
+              <Link href={`/build/${build.id}/edit`}>
+                <SC.EditBuild>edit build</SC.EditBuild>
+              </Link>
+            </AsideGroup>
             {/* TODO: restore me */}
             {/* <AsideGroup>by {build.owner.name}</AsideGroup> */}
             <AsideGroup>

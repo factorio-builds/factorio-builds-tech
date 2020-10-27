@@ -13,7 +13,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
   const error = isTouched && form.errors[field.name]
 
   return (
-    <ReactSelect
+    <ReactSelect<{ value: string; label: string }>
       placeholder={props.placeholder}
       // @ts-ignore
       options={props.options}
@@ -22,6 +22,8 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         // @ts-ignore
         form.setFieldValue(field.name, fieldValue.value)
       }}
+      // @ts-ignore
+      value={{ value: field.value, label: field.value }}
       styles={{
         control: (provided, state) => {
           const focusedShadow = `0 0 0 3px ${COLOR.FOCUSED}`
