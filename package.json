@@ -11,7 +11,9 @@
     "type-check": "tsc",
     "typeorm": "yarn local ./node_modules/typeorm/cli.js",
     "db:seed:config": "yarn local ./node_modules/typeorm-seeding/dist/cli.js config",
-    "db:seed:run": "yarn local ./node_modules/typeorm-seeding/dist/cli.js seed"
+    "db:seed:run": "yarn local ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -58,8 +60,16 @@
     "@types/uuid": "^8.3.0",
     "@types/validator": "^13.1.0",
     "@types/yup": "^0.29.8",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
     "babel-plugin-styled-components": "^1.11.1",
     "babel-plugin-transform-typescript-metadata": "^0.3.1",
+    "eslint": "^7.12.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
     "prettier": "^2.1.2",
     "request": "^2.88.2",
     "ts-node": "^9.0.0",
