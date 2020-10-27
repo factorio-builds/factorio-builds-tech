@@ -1,8 +1,7 @@
 import { GetServerSideProps } from "next"
-
+import Layout from "../../components/Layout"
 import { IUser } from "../../types"
 import { mockedUsers } from "../../utils/mock-users-data"
-import Layout from "../../components/Layout"
 
 interface IUsersPageProps {
   user?: IUser

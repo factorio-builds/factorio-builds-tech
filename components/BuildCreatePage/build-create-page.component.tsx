@@ -1,19 +1,19 @@
-import { useRouter } from "next/router"
-import { Form, Formik, Field } from "formik"
 import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
+import { Form, Formik, Field } from "formik"
+import { useRouter } from "next/router"
 import * as Yup from "yup"
-import Layout from "../../components/Layout"
 import { ECategory, EState } from "../../types"
-import ImageUpload from "../../components/ImageUpload"
-import Input from "../Input"
-import Stacker from "../Stacker"
-import InputGroup from "../InputGroup"
 import {
   decodeBlueprint,
   isBook,
   isValidBlueprint,
 } from "../../utils/blueprint"
+import ImageUpload from "../ImageUpload"
+import Input from "../Input"
+import InputGroup from "../InputGroup"
+import Layout from "../Layout"
+import Stacker from "../Stacker"
 
 interface IFormValues {
   name: string

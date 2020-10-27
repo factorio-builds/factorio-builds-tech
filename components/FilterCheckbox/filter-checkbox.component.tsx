@@ -1,6 +1,6 @@
-import cx from "classnames"
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
+import cx from "classnames"
 import { IStoreState } from "../../redux/store"
 import { ECategory, EFilterType, EState } from "../../types"
 import * as SC from "./filter-checkbox.styles"

@@ -1,7 +1,7 @@
 import React from "react"
+import Link from "next/link"
 import { IBuild, IMetadata } from "../../types"
 import * as SC from "./build-card.styles"
-import Link from "next/link"
 
 interface IBuildCardProps {
   name: IBuild["name"]

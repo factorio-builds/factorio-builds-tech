@@ -1,9 +1,8 @@
 import { GetServerSideProps } from "next"
 import Link from "next/link"
-
+import Layout from "../../components/Layout"
 import { IUser } from "../../types"
 import { mockedUsers } from "../../utils/mock-users-data"
-import Layout from "../../components/Layout"
 
 interface IUsersIndexPage {
   users: IUser[]
