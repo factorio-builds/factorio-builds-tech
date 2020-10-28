@@ -59,8 +59,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
   })
 
-  console.log(tempBuilds)
-
   dispatch({
     type: "SET_BUILDS",
     payload: tempBuilds,

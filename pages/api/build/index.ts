@@ -9,7 +9,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const connection = await connectDB()
     const buildsRepository = connection!.getRepository(Build)
     // const userRepository = connection!.getRepository(User)
-    console.log("Connection has been established successfully.")
 
     switch (req.method) {
       case "GET":

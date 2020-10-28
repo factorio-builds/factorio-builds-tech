@@ -5,7 +5,6 @@ import { Build } from "../../../db/entities/build.entity"
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const connection = await connectDB()
-    console.log("Connection has been established successfully.")
 
     switch (req.method) {
       case "GET":
