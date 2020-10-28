@@ -268,6 +268,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                     {Object.keys(ECategory).map((category) => {
                       return (
                         <Field
+                          key={category}
                           name="categories"
                           label={category.toLowerCase()}
                           type="checkbox"
