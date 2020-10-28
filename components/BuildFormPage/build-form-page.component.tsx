@@ -155,7 +155,6 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           setInit(true)
 
           const json = decodeBlueprint(formikProps.values.blueprint)
-          console.log(json)
 
           const bp = isBook(json) ? json.blueprint_book : json.blueprint
 
@@ -268,6 +267,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                     {Object.keys(ECategory).map((category) => {
                       return (
                         <Field
+                          key={category}
                           name="categories"
                           label={category.toLowerCase()}
                           type="checkbox"

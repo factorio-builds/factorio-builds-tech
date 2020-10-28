@@ -28,7 +28,6 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
     reader.onload = () => {
       const binaryStr = reader.result
       const imageUrl = toImage(binaryStr as ArrayBuffer)
-      console.log(imageUrl)
       setImagePreview(imageUrl)
       props.onChange(file)
     }

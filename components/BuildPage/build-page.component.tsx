@@ -141,7 +141,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             </AsideGroup>
             <AsideGroup title="Categories">
               {build.metadata.categories.map((category) => (
-                <div>{category}</div>
+                <div key={category}>{category}</div>
               ))}
             </AsideGroup>
             <AsideGroup title="Game state">
