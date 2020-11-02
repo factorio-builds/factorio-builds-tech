@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useDistributeToColumn } from "../../hooks/useDistributeToColumn"
 import { IBuild } from "../../types"
-import { mockedImages } from "../../utils/mock-images-data"
 import BuildCard from "../BuildCard"
 import * as SC from "./build-card-list.styles"
 import { COLS, GUTTER } from "./design-tokens"
@@ -16,15 +15,9 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => {
   const CONTAINER_WIDTH = 1052 // needs to be dynamic on window resize
 
   const tempItems = [...items, ...items, ...items, ...items, ...items]
-  const tempFakedItems = tempItems.map((item, index) => {
-    return {
-      ...item,
-      image: mockedImages[index % 5],
-    }
-  })
 
   const columns = useDistributeToColumn(
-    tempFakedItems,
+    tempItems,
     COL_COUNT,
     CONTAINER_WIDTH,
     COL_GUTTER
@@ -41,7 +34,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => {
                 categories={item.metadata.categories}
                 // @ts-ignore
                 isBook={item.isBook}
-                image={item.image.src}
+                image={item.image}
                 id={item.id}
               />
             </SC.Item>
