@@ -10,6 +10,7 @@ import {
 import type {
   IDecodedBlueprintBookData,
   IDecodedBlueprintData,
+  IImage,
   IMetadata,
 } from "../../types"
 import { User } from "./user.entity"
@@ -40,9 +41,8 @@ export class Build {
   @JoinTable()
   owner!: User
 
-  // TODO: eventually, not nullable, quick fix for developement
-  @Column({ type: "varchar", nullable: true })
-  image!: string
+  @Column("jsonb")
+  image!: IImage
 
   @CreateDateColumn({ type: "timestamp" })
   createdAt!: string

@@ -23,6 +23,7 @@
     "express": "^4.17.1",
     "formidable": "^1.2.2",
     "formik": "^2.2.1",
+    "image-size": "^0.9.3",
     "next": "latest",
     "pako": "^1.0.11",
     "pg": "^8.4.1",

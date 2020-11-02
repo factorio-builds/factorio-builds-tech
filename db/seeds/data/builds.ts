@@ -16,6 +16,12 @@ export const builds: IBuild[] = [
       tileable: false,
       area: 43,
     },
+    image: {
+      src:
+        "https://factorio-builds-static-assets-dev-781466525417.s3.amazonaws.com/a197ee1c-9b02-4824-bd5f-3725073fc772",
+      width: 2540,
+      height: 1430,
+    },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -33,6 +39,12 @@ export const builds: IBuild[] = [
       state: EState.LATE_GAME,
       tileable: true,
       area: 265,
+    },
+    image: {
+      src:
+        "https://factorio-builds-static-assets-dev-781466525417.s3.amazonaws.com/a84e9b6c-c920-4567-9ba0-2a018d734da7",
+      width: 640,
+      height: 640,
     },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -52,6 +64,12 @@ export const builds: IBuild[] = [
       state: EState.MID_GAME,
       tileable: true,
       area: 265,
+    },
+    image: {
+      src:
+        "https://factorio-builds-static-assets-dev-781466525417.s3.amazonaws.com/c5f4aad0-8237-4a88-8280-d9d33875d25a",
+      width: 640,
+      height: 635,
     },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
