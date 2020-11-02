@@ -3,6 +3,7 @@ import { promises as fs } from "fs"
 import path from "path"
 
 export async function uploadFile(
+  name: string,
   filePath: string
 ): Promise<S3.ManagedUpload.SendData> {
   if (!process.env.AWS_S3_BUCKET || !process.env.AWS_SECRET_ACCESS_KEY) {
@@ -31,7 +32,7 @@ export async function uploadFile(
     s3.upload(
       {
         Bucket: process.env.AWS_S3_BUCKET as string,
-        Key: "new-one",
+        Key: name,
         Body: file,
         ACL: "public-read",
       },
