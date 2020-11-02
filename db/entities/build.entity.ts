@@ -40,6 +40,10 @@ export class Build {
   @JoinTable()
   owner!: User
 
+  // TODO: eventually, not nullable, quick fix for developement
+  @Column({ type: "varchar", nullable: true })
+  image!: string
+
   @CreateDateColumn({ type: "timestamp" })
   createdAt!: string
 

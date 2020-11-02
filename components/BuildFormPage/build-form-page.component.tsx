@@ -25,6 +25,16 @@ interface IFormValues {
   image: File | null
 }
 
+interface IValidFormValues {
+  name: string
+  blueprint: string
+  description: string
+  state: EState
+  tileable: boolean
+  categories: ECategory[]
+  image: File
+}
+
 const FILE_SIZE = 160 * 1024
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
 
@@ -95,6 +105,21 @@ const validate = (fieldName: keyof IFormValues) => async (value: string) => {
   }
 }
 
+const toFormData = (formValues: IValidFormValues) => {
+  const formData = new FormData()
+
+  formData.append("name", formValues.name)
+  formData.append("blueprint", formValues.blueprint)
+  formData.append("description", formValues.description)
+  formData.append("state", formValues.state)
+  formData.append("tileable", String(formValues.tileable))
+  formData.append("categories", String(formValues.categories))
+  formData.append("categories", String(formValues.categories))
+  formData.append("image", formValues.image)
+
+  return formData
+}
+
 interface IBuildFormPageCreating {
   type: "CREATE"
   build?: undefined
@@ -123,7 +148,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           props.type === "EDIT" ? `build/${props.build.id}` : `build`
         fetch(`http://localhost:3000/api/${endpoint}`, {
           method: "POST",
-          body: JSON.stringify(values),
+          body: toFormData(values as IValidFormValues),
         })
           .then((res) => res.json())
           .then((res) => {
