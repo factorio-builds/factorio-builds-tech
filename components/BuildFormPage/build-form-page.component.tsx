@@ -113,8 +113,7 @@ const toFormData = (formValues: IValidFormValues) => {
   formData.append("description", formValues.description)
   formData.append("state", formValues.state)
   formData.append("tileable", String(formValues.tileable))
-  formData.append("categories", String(formValues.categories))
-  formData.append("categories", String(formValues.categories))
+  formData.append("categories", JSON.stringify(formValues.categories))
   formData.append("image", formValues.image)
 
   return formData
