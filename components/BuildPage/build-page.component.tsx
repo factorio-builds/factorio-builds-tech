@@ -111,7 +111,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       sidebar={
         <SC.BuildImage>
           {/* @ts-ignore */}
-          {build.image ? <img src={build.image} alt="" /> : "No image"}
+          {build.image ? <img src={build.image.src} alt="" /> : "No image"}
         </SC.BuildImage>
       }
     >

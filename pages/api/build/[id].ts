@@ -4,6 +4,10 @@ import { connectDB } from "../../../db"
 import { Build } from "../../../db/entities/build.entity"
 import { EState } from "../../../types"
 import { uploadFile } from "../../../utils/upload"
+import imageSize from "image-size"
+import { promisify } from "util"
+
+const imageSizeAsync = promisify(imageSize)
 
 // TODO: extract
 interface IParsedForm {
@@ -63,6 +67,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           console.error
         )
 
+        const dimensions = await imageSizeAsync(files.image.path)
+
         build.name = fields.name as string
         build.blueprint = fields.blueprint as string
         build.description = fields.description as string
@@ -75,8 +81,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             : [],
           tileable: Boolean(fields.tileable as string),
         }
-        if (file) {
-          build.image = file.Location
+        if (file && dimensions) {
+          build.image = {
+            src: file.Location,
+            width: dimensions.width as number,
+            height: dimensions.height as number,
+          }
         }
 
         await buildsRepository.save(build)
