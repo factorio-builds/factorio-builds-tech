@@ -16,7 +16,7 @@
     "lint:fix": "yarn lint --fix"
   },
   "dependencies": {
-    "aws-sdk": "^2.783.0",
+    "aws-sdk": "^2.784.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
