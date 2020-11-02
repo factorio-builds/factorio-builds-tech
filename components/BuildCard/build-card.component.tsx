@@ -1,13 +1,13 @@
 import React from "react"
 import Link from "next/link"
-import { IBuild, IMetadata } from "../../types"
+import { IBuild, IImage, IMetadata } from "../../types"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
   name: IBuild["name"]
   isBook: boolean
   categories: IMetadata["categories"]
-  image: string
+  image: IImage
   id: IBuild["id"]
 }
 
@@ -21,7 +21,7 @@ function BuildCard({
   return (
     <Link href={`/build/${id}`}>
       <SC.BuildCardWrapper>
-        <SC.BackgroundImage src={image} alt="" />
+        <SC.BackgroundImage src={image.src} alt="" />
         <SC.Content>
           <SC.Title>
             {isBook && <SC.Book src="/img/blueprint-book.png" />}
