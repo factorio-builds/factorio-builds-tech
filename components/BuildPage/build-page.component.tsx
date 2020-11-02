@@ -6,7 +6,6 @@ import Link from "next/link"
 import Caret from "../../icons/caret"
 import { IBuildWithJson } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
-import { mockedImages } from "../../utils/mock-images-data"
 import Layout from "../Layout"
 import * as SC from "./build-page.styles"
 
@@ -111,7 +110,8 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       }
       sidebar={
         <SC.BuildImage>
-          <img src={mockedImages[0].src} alt="Sample image" />
+          {/* @ts-ignore */}
+          {build.image ? <img src={build.image} alt="" /> : "No image"}
         </SC.BuildImage>
       }
     >

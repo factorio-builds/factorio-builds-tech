@@ -1,6 +1,26 @@
+import { IncomingForm, Fields, Files } from "formidable"
 import { NextApiRequest, NextApiResponse } from "next"
 import { connectDB } from "../../../db"
 import { Build } from "../../../db/entities/build.entity"
+import { EState } from "../../../types"
+import { uploadFile } from "../../../utils/upload"
+
+// TODO: extract
+interface IParsedForm {
+  fields: Fields
+  files: Files
+}
+
+// TODO: extract
+const parseForm = (req: NextApiRequest): Promise<IParsedForm> => {
+  return new Promise(function (resolve, reject) {
+    const form = new IncomingForm()
+    form.parse(req, function (err, fields, files) {
+      if (err) return reject(err)
+      resolve({ fields, files })
+    })
+  })
+}
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -25,6 +45,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         break
       case "POST": {
+        const { fields, files } = await parseForm(req)
+
         const buildsRepository = connection!.getRepository(Build)
         const build = await buildsRepository
           .findOne(req.query.id as string)
@@ -37,16 +59,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           throw new Error("Cannot find build data")
         }
 
-        const body = JSON.parse(req.body)
+        const file = await uploadFile(build.id, files.image.path).catch(
+          console.error
+        )
 
-        build.name = body.name
-        build.blueprint = body.blueprint
-        build.description = body.description
+        build.name = fields.name as string
+        build.blueprint = fields.blueprint as string
+        build.description = fields.description as string
         build.metadata = {
           ...build.metadata,
-          state: body.state.toLowerCase(),
-          categories: body.categories.length ? body.categories : [],
-          tileable: body.tileable,
+          state: fields.state as EState,
+          // @ts-ignore
+          categories: fields.categories.length ? fields.categories : [],
+          tileable: Boolean(fields.tileable as string),
+        }
+        if (file) {
+          build.image = file.Location
         }
 
         await buildsRepository.save(build)
@@ -58,6 +86,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (err) {
     res.status(500).json({ statusCode: 500, message: err.message })
   }
+}
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
 }
 
 export default handler
