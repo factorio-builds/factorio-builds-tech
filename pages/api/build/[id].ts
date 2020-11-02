@@ -70,7 +70,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           ...build.metadata,
           state: fields.state as EState,
           // @ts-ignore
-          categories: fields.categories.length ? fields.categories : [],
+          categories: JSON.parse(fields.categories).length
+            ? JSON.parse(fields.categories as string)
+            : [],
           tileable: Boolean(fields.tileable as string),
         }
         if (file) {
