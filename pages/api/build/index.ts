@@ -5,6 +5,11 @@ import { connectDB } from "../../../db"
 import { Build } from "../../../db/entities/build.entity"
 // import { User } from "../../../db/entities/user.entity"
 import { uploadFile } from "../../../utils/upload"
+import imageSize from "image-size"
+import { promisify } from "util"
+import { EState } from "../../../types"
+
+const imageSizeAsync = promisify(imageSize)
 
 interface IParsedForm {
   fields: Fields
@@ -43,6 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const id = uuidv4()
         const file = await uploadFile(id, files.image.path).catch(console.error)
+        const dimensions = await imageSizeAsync(files.image.path)
 
         // TODO: restore
         // const owner = await userRepository
@@ -52,20 +58,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         //     throw new Error("Cannot find user data")
         //   })
 
-        const build: Build = buildsRepository.create({
-          // @ts-ignore
+        const buildData: Build = {
           id,
           name: fields.name as string,
           blueprint: fields.blueprint as string,
           description: fields.description as string,
+          // @ts-ignore
           json: {},
-          image: file ? file.Location : null,
-          metadata: {
-            state: (fields.state as string).toLowerCase(),
-            categories: fields.categories.length ? fields.categories : [],
-            tileable: fields.tileable,
+          image: {
+            // @ts-ignore
+            src: file.Location,
+            width: dimensions?.width!,
+            height: dimensions?.height!,
           },
-        })
+          metadata: {
+            state: fields.state as EState,
+            // @ts-ignore
+            categories: JSON.parse(fields.categories).length
+              ? JSON.parse(fields.categories as string)
+              : [],
+            tileable: Boolean(fields.tileable as string),
+            area: 0,
+          },
+        }
+
+        const build: Build = buildsRepository.create(buildData)
         buildsRepository.save(build)
 
         res.status(200).json(build)
