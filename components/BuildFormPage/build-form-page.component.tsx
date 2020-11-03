@@ -22,7 +22,7 @@ interface IFormValues {
   state: EState | -1
   tileable: boolean
   categories: ECategory[]
-  image: File | null
+  image: File | string | null
 }
 
 interface IValidFormValues {
@@ -60,7 +60,7 @@ const createInitialValues = (build?: IBuild): IFormValues => {
     state: build.metadata.state,
     tileable: build.metadata.tileable,
     categories: build.metadata.categories,
-    image: null,
+    image: build.image.src,
   }
 }
 
@@ -201,6 +201,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
             title="Create a build"
             sidebar={
               <ImageUpload
+                image={formikProps.values.image}
                 onChange={(file) => formikProps.setFieldValue("image", file)}
               />
             }

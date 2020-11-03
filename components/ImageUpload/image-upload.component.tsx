@@ -4,6 +4,7 @@ import cx from "classnames"
 import * as SC from "./image-upload.styles"
 
 interface IImageUploadProps {
+  image: string | null
   onChange: (file: File | null) => void
 }
 
@@ -44,14 +45,16 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
     props.onChange(null)
   }
 
+  const image = imagePreview || props.image
+
   return (
     <SC.ImageUploadWrapper
       className={cx({ "is-active": isDragActive, "has-image": imagePreview })}
     >
       <SC.UploadZone {...getRootProps()}>
         <input {...getInputProps()} />
-        {imagePreview ? (
-          <SC.ImagePreview src={imagePreview} />
+        {image ? (
+          <SC.ImagePreview src={image} />
         ) : (
           <React.Fragment>
             <SC.StyledPlusIcon color="#67469b" />
@@ -63,7 +66,7 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
       </SC.UploadZone>
 
       <SC.DeleteButtonWrapper>
-        {imagePreview && (
+        {image && (
           <SC.DeleteButton onClick={removeImage}>delete image</SC.DeleteButton>
         )}
       </SC.DeleteButtonWrapper>
