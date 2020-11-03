@@ -19,5 +19,5 @@ export const SidebarBG = styled.div`
   top: 0;
   bottom: 0;
   right: 0;
-  width: 100vh;
+  width: 100vw;
 `
