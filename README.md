@@ -1,4 +1,4 @@
-<img src="https://user-images.githubusercontent.com/3461986/98059709-c3058f00-1e15-11eb-94ec-726207e58920.png" alt="Factorio builds" align="center" />
+<img src="https://user-images.githubusercontent.com/3461986/98061159-41affb80-1e19-11eb-81d3-3d27f174cf8d.png" alt="Factorio builds" align="center" />
 
 <br />
 
