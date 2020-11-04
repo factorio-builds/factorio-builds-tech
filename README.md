@@ -7,7 +7,7 @@ This project aims to be a website and tool to share and browse [blueprints](http
 - [Figma](https://www.figma.com/file/eDiTI6ZiAHHgoGSgXaWBO0/factorio-builds?node-id=393%3A11)
 - [Issues](https://github.com/veksen/factorio-builds/issues)
 - [Pull requests](https://github.com/veksen/factorio-builds/pulls)
-- [Current roadmap](https://github.com/veksen/factorio-builds/milestones)
+- [Current roadmap](https://github.com/veksen/factorio-builds/milestones?direction=asc&sort=title&state=open)
 
 ### Stack
 
