@@ -23,6 +23,8 @@
   https://nodejs.org/download/release/v12.19.0/ or via `nvm`<br />
 - Yarn<br />
   https://classic.yarnpkg.com/lang/en/
+- Docker<br />
+  https://www.docker.com/products/docker-desktop
 
 ### Get started
 
