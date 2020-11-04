@@ -1,6 +1,6 @@
-<img src="https://user-images.githubusercontent.com/3461986/98061159-41affb80-1e19-11eb-81d3-3d27f174cf8d.png" alt="Factorio builds" align="center" />
+<img src="https://user-images.githubusercontent.com/3461986/98061159-41affb80-1e19-11eb-81d3-3d27f174cf8d.png" alt="Factorio builds" align="center" /><br />
 
-<br />
+<p>This project aims to be a website and tool to share and browse [blueprints](https://wiki.factorio.com/Blueprint) for the [Factorio](https://factorio.com/) game, with strong values in user experience to make it the least painful experience to search/filter, and create builds.</p>
 
 # Quick links
 
