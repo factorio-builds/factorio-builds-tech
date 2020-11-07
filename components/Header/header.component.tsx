@@ -10,9 +10,15 @@ function Header(): JSX.Element {
         <Link href="/">
           <SC.StyledLogo />
         </Link>
-        <Link href="/build/create">
-          <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
-        </Link>
+
+        <SC.StyledStacker orientation="horizontal" gutter={18}>
+          <Link href="/build/create">
+            <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
+          </Link>
+          <Link href="/login">
+            <SC.InnerLink>Login</SC.InnerLink>
+          </Link>
+        </SC.StyledStacker>
       </Container>
     </SC.HeaderWrapper>
   )

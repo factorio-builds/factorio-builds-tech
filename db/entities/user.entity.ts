@@ -13,6 +13,9 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string
 
+  @Column({ type: "varchar", nullable: true })
+  discordId!: string
+
   @Column("varchar")
   name!: string
 

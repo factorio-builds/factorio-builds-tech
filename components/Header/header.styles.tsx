@@ -2,6 +2,7 @@ import styled from "styled-components"
 import { COLOR } from "../../design/tokens/color"
 import Logo from "../../icons/logo"
 import { ContainerWrapper as Container } from "../Container/container.styles"
+import Stacker from "../Stacker"
 
 export const HeaderWrapper = styled.div`
   display: flex;
@@ -34,9 +35,24 @@ export const CreateBuildButton = styled.button`
   line-height: 38px;
   padding: 0 14px;
   cursor: pointer;
-  margin-left: auto;
 
   &:hover {
     background: linear-gradient(180deg, #613d99 0%, #3d2b59 100%);
+  }
+`
+
+export const StyledStacker = styled(Stacker)`
+  align-items: center;
+  margin-left: auto;
+`
+
+export const InnerLink = styled.span`
+  color: ${COLOR.PURPLE700};
+  font-size: 17px;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:hover {
+    color: ${COLOR.PURPLE900};
   }
 `
