@@ -13,6 +13,11 @@ export const BuildCardWrapper = styled.div`
 export const BackgroundImage = styled.img`
   display: block;
   width: 100%;
+  filter: contrast(0.8);
+
+  ${BuildCardWrapper}:hover & {
+    filter: contrast(1);
+  }
 `
 
 export const Content = styled.div`
@@ -39,6 +44,10 @@ export const Title = styled.h3`
 
   a {
     color: #fff;
+  }
+
+  ${BuildCardWrapper}:hover & {
+    text-decoration: underline;
   }
 `
 
