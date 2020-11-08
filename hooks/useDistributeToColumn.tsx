@@ -19,10 +19,15 @@ function columnHeight(
   const itemsTotalHeight = items.reduce((acc, item) => {
     return acc + calcRatio(item.image.width, item.image.height) * colWidth
   }, 0)
+
   return itemsTotalHeight + gutterHeight
 }
 
-function getShortestColumn(columns: any[], colWidth: number, gutter: number) {
+function getShortestColumn(
+  columns: IBuild[][],
+  colWidth: number,
+  gutter: number
+) {
   const currColumnsHeight = columns.map((column) =>
     columnHeight(column, colWidth, gutter)
   )
@@ -45,7 +50,7 @@ export function useDistributeToColumn(
   const colWidth =
     containerWidth / colCount - (gutter * (colCount - 1)) / colCount
 
-  const columns = Array.from({ length: colCount }, () => [])
+  const columns = Array.from({ length: colCount }, () => [] as IBuild[])
 
   // TODO: memoize
   items.forEach((item) => {
