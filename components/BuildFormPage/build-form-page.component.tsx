@@ -154,12 +154,12 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
             if (props.type === "EDIT") {
               dispatch({
                 type: "EDIT_BUILD",
-                payload: { ...values, id: res.id },
+                payload: res,
               })
             } else {
               dispatch({
                 type: "CREATE_BUILD",
-                payload: values,
+                payload: res,
               })
             }
             router.push("/")
