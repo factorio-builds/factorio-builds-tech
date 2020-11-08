@@ -1,14 +1,13 @@
 import { v4 as uuidv4 } from "uuid"
 import { IBuild } from "../../types"
-import { mockedBuilds } from "../../utils/mock-builds-data"
 import { IPayloadAction } from "../store"
 
 export interface IStoreBuildsState {
   items: IBuild[]
 }
 
-export const initialBuildsState: IStoreBuildsState = {
-  items: mockedBuilds,
+const initialBuildsState: IStoreBuildsState = {
+  items: [],
 }
 
 type TSetBuildsAction = IPayloadAction<"SET_BUILDS", IBuild[]>

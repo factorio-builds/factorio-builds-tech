@@ -1,79 +1,56 @@
-import { useMemo } from "react"
-import {
-  combineReducers,
-  createStore,
-  applyMiddleware,
-  Action,
-  Store,
-} from "redux"
+import { createWrapper, HYDRATE, MakeStore } from "next-redux-wrapper"
+import { createStore, applyMiddleware, Action, combineReducers } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
-import {
-  buildsReducer,
-  initialBuildsState,
-  IStoreBuildsState,
-  TBuildsAction,
-} from "./reducers/builds"
-import {
-  filtersReducer,
-  initialFiltersState,
-  IStoreFiltersState,
-  TFiltersAction,
-} from "./reducers/filters"
+import reducers from "./reducer"
+import { IStoreBuildsState, TBuildsAction } from "./reducers/builds"
+import { IStoreFiltersState, TFiltersAction } from "./reducers/filters"
 
 export interface IPayloadAction<T, P> extends Action<T> {
   payload: P
 }
-
-let store: Store<IStoreState, TAction> | undefined
 
 export interface IStoreState {
   builds: IStoreBuildsState
   filters: IStoreFiltersState
 }
 
-const initialState: IStoreState = {
-  builds: initialBuildsState,
-  filters: initialFiltersState,
-}
+type THydrateAction = IPayloadAction<typeof HYDRATE, any>
 
-type TAction = TBuildsAction | TFiltersAction
+type TAction = THydrateAction | TBuildsAction | TFiltersAction
 
-const reducer = combineReducers({
-  builds: buildsReducer,
-  filters: filtersReducer,
-})
+export const makeStore: MakeStore<IStoreState, TAction> = () => {
+  const combinedReducer = combineReducers({
+    ...reducers,
+  })
 
-function initStore(preloadedState = initialState) {
-  return createStore<IStoreState, TAction, {}, {}>(
-    reducer,
-    preloadedState,
-    composeWithDevTools(applyMiddleware())
-  )
-}
-
-export const initializeStore = (preloadedState?: IStoreState) => {
-  let _store = store ?? initStore(preloadedState)
-
-  // After navigating to a page with an initial Redux state, merge that state
-  // with the current state in the store, and create a new store
-  if (preloadedState && store) {
-    _store = initStore({
-      ...store.getState(),
-      ...preloadedState,
-    })
-    // Reset the current store
-    store = undefined
+  const reducer = (state: IStoreState, action: TAction): IStoreState => {
+    if (action.type === HYDRATE) {
+      const nextState: IStoreState = {
+        ...state, // use previous state
+        ...action.payload, // apply delta from hydration
+      }
+      return nextState
+    } else {
+      return combinedReducer(state, action)
+    }
   }
 
-  // For SSG and SSR always create a new store
-  if (typeof window === "undefined") return _store
-  // Create the store once in the client
-  if (!store) store = _store
+  // @ts-ignore
+  const store = createStore(reducer, composeWithDevTools(applyMiddleware()))
 
-  return _store
-}
+  // @ts-ignore
+  if (module.hot) {
+    // @ts-ignore
+    module.hot.accept("./reducer", () => {
+      console.log("Replacing reducer")
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      store.replaceReducer(require("./reducer").default)
+    })
+  }
 
-export function useStore(initialState: IStoreState) {
-  const store = useMemo(() => initializeStore(initialState), [initialState])
   return store
 }
+
+export const wrapper = createWrapper<IStoreState, TAction>(makeStore, {
+  debug: true,
+})
