@@ -1,7 +1,13 @@
 import { IBuild } from "../types"
 
 function calcRatio(width: number, height: number): number {
-  return height / width
+  const ratio = height / width
+
+  if (isNaN(ratio)) {
+    return 1
+  }
+
+  return ratio
 }
 
 function columnHeight(
