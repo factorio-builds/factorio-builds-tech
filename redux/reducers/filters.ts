@@ -21,7 +21,7 @@ export interface IStoreFiltersState {
   [EFilterType.CATEGORY]: IStoreCategoryFilters
 }
 
-export const initialFiltersState: IStoreFiltersState = {
+const initialFiltersState: IStoreFiltersState = {
   query: "",
   [EFilterType.STATE]: {
     [EState.EARLY_GAME]: false,
