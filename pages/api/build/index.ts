@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { v4 as uuidv4 } from "uuid"
 import { connectDB } from "../../../db"
 import { Build } from "../../../db/entities/build.entity"
-// import { User } from "../../../db/entities/user.entity"
+import { User } from "../../../db/entities/user.entity"
 import { uploadFile } from "../../../utils/upload"
 import imageSize from "image-size"
 import { promisify } from "util"
@@ -30,7 +30,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const connection = await connectDB()
     const buildsRepository = connection!.getRepository(Build)
-    // const userRepository = connection!.getRepository(User)
+    const userRepository = connection!.getRepository(User)
 
     switch (req.method) {
       case "GET":
@@ -44,19 +44,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         }
         break
       case "POST": {
+        // @ts-ignore
+        if (!req.session?.passport?.user) {
+          res.status(401).json({
+            success: false,
+            message: "You must be logged in to perform this action",
+          })
+          break
+        }
+
         const { fields, files } = await parseForm(req)
 
         const id = uuidv4()
         const file = await uploadFile(id, files.image.path).catch(console.error)
         const dimensions = await imageSizeAsync(files.image.path)
 
-        // TODO: restore
-        // const owner = await userRepository
-        //   .findOne("8358cfb0-2675-4651-a9c2-0d7cf57d6110")
-        //   .catch((error) => {
-        //     console.error(error)
-        //     throw new Error("Cannot find user data")
-        //   })
+        const owner = await userRepository
+          // @ts-ignore
+          .findOne(req.session.passport.user.id)
+          .catch((error) => {
+            console.error(error)
+            throw new Error("Cannot find user data")
+          })
 
         const buildData: Build = {
           id,
@@ -80,6 +89,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             tileable: Boolean(fields.tileable as string),
             area: 0,
           },
+          owner: owner as User,
         }
 
         const build: Build = buildsRepository.create(buildData)
