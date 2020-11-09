@@ -5,7 +5,7 @@ import BuildListLookupStats from "../components/BuildListLookupStats"
 import Filters from "../components/Filters"
 import Layout from "../components/Layout"
 import SearchInput from "../components/SearchInput"
-import { connectDB } from "../db"
+import { ensureConnection } from "../db"
 import { Build } from "../db/entities/build.entity"
 import { filteredBuildsSelector } from "../redux/selectors/builds"
 import { IStoreState, wrapper } from "../redux/store"
@@ -38,7 +38,7 @@ const IndexPage: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
-    const connection = await connectDB()
+    const connection = await ensureConnection()
 
     const buildsRepository = connection!.getRepository(Build)
     const builds = await buildsRepository.find().catch((error) => {

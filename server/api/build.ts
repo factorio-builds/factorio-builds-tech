@@ -3,7 +3,7 @@ import { IncomingForm, Fields, Files } from "formidable"
 import imageSize from "image-size"
 import { promisify } from "util"
 import { v4 as uuidv4 } from "uuid"
-import { connectDB } from "../../db"
+import { ensureConnection } from "../../db"
 import { Build } from "../../db/entities/build.entity"
 import { User } from "../../db/entities/user.entity"
 import { EState } from "../../types"
@@ -34,7 +34,7 @@ const parseForm = (req: express.Request): Promise<IParsedForm> => {
  * GET ALL BUILDS
  */
 buildRoutes.get("/build", async (_req, res) => {
-  const connection = await connectDB()
+  const connection = await ensureConnection()
   const buildsRepository = connection!.getRepository(Build)
   const builds = await buildsRepository.find().catch((error) => {
     console.error(error)
@@ -48,7 +48,7 @@ buildRoutes.get("/build", async (_req, res) => {
  * SAVE A NEW BUILD
  */
 buildRoutes.post("/build", async (req, res) => {
-  const connection = await connectDB()
+  const connection = await ensureConnection()
   const buildsRepository = connection!.getRepository(Build)
   const userRepository = connection!.getRepository(User)
 
@@ -115,7 +115,7 @@ buildRoutes.post("/build", async (req, res) => {
  * GET BUILD BY ID
  */
 buildRoutes.get("/build/:id", async (req, res) => {
-  const connection = await connectDB()
+  const connection = await ensureConnection()
   const buildsRepository = connection!.getRepository(Build)
   const build = await buildsRepository
     .findOne(req.query.id as string)
@@ -138,7 +138,7 @@ buildRoutes.get("/build/:id", async (req, res) => {
 buildRoutes.post("/build/:id", async (req, res) => {
   const { fields, files } = await parseForm(req)
 
-  const connection = await connectDB()
+  const connection = await ensureConnection()
   const buildsRepository = connection!.getRepository(Build)
   const build = await buildsRepository
     .findOne(req.query.id as string)
