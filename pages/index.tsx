@@ -1,5 +1,4 @@
 import { useSelector } from "react-redux"
-import { IncomingMessage } from "http"
 import { GetServerSideProps, NextPage } from "next"
 import BuildCardList from "../components/BuildCardList"
 import BuildListLookupStats from "../components/BuildListLookupStats"
@@ -37,32 +36,8 @@ const IndexPage: NextPage = () => {
   )
 }
 
-// TODO: properly extend IncomingMessage
-interface ExtendedReq extends IncomingMessage {
-  session: {
-    passport: {
-      user: {
-        name: string
-        discordId: string
-        id: string
-        createdAt: string
-        updatedAt: string
-      }
-    }
-  }
-}
-
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
-    // TODO: properly extend IncomingMessage
-    const req = ctx.req as ExtendedReq
-
-    if (req && req.session.passport) {
-      // user is logged in
-      console.log(req.session)
-      console.log(req.session.passport.user)
-    }
-
     const connection = await connectDB()
 
     const buildsRepository = connection!.getRepository(Build)
