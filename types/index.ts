@@ -1,3 +1,6 @@
+import { IncomingMessage } from "http"
+import { User } from "../db/entities/user.entity"
+
 export enum EFilterType {
   "STATE",
   "CATEGORY",
@@ -108,4 +111,13 @@ export interface IBlueprintBook {
   label: string
   description?: string
   version: number
+}
+
+// TODO: properly extend IncomingMessage
+export interface ExtendedReq extends IncomingMessage {
+  session: {
+    passport: {
+      user: User
+    }
+  }
 }

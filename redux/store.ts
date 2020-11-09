@@ -2,6 +2,7 @@ import { createWrapper, HYDRATE, MakeStore } from "next-redux-wrapper"
 import { createStore, applyMiddleware, Action, combineReducers } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import reducers from "./reducer"
+import { IStoreAuthState, TAuthAction } from "./reducers/auth"
 import { IStoreBuildsState, TBuildsAction } from "./reducers/builds"
 import { IStoreFiltersState, TFiltersAction } from "./reducers/filters"
 
@@ -10,13 +11,14 @@ export interface IPayloadAction<T, P> extends Action<T> {
 }
 
 export interface IStoreState {
+  auth: IStoreAuthState
   builds: IStoreBuildsState
   filters: IStoreFiltersState
 }
 
 type THydrateAction = IPayloadAction<typeof HYDRATE, any>
 
-type TAction = THydrateAction | TBuildsAction | TFiltersAction
+type TAction = THydrateAction | TAuthAction | TBuildsAction | TFiltersAction
 
 export const makeStore: MakeStore<IStoreState, TAction> = () => {
   const combinedReducer = combineReducers({
