@@ -19,7 +19,7 @@ const sizes = ["small", "medium", "large"].forEach((size) => {
 
     dest = dest.replace(/_/g, "-")
 
-    console.log(src + " => " + dest)
+    console.info(src + " => " + dest)
     request(src).pipe(
       fs.createWriteStream("./public/img/icons/" + size + "/" + dest)
     )

@@ -19,8 +19,6 @@ const setUser = (
   state: IStoreAuthState,
   payload: TSetUserAction["payload"]
 ) => {
-  console.log("set user")
-  console.log(payload)
   return {
     ...state,
     user: payload,

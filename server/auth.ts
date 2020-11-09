@@ -20,9 +20,6 @@ authRoutes.get(
 
 authRoutes.get("/auth/discord/callback", (req, res, next) => {
   passport.authenticate("discord", (err, user) => {
-    console.log("we are here")
-    console.log(err)
-    console.log(user)
     if (err) return next(err)
     if (!user) return res.redirect("/login")
     req.logIn(user, (err) => {
