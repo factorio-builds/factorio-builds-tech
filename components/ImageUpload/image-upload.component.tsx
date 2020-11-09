@@ -24,8 +24,12 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
 
     const reader = new FileReader()
 
-    reader.onabort = () => console.log("file reading was aborted")
-    reader.onerror = () => console.log("file reading has failed")
+    reader.onabort = () => {
+      // TODO: handle abort
+    }
+    reader.onerror = () => {
+      // TODO: handle error
+    }
     reader.onload = () => {
       const binaryStr = reader.result
       const imageUrl = toImage(binaryStr as ArrayBuffer)

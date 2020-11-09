@@ -44,7 +44,7 @@ export const makeStore: MakeStore<IStoreState, TAction> = () => {
   if (module.hot) {
     // @ts-ignore
     module.hot.accept("./reducer", () => {
-      console.log("Replacing reducer")
+      console.info("Replacing reducer")
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       store.replaceReducer(require("./reducer").default)
     })

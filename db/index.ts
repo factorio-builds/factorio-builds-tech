@@ -38,7 +38,7 @@ const initializeDatabase = async () => {
   isConnecting = false
 
   // log for debugging
-  console.log(`Connection to database "${ENVIRONMENT}" initialized.`)
+  console.info(`Connection to database "${ENVIRONMENT}" initialized.`)
 }
 
 // run initialization on script execution.
