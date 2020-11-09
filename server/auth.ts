@@ -1,7 +1,7 @@
 import express from "express"
 import passport from "passport"
 import DiscordStrategy from "passport-discord"
-import { connectDB } from "../db"
+import { ensureConnection } from "../db"
 import { User } from "../db/entities/user.entity"
 
 export const authRoutes = express.Router()
@@ -44,7 +44,7 @@ export const discordStrategy = new DiscordStrategy(
     scope: ["identify", "email"],
   },
   async function (_accessToken, _refreshToken, profile, cb) {
-    const connection = await connectDB()
+    const connection = await ensureConnection()
 
     const userRepository = connection!.getRepository(User)
     const user = await userRepository.findOne({

@@ -1,60 +1,68 @@
-import {
-  Connection,
-  createConnection,
-  getConnectionManager,
-  getConnectionOptions,
-} from "typeorm"
+import { Connection, getConnectionManager, getConnectionOptions } from "typeorm"
 import { Build } from "./entities/build.entity"
 import { User } from "./entities/user.entity"
 
-// taken from https://github.com/vercel/next.js/discussions/12254#discussioncomment-19769
-// TODO: get from environment vars or something
-const ENVIRONMENT = "default"
-const CONNECTION_ATTEMPT_INTERVAL = 100
-const CONNECTION_TIMEOUT = 3 //3 seconds
+// taken from https://github.com/typeorm/typeorm/issues/6241#issuecomment-643690383
+const getOptions = async () => {
+  const connectionOptions = await getConnectionOptions("default")
 
-// initialize database connection
-let isConnecting = false
-let connection: Connection
-const initializeDatabase = async () => {
-  if (isConnecting) return
-  isConnecting = true
-
-  // close connection if exists. could contain references to unloaded entities.
-  const connections = getConnectionManager()
-  if (connections.has(ENVIRONMENT)) {
-    await connections.get(ENVIRONMENT).close()
+  return {
+    default: {
+      ...connectionOptions,
+      name: "default",
+      synchronize: process.env.NODE_ENV !== "production",
+      entities: [Build, User],
+    },
   }
-
-  // create new connection
-  const newConnection = await createConnection({
-    ...(await getConnectionOptions(ENVIRONMENT)),
-    name: ENVIRONMENT,
-    entities: [Build, User],
-    synchronize: true,
-  })
-
-  connection = newConnection
-  isConnecting = false
-
-  // log for debugging
-  console.info(`Connection to database "${ENVIRONMENT}" initialized.`)
 }
 
-// run initialization on script execution.
-// for prod this will only happen once, but for dev this will happen every time this module is hot reloaded
-initializeDatabase()
+function entitiesChanged(prevEntities: any[], newEntities: any[]): boolean {
+  if (prevEntities.length !== newEntities.length) return true
 
-// wait for the connection to the database has been established
-export const connectDB = async () => {
-  let waiting = 0
-  while (!connection) {
-    await new Promise((resolve) =>
-      setTimeout(resolve, CONNECTION_ATTEMPT_INTERVAL)
-    )
-    waiting += CONNECTION_ATTEMPT_INTERVAL
-    if (waiting > CONNECTION_TIMEOUT) break
+  for (let i = 0; i < prevEntities.length; i++) {
+    if (prevEntities[i] !== newEntities[i]) return true
   }
-  if (!connection) throw new Error("Database not intialized")
-  return connection
+
+  return false
+}
+
+async function updateConnectionEntities(
+  connection: Connection,
+  entities: any[]
+) {
+  // @ts-ignore
+  if (!entitiesChanged(connection.options.entities, entities)) return
+
+  // @ts-ignore
+  connection.options.entities = entities
+
+  // @ts-ignore
+  connection.buildMetadatas()
+
+  if (connection.options.synchronize) {
+    await connection.synchronize()
+  }
+}
+
+export async function ensureConnection(name = "default"): Promise<Connection> {
+  const connectionManager = getConnectionManager()
+  const options = await getOptions()
+
+  if (connectionManager.has(name)) {
+    const connection = connectionManager.get(name)
+
+    if (!connection.isConnected) {
+      await connection.connect()
+    }
+
+    if (process.env.NODE_ENV !== "production") {
+      // @ts-ignore
+      await updateConnectionEntities(connection, options[name].entities)
+    }
+
+    return connection
+  }
+
+  // @ts-ignore
+  return connectionManager.create({ name, ...options[name] }).connect()
 }

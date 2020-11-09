@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next"
 import React from "react"
 import BuildFormPage from "../../../components/BuildFormPage"
 import Layout from "../../../components/Layout"
-import { connectDB } from "../../../db"
+import { ensureConnection } from "../../../db"
 import { Build } from "../../../db/entities/build.entity"
 import { IBuildWithJson } from "../../../types"
 
@@ -31,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
 
-    const connection = await connectDB()
+    const connection = await ensureConnection()
 
     const buildsRepository = connection!.getRepository(Build)
     const build = await buildsRepository
