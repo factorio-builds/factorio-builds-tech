@@ -8,6 +8,7 @@ import { Build } from "../../db/entities/build.entity"
 import { User } from "../../db/entities/user.entity"
 import { EState } from "../../types"
 import { uploadFile } from "../../utils/upload"
+import { ensureAuthenticated } from "../middlewares"
 
 const imageSizeAsync = promisify(imageSize)
 
@@ -47,19 +48,10 @@ buildRoutes.get("/build", async (_req, res) => {
 /*
  * SAVE A NEW BUILD
  */
-buildRoutes.post("/build", async (req, res) => {
+buildRoutes.post("/build", ensureAuthenticated, async (req, res) => {
   const connection = await ensureConnection()
   const buildsRepository = connection!.getRepository(Build)
   const userRepository = connection!.getRepository(User)
-
-  // @ts-ignore
-  if (!req.session || !req.session.passport || !req.session.passport.user) {
-    res.status(401).json({
-      success: false,
-      message: "You must be logged in to perform this action",
-    })
-    return
-  }
 
   const { fields, files } = await parseForm(req)
 
@@ -75,7 +67,7 @@ buildRoutes.post("/build", async (req, res) => {
   }
 
   const owner = await userRepository
-    .findOne(req.session.passport.user.id)
+    .findOne(req.session!.passport.user.id)
     .catch((error) => {
       console.error(error)
       throw new Error("Cannot find user data")
@@ -135,7 +127,8 @@ buildRoutes.get("/build/:id", async (req, res) => {
  * SAVE AN EXISTING BUILD
  */
 // TODO: convert to put
-buildRoutes.post("/build/:id", async (req, res) => {
+buildRoutes.post("/build/:id", ensureAuthenticated, async (req, res) => {
+  // @ts-ignore
   const { fields, files } = await parseForm(req)
 
   const connection = await ensureConnection()
