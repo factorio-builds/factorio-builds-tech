@@ -201,7 +201,11 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
             title="Create a build"
             sidebar={
               <ImageUpload
-                image={formikProps.values.image}
+                image={
+                  typeof formikProps.values.image === "string"
+                    ? formikProps.values.image
+                    : null
+                }
                 onChange={(file) => formikProps.setFieldValue("image", file)}
               />
             }
