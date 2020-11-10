@@ -2,8 +2,7 @@ import { GetServerSideProps } from "next"
 import React from "react"
 import BuildFormPage from "../../../components/BuildFormPage"
 import Layout from "../../../components/Layout"
-import { ensureConnection } from "../../../db"
-import { Build } from "../../../db/entities/build.entity"
+import { BuildRepository } from "../../../db/repository/build.repository"
 import { IBuildWithJson } from "../../../types"
 
 interface IBuildsEditPageProps {
@@ -31,15 +30,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
 
-    const connection = await ensureConnection()
-
-    const buildsRepository = connection!.getRepository(Build)
-    const build = await buildsRepository
-      .findOne(id as string)
-      .catch((error) => {
-        console.error(error)
-        throw new Error("Cannot find build data")
-      })
+    const buildRepository = await BuildRepository()
+    const build = await buildRepository.findOne(id as string).catch((error) => {
+      console.error(error)
+      throw new Error("Cannot find build data")
+    })
 
     if (!build) throw new Error("Build not found")
 

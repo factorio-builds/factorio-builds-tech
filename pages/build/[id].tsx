@@ -4,6 +4,7 @@ import { Build } from "../../db/entities/build.entity"
 import { IBuildWithJson } from "../../types"
 import Layout from "../../components/Layout"
 import BuildPage from "../../components/BuildPage"
+import { BuildRepository } from "../../db/repository/build.repository"
 
 interface IBuildsPageProps {
   build?: IBuildWithJson
@@ -30,10 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
 
-    const connection = await ensureConnection()
-
-    const buildsRepository = connection!.getRepository(Build)
-    const build = await buildsRepository
+    const buildRepository = await BuildRepository()
+    const build = await buildRepository
       .findOne(id as string)
       // TODO: reproduce with TypeORM
       // .findByPk(req.query.id, {

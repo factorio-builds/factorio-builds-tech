@@ -1,7 +1,6 @@
 import express from "express"
 import { IncomingForm, Fields, Files } from "formidable"
-import { ensureConnection } from "../../db"
-import { Build } from "../../db/entities/build.entity"
+import { BuildRepository } from "../../db/repository/build.repository"
 import { ensureAuthenticated } from "../middlewares"
 import {
   createBuildUseCase,
@@ -31,9 +30,8 @@ const parseForm = (req: express.Request): Promise<IParsedForm> => {
  * GET ALL BUILDS
  */
 buildRoutes.get("/build", async (_req, res) => {
-  const connection = await ensureConnection()
-  const buildsRepository = connection!.getRepository(Build)
-  const builds = await buildsRepository.find().catch((error) => {
+  const buildRepository = await BuildRepository()
+  const builds = await buildRepository.find().catch((error) => {
     console.error(error)
     throw new Error("Cannot find build data")
   })
@@ -61,9 +59,8 @@ buildRoutes.post("/build", ensureAuthenticated, async (req, res) => {
  * GET BUILD BY ID
  */
 buildRoutes.get("/build/:id", async (req, res) => {
-  const connection = await ensureConnection()
-  const buildsRepository = connection!.getRepository(Build)
-  const build = await buildsRepository
+  const buildRepository = await BuildRepository()
+  const build = await buildRepository
     .findOne(req.query.id as string)
     // TODO: reproduce with TypeORM
     // .findByPk(req.query.id, {

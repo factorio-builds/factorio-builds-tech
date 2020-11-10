@@ -4,9 +4,10 @@ import imageSize from "image-size"
 import { ISizeCalculationResult } from "image-size/dist/types/interface"
 import { promisify } from "util"
 import { v4 as uuidv4 } from "uuid"
-import { ensureConnection } from "../../db"
 import { Build } from "../../db/entities/build.entity"
 import { User } from "../../db/entities/user.entity"
+import { BuildRepository } from "../../db/repository/build.repository"
+import { UserRepository } from "../../db/repository/user.repository"
 import { EState } from "../../types"
 import { uploadFile } from "../../utils/upload"
 const imageSizeAsync = promisify(imageSize)
@@ -43,8 +44,7 @@ async function handleFile(
 }
 
 async function getUserById(id: string): Promise<User | void> {
-  const connection = await ensureConnection()
-  const userRepository = connection!.getRepository(User)
+  const userRepository = await UserRepository()
 
   return userRepository.findOne(id).catch((error) => {
     console.error(error)
@@ -53,8 +53,7 @@ async function getUserById(id: string): Promise<User | void> {
 }
 
 async function getBuildById(id: string): Promise<Build | void> {
-  const connection = await ensureConnection()
-  const buildRepository = connection!.getRepository(Build)
+  const buildRepository = await BuildRepository()
 
   return buildRepository.findOne(id).catch((error) => {
     console.error(error)
@@ -63,8 +62,7 @@ async function getBuildById(id: string): Promise<Build | void> {
 }
 
 async function saveBuild(build: Build) {
-  const connection = await ensureConnection()
-  const buildRepository = connection!.getRepository(Build)
+  const buildRepository = await BuildRepository()
   const toSave = buildRepository.create(build)
 
   return buildRepository.save(toSave)
