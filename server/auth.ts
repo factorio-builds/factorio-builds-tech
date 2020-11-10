@@ -1,8 +1,7 @@
 import express from "express"
 import passport from "passport"
 import DiscordStrategy from "passport-discord"
-import { ensureConnection } from "../db"
-import { User } from "../db/entities/user.entity"
+import { UserRepository } from "../db/repository/user.repository"
 
 export const authRoutes = express.Router()
 
@@ -44,9 +43,7 @@ export const discordStrategy = new DiscordStrategy(
     scope: ["identify", "email"],
   },
   async function (_accessToken, _refreshToken, profile, cb) {
-    const connection = await ensureConnection()
-
-    const userRepository = connection!.getRepository(User)
+    const userRepository = await UserRepository()
     const user = await userRepository.findOne({
       where: { discordId: profile.id },
     })

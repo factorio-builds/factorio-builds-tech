@@ -7,6 +7,7 @@ import Layout from "../components/Layout"
 import SearchInput from "../components/SearchInput"
 import { ensureConnection } from "../db"
 import { Build } from "../db/entities/build.entity"
+import { BuildRepository } from "../db/repository/build.repository"
 import { filteredBuildsSelector } from "../redux/selectors/builds"
 import { IStoreState, wrapper } from "../redux/store"
 import { IBuild } from "../types"
@@ -38,10 +39,8 @@ const IndexPage: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
-    const connection = await ensureConnection()
-
-    const buildsRepository = connection!.getRepository(Build)
-    const builds = await buildsRepository.find().catch((error) => {
+    const buildRepository = await BuildRepository()
+    const builds = await buildRepository.find().catch((error) => {
       console.error(error)
       throw new Error("Cannot find build data")
     })
