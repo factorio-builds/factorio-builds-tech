@@ -1,10 +1,38 @@
 import styled from "styled-components"
-import { Plus } from "../../icons/plus"
+import { COLOR } from "../../design/tokens/color"
+import Lamp from "../../icons/lamp"
 
 export const ImageUploadWrapper = styled.div`
   display: flex;
   flex-direction: column;
+`
+
+export const TopRow = styled.div`
+  display: flex;
   align-items: center;
+`
+
+// TODO: extract
+export const Label = styled.label`
+  font-size: 18px;
+  line-height: 1.8;
+  font-weight: 700;
+  color: ${COLOR.PURPLE900};
+`
+
+export const SwapImage = styled.button`
+  margin-left: auto;
+  background: none;
+  border: none;
+  padding: 0;
+  color: ${COLOR.BLUE500};
+  border-bottom: 1px solid ${COLOR.BLUE500};
+  cursor: pointer;
+
+  &:hover {
+    color: ${COLOR.BLUE700};
+    border-bottom-color: ${COLOR.BLUE700};
+  }
 `
 
 export const UploadZone = styled.div`
@@ -13,14 +41,15 @@ export const UploadZone = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 248px;
-  height: 248px;
-  border: 6px solid #67469b;
-  border-radius: 10px;
+  width: 300px;
+  height: 377px;
+  border: 2px solid ${COLOR.PURPLE500};
   overflow-y: hidden;
   overflow-y: hidden;
   margin: 0 auto;
   cursor: pointer;
+  background: ${COLOR.INPUT};
+  padding: 8px;
 
   .has-image & {
     height: auto;
@@ -32,19 +61,14 @@ export const UploadZone = styled.div`
     box-shadow: 0 0 0 3px #40a9ff !important;
   }
 
-  &:hover {
-    background: #ebebeb;
-  }
-
   &:hover::after {
     content: "";
     position: absolute;
-    border-radius: 3px;
-    top: 8px;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    border: 2px dashed #67469b;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.25);
   }
 
   .has-image &:hover::after {
@@ -57,32 +81,40 @@ export const ImagePreview = styled.img`
   width: 100%;
 `
 
-export const StyledPlusIcon = styled(Plus)`
-  width: 90px;
-  height: 90px;
-`
-
 export const Hint = styled.div`
-  position: absolute;
-  bottom: 16px;
-  color: #67469b;
-  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  color: ${COLOR.PURPLE700};
+  font-size: 18px;
   letter-spacing: 0.05em;
 `
 
-export const DeleteButtonWrapper = styled.div`
-  margin: 16px 0;
+export const NoImageBackdrop = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("/img/image-backdrop.jpg");
+  background-size: cover;
+  background-position: 50% 50%;
 `
 
-export const DeleteButton = styled.button`
-  background: #c20e0e;
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
+export const Recommended = styled.div`
+  display: flex;
+  align-items: center;
+  background: #877599;
+  color: ${COLOR.PURPLE700};
+  padding: 14px 14px;
+  font-size: 12px;
+  margin-top: 7px;
+`
 
-  &:hover {
-    background: #9d1111;
-  }
+export const StyledLamp = styled(Lamp)`
+  flex: 0 0 23px;
+  width: 23px;
+  margin-right: 15px;
 `

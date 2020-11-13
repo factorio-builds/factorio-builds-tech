@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 export const Content = styled.div`
-  padding: 20px 0 20px 34px;
+  padding: 20px 0 20px 20px;
   flex: 1 1 auto;
 
   > ::first-child {

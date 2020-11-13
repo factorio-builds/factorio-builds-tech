@@ -28,7 +28,7 @@ const Layout: React.FC<ILayoutProps> = ({
     <Header />
     {subheader && <Subheader>{subheader}</Subheader>}
     <Container>
-      <Sidebar>{sidebar}</Sidebar>
+      {sidebar && <Sidebar>{sidebar}</Sidebar>}
       <SC.Content>{children}</SC.Content>
     </Container>
   </>

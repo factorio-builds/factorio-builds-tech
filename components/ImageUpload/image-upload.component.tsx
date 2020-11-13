@@ -4,6 +4,7 @@ import cx from "classnames"
 import * as SC from "./image-upload.styles"
 
 interface IImageUploadProps {
+  label: string
   image: string | null
   onChange: (file: File | null) => void
 }
@@ -55,25 +56,29 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
     <SC.ImageUploadWrapper
       className={cx({ "is-active": isDragActive, "has-image": imagePreview })}
     >
+      <SC.TopRow>
+        <SC.Label>{props.label}</SC.Label>
+        {image && <SC.SwapImage onClick={removeImage}>swap image</SC.SwapImage>}
+      </SC.TopRow>
+
       <SC.UploadZone {...getRootProps()}>
         <input {...getInputProps()} />
         {image ? (
           <SC.ImagePreview src={image} />
         ) : (
-          <React.Fragment>
-            <SC.StyledPlusIcon color="#67469b" />
+          <SC.NoImageBackdrop>
             <SC.Hint>
               {isDragActive ? "(drop image here)" : "(click or drag image)"}
             </SC.Hint>
-          </React.Fragment>
+          </SC.NoImageBackdrop>
         )}
       </SC.UploadZone>
 
-      <SC.DeleteButtonWrapper>
-        {image && (
-          <SC.DeleteButton onClick={removeImage}>delete image</SC.DeleteButton>
-        )}
-      </SC.DeleteButtonWrapper>
+      <SC.Recommended>
+        <SC.StyledLamp />
+        We recommended using a tall image, if possible, share the build image
+        vertically.
+      </SC.Recommended>
     </SC.ImageUploadWrapper>
   )
 }

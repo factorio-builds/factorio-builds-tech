@@ -7,7 +7,7 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   background: ${COLOR.SUBHEADER};
   color: ${COLOR.PURPLE900};
-  padding: 25px 0;
+  padding: 25px 20px;
 
   ${Container} {
     flex-direction: column;
