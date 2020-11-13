@@ -118,3 +118,29 @@ export const StyledLamp = styled(Lamp)`
   width: 23px;
   margin-right: 15px;
 `
+
+export const Feedback = styled.div`
+  padding: 10px 0;
+  font-size: 18px;
+
+  svg {
+    width: 15px;
+    margin-right: 8px;
+  }
+
+  &.variant-positive {
+    color: #68c06b;
+
+    svg path {
+      fill: #68c06b;
+    }
+  }
+
+  &.variant-warning {
+    color: #fde92e;
+
+    svg path {
+      fill: #fde92e;
+    }
+  }
+`
