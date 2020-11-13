@@ -19,6 +19,7 @@ interface ICreateParameters {
 }
 
 interface IUpdateParameters {
+  ownerId: string
   fields: Fields
   files: Files
 }
@@ -59,6 +60,15 @@ async function getBuildById(id: string): Promise<Build | void> {
     console.error(error)
     throw new Error("Cannot find build data")
   })
+}
+
+async function isOwnedByUser(
+  buildId: string,
+  ownerId: string
+): Promise<boolean> {
+  const buildRepository = await BuildRepository()
+
+  return buildRepository.isOwnedBy(buildId, ownerId)
 }
 
 async function saveBuild(build: Build) {
@@ -104,6 +114,7 @@ export async function createBuildUseCase({
 
 // TODO: validate ownership
 export async function updateBuildUseCase({
+  ownerId,
   fields,
   files,
 }: IUpdateParameters): Promise<Build> {
@@ -111,6 +122,12 @@ export async function updateBuildUseCase({
 
   if (!build) {
     throw new Error("no build")
+  }
+
+  const ownedByUser = await isOwnedByUser(build.id, ownerId)
+
+  if (!ownedByUser) {
+    throw new Error("you do not own that build")
   }
 
   const { uploadedFile, dimensions } = await handleFile(build.id, files.image)

@@ -81,8 +81,14 @@ buildRoutes.get("/build/:id", async (req, res) => {
 buildRoutes.post("/build/:id", ensureAuthenticated, async (req, res) => {
   const { fields, files } = await parseForm(req)
 
-  const build = await updateBuildUseCase({ fields, files })
+  const build = await updateBuildUseCase({
+    ownerId: req.session!.passport.user.id,
+    fields,
+    files,
+  }).catch((error) => {
+    // TODO: proper error handling with correct status
+    res.status(500).json({ success: false, message: error.message })
+  })
 
-  // TODO: error handling
   res.status(200).json(build)
 })
