@@ -135,9 +135,9 @@ const Step2: React.FC<IStep2Props> = (props) => {
             })}
           </InputGroup>
 
-          <div style={{ marginTop: "16px" }}>
+          <SC.ButtonsStack gutter={24} orientation="horizontal">
             <Button variant="success">Save build</Button>
-          </div>
+          </SC.ButtonsStack>
         </Stacker>
       </SC.Content>
       <SC.Sidebar>

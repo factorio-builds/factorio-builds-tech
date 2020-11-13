@@ -78,7 +78,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
             </>
           )}
 
-          <div style={{ marginTop: "16px" }}>
+          <SC.ButtonsStack gutter={24} orientation="horizontal">
             <Button
               variant="success"
               type="button"
@@ -87,7 +87,12 @@ const Step1: React.FC<IStep1Props> = (props) => {
             >
               Continue
             </Button>
-          </div>
+            {!stepIsValid && (
+              <SC.SkipButton onClick={props.goToNextStep}>
+                or skip
+              </SC.SkipButton>
+            )}
+          </SC.ButtonsStack>
         </Stacker>
       </SC.Content>
     </SC.Row>
