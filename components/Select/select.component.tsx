@@ -22,8 +22,12 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         // @ts-ignore
         form.setFieldValue(field.name, fieldValue.value)
       }}
-      // @ts-ignore
-      value={{ value: field.value, label: field.value }}
+      value={
+        field.value
+          ? // @ts-ignore
+            props.options.find((option) => option.value === field.value)
+          : null
+      }
       styles={{
         control: (provided, state) => {
           const focusedShadow = `0 0 0 3px ${COLOR.FOCUSED}`

@@ -43,6 +43,22 @@ const FILE_SIZE = 160 * 1024
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
 
 // TODO: extract
+const STATE_MAP = [
+  {
+    name: "Early-game",
+    value: EState.EARLY_GAME,
+  },
+  {
+    name: "Mid-game",
+    value: EState.MID_GAME,
+  },
+  {
+    name: "Late-game",
+    value: EState.LATE_GAME,
+  },
+]
+
+// TODO: extract
 const CATEGORY_MAP = [
   {
     icon: "splitter",
@@ -335,9 +351,9 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                         type="select"
                         required
                         component={Input}
-                        options={Object.keys(EState).map((state) => ({
-                          label: state,
-                          value: state,
+                        options={STATE_MAP.map((state) => ({
+                          label: state.name,
+                          value: state.value,
                         }))}
                         validate={validate("state")}
                         size="small"
