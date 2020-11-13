@@ -1,4 +1,6 @@
 import styled from "styled-components"
+import { COLOR } from "../../design/tokens/color"
+import Stacker from "../Stacker"
 
 export const Row = styled.div`
   display: flex;
@@ -11,4 +13,22 @@ export const Content = styled.div`
 
 export const Sidebar = styled.div`
   flex: 0 0 300px;
+`
+
+export const ButtonsStack = styled(Stacker)`
+  margin-top: 16px;
+`
+
+export const SkipButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  color: ${COLOR.PURPLE700};
+  font-size: 17px;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    color: ${COLOR.PURPLE900};
+  }
 `
