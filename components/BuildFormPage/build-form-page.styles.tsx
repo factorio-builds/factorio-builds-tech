@@ -6,7 +6,7 @@ export const Row = styled.div`
 `
 
 export const Content = styled.div`
-  flex: 1 1 725px;
+  flex: 0 1 calc(100% - 300px);
 `
 
 export const Sidebar = styled.div`
