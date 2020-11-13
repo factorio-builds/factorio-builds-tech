@@ -6,6 +6,7 @@ import * as SC from "./checkbox.styles"
 interface ICheckboxProps extends FieldProps {
   id: string
   label: string
+  prefix: JSX.Element
   text?: string
   inline?: boolean
 }
@@ -27,7 +28,12 @@ const Checkbox: React.FC<ICheckboxProps> = (props) => {
       >
         {props.field.checked}
         <SC.Square />
-        {props.label && <SC.Text>{props.label}</SC.Text>}
+        {props.label && (
+          <SC.Text>
+            {props.prefix && <SC.Prefix>{props.prefix}</SC.Prefix>}
+            {props.label}
+          </SC.Text>
+        )}
       </SC.Label>
     </SC.CheckboxWrapper>
   )

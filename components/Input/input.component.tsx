@@ -8,13 +8,23 @@ import * as SC from "./input.styles"
 
 interface IInputProps extends FieldProps {
   label: string
+  prefix: JSX.Element
   placeholder: string
   type: "text" | "textarea" | "checkbox" | "select"
+  size: "small" | "large"
   required?: boolean
   inline?: boolean
+  validFeedback?: string
 }
 
-const Input: React.FC<IInputProps> = ({ field, form, type, ...props }) => {
+const Input: React.FC<IInputProps> = ({
+  prefix,
+  field,
+  form,
+  type,
+  size,
+  ...props
+}) => {
   const uid = useUID()
 
   const isTouched = form.touched[field.name]
@@ -23,6 +33,7 @@ const Input: React.FC<IInputProps> = ({ field, form, type, ...props }) => {
   return (
     <InputWrapper
       {...props}
+      className={`size-${size}`}
       label={
         !props.inline && type !== "checkbox"
           ? // todo: extract/cleanup logic
@@ -30,6 +41,7 @@ const Input: React.FC<IInputProps> = ({ field, form, type, ...props }) => {
           : undefined
       }
       error={error}
+      validFeedback={isTouched && !error ? props.validFeedback : undefined}
       uid={uid}
     >
       {type === "text" && <SC.StyledInput {...field} id={uid} />}
@@ -37,6 +49,7 @@ const Input: React.FC<IInputProps> = ({ field, form, type, ...props }) => {
       {type === "checkbox" && (
         <Checkbox
           {...props}
+          prefix={prefix}
           label={props.label}
           form={form}
           field={field}
@@ -53,6 +66,7 @@ const Input: React.FC<IInputProps> = ({ field, form, type, ...props }) => {
 
 Input.defaultProps = {
   type: "text",
+  size: "large",
   required: false,
   inline: false,
 }

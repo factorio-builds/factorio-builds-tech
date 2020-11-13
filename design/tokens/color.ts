@@ -18,7 +18,7 @@ export const COLOR = {
   BLUE100: "#001833", // UNUSED
 
   SELECTED: "#4299FF",
-  FOCUSED: "#AAD1FF",
+  FOCUSED: "#BDD8F7",
 
   SUCCESS: "#8FCD5B",
   DANGER: "#F24439",
@@ -30,4 +30,5 @@ export const COLOR = {
   BACKGROUND: "#150F1E",
   LINK: "#28D8FF",
   CODE: "#241A34",
+  INPUT: "#241A34",
 }

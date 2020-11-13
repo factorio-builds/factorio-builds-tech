@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useDispatch } from "react-redux"
 import { Form, Formik, Field } from "formik"
+import startCase from "lodash/startCase"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
 import { ECategory, EState, IBuild } from "../../types"
@@ -9,11 +10,14 @@ import {
   isBook,
   isValidBlueprint,
 } from "../../utils/blueprint"
+import Button from "../Button"
 import ImageUpload from "../ImageUpload"
 import Input from "../Input"
 import InputGroup from "../InputGroup"
+import ItemIcon from "../ItemIcon"
 import Layout from "../Layout"
 import Stacker from "../Stacker"
+import * as SC from "./build-form-page.styles"
 
 interface IFormValues {
   name: string
@@ -37,6 +41,51 @@ interface IValidFormValues {
 
 const FILE_SIZE = 160 * 1024
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
+
+// TODO: extract
+const STATE_MAP = [
+  {
+    name: "Early-game",
+    value: EState.EARLY_GAME,
+  },
+  {
+    name: "Mid-game",
+    value: EState.MID_GAME,
+  },
+  {
+    name: "Late-game",
+    value: EState.LATE_GAME,
+  },
+]
+
+// TODO: extract
+const CATEGORY_MAP = [
+  {
+    icon: "splitter",
+    name: startCase(ECategory.BALANCER),
+    value: ECategory.BALANCER,
+  },
+  {
+    icon: "stone-furnace",
+    name: startCase(ECategory.SMELTING),
+    value: ECategory.SMELTING,
+  },
+  {
+    icon: "straight-rail",
+    name: startCase(ECategory.TRAINS),
+    value: ECategory.TRAINS,
+  },
+  {
+    icon: "assembling-machine-1",
+    name: startCase(ECategory.PRODUCTION),
+    value: ECategory.PRODUCTION,
+  },
+  {
+    icon: "solar-panel",
+    name: startCase(ECategory.ENERGY),
+    value: ECategory.ENERGY,
+  },
+]
 
 const baseInitialValues: IFormValues = {
   name: "",
@@ -172,6 +221,8 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
 
           if (isValid && formikProps.touched.blueprint) {
             setCanInit(true)
+          } else {
+            setCanInit(false)
           }
         }, [formikProps.touched.blueprint, formikProps.values.blueprint])
 
@@ -199,121 +250,157 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
         return (
           <Layout
             title="Create a build"
-            sidebar={
-              <ImageUpload
-                image={
-                  typeof formikProps.values.image === "string"
-                    ? formikProps.values.image
-                    : null
-                }
-                onChange={(file) => formikProps.setFieldValue("image", file)}
-              />
+            /* TODO: extract style */
+            subheader={
+              <h2 style={{ fontSize: "24px", fontWeight: 700 }}>
+                {props.type === "CREATE" ? "Create a build" : "Edit build"}
+              </h2>
             }
           >
-            <h2>{props.type === "CREATE" ? "Create a build" : "Edit build"}</h2>
-
             <Form>
-              {!init && props.type === "CREATE" && (
-                <Stacker>
-                  <Field
-                    name="blueprint"
-                    label="Blueprint"
-                    type="textarea"
-                    rows="5"
-                    required
-                    component={Input}
-                    validate={validate("blueprint")}
-                    onKeyPress={handleOnKeyPress}
-                  />
+              <SC.Row>
+                <SC.Content>
+                  {!init && props.type === "CREATE" && (
+                    <Stacker>
+                      <p>
+                        Get started with a blueprint string, we will parse your
+                        blueprint to extract the relevant metadata as best as we
+                        can!
+                      </p>
 
-                  <div style={{ marginTop: "16px" }}>
-                    <button
-                      type="button"
-                      disabled={!canInit}
-                      onClick={preFillForm}
-                    >
-                      continue
-                    </button>
-                  </div>
-                </Stacker>
-              )}
+                      <Field
+                        name="blueprint"
+                        label="Blueprint string"
+                        type="textarea"
+                        rows="5"
+                        required
+                        component={Input}
+                        validate={validate("blueprint")}
+                        onKeyPress={handleOnKeyPress}
+                        validFeedback="Found a valid blueprint"
+                      />
 
-              {(init || props.type === "EDIT") && (
-                <Stacker>
-                  <Field
-                    name="name"
-                    label="Name"
-                    type="text"
-                    required
-                    component={Input}
-                    validate={validate("name")}
-                  />
+                      {canInit && (
+                        <>
+                          <p>
+                            Blueprint with a name of XXXXX, totally YYY
+                            entities.Assuming category of ABC, game state of DEF
+                            with ZZ% confidence.
+                          </p>
 
-                  <Field
-                    name="description"
-                    label="Description"
-                    type="textarea"
-                    rows="5"
-                    component={Input}
-                    validate={validate("description")}
-                  />
+                          <p>
+                            You’ll get to adjust everything on the next screen.
+                          </p>
+                        </>
+                      )}
 
-                  <Field
-                    name="blueprint"
-                    label="Blueprint"
-                    type="textarea"
-                    rows="5"
-                    required
-                    component={Input}
-                    validate={validate("blueprint")}
-                  />
+                      <div style={{ marginTop: "16px" }}>
+                        <Button
+                          variant="success"
+                          type="button"
+                          disabled={!canInit}
+                          onClick={preFillForm}
+                        >
+                          Continue
+                        </Button>
+                      </div>
+                    </Stacker>
+                  )}
 
-                  <Field
-                    name="tileable"
-                    label="Tileable"
-                    type="checkbox"
-                    component={Input}
-                    validate={validate("tileable")}
-                  />
+                  {(init || props.type === "EDIT") && (
+                    <Stacker>
+                      <Field
+                        name="name"
+                        label="Name"
+                        type="text"
+                        required
+                        component={Input}
+                        validate={validate("name")}
+                      />
 
-                  <Field
-                    name="state"
-                    label="Game state"
-                    type="select"
-                    required
-                    component={Input}
-                    options={Object.keys(EState).map((state) => ({
-                      label: state,
-                      value: state,
-                    }))}
-                    validate={validate("state")}
-                  />
+                      <Field
+                        name="description"
+                        label="Description"
+                        type="textarea"
+                        rows="5"
+                        component={Input}
+                        validate={validate("description")}
+                      />
 
-                  <InputGroup
-                    legend="Categories"
-                    error={formikProps.errors.categories}
-                  >
-                    {Object.keys(ECategory).map((category) => {
-                      return (
-                        <Field
-                          key={category}
-                          name="categories"
-                          label={category.toLowerCase()}
-                          type="checkbox"
-                          value={category}
-                          inline={true}
-                          component={Input}
-                          validate={validate("categories")}
-                        />
-                      )
-                    })}
-                  </InputGroup>
+                      <Field
+                        name="blueprint"
+                        label="Blueprint"
+                        type="textarea"
+                        rows="5"
+                        required
+                        component={Input}
+                        validate={validate("blueprint")}
+                      />
 
-                  <div style={{ marginTop: "16px" }}>
-                    <button>save</button>
-                  </div>
-                </Stacker>
-              )}
+                      <Field
+                        name="tileable"
+                        label="Tileable"
+                        type="checkbox"
+                        component={Input}
+                        validate={validate("tileable")}
+                      />
+
+                      <Field
+                        name="state"
+                        label="Game state"
+                        type="select"
+                        required
+                        component={Input}
+                        options={STATE_MAP.map((state) => ({
+                          label: state.name,
+                          value: state.value,
+                        }))}
+                        validate={validate("state")}
+                        size="small"
+                      />
+
+                      <InputGroup
+                        legend="Categories"
+                        error={formikProps.errors.categories}
+                      >
+                        {CATEGORY_MAP.map((category) => {
+                          return (
+                            <Field
+                              key={category.value}
+                              name="categories"
+                              label={category.name}
+                              prefix={<ItemIcon itemName={category.icon} />}
+                              type="checkbox"
+                              value={category.value}
+                              component={Input}
+                              validate={validate("categories")}
+                            />
+                          )
+                        })}
+                      </InputGroup>
+
+                      <div style={{ marginTop: "16px" }}>
+                        <Button variant="success">Save build</Button>
+                      </div>
+                    </Stacker>
+                  )}
+                </SC.Content>
+                <SC.Sidebar>
+                  {(init || props.type === "EDIT") && (
+                    <ImageUpload
+                      label="Build image"
+                      image={
+                        typeof formikProps.values.image === "string"
+                          ? formikProps.values.image
+                          : null
+                      }
+                      onChange={(file) =>
+                        formikProps.setFieldValue("image", file)
+                      }
+                    />
+                  )}
+                </SC.Sidebar>
+              </SC.Row>
             </Form>
           </Layout>
         )

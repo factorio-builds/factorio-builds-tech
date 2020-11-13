@@ -22,8 +22,12 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         // @ts-ignore
         form.setFieldValue(field.name, fieldValue.value)
       }}
-      // @ts-ignore
-      value={{ value: field.value, label: field.value }}
+      value={
+        field.value
+          ? // @ts-ignore
+            props.options.find((option) => option.value === field.value)
+          : null
+      }
       styles={{
         control: (provided, state) => {
           const focusedShadow = `0 0 0 3px ${COLOR.FOCUSED}`
@@ -33,12 +37,12 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             fontWeight: 400,
             lineHeight: 1.8,
             padding: "1px 13px",
+            background: COLOR.INPUT,
             border: "2px solid",
-            borderColor: `${error ? COLOR.DANGER : COLOR.GREY300} !important`,
+            borderColor: `${error ? COLOR.DANGER : COLOR.PURPLE500} !important`,
             borderRadius: 0,
             boxShadow: state.isFocused ? focusedShadow : "none",
             transition: "none",
-            outline: "3px solid #fff",
             "&:hover": {
               boxShadow: state.isFocused
                 ? focusedShadow
@@ -46,20 +50,26 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             },
           }
         },
+        singleValue: (provided) => ({
+          ...provided,
+          color: COLOR.PURPLE700,
+        }),
         valueContainer: (provided) => ({
           ...provided,
           padding: 0,
         }),
         placeholder: (provided) => ({
           ...provided,
-          color: "#bbb",
+          color: COLOR.PURPLE500,
           margin: 0,
         }),
         menu: (provided) => ({
           ...provided,
           marginTop: "-2px",
           border: "2px solid",
-          borderColor: COLOR.GREY300,
+          background: COLOR.INPUT,
+          borderColor: COLOR.PURPLE500,
+          boxShadow: `inset 0 1px 0 0 ${COLOR.PURPLE300}`,
           borderTop: "none",
           borderRadius: 0,
           padding: "6px",
@@ -69,7 +79,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         }),
         dropdownIndicator: (provided) => ({
           ...provided,
-          color: COLOR.GREY300,
+          color: COLOR.PURPLE500,
           paddingRight: 0,
         }),
         input: (provided) => ({
@@ -93,10 +103,13 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             : state.isFocused
             ? `${COLOR.FOCUSED} !important`
             : "none",
-          color: state.isSelected ? "#fff !important" : "#000",
+          color:
+            state.isSelected || state.isFocused
+              ? "#241A34 !important"
+              : COLOR.PURPLE700,
           "&:hover": {
             background: COLOR.FOCUSED,
-            color: "#000",
+            color: "#241A34 !important",
           },
         }),
       }}

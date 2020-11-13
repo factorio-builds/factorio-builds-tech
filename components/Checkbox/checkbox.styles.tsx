@@ -4,10 +4,10 @@ import { COLOR } from "../../design/tokens/color"
 export const Square = styled.div`
   position: relative;
   box-sizing: border-box;
-  background: #fff;
+  background: ${COLOR.INPUT};
   width: 34px;
   height: 34px;
-  border: 2px solid ${COLOR.GREY300};
+  border: 2px solid ${COLOR.PURPLE500};
 
   &::after {
     content: "";
@@ -45,7 +45,7 @@ export const CheckboxWrapper = styled.div`
   }
 
   &:hover ${Square}::after {
-    background: #e3e3e3;
+    background: ${COLOR.PURPLE500};
   }
 
   &:focus-within ${Square} {
@@ -54,7 +54,7 @@ export const CheckboxWrapper = styled.div`
   }
 
   &.is-checked ${Square}::after {
-    background: ${COLOR.SUCCESS};
+    background: ${COLOR.SELECTED};
   }
 
   .is-error ${Square} {
@@ -63,5 +63,17 @@ export const CheckboxWrapper = styled.div`
 `
 
 export const Text = styled.div`
+  display: flex;
+  align-items: center;
   margin-left: 16px;
+`
+
+export const Prefix = styled.div`
+  width: 24px;
+  margin-right: 6px;
+
+  & img,
+  & svg {
+    width: 100%;
+  }
 `
