@@ -1,10 +1,10 @@
 import { GetServerSideProps } from "next"
 import Layout from "../../components/Layout"
-import { IUser } from "../../types"
+import { User } from "../../db/entities/user.entity"
 import { mockedUsers } from "../../utils/mock-users-data"
 
 interface IUsersPageProps {
-  user?: IUser
+  user?: User
   errors?: string
 }
 

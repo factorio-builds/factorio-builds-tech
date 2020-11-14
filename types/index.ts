@@ -33,13 +33,6 @@ export interface IImage {
   height: number
 }
 
-export interface IUser {
-  id: string
-  name: string
-  created_at: string
-  updated_at: string
-}
-
 // Blueprint data types from https://github.com/BlooperDB/factorio-render
 export interface IVector {
   x: number
