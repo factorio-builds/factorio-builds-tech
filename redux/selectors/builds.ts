@@ -12,21 +12,6 @@ import {
   filtersStateSelector,
 } from "./filters"
 
-// mappers not ideal, but necessary until DB is typed
-const categoryMap = {
-  balancer: ECategory.BALANCER,
-  smelting: ECategory.SMELTING,
-  trains: ECategory.TRAINS,
-  production: ECategory.PRODUCTION,
-  energy: ECategory.ENERGY,
-}
-
-const stateMap = {
-  early_game: EState.EARLY_GAME,
-  mid_game: EState.MID_GAME,
-  late_game: EState.LATE_GAME,
-}
-
 const buildsSelector = (state: IStoreState) => state.builds.items
 
 const filteredBuildsByState = (
@@ -44,8 +29,7 @@ const filteredBuildsByState = (
 
   return builds.filter((build) => {
     if (build.metadata.state) {
-      // @ts-ignore
-      return stateFilters[stateMap[build.metadata.state]]
+      return stateFilters[build.metadata.state]
     }
   })
 }
@@ -66,8 +50,7 @@ const filteredBuildsByCategory = (
   return builds.filter((build) => {
     if (build.metadata.categories.length) {
       return build.metadata.categories.some((category) => {
-        // @ts-ignore
-        return categoryFilters[categoryMap[category]]
+        return categoryFilters[category]
       })
     }
   })
