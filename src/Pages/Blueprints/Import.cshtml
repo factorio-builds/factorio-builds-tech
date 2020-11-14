@@ -1,0 +1,38 @@
+@page
+@model ImportModel
+
+<div class="text-center">
+    <h1 class="display-4">Add Blueprint</h1>
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="form-group">
+            <label asp-for="Import.Payload"></label>
+            <textarea asp-for="Import.Payload" class="form-control" rows="6"></textarea>
+            <span asp-validation-for="Import.Payload"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    @if (Model.Blueprint != null)
+    {
+        <h2>@Model.Blueprint.Label</h2>
+        <p>@Model.Blueprint.Description</p>
+        <p>(@Model.Blueprint.Entities.Count() entities)</p>
+
+        <table class="table">
+            <tbody>
+                @foreach (var (key, count) in Model.GetEntityStats())
+                {
+                    <tr>
+                        <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
+                        <td>@count</td>
+                        <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

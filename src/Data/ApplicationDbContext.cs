@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace FactorioTech.Data
+namespace FactorioTech.Web.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

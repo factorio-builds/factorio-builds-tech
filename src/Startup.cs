@@ -1,4 +1,4 @@
-using FactorioTech.Data;
+using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace FactorioTech
+namespace FactorioTech.Web
 {
     public class Startup
     {
@@ -20,10 +20,30 @@ namespace FactorioTech
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(opts => opts.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
+            //var appConfig = _configuration.Get<AppConfig>();
+            //if (appConfig == null)
+            //    throw new Exception("Failed to parse configuration");
+
+            //services.Configure<AppConfig>(_configuration);
+            services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
+
+            services.AddAuthentication().AddGitHub(options =>
+            {
+                options.ClientId = "***REMOVED***";
+                options.ClientSecret = "***REMOVED***";
+            });
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+            {
+                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
+            });
+
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddDefaultIdentity<IdentityUser>(opts => opts.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<IdentityUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddRazorPages();
         }
 
