@@ -10,6 +10,11 @@ import { BuildRepository } from "../../db/repository/build.repository"
 import { UserRepository } from "../../db/repository/user.repository"
 import { EState } from "../../types"
 import { uploadFile } from "../../utils/upload"
+import {
+  EntityNotFoundException,
+  EntityPermissonException,
+} from "../exceptions/entity.exceptions"
+import { FileHandleException } from "../exceptions/file.exceptions"
 const imageSizeAsync = promisify(imageSize)
 
 interface ICreateParameters {
@@ -36,7 +41,7 @@ async function handleFile(
   const dimensions = await imageSizeAsync(file.path)
 
   if (!uploadedFile || !dimensions) {
-    throw new Error("Failed to handle uploaded file")
+    throw new FileHandleException("Failed to handle uploaded file")
   }
 
   return {
@@ -48,18 +53,16 @@ async function handleFile(
 async function getUserById(id: string): Promise<User | void> {
   const userRepository = await UserRepository()
 
-  return userRepository.findOne(id).catch((error) => {
-    console.error(error)
-    throw new Error("Cannot find user data")
+  return userRepository.findOne(id).catch(() => {
+    throw new EntityNotFoundException("User not found")
   })
 }
 
 async function getBuildById(id: string): Promise<Build | void> {
   const buildRepository = await BuildRepository()
 
-  return buildRepository.findOne(id).catch((error) => {
-    console.error(error)
-    throw new Error("Cannot find build data")
+  return buildRepository.findOne(id).catch(() => {
+    throw new EntityNotFoundException("Build not found")
   })
 }
 
@@ -123,13 +126,13 @@ export async function updateBuildUseCase({
   const build = await getBuildById(buildId)
 
   if (!build) {
-    throw new Error("no build")
+    throw new EntityNotFoundException("Build not found")
   }
 
   const ownedByUser = await isOwnedByUser(buildId, ownerId)
 
   if (!ownedByUser) {
-    throw new Error("you do not own that build")
+    throw new EntityPermissonException("You do not own that build")
   }
 
   if (files.image) {

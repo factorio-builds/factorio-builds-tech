@@ -1,6 +1,10 @@
 import express from "express"
 import { IncomingForm, Fields, Files } from "formidable"
 import { BuildRepository } from "../../db/repository/build.repository"
+import {
+  EntityNotFoundException,
+  EntityPermissonException,
+} from "../exceptions/entity.exceptions"
 import { ensureAuthenticated } from "../middlewares"
 import {
   createBuildUseCase,
@@ -30,66 +34,87 @@ const parseForm = (req: express.Request): Promise<IParsedForm> => {
  * GET ALL BUILDS
  */
 buildRoutes.get("/build", async (_req, res) => {
-  const buildRepository = await BuildRepository()
-  const builds = await buildRepository.find().catch((error) => {
-    console.error(error)
-    throw new Error("Cannot find build data")
-  })
+  try {
+    const buildRepository = await BuildRepository()
+    const builds = await buildRepository.find()
 
-  res.status(200).json(builds)
+    res.status(200).json({ success: true, result: builds })
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message })
+  }
 })
 
 /*
  * SAVE A NEW BUILD
  */
 buildRoutes.post("/build", ensureAuthenticated, async (req, res) => {
-  const { fields, files } = await parseForm(req)
+  try {
+    const { fields, files } = await parseForm(req)
 
-  const build = await createBuildUseCase({
-    ownerId: req.session!.passport.user.id,
-    fields,
-    files,
-  })
+    const build = await createBuildUseCase({
+      ownerId: req.session!.passport.user.id,
+      fields,
+      files,
+    })
 
-  // TODO: error handling
-  res.status(200).json(build)
+    res.status(200).json({ success: true, result: build })
+  } catch (error) {
+    if (error instanceof EntityNotFoundException) {
+      res.status(409).json({ success: false, message: error.message })
+    }
+    res.status(500).json({ success: false, message: error.message })
+  }
 })
 
 /*
  * GET BUILD BY ID
  */
 buildRoutes.get("/build/:id", async (req, res) => {
-  const buildRepository = await BuildRepository()
-  const build = await buildRepository
-    .findOne(req.query.id as string)
-    // TODO: reproduce with TypeORM
-    // .findByPk(req.query.id, {
-    //   // @ts-ignore
-    //   include: [{ model: db.user, as: "owner" }],
-    // })
-    .catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
-  res.status(200).json(build)
+  try {
+    const buildRepository = await BuildRepository()
+    const build = await buildRepository
+      .findOne(req.query.id as string)
+      // TODO: reproduce with TypeORM
+      // .findByPk(req.query.id, {
+      //   // @ts-ignore
+      //   include: [{ model: db.user, as: "owner" }],
+      // })
+      .catch(() => {
+        throw new EntityNotFoundException("Build not found")
+      })
+
+    res.status(200).json({ success: true, result: build })
+  } catch (error) {
+    if (error instanceof EntityNotFoundException) {
+      res.status(404).json({ success: false, message: error.message })
+    }
+    res.status(500).json({ success: false, message: error.message })
+  }
 })
 
 /*
  * SAVE AN EXISTING BUILD
  */
 // TODO: convert to put
-buildRoutes.post("/build/:id", ensureAuthenticated, async (req, res) => {
-  const { fields, files } = await parseForm(req)
+buildRoutes.put("/build/:id", ensureAuthenticated, async (req, res) => {
+  try {
+    const { fields, files } = await parseForm(req)
 
-  const build = await updateBuildUseCase({
-    buildId: req.params.id,
-    ownerId: req.session!.passport.user.id,
-    fields,
-    files,
-  }).catch((error) => {
-    // TODO: proper error handling with correct status
+    const build = await updateBuildUseCase({
+      buildId: req.params.id,
+      ownerId: req.session!.passport.user.id,
+      fields,
+      files,
+    })
+
+    res.status(200).json({ success: true, result: build })
+  } catch (error) {
+    if (error instanceof EntityNotFoundException) {
+      res.status(406).json({ success: false, message: error.message })
+    }
+    if (error instanceof EntityPermissonException) {
+      res.status(403).json({ success: false, message: error.message })
+    }
     res.status(500).json({ success: false, message: error.message })
-  })
-
-  res.status(200).json(build)
+  }
 })

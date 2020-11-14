@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react"
 import { useDispatch } from "react-redux"
+import axios from "axios"
 import { Form, Formik } from "formik"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
@@ -144,24 +145,28 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
       onSubmit={(values) => {
         const endpoint =
           props.type === "EDIT" ? `build/${props.build.id}` : `build`
-        fetch(`http://localhost:3000/api/${endpoint}`, {
-          method: "POST",
-          body: toFormData(values as IValidFormValues),
+        axios({
+          url: `http://localhost:3000/api/${endpoint}`,
+          method: props.type === "EDIT" ? "PUT" : "POST",
+          data: toFormData(values as IValidFormValues),
         })
-          .then((res) => res.json())
           .then((res) => {
             if (props.type === "EDIT") {
               dispatch({
                 type: "EDIT_BUILD",
-                payload: res,
+                payload: res.data,
               })
             } else {
               dispatch({
                 type: "CREATE_BUILD",
-                payload: res,
+                payload: res.data,
               })
             }
             router.push("/")
+          })
+          .catch((err) => {
+            // TODO: handle me
+            console.log(err)
           })
       }}
     >
