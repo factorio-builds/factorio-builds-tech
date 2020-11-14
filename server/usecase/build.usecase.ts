@@ -132,7 +132,17 @@ export async function updateBuildUseCase({
     throw new Error("you do not own that build")
   }
 
-  const { uploadedFile, dimensions } = await handleFile(build.id, files.image)
+  if (files.image) {
+    const { uploadedFile, dimensions } = await handleFile(buildId, files.image)
+
+    if (uploadedFile && dimensions) {
+      build.image = {
+        src: uploadedFile.Location,
+        width: dimensions.width as number,
+        height: dimensions.height as number,
+      }
+    }
+  }
 
   build.name = fields.name as string
   build.blueprint = fields.blueprint as string
@@ -145,13 +155,6 @@ export async function updateBuildUseCase({
       ? JSON.parse(fields.categories as string)
       : [],
     tileable: Boolean(fields.tileable as string),
-  }
-  if (uploadedFile && dimensions) {
-    build.image = {
-      src: uploadedFile.Location,
-      width: dimensions.width as number,
-      height: dimensions.height as number,
-    }
   }
 
   return saveBuild(build)
