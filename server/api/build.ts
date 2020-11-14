@@ -38,7 +38,7 @@ buildRoutes.get("/build", async (_req, res) => {
     const buildRepository = await BuildRepository()
     const builds = await buildRepository.find()
 
-    res.status(200).json(builds)
+    res.status(200).json({ success: true, result: builds })
   } catch (error) {
     res.status(500).json({ success: false, message: error.message })
   }
@@ -57,7 +57,7 @@ buildRoutes.post("/build", ensureAuthenticated, async (req, res) => {
       files,
     })
 
-    res.status(200).json(build)
+    res.status(200).json({ success: true, result: build })
   } catch (error) {
     if (error instanceof EntityNotFoundException) {
       res.status(409).json({ success: false, message: error.message })
@@ -83,7 +83,7 @@ buildRoutes.get("/build/:id", async (req, res) => {
         throw new EntityNotFoundException("Build not found")
       })
 
-    res.status(200).json(build)
+    res.status(200).json({ success: true, result: build })
   } catch (error) {
     if (error instanceof EntityNotFoundException) {
       res.status(404).json({ success: false, message: error.message })
@@ -107,7 +107,7 @@ buildRoutes.put("/build/:id", ensureAuthenticated, async (req, res) => {
       files,
     })
 
-    res.status(200).json(build)
+    res.status(200).json({ success: true, result: build })
   } catch (error) {
     if (error instanceof EntityNotFoundException) {
       res.status(406).json({ success: false, message: error.message })
