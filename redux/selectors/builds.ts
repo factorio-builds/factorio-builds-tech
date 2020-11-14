@@ -1,5 +1,5 @@
 import { createSelector } from "reselect"
-import { ECategory, EState, IBuild } from "../../types"
+import { IBuild } from "../../types"
 import {
   IStoreCategoryFilters,
   IStoreFiltersState,

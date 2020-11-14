@@ -1,6 +1,4 @@
 import { GetServerSideProps } from "next"
-import { ensureConnection } from "../../db"
-import { Build } from "../../db/entities/build.entity"
 import { IBuildWithJson } from "../../types"
 import Layout from "../../components/Layout"
 import BuildPage from "../../components/BuildPage"
