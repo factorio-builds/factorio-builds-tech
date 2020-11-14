@@ -44,6 +44,9 @@ export class Build {
   @Column("jsonb")
   image!: IImage
 
+  @Column("integer")
+  views!: number
+
   @CreateDateColumn({ type: "timestamp" })
   createdAt!: string
 
