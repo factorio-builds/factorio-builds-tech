@@ -96,7 +96,7 @@ buildRoutes.get("/build/:id", async (req, res) => {
  * SAVE AN EXISTING BUILD
  */
 // TODO: convert to put
-buildRoutes.post("/build/:id", ensureAuthenticated, async (req, res) => {
+buildRoutes.put("/build/:id", ensureAuthenticated, async (req, res) => {
   try {
     const { fields, files } = await parseForm(req)
 

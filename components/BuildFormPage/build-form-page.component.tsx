@@ -147,7 +147,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           props.type === "EDIT" ? `build/${props.build.id}` : `build`
         axios({
           url: `http://localhost:3000/api/${endpoint}`,
-          method: "POST",
+          method: props.type === "EDIT" ? "PUT" : "POST",
           data: toFormData(values as IValidFormValues),
         })
           .then((res) => {
