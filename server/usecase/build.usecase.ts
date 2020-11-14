@@ -19,6 +19,7 @@ interface ICreateParameters {
 }
 
 interface IUpdateParameters {
+  buildId: string
   ownerId: string
   fields: Fields
   files: Files
@@ -114,23 +115,34 @@ export async function createBuildUseCase({
 
 // TODO: validate ownership
 export async function updateBuildUseCase({
+  buildId,
   ownerId,
   fields,
   files,
 }: IUpdateParameters): Promise<Build> {
-  const build = await getBuildById(fields.id as string)
+  const build = await getBuildById(buildId)
 
   if (!build) {
     throw new Error("no build")
   }
 
-  const ownedByUser = await isOwnedByUser(build.id, ownerId)
+  const ownedByUser = await isOwnedByUser(buildId, ownerId)
 
   if (!ownedByUser) {
     throw new Error("you do not own that build")
   }
 
-  const { uploadedFile, dimensions } = await handleFile(build.id, files.image)
+  if (files.image) {
+    const { uploadedFile, dimensions } = await handleFile(buildId, files.image)
+
+    if (uploadedFile && dimensions) {
+      build.image = {
+        src: uploadedFile.Location,
+        width: dimensions.width as number,
+        height: dimensions.height as number,
+      }
+    }
+  }
 
   build.name = fields.name as string
   build.blueprint = fields.blueprint as string
@@ -143,13 +155,6 @@ export async function updateBuildUseCase({
       ? JSON.parse(fields.categories as string)
       : [],
     tileable: Boolean(fields.tileable as string),
-  }
-  if (uploadedFile && dimensions) {
-    build.image = {
-      src: uploadedFile.Location,
-      width: dimensions.width as number,
-      height: dimensions.height as number,
-    }
   }
 
   return saveBuild(build)
