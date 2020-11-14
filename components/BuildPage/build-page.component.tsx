@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react"
 import ReactMarkdown from "react-markdown"
+import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
 import Caret from "../../icons/caret"
+import { IStoreState } from "../../redux/store"
 import { IBuildWithJson } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import Layout from "../Layout"
@@ -35,6 +37,7 @@ const AsideGroup: React.FC<{ title?: string }> = (props) => {
 }
 
 function BuildPage({ build }: IBuildPageProps): JSX.Element {
+  const user = useSelector((state: IStoreState) => state.auth.user)
   const [blueprintExpanded, setBlueprintExpanded] = useState(false)
   const [blueprintFormat, setBlueprintFormat] = useState<"base64" | "json">(
     "base64"
@@ -118,11 +121,13 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Content>
           <SC.Aside>
-            <AsideGroup>
-              <Link href={`/build/${build.id}/edit`}>
-                <SC.EditBuild>edit build</SC.EditBuild>
-              </Link>
-            </AsideGroup>
+            {build.owner.id === user?.id && (
+              <AsideGroup>
+                <Link href={`/build/${build.id}/edit`}>
+                  <SC.EditBuild>edit build</SC.EditBuild>
+                </Link>
+              </AsideGroup>
+            )}
             <AsideGroup>by {build.owner.name}</AsideGroup>
             <AsideGroup>
               <SC.AsideSubGroup>
