@@ -49,9 +49,11 @@ buildRoutes.post("/build", ensureAuthenticated, async (req, res) => {
     ownerId: req.session!.passport.user.id,
     fields,
     files,
+  }).catch((error) => {
+    // TODO: proper error handling with correct status
+    res.status(500).json({ success: false, message: error.message })
   })
 
-  // TODO: error handling
   res.status(200).json(build)
 })
 
