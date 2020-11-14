@@ -1,4 +1,4 @@
-import { IBuild } from "../types"
+import { Build } from "../db/entities/build.entity"
 
 function calcRatio(width: number, height: number): number {
   const ratio = height / width
@@ -11,7 +11,7 @@ function calcRatio(width: number, height: number): number {
 }
 
 function columnHeight(
-  items: IBuild[],
+  items: Build[],
   colWidth: number,
   gutter: number
 ): number {
@@ -24,7 +24,7 @@ function columnHeight(
 }
 
 function getShortestColumn(
-  columns: IBuild[][],
+  columns: Build[][],
   colWidth: number,
   gutter: number
 ) {
@@ -38,11 +38,11 @@ function getShortestColumn(
 }
 
 export function useDistributeToColumn(
-  items: IBuild[],
+  items: Build[],
   colCount: number,
   containerWidth: number,
   gutter: number
-): IBuild[][] {
+): Build[][] {
   if (colCount === 0) {
     return []
   }
@@ -50,7 +50,7 @@ export function useDistributeToColumn(
   const colWidth =
     containerWidth / colCount - (gutter * (colCount - 1)) / colCount
 
-  const columns = Array.from({ length: colCount }, () => [] as IBuild[])
+  const columns = Array.from({ length: colCount }, () => [] as Build[])
 
   // TODO: memoize
   items.forEach((item) => {

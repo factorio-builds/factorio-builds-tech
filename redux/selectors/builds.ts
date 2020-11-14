@@ -1,5 +1,5 @@
 import { createSelector } from "reselect"
-import { IBuild } from "../../types"
+import { Build } from "../../db/entities/build.entity"
 import {
   IStoreCategoryFilters,
   IStoreFiltersState,
@@ -15,7 +15,7 @@ import {
 const buildsSelector = (state: IStoreState) => state.builds.items
 
 const filteredBuildsByState = (
-  builds: IBuild[],
+  builds: Build[],
   stateFilters: IStoreStateFilters
 ) => {
   const hasStateFilters = Object.keys(stateFilters).some((k) => {
@@ -35,7 +35,7 @@ const filteredBuildsByState = (
 }
 
 const filteredBuildsByCategory = (
-  builds: IBuild[],
+  builds: Build[],
   categoryFilters: IStoreCategoryFilters
 ) => {
   const hasCategoryFilters = Object.keys(categoryFilters).some((k) => {
@@ -57,7 +57,7 @@ const filteredBuildsByCategory = (
 }
 
 const filteredBuildsByQuery = (
-  builds: IBuild[],
+  builds: Build[],
   query: IStoreFiltersState["query"]
 ) => {
   if (!query.trim()) {

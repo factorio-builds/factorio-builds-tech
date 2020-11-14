@@ -2,7 +2,7 @@
 /* TAKEN FROM IMPLEMENTATION FROM A PREVIOUS PROJECT, IF/WHEN JEST IS IMPLEMENTED,
    WE CAN GET THIS UP AND RUNNING */
 
-import { IBuild } from "../types"
+import { Build } from "../db/entities/build.entity"
 import { useDistributeToColumn } from "./useDistributeToColumn"
 
 const COL_WIDTH = 250
@@ -48,7 +48,7 @@ describe("useDistributeToColumn", () => {
   )
 
   it("distributes when no items are passed", () => {
-    const items: IBuild[] = []
+    const items: Build[] = []
     // tslint:disable-next-line react-hooks-nesting
     expect(useDistributeToColumn(items, 3, COL_WIDTH, GUTTER)).toEqual([
       [],
@@ -58,7 +58,7 @@ describe("useDistributeToColumn", () => {
   })
 
   it("distributes less items than the column count", () => {
-    const items: IBuild[] = [
+    const items: Build[] = [
       { id: 1, width: 250, height: 250 },
       { id: 2, width: 250, height: 140 },
     ]
@@ -71,7 +71,7 @@ describe("useDistributeToColumn", () => {
   })
 
   it("distributes items equal to the column count", () => {
-    const items: IBuild[] = [
+    const items: Build[] = [
       { id: 1, width: 250, height: 250 },
       { id: 2, width: 250, height: 140 },
       { id: 3, width: 250, height: 458 },
@@ -90,7 +90,7 @@ describe("useDistributeToColumn", () => {
   })
 
   it("carries the original value in the value key", () => {
-    const items: IBuild[] = [
+    const items: Build[] = [
       { id: 1, width: 250, height: 250, value: { name: "PHOTO1" } },
       { id: 2, width: 250, height: 140, value: { name: "PHOTO2" } },
       { id: 3, width: 250, height: 458, value: { name: "PHOTO3" } },

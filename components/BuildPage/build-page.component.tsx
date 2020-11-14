@@ -4,9 +4,9 @@ import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
+import { Build } from "../../db/entities/build.entity"
 import Caret from "../../icons/caret"
 import { IStoreState } from "../../redux/store"
-import { IBuildWithJson } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import Layout from "../Layout"
 import * as SC from "./build-page.styles"
@@ -24,7 +24,7 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
 }
 
 interface IBuildPageProps {
-  build: IBuildWithJson
+  build: Build
 }
 
 const AsideGroup: React.FC<{ title?: string }> = (props) => {
@@ -113,7 +113,6 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       }
       sidebar={
         <SC.BuildImage>
-          {/* @ts-ignore */}
           {build.image ? <img src={build.image.src} alt="" /> : "No image"}
         </SC.BuildImage>
       }
@@ -131,15 +130,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             <AsideGroup>by {build.owner.name}</AsideGroup>
             <AsideGroup>
               <SC.AsideSubGroup>
-                {/* @ts-ignore */}
-                published on <b>{formatDate(build?.createdAt)}</b>
-                {/* @ts-ignore */}
+                published on <b>{formatDate(build.createdAt)}</b>
                 <br />({formatSince(build.createdAt)})
               </SC.AsideSubGroup>
               <SC.AsideSubGroup>
-                {/* @ts-ignore */}
                 edited on <b>{formatDate(build.updatedAt)}</b>
-                {/* @ts-ignore */}
                 <br />({formatSince(build.updatedAt)})
               </SC.AsideSubGroup>
             </AsideGroup>

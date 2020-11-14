@@ -1,12 +1,12 @@
 import * as React from "react"
+import { Build } from "../../db/entities/build.entity"
 import { useDistributeToColumn } from "../../hooks/useDistributeToColumn"
-import { IBuild } from "../../types"
 import BuildCard from "../BuildCard"
 import * as SC from "./build-card-list.styles"
 import { COLS, GUTTER } from "./design-tokens"
 
 interface IBuildCardListProps {
-  items: IBuild[]
+  items: Build[]
 }
 
 const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => {

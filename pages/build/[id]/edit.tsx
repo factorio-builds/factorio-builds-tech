@@ -2,11 +2,11 @@ import { GetServerSideProps } from "next"
 import React from "react"
 import BuildFormPage from "../../../components/BuildFormPage"
 import Layout from "../../../components/Layout"
+import { Build } from "../../../db/entities/build.entity"
 import { BuildRepository } from "../../../db/repository/build.repository"
-import { IBuildWithJson } from "../../../types"
 
 interface IBuildsEditPageProps {
-  build?: IBuildWithJson
+  build?: Build
   errors?: string
 }
 

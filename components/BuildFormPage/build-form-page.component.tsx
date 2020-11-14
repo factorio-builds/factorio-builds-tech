@@ -4,7 +4,8 @@ import axios from "axios"
 import { Form, Formik } from "formik"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
-import { ECategory, EState, IBuild } from "../../types"
+import { Build } from "../../db/entities/build.entity"
+import { ECategory, EState } from "../../types"
 import { isValidBlueprint } from "../../utils/blueprint"
 import Layout from "../Layout"
 import Step1 from "./step-1.component"
@@ -43,7 +44,7 @@ const baseInitialValues: IFormValues = {
   image: null,
 }
 
-const createInitialValues = (build?: IBuild): IFormValues => {
+const createInitialValues = (build?: Build): IFormValues => {
   if (!build) {
     return baseInitialValues
   }
@@ -123,7 +124,7 @@ interface IBuildFormPageCreating {
 
 interface IBuildFormPageEditing {
   type: "EDIT"
-  build: IBuild
+  build: Build
 }
 
 type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing
