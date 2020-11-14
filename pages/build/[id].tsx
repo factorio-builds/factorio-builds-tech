@@ -32,17 +32,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const id = params?.id
 
     const buildRepository = await BuildRepository()
-    const build = await buildRepository
-      .findOne(id as string)
-      // TODO: reproduce with TypeORM
-      // .findByPk(req.query.id, {
-      //   // @ts-ignore
-      //   include: [{ model: db.user, as: "owner" }],
-      // })
-      .catch((error) => {
-        console.error(error)
-        throw new Error("Cannot find build data")
-      })
+    const build = await buildRepository.findOne(id as string).catch((error) => {
+      console.error(error)
+      throw new Error("Cannot find build data")
+    })
 
     if (!build) throw new Error("Build not found")
 

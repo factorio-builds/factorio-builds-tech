@@ -123,8 +123,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                 <SC.EditBuild>edit build</SC.EditBuild>
               </Link>
             </AsideGroup>
-            {/* TODO: restore me */}
-            {/* <AsideGroup>by {build.owner.name}</AsideGroup> */}
+            <AsideGroup>by {build.owner.name}</AsideGroup>
             <AsideGroup>
               <SC.AsideSubGroup>
                 {/* @ts-ignore */}
