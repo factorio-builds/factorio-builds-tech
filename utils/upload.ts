@@ -1,5 +1,6 @@
 import S3 from "aws-sdk/clients/s3"
 import { promises as fs } from "fs"
+import { FileHandleException } from "../server/exceptions/file.exceptions"
 
 export async function uploadFile(
   name: string,
@@ -19,10 +20,12 @@ export async function uploadFile(
   })
 
   // ideally we want to avoid saving file to disk
-  const file = await fs.readFile(filePath).catch(console.error)
+  const file = await fs.readFile(filePath).catch(() => {
+    throw new FileHandleException("Can't find file")
+  })
 
   if (!file) {
-    throw "Can't find file"
+    throw new FileHandleException("Can't find file")
   }
 
   return new Promise((resolve, reject) => {
