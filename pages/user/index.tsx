@@ -1,11 +1,11 @@
 import { GetServerSideProps } from "next"
 import Link from "next/link"
 import Layout from "../../components/Layout"
-import { IUser } from "../../types"
+import { User } from "../../db/entities/user.entity"
 import { mockedUsers } from "../../utils/mock-users-data"
 
 interface IUsersIndexPage {
-  users: IUser[]
+  users: User[]
 }
 
 const UsersIndexPage = ({ users }: IUsersIndexPage) => (
@@ -24,7 +24,7 @@ const UsersIndexPage = ({ users }: IUsersIndexPage) => (
 )
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const users: IUser[] = mockedUsers
+  const users: User[] = mockedUsers
   return { props: { users } }
 }
 
