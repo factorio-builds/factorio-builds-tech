@@ -1,7 +1,8 @@
-import { IBuild, EState, ECategory } from "../types"
+import { Build } from "../db/entities/build.entity"
+import { EState, ECategory } from "../types"
 import { mockedUsers } from "./mock-users-data"
 
-export const mockedBuilds: IBuild[] = [
+export const mockedBuilds: Build[] = [
   {
     id: "1",
     description: "some dummy description",

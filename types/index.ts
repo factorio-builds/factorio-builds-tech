@@ -27,22 +27,6 @@ export interface IMetadata {
   categories: ECategory[]
 }
 
-export interface IBuild {
-  id: string
-  description: string
-  blueprint: string
-  metadata: IMetadata
-  name: string
-  created_at: string
-  updated_at: string
-  owner: IUser
-  image: IImage
-}
-
-export interface IBuildWithJson extends IBuild {
-  json: IDecodedBlueprintBookData | IDecodedBlueprintData
-}
-
 export interface IImage {
   src: string
   width: number

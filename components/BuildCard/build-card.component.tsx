@@ -1,14 +1,15 @@
 import React from "react"
 import Link from "next/link"
-import { IBuild, IImage, IMetadata } from "../../types"
+import { Build } from "../../db/entities/build.entity"
+import { IMetadata } from "../../types"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
-  name: IBuild["name"]
+  name: Build["name"]
   isBook: boolean
   categories: IMetadata["categories"]
-  image: IImage
-  id: IBuild["id"]
+  image: Build["image"]
+  id: Build["id"]
 }
 
 function BuildCard({

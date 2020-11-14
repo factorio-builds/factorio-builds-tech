@@ -1,11 +1,11 @@
 import { GetServerSideProps } from "next"
-import { IBuildWithJson } from "../../types"
 import Layout from "../../components/Layout"
 import BuildPage from "../../components/BuildPage"
 import { BuildRepository } from "../../db/repository/build.repository"
+import { Build } from "../../db/entities/build.entity"
 
 interface IBuildsPageProps {
-  build?: IBuildWithJson
+  build?: Build
   errors?: string
 }
 

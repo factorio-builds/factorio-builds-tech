@@ -1,18 +1,18 @@
 import { v4 as uuidv4 } from "uuid"
-import { IBuild } from "../../types"
+import { Build } from "../../db/entities/build.entity"
 import { IPayloadAction } from "../store"
 
 export interface IStoreBuildsState {
-  items: IBuild[]
+  items: Build[]
 }
 
 const initialBuildsState: IStoreBuildsState = {
   items: [],
 }
 
-type TSetBuildsAction = IPayloadAction<"SET_BUILDS", IBuild[]>
-type TCreateBuildAction = IPayloadAction<"CREATE_BUILD", IBuild>
-type TUpdateBuildAction = IPayloadAction<"UPDATE_BUILD", IBuild>
+type TSetBuildsAction = IPayloadAction<"SET_BUILDS", Build[]>
+type TCreateBuildAction = IPayloadAction<"CREATE_BUILD", Build>
+type TUpdateBuildAction = IPayloadAction<"UPDATE_BUILD", Build>
 
 export type TBuildsAction =
   | TSetBuildsAction

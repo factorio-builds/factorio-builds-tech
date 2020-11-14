@@ -5,10 +5,10 @@ import BuildListLookupStats from "../components/BuildListLookupStats"
 import Filters from "../components/Filters"
 import Layout from "../components/Layout"
 import SearchInput from "../components/SearchInput"
+import { Build } from "../db/entities/build.entity"
 import { BuildRepository } from "../db/repository/build.repository"
 import { filteredBuildsSelector } from "../redux/selectors/builds"
 import { IStoreState, wrapper } from "../redux/store"
-import { IBuild } from "../types"
 import { decodeBlueprint, isBook } from "../utils/blueprint"
 
 const IndexPage: NextPage = () => {
@@ -43,7 +43,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       throw new Error("Cannot find build data")
     })
 
-    const deserializedBuilds: IBuild[] = JSON.parse(JSON.stringify(builds))
+    const deserializedBuilds: Build[] = JSON.parse(JSON.stringify(builds))
 
     // temp until part of data structure/metadata
     const tempBuilds = deserializedBuilds.map((build) => {
