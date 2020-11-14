@@ -82,6 +82,7 @@ buildRoutes.post("/build/:id", ensureAuthenticated, async (req, res) => {
   const { fields, files } = await parseForm(req)
 
   const build = await updateBuildUseCase({
+    buildId: req.params.id,
     ownerId: req.session!.passport.user.id,
     fields,
     files,
