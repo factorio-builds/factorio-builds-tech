@@ -14,7 +14,7 @@ export class User {
   id!: string
 
   @Column({ type: "varchar", nullable: true })
-  discordId!: string
+  discordId!: string | null
 
   @Column("varchar")
   name!: string
