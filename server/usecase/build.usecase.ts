@@ -15,6 +15,7 @@ import {
   EntityPermissonException,
 } from "../exceptions/entity.exceptions"
 import { FileHandleException } from "../exceptions/file.exceptions"
+import { ViewCountService } from "../services/view-count.service"
 const imageSizeAsync = promisify(imageSize)
 
 interface ICreateParameters {
@@ -28,6 +29,11 @@ interface IUpdateParameters {
   ownerId: string
   fields: Fields
   files: Files
+}
+
+interface IIncrementViewParameters {
+  build: Build
+  ip: string
 }
 
 async function handleFile(
@@ -161,4 +167,20 @@ export async function updateBuildUseCase({
   }
 
   return saveBuild(build)
+}
+
+export async function viewBuildIncrementUseCase({
+  build,
+  ip,
+}: IIncrementViewParameters): Promise<boolean> {
+  const viewCountService = new ViewCountService()
+  const inCooldown = await viewCountService.cooldown(build.id, ip)
+
+  if (!inCooldown) {
+    const buildRepository = await BuildRepository()
+    const incremented = await buildRepository.incrementViews(build)
+    return incremented
+  }
+
+  return false
 }
