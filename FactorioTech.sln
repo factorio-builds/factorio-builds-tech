@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30608.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactorioTech.Web", "src\FactorioTech.Web.csproj", "{44296D58-61BE-41AE-B110-025CA2ECBB0D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactorioTech.Tests", "test\FactorioTech.Tests\FactorioTech.Tests.csproj", "{BA2619F7-E91C-4A8D-BC1A-A1490E041E51}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{17E636A9-BC53-4A85-A566-FCE065CDEF62}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{684B3D0F-7AF6-4B7B-BD94-A29669218488}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactorioTech.Web", "src\FactorioTech.Web\FactorioTech.Web.csproj", "{44296D58-61BE-41AE-B110-025CA2ECBB0D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactorioTech.Tests", "test\FactorioTech.Tests\FactorioTech.Tests.csproj", "{BA2619F7-E91C-4A8D-BC1A-A1490E041E51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

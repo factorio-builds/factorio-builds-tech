@@ -23,6 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FactorioTech.Web.csproj" />
+    <ProjectReference Include="..\..\src\FactorioTech.Web\FactorioTech.Web.csproj" />
   </ItemGroup>
 </Project>
