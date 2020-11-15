@@ -4,16 +4,16 @@
   "license": "MIT",
   "scripts": {
     "build": "next build",
+    "db:seed:config": "yarn local ./node_modules/typeorm-seeding/dist/cli.js config",
+    "db:seed:run": "yarn local ./node_modules/typeorm-seeding/dist/cli.js seed",
     "dev": "ts-node --project tsconfig.server.json server/index.ts",
     "format": "prettier --write {components,design,hooks,icons,pages,redux,styles,types,utils}/{**,**/**}/*.{js,ts,tsx}",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "yarn lint --fix",
     "local": "DOTENV_CONFIG_PATH=./.env ts-node --project ./tsconfig.yarn.json -r dotenv/config",
     "start": "next start",
     "type-check": "tsc",
-    "typeorm": "yarn local ./node_modules/typeorm/cli.js",
-    "db:seed:config": "yarn local ./node_modules/typeorm-seeding/dist/cli.js config",
-    "db:seed:run": "yarn local ./node_modules/typeorm-seeding/dist/cli.js seed",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "yarn lint --fix"
+    "typeorm": "yarn local ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
     "aws-sdk": "^2.784.0",
