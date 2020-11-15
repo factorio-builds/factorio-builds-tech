@@ -1,6 +1,7 @@
 using FactorioTech.Web.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using OneOf;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -25,7 +26,7 @@ namespace FactorioTech.Web.Pages.Blueprints
         [BindProperty]
         public BindingModel Import { get; set; } = new();
 
-        public Blueprint? Blueprint { get; set; }
+        public OneOf<Blueprint, BlueprintBook>? ImportResult { get; set; }
 
         public void OnGet()
         {
@@ -38,17 +39,13 @@ namespace FactorioTech.Web.Pages.Blueprints
                 return Page();
             }
 
-            var envelope = await new BlueprintConverter().FromString(Import.Payload);
-            if (envelope?.Blueprint != null)
-            {
-                Blueprint = envelope.Blueprint;
-            }
+            ImportResult = await new BlueprintConverter().FromString(Import.Payload);
 
             return Page();
         }
 
-        public IDictionary<string, int> GetEntityStats() =>
-            (Blueprint?.Entities ?? Enumerable.Empty<Entity>())
+        public IDictionary<string, int> GetEntityStats(Blueprint blueprint) =>
+            blueprint.Entities
                 .GroupBy(e => e.Name)
                 .OrderByDescending(g => g.Count())
                 .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Count());
@@ -68,7 +65,8 @@ namespace FactorioTech.Web.Pages.Blueprints
                 "logistic-chest-requester" => "Requester_chest",
                 "logistic-chest-buffer" => "Buffer_chest",
                 "logistic-chest-storage" => "Storage_chest",
-                _ => key[..1].ToUpperInvariant() + key[1..].Replace("-", "_"),
+                "stone-wall" => "Wall",
+                { } k => k[..1].ToUpperInvariant() + k[1..].Replace("-", "_"),
             };
     }
 }

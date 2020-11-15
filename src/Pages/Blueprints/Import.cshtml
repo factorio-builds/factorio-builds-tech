@@ -16,23 +16,50 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-    @if (Model.Blueprint != null)
+    @if (Model.ImportResult != null)
     {
-        <h2>@Model.Blueprint.Label</h2>
-        <p>@Model.Blueprint.Description</p>
-        <p>(@Model.Blueprint.Entities.Count() entities)</p>
+        @if (Model.ImportResult.Value.TryPickT0(out var blueprint, out var _))
+        {
+            <h3>@blueprint.Label</h3>
+            <p>@blueprint.Description</p>
+            <p>(@blueprint.Entities.Count() entities)</p>
 
-        <table class="table">
-            <tbody>
-                @foreach (var (key, count) in Model.GetEntityStats())
-                {
-                    <tr>
-                        <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
-                        <td>@count</td>
-                        <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            <table class="table">
+                <tbody>
+                    @foreach (var (key, count) in Model.GetEntityStats(blueprint))
+                    {
+                        <tr>
+                            <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
+                            <td>@count</td>
+                            <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else if (Model.ImportResult.Value.TryPickT1(out var blueprintBook, out var _))
+        {
+            <h3>@blueprintBook.Label</h3>
+
+            @foreach (var blueprint2 in blueprintBook.Blueprints.OrderByDescending(bp => bp.Index).Select(bp => bp.Blueprint))
+            {
+                <h3>@blueprint2.Label</h3>
+                <p>@blueprint2.Description</p>
+                <p>(@blueprint2.Entities.Count() entities)</p>
+
+                <table class="table">
+                    <tbody>
+                        @foreach (var (key, count) in Model.GetEntityStats(blueprint2))
+                        {
+                            <tr>
+                                <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
+                                <td>@count</td>
+                                <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        }
     }
 </div>

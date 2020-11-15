@@ -1,6 +1,8 @@
+using OneOf;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq.Expressions;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -8,17 +10,20 @@ namespace FactorioTech.Web.Core
 {
     public class BlueprintConverter
     {
-        public record Envelope
+        // ReSharper disable once ClassNeverInstantiated.Local
+        private record Envelope
         {
-            public Blueprint Blueprint { get; init; } = new();
+            public Blueprint? Blueprint { get; init; }
+            public BlueprintBook? BlueprintBook { get; init; }
         }
 
         private static readonly JsonSerializerOptions _options = new()
         {
             PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
+            IgnoreNullValues = true,
         };
 
-        public async Task<Envelope?> FromString(string blueprint)
+        public async Task<OneOf<Blueprint, BlueprintBook>> FromString(string blueprint)
         {
             // Factorio blueprint format:
             //
@@ -35,7 +40,25 @@ namespace FactorioTech.Web.Core
             var compressed = Convert.FromBase64String(blueprint[1..]);
             await using var stream = new MemoryStream(compressed[2..]);
             await using var inflater = new DeflateStream(stream, CompressionMode.Decompress);
-            return await JsonSerializer.DeserializeAsync<Envelope>(inflater, _options);
+
+            try
+            {
+                return await JsonSerializer.DeserializeAsync<Envelope>(inflater, _options) switch
+                {
+                    { Blueprint: not null } e => e.Blueprint,
+                    { BlueprintBook: not null } e => e.BlueprintBook,
+                    _ => throw new Exception("Invalid blueprint string"),
+                };
+            }
+            catch (Exception ex)
+            {
+                stream.Seek(0, SeekOrigin.Begin);
+                await using var debugInflater = new DeflateStream(stream, CompressionMode.Decompress);
+                using var debugReader = new StreamReader(debugInflater);
+                var debugJson = await debugReader.ReadToEndAsync();
+
+                throw;
+            }
         }
     }
 }

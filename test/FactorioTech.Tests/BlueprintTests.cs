@@ -1,5 +1,6 @@
 using FactorioTech.Web.Core;
 using FluentAssertions;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,19 +11,45 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task SimpleBlueprint()
         {
-            var blueprint = "0eNqllMtugzAQRX8FzRqiQszLyyy77bKqKh6jaiTbWLapghD/XhOkNEpJ04adx56553r8GKEWPWpDygEfoUXbGNKOOgUcnnvrgiqwJLXA4Jy4gxCo6ZQF/jqCpQ9VibnYDRp9FTmUPkNVco7wqA1aGzlTKas746IahYPJS6gWj8DjKbwrYjW1aJzxrr4Lk+ktBFSOHOFi5RQM76qXNRqvfM9ECLqztGx2hNlLud+lIQzAi3nkWS0ZbJaMZDZ6hUgeQCT/Q+wfQLDbCLaCYGeExJZ6GaHw6YaaSHcCf2+TR00rkummxqTrotmmA02vW5GtIPJNvm80o9h0hH/yXW5CsJ+3xL+t0xvkFx9ECKLyYn7uZfkSDhdLn2jscomLmOWszLM8fsrSbJq+AEDWdWo=";
+            var input = "0eNqllMtugzAQRX8FzRqiQszLyyy77bKqKh6jaiTbWLapghD/XhOkNEpJ04adx56553r8GKEWPWpDygEfoUXbGNKOOgUcnnvrgiqwJLXA4Jy4gxCo6ZQF/jqCpQ9VibnYDRp9FTmUPkNVco7wqA1aGzlTKas746IahYPJS6gWj8DjKbwrYjW1aJzxrr4Lk+ktBFSOHOFi5RQM76qXNRqvfM9ECLqztGx2hNlLud+lIQzAi3nkWS0ZbJaMZDZ6hUgeQCT/Q+wfQLDbCLaCYGeExJZ6GaHw6YaaSHcCf2+TR00rkummxqTrotmmA02vW5GtIPJNvm80o9h0hH/yXW5CsJ+3xL+t0xvkFx9ECKLyYn7uZfkSDhdLn2jscomLmOWszLM8fsrSbJq+AEDWdWo=";
 
             var converter = new BlueprintConverter();
-            var result = await converter.FromString(blueprint);
+            var result = await converter.FromString(input);
 
-            result.Should().NotBeNull();
-            result!.Blueprint.Should().NotBeNull();
-            result.Blueprint.Label.Should().Be("Simple Blueprint");
-            result.Blueprint.Description.Should().Be("Just a simple blueprint.");
-            result.Blueprint.Item.Should().Be("blueprint");
-            result.Blueprint.Version.Should().Be(281474976710656);
+            result.Value.Should().BeOfType<Blueprint>();
 
-            result.Blueprint.Icons.Should().ContainInOrder(
+            MatchSimpleBlueprint(result.AsT0);
+        }
+
+        [Fact]
+        public async Task SimpleBlueprintBook()
+        {
+            var input = "0eNqlVE1vwjAM/SuVzy2ipR/QI8ddd5wm1A+LWUuTKEkZCPW/L2k1QKzARm9xbL/37MQ+QslalIq42ZRCfEJ+PN9oyN8uTOerUVeKpCHBIYeXVhuv8DQ1kqF3CpyBD1QJPuRr2vKCuWRzkGizyGBjI3jROAv3UqHWgVEF11IoE5TIDHQWgte4hzzs/IcgWlKNyiir6pwYde8+IDdkCAcpvXHY8LYpUVnkRyJ8kELTUOwRnJbVYpb4cIB86U6WqyaF1RAROaFXFNETFNH/KBZPUMS3KeIRivhE0WBNbRMgs+GKqkAKhvfbZKm6EchkUmOScdB00oMm161IRyiySbpvNGM56Qn/pHs1iSL+/UvsbPUzmF8sCB9YYcHs3euwEtYXrh0qPXziZRhn8SpLs3CeJul5YOdjoEG/lm4je+vB/6fN5Dkw74vMR+/k26fX1ujGCV0BhW3RDjc/Nd0pvPsGs+rVjQ==";
+
+            var service = new BlueprintConverter();
+            var result = await service.FromString(input);
+
+            result.Value.Should().BeOfType<BlueprintBook>();
+
+            var book = result.AsT1;
+            book.Label.Should().Be("Simple Blueprint Book");
+            book.Item.Should().Be("blueprint-book");
+            book.ActiveIndex.Should().Be(0);
+            book.Version.Should().Be(281474976710656);
+            book.Blueprints.Should().HaveCount(1);
+
+            book.Blueprints.Single().Index.Should().Be(0);
+            MatchSimpleBlueprint(book.Blueprints.Single().Blueprint);
+        }
+
+        private void MatchSimpleBlueprint(Blueprint blueprint)
+        {
+            blueprint.Label.Should().Be("Simple Blueprint");
+            blueprint.Description.Should().Be("Just a simple blueprint.");
+            blueprint.Item.Should().Be("blueprint");
+            blueprint.Version.Should().Be(281474976710656);
+
+            blueprint.Icons.Should().ContainInOrder(
                 new Icon
                 {
                     Index = 1,
@@ -30,7 +57,7 @@ namespace FactorioTech.Tests
                     {
                         Type = "item",
                         Name = "express-transport-belt",
-                    }
+                    },
                 },
                 new Icon
                 {
@@ -39,11 +66,11 @@ namespace FactorioTech.Tests
                     {
                         Type = "item",
                         Name = "spidertron",
-                    }
+                    },
                 }
             );
 
-            result.Blueprint.Entities.Should().ContainInOrder(
+            blueprint.Entities.Should().ContainInOrder(
                 new Entity
                 {
                     EntityNumber = 1,
@@ -105,17 +132,6 @@ namespace FactorioTech.Tests
                     Direction = 4,
                 }
             );
-        }
-
-        [Fact]
-        public async Task SimpleBlueprintBook()
-        {
-            var blueprint = "0eNqlVE1vwjAM/SuVzy2ipR/QI8ddd5wm1A+LWUuTKEkZCPW/L2k1QKzARm9xbL/37MQ+QslalIq42ZRCfEJ+PN9oyN8uTOerUVeKpCHBIYeXVhuv8DQ1kqF3CpyBD1QJPuRr2vKCuWRzkGizyGBjI3jROAv3UqHWgVEF11IoE5TIDHQWgte4hzzs/IcgWlKNyiir6pwYde8+IDdkCAcpvXHY8LYpUVnkRyJ8kELTUOwRnJbVYpb4cIB86U6WqyaF1RAROaFXFNETFNH/KBZPUMS3KeIRivhE0WBNbRMgs+GKqkAKhvfbZKm6EchkUmOScdB00oMm161IRyiySbpvNGM56Qn/pHs1iSL+/UvsbPUzmF8sCB9YYcHs3euwEtYXrh0qPXziZRhn8SpLs3CeJul5YOdjoEG/lm4je+vB/6fN5Dkw74vMR+/k26fX1ujGCV0BhW3RDjc/Nd0pvPsGs+rVjQ==";
-
-            var service = new BlueprintConverter();
-            var result = await service.FromString(blueprint);
-
-            result.Should().NotBeNull();
         }
     }
 }

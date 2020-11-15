@@ -1,22 +1,44 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace FactorioTech.Web.Core
 {
+    public record BlueprintBook
+    {
+        public string Item { get; init; } = string.Empty;
+        public string? Label { get; init; }
+        public int ActiveIndex { get; init; }
+        public long Version { get; init; }
+        public IEnumerable<BlueprintBookItem> Blueprints { get; init; } = Enumerable.Empty<BlueprintBookItem>();
+    }
+
+    public record BlueprintBookItem
+    {
+        public Blueprint Blueprint { get; init; } = new();
+        public int Index { get; init; }
+    }
+
     /// <summary>
     /// https://wiki.factorio.com/Blueprint_string_format#Blueprint_object
     /// </summary>
     public record Blueprint
     {
         public string Item { get; init; } = string.Empty;
-        public string Label { get; init; } = string.Empty;
+        public string? Label { get; init; }
         public Color? LabelColor { get; init; }
-        public string Description { get; init; } = string.Empty;
+        public string? Description { get; init; }
         public IEnumerable<Entity> Entities { get; init; } = Enumerable.Empty<Entity>();
         public IEnumerable<Tile> Tiles { get; init; } = Enumerable.Empty<Tile>();
         public IEnumerable<Icon> Icons { get; init; } = Enumerable.Empty<Icon>();
         public IEnumerable<Schedule> Schedules { get; init; } = Enumerable.Empty<Schedule>();
         public long Version { get; init; }
+
+        [JsonPropertyName("snap-to-grid")]
+        public Position? SnapToGrid { get; init; }
+
+        [JsonPropertyName("absolute-snapping")]
+        public bool AbsoluteSnapping { get; init; }
     }
 
     /// <summary>
