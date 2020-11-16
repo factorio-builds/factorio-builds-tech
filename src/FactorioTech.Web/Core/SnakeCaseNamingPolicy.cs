@@ -8,17 +8,12 @@ namespace FactorioTech.Web.Core
     /// <summary>
     /// workaround for missing snake_case policy in System.Text.Json (coming in .NET 6)
     /// see https://github.com/dotnet/runtime/issues/782
-    /// code from https://github.com/JoyMoe/JoyMoe.Common/blob/dev/src/JoyMoe.Common.Json/SnakeCasePropertyNamingPolicy.cs
+    /// code taken from https://github.com/efcore/EFCore.NamingConventions/blob/36a41daa870175ff90f8981bb0204611fec7a646/EFCore.NamingConventions/Internal/SnakeCaseNameRewriter.cs
     /// </summary>
     public class SnakeCaseNamingPolicy : JsonNamingPolicy
     {
-        public static readonly SnakeCaseNamingPolicy Instance = new();
-
-        /// <inheritdoc/>
         public override string ConvertName(string name)
         {
-            // Port from https://github.com/efcore/EFCore.NamingConventions/blob/290cc330292d60bd1bad8eb28b46ef755de4b0cb/EFCore.NamingConventions/NamingConventions/Internal/SnakeCaseNameRewriter.cs
-
             if (string.IsNullOrEmpty(name))
             {
                 return name;
@@ -53,20 +48,22 @@ namespace FactorioTech.Web.Core
                             builder.Append('_');
                         }
 
-#pragma warning disable CA1308 // Normalize strings to uppercase
                         currentChar = char.ToLowerInvariant(currentChar);
-#pragma warning restore CA1308 // Normalize strings to uppercase
                         break;
 
                     case UnicodeCategory.LowercaseLetter:
                     case UnicodeCategory.DecimalDigitNumber:
                         if (previousCategory == UnicodeCategory.SpaceSeparator)
+                        {
                             builder.Append('_');
+                        }
                         break;
 
                     default:
                         if (previousCategory != null)
+                        {
                             previousCategory = UnicodeCategory.SpaceSeparator;
+                        }
                         continue;
                 }
 

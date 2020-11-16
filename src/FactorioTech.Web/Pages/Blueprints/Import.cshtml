@@ -1,65 +1,89 @@
 @page
 @model ImportModel
 
-<div class="text-center">
-    <h1 class="display-4">Add Blueprint</h1>
+<div class="">
+    <h1>Import Blueprint</h1>
 
     <form method="post">
         <div asp-validation-summary="ModelOnly"></div>
-
+        <p>Paste your blueprint string in the text area below.</p>
         <div class="form-group">
-            <label asp-for="Import.Payload"></label>
-            <textarea asp-for="Import.Payload" class="form-control" rows="6"></textarea>
+            <textarea asp-for="Import.Payload" class="form-control" rows="8"></textarea>
             <span asp-validation-for="Import.Payload"></span>
         </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Continue</button>
     </form>
 
-    @if (Model.ImportResult != null)
+    @if (Model.Blueprints.Any())
     {
-        @if (Model.ImportResult.Value.TryPickT0(out var blueprint, out var _))
-        {
-            <h3>@blueprint.Label</h3>
-            <p>@blueprint.Description</p>
-            <p>(@blueprint.Entities.Count() entities)</p>
+        <hr />
+    }
 
-            <table class="table">
-                <tbody>
-                    @foreach (var (key, count) in Model.GetEntityStats(blueprint))
-                    {
-                        <tr>
-                            <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
-                            <td>@count</td>
-                            <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else if (Model.ImportResult.Value.TryPickT1(out var blueprintBook, out var _))
-        {
-            <h3>@blueprintBook.Label</h3>
+    @if (Model.Book != null)
+    {
+        <h2>Blueprint Book</h2>
+        <h3>@Model.Book.Label</h3>
+        <p>(contains @Model.Book.Blueprints.Count() blueprints)</p>
 
-            @foreach (var blueprint2 in blueprintBook.Blueprints.OrderByDescending(bp => bp.Index).Select(bp => bp.Blueprint))
-            {
-                <h3>@blueprint2.Label</h3>
-                <p>@blueprint2.Description</p>
-                <p>(@blueprint2.Entities.Count() entities)</p>
+        <h2>Blueprints</h2>
+    }
 
-                <table class="table">
-                    <tbody>
-                        @foreach (var (key, count) in Model.GetEntityStats(blueprint2))
-                        {
-                            <tr>
-                                <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
-                                <td>@count</td>
-                                <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-        }
+    @foreach (var (blueprint, hash, imageUri) in Model.Blueprints)
+    {
+        <h3>@blueprint.Label</h3>
+        <p>@blueprint.Description</p>
+
+        <div class="accordion" id="accordion-@hash">
+            <div class="card">
+                <div class="card-header" id="accordion-preview-@hash">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button"
+                                data-toggle="collapse" data-target="#accordion-preview-collapse-@hash"
+                                aria-expanded="true" aria-controls="accordion-preview-collapse-@hash">
+                            Preview
+                        </button>
+                    </h2>
+                </div>
+                <div id="accordion-preview-collapse-@hash" class="collapse"
+                     data-parent="#accordion-@hash"
+                     aria-labelledby="accordion-preview-@hash">
+                    <div class="card-body">
+                        <img src="@imageUri" class="img-fluid" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header" id="accordion-entities-@hash">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button"
+                                data-toggle="collapse" data-target="#accordion-entities-collapse-@hash"
+                                aria-expanded="false" aria-controls="accordion-entities-collapse-@hash">
+                            Contains @blueprint.Entities.Count() entities
+                        </button>
+                    </h2>
+                </div>
+                <div id="accordion-entities-collapse-@hash" class="collapse"
+                     data-parent="#accordion-@hash"
+                     aria-labelledby="accordion-entities-@hash">
+                    <div class="card-body">
+                        <table class="table table-striped table-sm">
+                            <tbody>
+                                @foreach (var (key, count) in Model.GetEntityStats(blueprint))
+                                {
+                                    <tr>
+                                        <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
+                                        <td>@count</td>
+                                        <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br /><br />
     }
 </div>

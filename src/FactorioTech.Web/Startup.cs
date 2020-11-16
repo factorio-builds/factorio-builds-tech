@@ -1,3 +1,4 @@
+using FactorioTech.Web.Core;
 using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +46,11 @@ namespace FactorioTech.Web
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddRazorPages();
+            services.AddHttpClient();
+
+            services.AddTransient<FbsrClient>();
+            services.AddTransient<ImageService>();
+            services.AddTransient<BlueprintConverter>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -70,6 +76,7 @@ namespace FactorioTech.Web
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
         }

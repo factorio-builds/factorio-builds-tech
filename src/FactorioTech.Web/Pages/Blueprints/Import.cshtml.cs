@@ -1,9 +1,7 @@
 using FactorioTech.Web.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using OneOf;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +10,18 @@ namespace FactorioTech.Web.Pages.Blueprints
 {
     public class ImportModel : PageModel
     {
+        private readonly ImageService _imageService;
+        private readonly BlueprintConverter _blueprintConverter;
+
+        public ImportModel(ImageService imageService, BlueprintConverter blueprintConverter)
+        {
+            _imageService = imageService;
+            _blueprintConverter = blueprintConverter;
+        }
+
         public class BindingModel
         {
             [Required]
-            [DisplayName("Blueprint string")]
             [RegularExpression(
                 // base64 starting with "0"
                 "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
@@ -26,7 +32,8 @@ namespace FactorioTech.Web.Pages.Blueprints
         [BindProperty]
         public BindingModel Import { get; set; } = new();
 
-        public OneOf<Blueprint, BlueprintBook>? ImportResult { get; set; }
+        public FactorioApi.BlueprintBook? Book { get; private set; }
+        public List<(FactorioApi.Blueprint Blueprint, string Hash, string BlueprintImageUri)> Blueprints { get; } = new();
 
         public void OnGet()
         {
@@ -39,12 +46,35 @@ namespace FactorioTech.Web.Pages.Blueprints
                 return Page();
             }
 
-            ImportResult = await new BlueprintConverter().FromString(Import.Payload);
+            var result = await _blueprintConverter.Decode(Import.Payload);
+            await result.Match(
+                async blueprint =>
+                {
+                    var (hash, imageUri) = await SaveBlueprintRendering(blueprint);
+                    Blueprints.Add((blueprint, hash, imageUri));
+                },
+                async book =>
+                {
+                    foreach (var blueprint in book.Blueprints.OrderBy(x => x.Index).Select(x => x.Blueprint))
+                    {
+                        var (hash, imageUri) = await SaveBlueprintRendering(blueprint);
+                        Blueprints.Add((blueprint, hash, imageUri));
+                    }
+
+                    Book = book;
+                });
 
             return Page();
         }
 
-        public IDictionary<string, int> GetEntityStats(Blueprint blueprint) =>
+        private async Task<(string Hash, string ImageUri)> SaveBlueprintRendering(FactorioApi.Blueprint blueprint)
+        {
+            var encoded = await _blueprintConverter.Encode(blueprint);
+            var hash = await _imageService.SaveBlueprintRendering(encoded);
+            return (hash, $"/api/files/blueprint/{hash}.jpg");
+        }
+
+        public IDictionary<string, int> GetEntityStats(FactorioApi.Blueprint blueprint) =>
             blueprint.Entities
                 .GroupBy(e => e.Name)
                 .OrderByDescending(g => g.Count())
