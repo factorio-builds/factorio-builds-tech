@@ -3,9 +3,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from "typeorm"
 import type {
   IDecodedBlueprintBookData,
@@ -35,10 +35,11 @@ export class Build {
   @Column("jsonb")
   metadata!: IMetadata
 
-  @ManyToOne(() => User, (user) => user.builds, {
-    eager: true,
-  })
-  @JoinTable()
+  @Column({ name: "ownerId" })
+  ownerId!: string
+
+  @ManyToOne(() => User, (user) => user.builds, { eager: true })
+  @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
   owner!: User
 
   @Column("jsonb")
