@@ -1,6 +1,6 @@
 import S3 from "aws-sdk/clients/s3"
 import { promises as fs } from "fs"
-import { FileHandleException } from "../server/exceptions/file.exceptions"
+import { FileHandleException } from "../exceptions/file.exceptions"
 
 export async function uploadFile(
   name: string,

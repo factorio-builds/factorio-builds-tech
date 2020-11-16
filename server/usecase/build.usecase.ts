@@ -9,12 +9,12 @@ import { User } from "../../db/entities/user.entity"
 import { BuildRepository } from "../../db/repository/build.repository"
 import { UserRepository } from "../../db/repository/user.repository"
 import { EState } from "../../types"
-import { uploadFile } from "../../utils/upload"
 import {
   EntityNotFoundException,
   EntityPermissonException,
 } from "../exceptions/entity.exceptions"
 import { FileHandleException } from "../exceptions/file.exceptions"
+import { uploadFile } from "../services/upload.service"
 import { ViewCountService } from "../services/view-count.service"
 const imageSizeAsync = promisify(imageSize)
 
