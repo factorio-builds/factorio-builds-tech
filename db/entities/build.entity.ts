@@ -38,7 +38,7 @@ export class Build {
   @Column({ name: "ownerId" })
   ownerId!: string
 
-  @ManyToOne(() => User, (user) => user.builds, { eager: true })
+  @ManyToOne("User", { eager: true })
   @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
   owner!: User
 

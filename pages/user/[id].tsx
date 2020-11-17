@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next"
 import Layout from "../../components/Layout"
 import { User } from "../../db/entities/user.entity"
-import { mockedUsers } from "../../utils/mock-users-data"
+import { UserRepository } from "../../db/repository/user.repository"
 
 interface IUsersPageProps {
   user?: User
@@ -27,7 +27,15 @@ export default UsersPage
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
-    const user = mockedUsers.find((data) => data.id === id)
+
+    const userRepository = await UserRepository()
+    const user = await userRepository.findOne(id as string).catch((error) => {
+      console.error(error)
+      throw new Error("Cannot find user data")
+    })
+
+    if (!user) throw new Error("User not found")
+
     return { props: { user } }
   } catch (err) {
     return { props: { errors: err.message } }
