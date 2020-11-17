@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next"
 import Link from "next/link"
 import Layout from "../../components/Layout"
 import { User } from "../../db/entities/user.entity"
-import { mockedUsers } from "../../utils/mock-users-data"
+import { UserRepository } from "../../db/repository/user.repository"
 
 interface IUsersIndexPage {
   users: User[]
@@ -24,7 +24,12 @@ const UsersIndexPage = ({ users }: IUsersIndexPage) => (
 )
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const users: User[] = mockedUsers
+  const userRepository = await UserRepository()
+  const users = await userRepository.find().catch((error) => {
+    console.error(error)
+    throw new Error("Cannot find user data")
+  })
+
   return { props: { users } }
 }
 

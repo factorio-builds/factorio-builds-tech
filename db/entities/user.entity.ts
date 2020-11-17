@@ -19,7 +19,7 @@ export class User {
   @Column("varchar")
   name!: string
 
-  @OneToMany(() => Build, (build) => build.owner)
+  @OneToMany("Build", "owner")
   builds!: Build[]
 
   @CreateDateColumn({ type: "timestamp" })
