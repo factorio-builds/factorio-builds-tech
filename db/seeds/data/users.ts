@@ -1,12 +1,14 @@
+import { ERole } from "../../../types"
 import { User } from "../../entities/user.entity"
 
-export const users: Omit<User, "builds">[] = [
+export const users: Omit<User, "builds" | "role">[] = [
   {
     name: "Billy Bob",
     id: "c8b15803-1b90-4194-9896-a2869e67deb2",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     discordId: null,
+    roleName: ERole.USER,
   },
   {
     name: "Mary Sue",
@@ -14,5 +16,6 @@ export const users: Omit<User, "builds">[] = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     discordId: null,
+    roleName: ERole.USER,
   },
 ]

@@ -20,6 +20,11 @@ export enum ECategory {
   "ENERGY" = "ENERGY",
 }
 
+export enum ERole {
+  "ADMIN" = "ADMIN",
+  "USER" = "USER",
+}
+
 export interface IMetadata {
   tileable: boolean
   area: number
