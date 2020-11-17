@@ -1,8 +1,10 @@
 using FactorioTech.Web.Core;
+using FactorioTech.Web.Core.Domain;
 using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,20 +36,34 @@ namespace FactorioTech.Web
                 options.ClientSecret = "***REMOVED***";
             });
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
             });
 
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddDefaultIdentity<IdentityUser>(options =>
+            services.AddIdentityCore<User>()
+                .AddDefaultTokenProviders()
+                .AddSignInManager()
+                .AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddAuthentication(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            }).AddIdentityCookies();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.LogoutPath = "/Account/Logout";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+            });
 
             services.AddRazorPages();
             services.AddHttpClient();
 
+            services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
             services.AddTransient<ImageService>();
             services.AddTransient<BlueprintConverter>();

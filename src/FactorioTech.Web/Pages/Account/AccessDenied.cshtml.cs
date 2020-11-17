@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FactorioTech.Web.Pages.Blueprints
+namespace FactorioTech.Web.Pages.Account
 {
-    public class ViewModel : PageModel
+    public class AccessDeniedModel : PageModel
     {
         public void OnGet()
         {
+
         }
     }
 }
+

@@ -6,6 +6,7 @@
 # App specific
 app.db
 wwwroot/
+Migrations/
 
 # User-specific files
 *.rsuser

@@ -1,10 +1,14 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace FactorioTech.Web.Core.Domain
 {
     public sealed class Blueprint
     {
-        public string Id { get; init; } = string.Empty;
+        [Key]
+        public Guid Id { get; init; }
 
-        public string OwnerId { get; init; } = string.Empty;
+        public Guid OwnerId { get; init; }
 
         //public string Encoded { get; }
         //public FactorioApi.Blueprint Payload { get; }
