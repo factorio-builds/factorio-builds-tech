@@ -52,6 +52,7 @@ buildRoutes.post("/build", ensureAuthenticated, async (req, res) => {
     const { fields, files } = await parseForm(req)
 
     const build = await createBuildUseCase({
+      // @ts-ignore
       ownerId: req.session!.passport.user.id,
       fields,
       files,
@@ -102,6 +103,7 @@ buildRoutes.put("/build/:id", ensureAuthenticated, async (req, res) => {
 
     const build = await updateBuildUseCase({
       buildId: req.params.id,
+      // @ts-ignore
       ownerId: req.session!.passport.user.id,
       fields,
       files,
