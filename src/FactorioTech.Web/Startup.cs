@@ -1,6 +1,7 @@
 using FactorioTech.Web.Core;
 using FactorioTech.Web.Core.Domain;
 using FactorioTech.Web.Data;
+using FactorioTech.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -30,22 +31,26 @@ namespace FactorioTech.Web
             //services.Configure<AppConfig>(_configuration);
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
-            services.AddAuthentication().AddGitHub(options =>
-            {
-                options.ClientId = "***REMOVED***";
-                options.ClientSecret = "***REMOVED***";
-            });
+            services.AddAuthentication()
+                .AddGitHub(options =>
+                {
+                    options.ClientId = _configuration["OAuthProviders:GitHub:ClientId"];
+                    options.ClientSecret = _configuration["OAuthProviders:GitHub:ClientSecret"];
+                    options.Scope.Add("user:email");
+                });
 
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
-            });
+            }).AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddIdentityCore<User>()
                 .AddDefaultTokenProviders()
                 .AddSignInManager()
+                .AddRoles<Role>()
                 .AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomUserClaimsPrincipalFactory>();
 
             services.AddAuthentication(options =>
             {

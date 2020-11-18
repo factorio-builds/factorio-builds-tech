@@ -11,11 +11,6 @@ namespace FactorioTech.Web
     {
         public static void Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                .AddCommandLine(args)
-                .AddEnvironmentVariables("FT_")
-                .Build();
-
             var loggerBuilder = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Information()
@@ -29,7 +24,10 @@ namespace FactorioTech.Web
                 Log.Information("FactorioTech starting up");
 
                 WebHost.CreateDefaultBuilder(args)
-                    .UseConfiguration(configuration)
+                    .ConfigureAppConfiguration(config =>
+                    {
+                        config.AddJsonFile("appsettings.secret.json", optional: true, reloadOnChange: true);
+                    })
                     .UseSerilog()
                     .UseStartup<Startup>()
                     .Build()

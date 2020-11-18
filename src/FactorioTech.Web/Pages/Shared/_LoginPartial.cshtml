@@ -1,4 +1,3 @@
-@using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
@@ -6,7 +5,7 @@
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name</a>
+            <a class="nav-link" asp-page="/Account/Manage/Index" title="Manage">Hello @User.GetDisplayName()</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
@@ -17,10 +16,7 @@
     else
     {
         <li class="nav-item">
-            <a class="nav-link" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" asp-page="/Account/Login">Login</a>
+            <a class="nav-link" asp-page="/Account/Login">Login or Register</a>
         </li>
     }
 </ul>

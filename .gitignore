@@ -7,6 +7,7 @@
 app.db
 wwwroot/
 Migrations/
+*.secret.json
 
 # User-specific files
 *.rsuser

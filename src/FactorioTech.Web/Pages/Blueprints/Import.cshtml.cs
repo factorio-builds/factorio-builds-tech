@@ -19,7 +19,13 @@ namespace FactorioTech.Web.Pages.Blueprints
             _blueprintConverter = blueprintConverter;
         }
 
-        public class BindingModel
+        [BindProperty]
+        public InputModel Input { get; set; } = new();
+
+        public FactorioApi.BlueprintBook? Book { get; private set; }
+        public List<(FactorioApi.Blueprint Blueprint, string Hash, string BlueprintImageUri)> Blueprints { get; } = new();
+
+        public class InputModel
         {
             [Required]
             [RegularExpression(
@@ -28,12 +34,6 @@ namespace FactorioTech.Web.Pages.Blueprints
                 ErrorMessage = "This doesn't appear to be a valid blueprint string.")]
             public string Payload { get; set; } = string.Empty;
         }
-
-        [BindProperty]
-        public BindingModel Import { get; set; } = new();
-
-        public FactorioApi.BlueprintBook? Book { get; private set; }
-        public List<(FactorioApi.Blueprint Blueprint, string Hash, string BlueprintImageUri)> Blueprints { get; } = new();
 
         public void OnGet()
         {
@@ -46,7 +46,7 @@ namespace FactorioTech.Web.Pages.Blueprints
                 return Page();
             }
 
-            var result = await _blueprintConverter.Decode(Import.Payload);
+            var result = await _blueprintConverter.Decode(Input.Payload);
             await result.Match(
                 async blueprint =>
                 {
