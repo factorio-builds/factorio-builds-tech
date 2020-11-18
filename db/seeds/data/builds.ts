@@ -14,6 +14,7 @@ export const builds: Omit<Build, "owner">[] = [
       categories: [ECategory.BALANCER],
       state: EState.LATE_GAME,
       tileable: false,
+      markedInputs: false,
       area: 43,
     },
     image: {
@@ -38,6 +39,7 @@ export const builds: Omit<Build, "owner">[] = [
       categories: [ECategory.BALANCER],
       state: EState.LATE_GAME,
       tileable: true,
+      markedInputs: false,
       area: 265,
     },
     image: {
@@ -63,6 +65,7 @@ export const builds: Omit<Build, "owner">[] = [
       categories: [ECategory.ENERGY],
       state: EState.MID_GAME,
       tileable: true,
+      markedInputs: false,
       area: 265,
     },
     image: {

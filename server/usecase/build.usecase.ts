@@ -121,6 +121,7 @@ export async function createBuildUseCase({
       categories: JSON.parse(fields.categories).length
         ? JSON.parse(fields.categories as string)
         : [],
+      markedInputs: Boolean(fields.markedInputs as string),
       tileable: Boolean(fields.tileable as string),
       area: 0,
     },
@@ -172,6 +173,7 @@ export async function updateBuildUseCase({
     categories: JSON.parse(fields.categories).length
       ? JSON.parse(fields.categories as string)
       : [],
+    markedInputs: Boolean(fields.markedInputs as string),
     tileable: Boolean(fields.tileable as string),
   }
 
