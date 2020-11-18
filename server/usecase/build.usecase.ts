@@ -72,6 +72,12 @@ async function getBuildById(id: string): Promise<Build | void> {
   })
 }
 
+async function userIsAdmin(userId: string): Promise<boolean> {
+  const userRepository = await UserRepository()
+
+  return userRepository.isAdmin(userId)
+}
+
 async function isOwnedByUser(
   buildId: string,
   ownerId: string
@@ -135,9 +141,12 @@ export async function updateBuildUseCase({
     throw new EntityNotFoundException("Build not found")
   }
 
-  const ownedByUser = await isOwnedByUser(buildId, ownerId)
+  const [isAdmin, ownedByUser] = await Promise.all([
+    userIsAdmin(ownerId),
+    isOwnedByUser(buildId, ownerId),
+  ])
 
-  if (!ownedByUser) {
+  if (!ownedByUser && !isAdmin) {
     throw new EntityPermissonException("You do not own that build")
   }
 
