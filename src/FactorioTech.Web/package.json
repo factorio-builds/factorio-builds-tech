@@ -1,0 +1,28 @@
+{
+  "name": "factorio-tech",
+  "version": "1.0.0",
+  "author": "Daniel Stockhammer <daniel@stockhammer.it>",
+  "private": true,
+  "scripts": {
+    "build": "gulp build",
+    "clean": "gulp clean",
+    "watch": "gulp watch"
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "jquery": "^3.5.1",
+    "jquery-validation": "^1.19.2",
+    "jquery-validation-unobtrusive": "^3.2.11",
+    "popper.js": "^1.16.1"
+  },
+  "devDependencies": {
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^7.0.1",
+    "gulp-cli": "^2.3.0",
+    "gulp-csso": "^4.0.1",
+    "gulp-dart-sass": "^1.0.2",
+    "gulp-rename": "^2.0.0",
+    "gulp-sourcemaps": "^3.0.0"
+  }
+}

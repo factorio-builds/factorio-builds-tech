@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-FactorioTech-E4F6D77A-8FC6-40D1-8C23-1E531AAA3DAE</UserSecretsId>
     <Nullable>enable</Nullable>
-    <LangVersion>9.0</LangVersion> 
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,5 +23,12 @@
     <PackageReference Include="OneOf" Version="2.1.155" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
   </ItemGroup>
+
+  <Target Name="NpmBuild" BeforeTargets="Clean">
+    <Exec Command="npm run clean" />
+  </Target>
+  <Target Name="NpmClean" BeforeTargets="Build">
+    <Exec Command="npm run build" />
+  </Target>
 
 </Project>
