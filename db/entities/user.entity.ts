@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from "typeorm"
 import { ERole } from "../../types"
 import { Build } from "./build.entity"
@@ -23,11 +23,11 @@ export class User {
   @Column("varchar")
   name!: string
 
-  @Column({ name: "roleName" })
+  @Column({ type: "varchar", name: "roleName", default: ERole.USER })
   @JoinColumn({ name: "roleName", referencedColumnName: "name" })
   roleName!: ERole
 
-  @OneToOne("Role", { eager: true })
+  @ManyToOne("Role", "name", { eager: true })
   role!: Role
 
   @OneToMany("Build", "owner")

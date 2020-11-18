@@ -1,5 +1,6 @@
 import { Connection, getConnectionManager, getConnectionOptions } from "typeorm"
 import { Build } from "./entities/build.entity"
+import { Role } from "./entities/role.entity"
 import { User } from "./entities/user.entity"
 
 // taken from https://github.com/typeorm/typeorm/issues/6241#issuecomment-643690383
@@ -11,7 +12,7 @@ const getOptions = async () => {
       ...connectionOptions,
       name: "default",
       synchronize: process.env.NODE_ENV !== "production",
-      entities: [Build, User],
+      entities: [Build, Role, User],
     },
   }
 }
