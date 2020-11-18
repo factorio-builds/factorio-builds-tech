@@ -4,7 +4,7 @@ import { User } from "./user.entity"
 
 @Entity({ name: "Role" })
 export class Role {
-  @PrimaryColumn({ type: "enum", enum: ERole, default: ERole.USER })
+  @PrimaryColumn({ type: "varchar" })
   name!: ERole
 
   @OneToMany("User", "role")
