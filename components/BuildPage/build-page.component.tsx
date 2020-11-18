@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Build } from "../../db/entities/build.entity"
 import Caret from "../../icons/caret"
 import { IStoreState } from "../../redux/store"
+import { ERole } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import Layout from "../Layout"
 import * as SC from "./build-page.styles"
@@ -98,6 +99,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       })
   }, [itemsCount])
 
+  const isAdmin = user?.roleName === ERole.ADMIN
+  const ownedByMe = build.owner.id === user?.id
+
   return (
     <Layout
       title={build.name}
@@ -120,10 +124,12 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Content>
           <SC.Aside>
-            {build.owner.id === user?.id && (
+            {(isAdmin || ownedByMe) && (
               <AsideGroup>
                 <Link href={`/build/${build.id}/edit`}>
-                  <SC.EditBuild>edit build</SC.EditBuild>
+                  <SC.EditBuild>
+                    {ownedByMe ? "edit build" : "edit build as admin"}
+                  </SC.EditBuild>
                 </Link>
               </AsideGroup>
             )}
