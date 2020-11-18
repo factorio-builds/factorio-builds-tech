@@ -102,6 +102,14 @@ const Step2: React.FC<IStep2Props> = (props) => {
           />
 
           <Field
+            name="markedInputs"
+            label="Inputs are marked"
+            type="checkbox"
+            component={Input}
+            validate={validate("markedInputs")}
+          />
+
+          <Field
             name="state"
             label="Game state"
             type="select"

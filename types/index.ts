@@ -30,6 +30,7 @@ export interface IMetadata {
   area: number
   state: EState
   categories: ECategory[]
+  markedInputs: boolean
 }
 
 export interface IImage {
@@ -59,6 +60,15 @@ export interface IBlueprintIcon {
   signal: IBlueprintIconSignal
 }
 
+interface IControlBehaviorFilter {
+  signal: {
+    type: string
+    name: string
+  }
+  count: number
+  index: number
+}
+
 export interface IBlueprintEntity {
   entity_number: number
   name: string
@@ -66,6 +76,9 @@ export interface IBlueprintEntity {
   direction?: number
   type?: string
   recipe?: string
+  control_behavior: {
+    filters: IControlBehaviorFilter[]
+  }
 }
 
 export interface IDecodedBlueprintData {

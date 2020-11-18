@@ -2,6 +2,7 @@ import React, { useMemo } from "react"
 import { Field, FormikProps } from "formik"
 import {
   decodeBlueprint,
+  inputsAreMarked,
   isBook,
   isValidBlueprint,
 } from "../../utils/blueprint"
@@ -35,7 +36,21 @@ const Step1: React.FC<IStep1Props> = (props) => {
     props.formikProps.setFieldValue("name", bp.label)
     props.formikProps.setFieldValue("description", bp.description || "")
 
+    // TODO: extract
     // TODO: guess metadata from blueprint content
+    if (!isBook(json)) {
+      props.formikProps.setFieldValue(
+        "markedInputs",
+        inputsAreMarked(json.blueprint)
+      )
+    } else {
+      props.formikProps.setFieldValue(
+        "markedInputs",
+        json.blueprint_book.blueprints.some(({ blueprint }) => {
+          return inputsAreMarked(blueprint)
+        })
+      )
+    }
 
     props.goToNextStep()
   }
