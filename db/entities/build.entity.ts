@@ -45,7 +45,7 @@ export class Build {
   @Column("jsonb")
   image!: IImage
 
-  @Column("integer")
+  @Column({ type: "integer", default: 0 })
   views!: number
 
   @CreateDateColumn({ type: "timestamp" })
