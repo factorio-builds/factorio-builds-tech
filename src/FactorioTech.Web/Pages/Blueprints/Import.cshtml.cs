@@ -1,6 +1,8 @@
 using FactorioTech.Web.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NodaTime;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -19,57 +21,132 @@ namespace FactorioTech.Web.Pages.Blueprints
             _blueprintConverter = blueprintConverter;
         }
 
-        [BindProperty]
-        public InputModel Input { get; set; } = new();
+        [TempData]
+        public string? BlueprintString { get; set; }
 
-        public FactorioApi.BlueprintBook? Book { get; private set; }
-        public List<(FactorioApi.Blueprint Blueprint, string Hash, string BlueprintImageUri)> Blueprints { get; } = new();
+        public ImportInputModel ImportInput { get; set; } = new();
 
-        public class InputModel
+        public CreateInputModel CreateInput { get; set; } = new();
+
+        public FactorioApi.BlueprintBook? Book { get; set; }
+
+        public List<(FactorioApi.Blueprint Blueprint, string Hash, string BlueprintImageUri)> Blueprints { get; set; } = new();
+
+        public class ImportInputModel
         {
             [Required]
             [RegularExpression(
                 // base64 starting with "0"
                 "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
                 ErrorMessage = "This doesn't appear to be a valid blueprint string.")]
-            public string Payload { get; set; } = string.Empty;
+            public string BlueprintString { get; set; } = string.Empty;
+        }
+
+        public class CreateInputModel
+        {
+            [Required]
+            [StringLength(100, MinimumLength = 3)]
+            [RegularExpression("[a-z0-9_-]+")]
+            public string Slug { get; set; } = string.Empty;
+
+            [Required]
+            [StringLength(100, MinimumLength = 3)]
+            public string Title { get; set; } = string.Empty;
+
+            public string? Description { get; set; }
         }
 
         public void OnGet()
         {
+            ImportInput = new ImportInputModel
+            {
+                BlueprintString = BlueprintString ?? string.Empty
+            };
+
+            BlueprintString = null;
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync([FromForm]ImportInputModel importInput)
         {
             if (!ModelState.IsValid)
             {
+                ImportInput = importInput;
                 return Page();
             }
 
-            var result = await _blueprintConverter.Decode(Input.Payload);
-            await result.Match(
-                async blueprint =>
-                {
-                    var (hash, imageUri) = await SaveBlueprintRendering(blueprint);
-                    Blueprints.Add((blueprint, hash, imageUri));
-                },
-                async book =>
-                {
-                    foreach (var blueprint in book.Blueprints.OrderBy(x => x.Index).Select(x => x.Blueprint))
-                    {
-                        var (hash, imageUri) = await SaveBlueprintRendering(blueprint);
-                        Blueprints.Add((blueprint, hash, imageUri));
-                    }
+            var result = await _blueprintConverter.Decode(importInput.BlueprintString);
+            await result.Match(HandleBlueprint, HandleBook);
 
-                    Book = book;
-                });
+            BlueprintString = importInput.BlueprintString;
 
             return Page();
         }
 
-        private async Task<(string Hash, string ImageUri)> SaveBlueprintRendering(FactorioApi.Blueprint blueprint)
+        public async Task<IActionResult> OnPostCreateAsync([FromForm]CreateInputModel createInput)
         {
-            var encoded = await _blueprintConverter.Encode(blueprint);
+            if (!ModelState.IsValid)
+            {
+                CreateInput = createInput;
+                return Page();
+            }
+
+            var now = SystemClock.Instance.GetCurrentInstant();
+            var blueprintId = Guid.NewGuid();
+
+            //var version = new BlueprintVersion(
+            //    Guid.NewGuid(),
+            //    blueprintId,
+            //    now,
+            //    payload);
+
+            //var blueprint = new Blueprint(
+            //    blueprintId,
+            //    User.GetUserId(),
+            //    now,
+            //    "slug",
+            //    "title",
+            //    "description",
+            //    version);
+
+            await Task.Delay(0);
+            return RedirectToPage("./View");
+        }
+
+        private async Task HandleBlueprint(FactorioApi.Blueprint payload)
+        {
+            var encoded = await _blueprintConverter.Encode(payload);
+            var (hash, imageUri) = await SaveBlueprintRendering(encoded);
+
+            Blueprints.Add((payload, hash, imageUri));
+
+            CreateInput = new CreateInputModel
+            {
+                Title = payload.Label ?? string.Empty,
+                Slug = "slugified",
+                Description = payload.Description,
+            };
+        }
+
+        private async Task HandleBook(FactorioApi.BlueprintBook payload)
+        {
+            Book = payload;
+
+            foreach (var blueprint in payload.Blueprints.OrderBy(x => x.Index).Select(x => x.Blueprint))
+            {
+                var encoded = await _blueprintConverter.Encode(blueprint);
+                var (hash, imageUri) = await SaveBlueprintRendering(encoded);
+                Blueprints.Add((blueprint, hash, imageUri));
+            }
+
+            CreateInput = new CreateInputModel
+            {
+                Title = payload.Label ?? string.Empty,
+                Slug = "slugified",
+            };
+        }
+
+        private async Task<(string Hash, string ImageUri)> SaveBlueprintRendering(string encoded)
+        {
             var hash = await _imageService.SaveBlueprintRendering(encoded);
             return (hash, $"/api/files/blueprint/{hash}.jpg");
         }

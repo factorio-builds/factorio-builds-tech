@@ -44,7 +44,7 @@ namespace FactorioTech.Web.Pages.Account.Manage
             [Required]
             [EmailAddress]
             [Display(Name = "New email")]
-            public string NewEmail { get; set; }
+            public string NewEmail { get; set; } = string.Empty;
         }
 
         private async Task LoadAsync(User user)
@@ -97,6 +97,7 @@ namespace FactorioTech.Web.Pages.Account.Manage
                     pageHandler: null,
                     values: new { userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
+
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
                     "Confirm your email",
