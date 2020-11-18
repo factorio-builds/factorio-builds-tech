@@ -37,8 +37,8 @@ authRoutes.get("/logout", (req, res) => {
 
 export const discordStrategy = new DiscordStrategy(
   {
-    clientID: "774468058176684033",
-    clientSecret: "TTL-3jdBCfRl7e6IMsd1iIcpLjgtXOP7",
+    clientID: process.env.DISCORD_CLIENT_ID as string,
+    clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
     callbackURL: "http://localhost:3000/auth/discord/callback",
     scope: ["identify", "email"],
   },
