@@ -1,4 +1,4 @@
-import { useDistributeToColumn } from "./useDistributeToColumn"
+import { useDistributeToColumn } from "../useDistributeToColumn"
 
 const COL_WIDTH = 250
 const GUTTER = 15
