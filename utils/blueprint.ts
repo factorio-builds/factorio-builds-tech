@@ -53,16 +53,3 @@ export function getCountPerItem(blueprint: IBlueprint) {
     }
   }, {} as { [name: string]: number })
 }
-
-// TODO: could be improved to check that the combinator is right next to a belt facing it
-// odds are 99% of cases, a combinator with an item indicates input
-export function inputsAreMarked(blueprint: IBlueprint): boolean {
-  return blueprint.entities.some((entity) => {
-    return (
-      entity.name === "constant-combinator" &&
-      entity.control_behavior.filters.some((filter) => {
-        return filter.signal.type
-      })
-    )
-  })
-}

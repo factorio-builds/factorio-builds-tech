@@ -2,10 +2,10 @@ import React, { useMemo } from "react"
 import { Field, FormikProps } from "formik"
 import {
   decodeBlueprint,
-  inputsAreMarked,
   isBook,
   isValidBlueprint,
 } from "../../utils/blueprint"
+import { inputsAreMarked } from "../../utils/blueprint-heuristics"
 import Button from "../Button"
 import Input from "../Input"
 import Stacker from "../Stacker"
@@ -41,13 +41,13 @@ const Step1: React.FC<IStep1Props> = (props) => {
     if (!isBook(json)) {
       props.formikProps.setFieldValue(
         "markedInputs",
-        inputsAreMarked(json.blueprint)
+        inputsAreMarked(json.blueprint).value
       )
     } else {
       props.formikProps.setFieldValue(
         "markedInputs",
         json.blueprint_book.blueprints.some(({ blueprint }) => {
-          return inputsAreMarked(blueprint)
+          return inputsAreMarked(blueprint).value
         })
       )
     }
