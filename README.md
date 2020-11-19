@@ -1,4 +1,4 @@
-![Travis (.org) branch](https://img.shields.io/travis/veksen/factorio-builds/master?style=for-the-badge)
+[![Build Status](https://img.shields.io/travis/veksen/factorio-builds/master?style=for-the-badge)](https://travis-ci.org/veksen/factorio-builds)
 
 <img src="https://user-images.githubusercontent.com/3461986/98061159-41affb80-1e19-11eb-81d3-3d27f174cf8d.png" alt="Factorio builds" align="center" /><br />
 
