@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using System;
@@ -11,27 +11,13 @@ namespace FactorioTech.Web
     {
         public static void Main(string[] args)
         {
-            var loggerBuilder = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .MinimumLevel.Information()
-                .MinimumLevel.Override("FactorioTech", LogEventLevel.Debug)
-                .WriteTo.Console();
-
-            Log.Logger = loggerBuilder.CreateLogger();
+            Log.Logger = CreateLoggerBuilder(args).CreateLogger();
 
             try
             {
                 Log.Information("FactorioTech starting up");
 
-                WebHost.CreateDefaultBuilder(args)
-                    .ConfigureAppConfiguration(config =>
-                    {
-                        config.AddJsonFile("appsettings.secret.json", optional: true, reloadOnChange: true);
-                    })
-                    .UseSerilog()
-                    .UseStartup<Startup>()
-                    .Build()
-                    .Run();
+                CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -42,5 +28,24 @@ namespace FactorioTech.Web
                 Log.CloseAndFlush();
             }
         }
+
+        public static LoggerConfiguration CreateLoggerBuilder(string[] args) =>
+            new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("FactorioTech", LogEventLevel.Debug)
+                .WriteTo.Console();
+
+        public static IHostBuilder CreateHostBuilder(string[] args) => Host
+            .CreateDefaultBuilder(args)
+            .UseSerilog()
+            .ConfigureAppConfiguration(config =>
+            {
+                config.AddJsonFile("appsettings.secret.json", optional: true, reloadOnChange: true);
+            })
+            .ConfigureWebHostDefaults(builder =>
+            {
+                builder.UseStartup<Startup>();
+            });
     }
 }

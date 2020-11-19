@@ -6,8 +6,6 @@ namespace FactorioTech.Web.Pages.Account
     {
         public void OnGet()
         {
-
         }
     }
 }
-

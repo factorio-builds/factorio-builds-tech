@@ -1,0 +1,66 @@
+version: '3.8'
+
+volumes:
+  factorio:
+    external: true
+    name: factorio
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    # volumes:
+    #   - /etc/localtime:/etc/localtime:ro
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+  fbsr:
+    image: fbsr-wrapper
+    ports:
+      - "8080:8080"
+    volumes:
+      - factorio:/factorio:ro
+      # - /etc/localtime:/etc/localtime:ro
+
+  # grafana:
+  #   container_name: grafana
+  #   image: grafana/grafana
+  #   volumes:
+  #     - grafana:/var/lib/grafana
+  #     - /etc/localtime:/etc/localtime:ro
+  #   environment:
+  #     - GF_RENDERING_SERVER_URL=http://localhost:8081/render
+  #     - GF_RENDERING_CALLBACK_URL=http://localhost:3000/
+  #   depends_on:
+  #     - prometheus
+
+  # renderer:
+  #   container_name: grafana-image-renderer
+  #   image: grafana/grafana-image-renderer
+
+  # prometheus:
+  #   container_name: prometheus
+  #   image: prom/prometheus
+  #   user: root
+  #   volumes:
+  #     - prometheus:/data
+  #     - /etc/localtime:/etc/localtime:ro
+  #   command:
+  #     - "--storage.tsdb.path=/data"
+  #     - "--config.file=/etc/prometheus/prometheus.yaml"
+  #     - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+  #     - "--web.console.templates=/usr/share/prometheus/consoles"
+
+  # seq:
+  #   container_name: seq
+  #   image: datalust/seq
+  #   ports:
+  #     - 5341:80
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #   volumes:
+  #     - seq:/data
+  #     - /etc/localtime:/etc/localtime:ro

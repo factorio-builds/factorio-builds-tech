@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,7 @@ namespace FactorioTech.Web
 
             //services.Configure<AppConfig>(_configuration);
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
+            services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
             services.AddAuthentication()
                 .AddGitHub(options =>
@@ -41,7 +43,10 @@ namespace FactorioTech.Web
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection"));
+                options.UseNpgsql(
+                    _configuration.GetConnectionString("Postgres"),
+                    o => o.UseNodaTime());
+
             }).AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddIdentityCore<User>()
