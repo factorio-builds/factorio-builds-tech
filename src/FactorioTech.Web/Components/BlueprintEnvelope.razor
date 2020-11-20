@@ -1,0 +1,28 @@
+@using FactorioTech.Web.Core;
+
+@if (Envelope.Blueprint != null)
+{
+    <BlueprintCard Blueprint="@Envelope.Blueprint" ShowCopyButton="@ShowCopyButton" />
+}
+else if (Envelope.BlueprintBook != null)
+{
+    <h3>@Envelope.BlueprintBook.Label</h3>
+    <p>(contains @Envelope.BlueprintBook.Blueprints.Count() blueprints)</p>
+
+    @foreach (var blueprint in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index).Select(i => i.Blueprint))
+    {
+        <BlueprintCard Blueprint="@blueprint" ShowCopyButton="@ShowCopyButton" />
+    }
+}
+else
+{
+    <p>Invalid blueprint envelope.</p>
+}
+
+@code {
+    [Parameter]
+    public FactorioApi.Envelope Envelope { get; set; } = null!;
+
+    [Parameter]
+    public bool ShowCopyButton { get; set; }
+}

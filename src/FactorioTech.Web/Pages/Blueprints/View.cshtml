@@ -1,4 +1,14 @@
-﻿@page
-@model FactorioTech.Web.Pages.Blueprints.ViewModel
-@{
-}
+@page "{user}/{slug}"
+@model ViewModel
+
+<h1>@Model.Blueprint!.Title</h1>
+
+<p>@Model.Blueprint.Description</p>
+
+@(
+    await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.ServerPrerendered, new {
+        Envelope = Model.LatestVersion!.Payload,
+        ShowCopyButton = true,
+    })
+)
+

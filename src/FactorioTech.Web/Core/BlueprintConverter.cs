@@ -10,14 +10,7 @@ namespace FactorioTech.Web.Core
 {
     public class BlueprintConverter
     {
-        // ReSharper disable once ClassNeverInstantiated.Local
-        private record Envelope
-        {
-            public FactorioApi.Blueprint? Blueprint { get; init; }
-            public FactorioApi.BlueprintBook? BlueprintBook { get; init; }
-        }
-
-        private static readonly JsonSerializerOptions _options = new()
+        public static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
             IgnoreNullValues = true,
@@ -51,7 +44,7 @@ namespace FactorioTech.Web.Core
 
             try
             {
-                return await JsonSerializer.DeserializeAsync<Envelope>(decompresser, _options) switch
+                return await JsonSerializer.DeserializeAsync<FactorioApi.Envelope>(decompresser, JsonSerializerOptions) switch
                 {
                     { Blueprint: not null } e => e.Blueprint,
                     { BlueprintBook: not null } e => e.BlueprintBook,
@@ -74,11 +67,11 @@ namespace FactorioTech.Web.Core
         public async Task<string> Encode(OneOf<FactorioApi.Blueprint, FactorioApi.BlueprintBook> input)
         {
             var envelope = input.Match(
-                blueprint => new Envelope { Blueprint = blueprint },
-                book => new Envelope { BlueprintBook = book });
+                blueprint => new FactorioApi.Envelope { Blueprint = blueprint },
+                book => new FactorioApi.Envelope { BlueprintBook = book });
 
             await using var json = new MemoryStream();
-            await JsonSerializer.SerializeAsync(json, envelope, _options);
+            await JsonSerializer.SerializeAsync(json, envelope, JsonSerializerOptions);
             json.Seek(0, SeekOrigin.Begin);
 
             await using var compressed = new MemoryStream();

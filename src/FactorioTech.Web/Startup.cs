@@ -5,7 +5,6 @@ using FactorioTech.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +30,11 @@ namespace FactorioTech.Web
 
             //services.Configure<AppConfig>(_configuration);
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
-            services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
+
+            services.Configure<RouteOptions>(options =>
+            {
+                options.LowercaseUrls = true;
+            });
 
             services.AddAuthentication()
                 .AddGitHub(options =>
@@ -70,8 +73,12 @@ namespace FactorioTech.Web
                 options.AccessDeniedPath = "/Account/AccessDenied";
             });
 
-            services.AddRazorPages();
+            services.AddServerSideBlazor();
+            services.AddRazorPages()
+                .AddSessionStateTempDataProvider();
+
             services.AddHttpClient();
+            services.AddSession();
 
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
@@ -99,6 +106,8 @@ namespace FactorioTech.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

@@ -1,9 +1,14 @@
 using FactorioTech.Web.Core;
+using FactorioTech.Web.Core.Domain;
+using FactorioTech.Web.Data;
+using FactorioTech.Web.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NodaTime;
+using SluggyUnidecode;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +17,18 @@ namespace FactorioTech.Web.Pages.Blueprints
 {
     public class ImportModel : PageModel
     {
-        private readonly ImageService _imageService;
+        private readonly ILogger<ImportModel> _logger;
+        private readonly AppDbContext _ctx;
         private readonly BlueprintConverter _blueprintConverter;
 
-        public ImportModel(ImageService imageService, BlueprintConverter blueprintConverter)
+        public ImportModel(
+            ILogger<ImportModel> logger,
+            AppDbContext ctx,
+            BlueprintConverter blueprintConverter)
         {
-            _imageService = imageService;
+            _logger = logger;
             _blueprintConverter = blueprintConverter;
+            _ctx = ctx;
         }
 
         [TempData]
@@ -28,9 +38,7 @@ namespace FactorioTech.Web.Pages.Blueprints
 
         public CreateInputModel CreateInput { get; set; } = new();
 
-        public FactorioApi.BlueprintBook? Book { get; set; }
-
-        public List<(FactorioApi.Blueprint Blueprint, string Hash, string BlueprintImageUri)> Blueprints { get; set; } = new();
+        public FactorioApi.Envelope? Envelope { get; set; }
 
         public class ImportInputModel
         {
@@ -47,6 +55,11 @@ namespace FactorioTech.Web.Pages.Blueprints
             [Required]
             [StringLength(100, MinimumLength = 3)]
             [RegularExpression("[a-z0-9_-]+")]
+            //[PageRemote( // todo: doesn't work nested due to prefixed __RequestVerificationToken :(
+            //    PageHandler ="CheckSlug",
+            //    HttpMethod = nameof(HttpMethod.Post),
+            //    ErrorMessage = "You already have a blueprint with that slug",
+            //    AdditionalFields = "__RequestVerificationToken")]
             public string Slug { get; set; } = string.Empty;
 
             [Required]
@@ -56,11 +69,23 @@ namespace FactorioTech.Web.Pages.Blueprints
             public string? Description { get; set; }
         }
 
+        // todo: pulling this out of the model is a hackaround for [PageRemote] not working with nested model
+        // todo2: doesn't actually work.... breaks step 2
+        //[Required]
+        //[StringLength(100, MinimumLength = 3)]
+        //[RegularExpression("[a-z0-9_-]+")]
+        //[PageRemote(
+        //    PageHandler ="CheckSlug",
+        //    HttpMethod = nameof(HttpMethod.Post),
+        //    ErrorMessage = "You already have a blueprint with that slug",
+        //    AdditionalFields = "__RequestVerificationToken")]
+        //public string Slug { get; set; } = string.Empty;
+
         public void OnGet()
         {
             ImportInput = new ImportInputModel
             {
-                BlueprintString = BlueprintString ?? string.Empty
+                BlueprintString = BlueprintString ?? string.Empty,
             };
 
             BlueprintString = null;
@@ -75,8 +100,8 @@ namespace FactorioTech.Web.Pages.Blueprints
             }
 
             var result = await _blueprintConverter.Decode(importInput.BlueprintString);
-            await result.Match(HandleBlueprint, HandleBook);
 
+            Envelope = result.Match(HandleBlueprint, HandleBook);
             BlueprintString = importInput.BlueprintString;
 
             return Page();
@@ -84,96 +109,100 @@ namespace FactorioTech.Web.Pages.Blueprints
 
         public async Task<IActionResult> OnPostCreateAsync([FromForm]CreateInputModel createInput)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || BlueprintString == null)
             {
                 CreateInput = createInput;
                 return Page();
             }
 
-            var now = SystemClock.Instance.GetCurrentInstant();
-            var blueprintId = Guid.NewGuid();
+            var hash = Utils.ComputeHash(BlueprintString);
+            var potentialDupe = await _ctx.BlueprintVersions
+                .Where(x => x.Hash == hash)
+                .Select(x => new { VersionId = x.Id, x.BlueprintId })
+                .FirstOrDefaultAsync();
 
-            //var version = new BlueprintVersion(
-            //    Guid.NewGuid(),
-            //    blueprintId,
-            //    now,
-            //    payload);
-
-            //var blueprint = new Blueprint(
-            //    blueprintId,
-            //    User.GetUserId(),
-            //    now,
-            //    "slug",
-            //    "title",
-            //    "description",
-            //    version);
-
-            await Task.Delay(0);
-            return RedirectToPage("./View");
-        }
-
-        private async Task HandleBlueprint(FactorioApi.Blueprint payload)
-        {
-            var encoded = await _blueprintConverter.Encode(payload);
-            var (hash, imageUri) = await SaveBlueprintRendering(encoded);
-
-            Blueprints.Add((payload, hash, imageUri));
-
-            CreateInput = new CreateInputModel
+            if (potentialDupe != null)
             {
-                Title = payload.Label ?? string.Empty,
-                Slug = "slugified",
-                Description = payload.Description,
-            };
-        }
+                _logger.LogWarning("Attempted to save duplicate version {VersionId} for blueprint {BlueprintId}",
+                    potentialDupe.VersionId, potentialDupe.BlueprintId);
 
-        private async Task HandleBook(FactorioApi.BlueprintBook payload)
-        {
-            Book = payload;
-
-            foreach (var blueprint in payload.Blueprints.OrderBy(x => x.Index).Select(x => x.Blueprint))
-            {
-                var encoded = await _blueprintConverter.Encode(blueprint);
-                var (hash, imageUri) = await SaveBlueprintRendering(encoded);
-                Blueprints.Add((blueprint, hash, imageUri));
+                CreateInput = createInput;
+                return Page();
             }
 
+            if (await SlugExistsForUser(User.GetUserId(), createInput.Slug))
+            {
+                _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
+                    User.GetUserName(), createInput.Slug);
+
+                CreateInput = createInput;
+                return Page();
+            }
+
+            var result = await _blueprintConverter.Decode(BlueprintString);
+            var currentInstant = SystemClock.Instance.GetCurrentInstant();
+
+            var blueprint = new Blueprint(
+                Guid.NewGuid(),
+                User.GetUserId(),
+                currentInstant,
+                createInput.Slug.ToLowerInvariant(),
+                createInput.Title,
+                createInput.Description);
+
+            var version = new BlueprintVersion(
+                Guid.NewGuid(),
+                blueprint.Id,
+                currentInstant,
+                hash,
+                result);
+
+            _ctx.Add(blueprint);
+            _ctx.Add(version);
+            await _ctx.SaveChangesAsync();
+
+            return RedirectToPage("./View", new
+            {
+                user = User.GetUserName(),
+                slug = blueprint.Slug,
+            });
+        }
+
+        public async Task<JsonResult> OnPostCheckSlugAsync([FromForm]string slug)
+        {
+            var slugExists = await SlugExistsForUser(User.GetUserId(), slug);
+            return new JsonResult(!slugExists);
+        }
+
+        private async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
+            await _ctx.Users
+                .Where(u => u.Id == User.GetUserId())
+                .Join(_ctx.Blueprints, u => u.Id, bp => bp.OwnerId, (u, bp) => bp)
+                .Where(bp => bp.Slug == slug.ToLowerInvariant())
+                .AnyAsync();
+
+        private FactorioApi.Envelope HandleBlueprint(FactorioApi.Blueprint payload)
+        {
             CreateInput = new CreateInputModel
             {
+                Slug = payload.Label?.ToSlug() ?? string.Empty,
                 Title = payload.Label ?? string.Empty,
-                Slug = "slugified",
+                Description = payload.Description,
             };
+
+            return new FactorioApi.Envelope { Blueprint = payload };
         }
 
-        private async Task<(string Hash, string ImageUri)> SaveBlueprintRendering(string encoded)
+        private FactorioApi.Envelope HandleBook(FactorioApi.BlueprintBook payload)
         {
-            var hash = await _imageService.SaveBlueprintRendering(encoded);
-            return (hash, $"/api/files/blueprint/{hash}.jpg");
-        }
-
-        public IDictionary<string, int> GetEntityStats(FactorioApi.Blueprint blueprint) =>
-            blueprint.Entities
-                .GroupBy(e => e.Name)
-                .OrderByDescending(g => g.Count())
-                .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Count());
-
-        public string GetIconUrlForEntity(string key) =>
-            $"https://wiki.factorio.com/images/{GetWikiKeyForEntity(key)}.png";
-
-        public string GetWikiUrlForEntity(string key) => 
-            $"https://wiki.factorio.com/{GetWikiKeyForEntity(key)}";
-
-        private static string GetWikiKeyForEntity(string key) =>
-            key switch
+            CreateInput = new CreateInputModel
             {
-                "small-lamp" => "Lamp",
-                "logistic-chest-passive-provider" => "Passive_provider_chest",
-                "logistic-chest-active-provider" => "Active_provider_chest",
-                "logistic-chest-requester" => "Requester_chest",
-                "logistic-chest-buffer" => "Buffer_chest",
-                "logistic-chest-storage" => "Storage_chest",
-                "stone-wall" => "Wall",
-                { } k => k[..1].ToUpperInvariant() + k[1..].Replace("-", "_"),
+                Slug = payload.Label?.ToSlug() ?? string.Empty,
+                Title = payload.Label ?? string.Empty,
+                Description = null,
             };
+
+            return new FactorioApi.Envelope { BlueprintBook = payload };
+        }
     }
 }

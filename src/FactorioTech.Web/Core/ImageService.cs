@@ -1,9 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Web.Core
@@ -21,7 +18,7 @@ namespace FactorioTech.Web.Core
 
         public async Task<string> SaveBlueprintRendering(string blueprint)
         {
-            var hash = CreateHash(blueprint);
+            var hash = Utils.ComputeHash(blueprint);
             var imageFqfn = GetImageFqfn(hash);
 
             if (File.Exists(imageFqfn))
@@ -66,10 +63,5 @@ namespace FactorioTech.Web.Core
 
         private static string GetImageFqfn(string hash) =>
             Path.Combine(AppConfig.WorkingDir, "blueprints", $"{hash}.jpg");
-
-        private static string CreateHash(string input) =>
-            string.Join(string.Empty, MD5.Create()
-                .ComputeHash(Encoding.UTF8.GetBytes(input))
-                .Select(b => b.ToString("X2".ToLowerInvariant())));
     }
 }

@@ -4,9 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # App specific
-app.db
 wwwroot/
-Migrations/
 *.secret.json
 
 # User-specific files

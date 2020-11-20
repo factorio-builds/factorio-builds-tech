@@ -23,22 +23,20 @@ namespace FactorioTech.Web.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        public IList<UserLoginInfo> CurrentLogins { get; set; }
+        public IList<UserLoginInfo>? CurrentLogins { get; set; }
 
-        public IList<AuthenticationScheme> OtherLogins { get; set; }
+        public IList<AuthenticationScheme>? OtherLogins { get; set; }
 
         public bool ShowRemoveButton { get; set; }
 
         [TempData]
-        public string StatusMessage { get; set; }
+        public string? StatusMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
-                return NotFound($"Unable to load user with ID 'user.Id'.");
-            }
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
             CurrentLogins = await _userManager.GetLoginsAsync(user);
             OtherLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync())
@@ -52,9 +50,7 @@ namespace FactorioTech.Web.Pages.Account.Manage
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
-                return NotFound($"Unable to load user with ID 'user.Id'.");
-            }
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
             var result = await _userManager.RemoveLoginAsync(user, loginProvider, providerKey);
             if (!result.Succeeded)
@@ -83,15 +79,11 @@ namespace FactorioTech.Web.Pages.Account.Manage
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
-            {
-                return NotFound($"Unable to load user with ID 'user.Id'.");
-            }
+                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
             var info = await _signInManager.GetExternalLoginInfoAsync(user.Id.ToString());
             if (info == null)
-            {
                 throw new InvalidOperationException($"Unexpected error occurred loading external login info for user with ID '{user.Id}'.");
-            }
 
             var result = await _userManager.AddLoginAsync(user, info);
             if (!result.Succeeded)

@@ -1,13 +1,17 @@
+using FactorioTech.Web.Core;
 using FactorioTech.Web.Core.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Text.Json;
 
 namespace FactorioTech.Web.Data
 {
     public class AppDbContext : IdentityDbContext<User, Role, Guid>
     {
+        public DbSet<Blueprint> Blueprints { get; set; }
+        public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
 
 #pragma warning disable 8618
         public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -20,6 +24,33 @@ namespace FactorioTech.Web.Data
         {
             base.OnModelCreating(builder);
             CustomizeAspNetIdentity(builder);
+
+            builder.Entity<User>(entity =>
+            {
+                entity.HasMany<Blueprint>().WithOne()
+                    .HasForeignKey(x => x.OwnerId)
+                    .HasPrincipalKey(x => x.Id);
+            });
+
+            builder.Entity<Blueprint>(entity =>
+            {
+                entity.HasMany<BlueprintVersion>().WithOne()
+                    .HasForeignKey(e => e.BlueprintId)
+                    .HasPrincipalKey(e => e.Id);
+
+                entity.HasAlternateKey(e => new { e.OwnerId, e.Slug });
+            });
+
+            builder.Entity<BlueprintVersion>(entity =>
+            {
+                entity.Property(e => e.Payload)
+                    .HasConversion(
+                        envelope => JsonSerializer.Serialize(envelope, BlueprintConverter.JsonSerializerOptions),
+                        json => JsonSerializer.Deserialize<FactorioApi.Envelope>(json, BlueprintConverter.JsonSerializerOptions)!)
+                    .HasColumnType("jsonb");
+
+                entity.HasAlternateKey(e => e.Hash);
+            });
         }
 
         private void CustomizeAspNetIdentity(ModelBuilder builder)

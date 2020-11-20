@@ -22,6 +22,12 @@ else
         <div asp-validation-summary="ModelOnly"></div>
 
         <div class="form-group">
+            <label asp-for="CreateInput.Title"></label>
+            <input asp-for="CreateInput.Title" class="form-control" />
+            <span asp-validation-for="CreateInput.Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
             <label asp-for="CreateInput.Slug"></label>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -30,12 +36,6 @@ else
                 <input asp-for="CreateInput.Slug" class="form-control" aria-describedby="slug-username-addon" />
             </div>
             <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="CreateInput.Title"></label>
-            <input asp-for="CreateInput.Title" class="form-control" />
-            <span asp-validation-for="CreateInput.Title" class="text-danger"></span>
         </div>
 
         <div class="form-group">
@@ -50,70 +50,15 @@ else
     <hr />
 }
 
-@if (Model.Book != null)
+@if (Model.Envelope != null)
 {
-    <h2>Blueprint Book</h2>
-    <h3>@Model.Book.Label</h3>
-    <p>(contains @Model.Book.Blueprints.Count() blueprints)</p>
-
-    <h2>Blueprints</h2>
+    @(  await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.ServerPrerendered, new {
+            Envelope = Model.Envelope,
+            ShowCopyButton = false,
+        })
+    )
 }
 
-@foreach (var (blueprint, hash, imageUri) in Model.Blueprints)
-{
-    <h3>@blueprint.Label</h3>
-    <p>@blueprint.Description</p>
-
-    <div class="accordion" id="accordion-@hash">
-        <div class="card">
-            <div class="card-header" id="accordion-preview-@hash">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left" type="button"
-                            data-toggle="collapse" data-target="#accordion-preview-collapse-@hash"
-                            aria-expanded="true" aria-controls="accordion-preview-collapse-@hash">
-                        Preview
-                    </button>
-                </h2>
-            </div>
-            <div id="accordion-preview-collapse-@hash" class="collapse"
-                    data-parent="#accordion-@hash"
-                    aria-labelledby="accordion-preview-@hash">
-                <div class="card-body">
-                    <img src="@imageUri" class="img-fluid" />
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header" id="accordion-entities-@hash">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left" type="button"
-                            data-toggle="collapse" data-target="#accordion-entities-collapse-@hash"
-                            aria-expanded="false" aria-controls="accordion-entities-collapse-@hash">
-                        Contains @blueprint.Entities.Count() entities
-                    </button>
-                </h2>
-            </div>
-            <div id="accordion-entities-collapse-@hash" class="collapse"
-                    data-parent="#accordion-@hash"
-                    aria-labelledby="accordion-entities-@hash">
-                <div class="card-body">
-                    <table class="table table-striped table-sm">
-                        <tbody>
-                            @foreach (var (key, count) in Model.GetEntityStats(blueprint))
-                            {
-                                <tr>
-                                    <td><img src="@Model.GetIconUrlForEntity(key)" width="32" height="32" /></td>
-                                    <td>@count</td>
-                                    <td><a href="@Model.GetWikiUrlForEntity(key)">@key</a></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <br /><br />
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }
