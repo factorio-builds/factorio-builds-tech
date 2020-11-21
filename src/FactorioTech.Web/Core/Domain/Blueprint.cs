@@ -21,14 +21,23 @@ namespace FactorioTech.Web.Core.Domain
 
         [Required]
         [MaxLength(100)]
+        public string OwnerSlug { get; private set; }
+
+        [Required]
+        [MaxLength(100)]
         public string Title { get; private set; }
 
         public string? Description { get; private set; }
 
-        public Blueprint(Guid id, Guid ownerId, Instant createdAt, string slug, string title, string? description)
+        // navigation properties -> will be null if not included explicitly
+        public User? Owner { get; private set; }
+        public BlueprintVersion? LatestVersion { get; set; }
+
+        public Blueprint(Guid id, Guid ownerId, string ownerSlug, Instant createdAt, string slug, string title, string? description)
         {
             Id = id;
             OwnerId = ownerId;
+            OwnerSlug = ownerSlug;
             CreatedAt = createdAt;
             Slug = slug;
             Title = title;

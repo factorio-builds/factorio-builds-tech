@@ -1,0 +1,115 @@
+@page "/{user}/{slug}/{hash?}"
+@model ViewModel
+@using Humanizer
+
+@{ var blueprint = Model.Blueprint!; }
+
+<div class="container blueprint">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="User" asp-route-user="@blueprint.Owner!.UserName">@blueprint.Owner!.UserName</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <a asp-page="View" asp-route-user="@blueprint.Owner!.UserName" asp-route-slug="@blueprint.Slug" asp-route-hash="@null">@blueprint.Slug</a>
+            </li>
+            <li class="ml-auto">
+                <div class="btn-group ml-2" role="group">
+                    <button type="button" class="btn btn-sm btn-light border">Star</button>
+                    <button type="button" class="btn btn-sm btn-light border" disabled>42</button>
+                </div>
+            </li>
+            @if (User.GetUserId() == blueprint.OwnerId)
+            {
+                <li>
+                    <div class="btn-group ml-2" role="group">
+                        <button type="button" class="btn btn-sm btn-light border">Edit</button>
+                    </div>
+                </li>
+            }
+            <li>
+                <div class="btn-group ml-2" role="group">
+                    <button type="button" class="btn btn-sm btn-success">Copy to clipboard</button>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    @*<div class="row mb-4">
+        <div class="col-md-8">
+            <h4>
+                <a asp-page="User" asp-route-user="@blueprint.Owner!.UserName">@blueprint.Owner!.UserName</a>
+                /
+                <a asp-page="View" asp-route-user="@blueprint.Owner!.UserName" asp-route-slug="@blueprint.Slug" asp-route-hash="@null">@blueprint.Slug</a>
+            </h4>
+        </div>
+        <div class="col-md-4">
+            <div class="btn-toolbar float-right" role="toolbar">
+                <div class="btn-group ml-2" role="group">
+                    <button type="button" class="btn btn-sm btn-light border">Star</button>
+                    <button type="button" class="btn btn-sm btn-light border" disabled>42</button>
+                </div>
+                @if (User.GetUserId() == blueprint.OwnerId)
+                {
+                    <div class="btn-group ml-2" role="group">
+                        <button type="button" class="btn btn-sm btn-light border">Edit</button>
+                    </div>
+                }
+                <div class="btn-group ml-2" role="group">
+                    <button type="button" class="btn btn-sm btn-success">Copy to clipboard</button>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">@blueprint.Title</h1>
+            <p>
+                <small class="text-muted">
+                    by <a asp-page="User" asp-route-user="@blueprint.Owner.UserName">@blueprint.Owner.DisplayName</a>
+                    &bull; created @blueprint.CreatedAt.InZone(Model.TimeZone).ToDateTimeOffset().Humanize()
+                    @if (blueprint.CreatedAt == blueprint.LatestVersion!.CreatedAt)
+                    {
+                        <text>&bull; updated @blueprint.LatestVersion!.CreatedAt.InZone(Model.TimeZone).ToDateTimeOffset().Humanize()</text>
+                    }
+                </small>
+            </p>
+            <p><small class="text-muted"></small></p>
+            <p>@blueprint.Description</p>
+
+            <details>
+                <summary>Version History</summary>
+                <ul class="list-group list-group-flush">
+                    @foreach (var version in Model.Versions!)
+                    {
+                        <li class="list-group-item">
+                            <h5 class="mb-0">
+                                <a asp-page="View" asp-route-user="@blueprint.Owner.UserName" asp-route-slug="@blueprint.Slug" asp-route-hash="@version.Hash">
+                                    @version.Hash
+                                </a>
+                                @if (version.Id == blueprint.LatestVersion.Id)
+                                {
+                                    <text>(current version)</text>
+                                }
+                            </h5>
+                            <small class="text-muted">Updated @version.CreatedAt.InZone(Model.TimeZone).ToDateTimeOffset().Humanize()</small>
+                            <p>This is my new and aweome version!</p>
+                        </li>
+                    }
+                </ul>
+            </details>
+        </div>
+        <div class="col-md-4">
+            <img src="https://placekitten.com/500/500" class="img-thumbnail" loading="lazy" />
+        </div>
+    </div>
+</div>
+
+
+@(
+    await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
+        Envelope = blueprint.LatestVersion!.Payload,
+    })
+)
+

@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace FactorioTech.Web.Data.Migrations
 {
-    public partial class InitWithIdentityAndBlueprints : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -164,7 +164,8 @@ namespace FactorioTech.Web.Data.Migrations
                     CreatedAt = table.Column<Instant>(type: "timestamp", nullable: false),
                     Slug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    LatestVersionId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -238,13 +239,34 @@ namespace FactorioTech.Web.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Blueprints_LatestVersionId",
+                table: "Blueprints",
+                column: "LatestVersionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BlueprintVersions_BlueprintId",
                 table: "BlueprintVersions",
                 column: "BlueprintId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Blueprints_BlueprintVersions_LatestVersionId",
+                table: "Blueprints",
+                column: "LatestVersionId",
+                principalTable: "BlueprintVersions",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Blueprints_AspNetUsers_OwnerId",
+                table: "Blueprints");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Blueprints_BlueprintVersions_LatestVersionId",
+                table: "Blueprints");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -261,16 +283,16 @@ namespace FactorioTech.Web.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BlueprintVersions");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Blueprints");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "BlueprintVersions");
+
+            migrationBuilder.DropTable(
+                name: "Blueprints");
         }
     }
 }

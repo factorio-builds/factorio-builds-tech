@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FactorioTech.Web.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201120192802_InitWithIdentityAndBlueprints")]
-    partial class InitWithIdentityAndBlueprints
+    [Migration("20201121135550_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,9 @@ namespace FactorioTech.Web.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("LatestVersionId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
@@ -50,6 +53,8 @@ namespace FactorioTech.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasAlternateKey("OwnerId", "Slug");
+
+                    b.HasIndex("LatestVersionId");
 
                     b.ToTable("Blueprints");
                 });
@@ -290,11 +295,19 @@ namespace FactorioTech.Web.Data.Migrations
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.Blueprint", b =>
                 {
-                    b.HasOne("FactorioTech.Web.Core.Domain.User", null)
+                    b.HasOne("FactorioTech.Web.Core.Domain.BlueprintVersion", "LatestVersion")
+                        .WithMany()
+                        .HasForeignKey("LatestVersionId");
+
+                    b.HasOne("FactorioTech.Web.Core.Domain.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("LatestVersion");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>

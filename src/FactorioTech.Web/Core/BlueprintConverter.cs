@@ -24,7 +24,7 @@ namespace FactorioTech.Web.Core
             _logger = logger;
         }
 
-        public async Task<OneOf<FactorioApi.Blueprint, FactorioApi.BlueprintBook>> Decode(string blueprint)
+        public async Task<FactorioApi.BlueprintEnvelope> Decode(string blueprint)
         {
             // Factorio blueprint format:
             //
@@ -42,14 +42,27 @@ namespace FactorioTech.Web.Core
             await using var decompressed = new MemoryStream(compressed);
             await using var decompresser = new ZlibStream(decompressed, CompressionMode.Decompress);
 
+#if DEBUG
+            // set a breakpoint here and manually step into the if block to debug the json
+            if (!decompressed.CanRead)
+            {
+                decompressed.Seek(0, SeekOrigin.Begin);
+                await using var debugInflater = new ZlibStream(decompressed, CompressionMode.Decompress);
+                using var debugReader = new StreamReader(debugInflater);
+                var debugJson = await debugReader.ReadToEndAsync();
+                throw new Exception(debugJson);
+            }
+#endif
+
             try
             {
-                return await JsonSerializer.DeserializeAsync<FactorioApi.Envelope>(decompresser, JsonSerializerOptions) switch
+                return await JsonSerializer.DeserializeAsync<FactorioApi.BlueprintEnvelope>(decompresser, JsonSerializerOptions) switch
                 {
-                    { Blueprint: not null } e => e.Blueprint,
-                    { BlueprintBook: not null } e => e.BlueprintBook,
-                    _ => throw new Exception("Invalid blueprint string"),
+                    { Blueprint: not null } envelope => envelope,
+                    { BlueprintBook: not null } envelope => envelope,
+                    _ => throw new Exception("Failed to deserialize blueprint."),
                 };
+
             }
             catch (Exception ex)
             {
@@ -58,7 +71,7 @@ namespace FactorioTech.Web.Core
                 using var debugReader = new StreamReader(debugInflater);
                 var debugJson = await debugReader.ReadToEndAsync();
 
-                _logger.LogError(ex, "Failed to deserialize blueprint JSON: {Json}", debugJson);
+                _logger.LogError(ex, "JSON: {Json}", debugJson);
 
                 throw;
             }
@@ -67,8 +80,8 @@ namespace FactorioTech.Web.Core
         public async Task<string> Encode(OneOf<FactorioApi.Blueprint, FactorioApi.BlueprintBook> input)
         {
             var envelope = input.Match(
-                blueprint => new FactorioApi.Envelope { Blueprint = blueprint },
-                book => new FactorioApi.Envelope { BlueprintBook = book });
+                blueprint => new FactorioApi.BlueprintEnvelope { Blueprint = blueprint },
+                book => new FactorioApi.BlueprintEnvelope { BlueprintBook = book });
 
             await using var json = new MemoryStream();
             await JsonSerializer.SerializeAsync(json, envelope, JsonSerializerOptions);

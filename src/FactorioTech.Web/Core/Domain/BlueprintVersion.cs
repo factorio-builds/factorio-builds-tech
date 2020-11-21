@@ -22,7 +22,7 @@ namespace FactorioTech.Web.Core.Domain
         public string Hash { get; set; }
 
         [Required]
-        public FactorioApi.Envelope Payload { get; init; }
+        public FactorioApi.BlueprintEnvelope Payload { get; init; }
 
         public BlueprintVersion(Guid id, Guid blueprintId, Instant createdAt, string hash, OneOf<FactorioApi.Blueprint, FactorioApi.BlueprintBook> payload)
         {
@@ -31,11 +31,11 @@ namespace FactorioTech.Web.Core.Domain
             CreatedAt = createdAt;
             Hash = hash;
             Payload = payload.Match(
-                blueprint => new FactorioApi.Envelope { Blueprint = blueprint },
-                book => new FactorioApi.Envelope { BlueprintBook = book });
+                blueprint => new FactorioApi.BlueprintEnvelope { Blueprint = blueprint },
+                book => new FactorioApi.BlueprintEnvelope { BlueprintBook = book });
         }
 
-        public BlueprintVersion(Guid id, Guid blueprintId, Instant createdAt, string hash, FactorioApi.Envelope payload)
+        public BlueprintVersion(Guid id, Guid blueprintId, Instant createdAt, string hash, FactorioApi.BlueprintEnvelope payload)
         {
             Id = id;
             BlueprintId = blueprintId;

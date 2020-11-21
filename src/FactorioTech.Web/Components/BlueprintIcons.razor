@@ -1,0 +1,29 @@
+@using FactorioTech.Web.Core;
+
+@{ var icons = Icons?.OrderBy(i => i.Index)?.Select(i => i.Signal)?.ToArray() ?? new FactorioApi.SignalId[0]; }
+
+<div class="blueprint-icon is-@Type has-@icons.Length mr-2">
+    <img class="is-bg" src="/api/files/icon/64/item/@(Type).png" width="64" height="64" loading="lazy" />
+
+    @if (icons.Length > 0)
+    {
+        var size = icons.Length == 1 ? 64 : 32;
+        if (Type == "blueprint-book")
+        {
+            size /= 2;
+        }
+
+        for (var i = 0; i < icons.Length; i++)
+        {
+            <img class="is-icon is-@(i+1)"src="/api/files/icon/@size/@(icons[i].Type)/@(icons[i].Name).png" width="@size" height="@size" loading="lazy" />
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<FactorioApi.Icon>? Icons { get; set; }
+
+    [Parameter]
+    public string Type { get; set; } = "blueprint";
+}

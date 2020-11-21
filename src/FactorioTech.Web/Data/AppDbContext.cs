@@ -27,7 +27,8 @@ namespace FactorioTech.Web.Data
 
             builder.Entity<User>(entity =>
             {
-                entity.HasMany<Blueprint>().WithOne()
+                entity.HasMany<Blueprint>()
+                    .WithOne(x => x.Owner!)
                     .HasForeignKey(x => x.OwnerId)
                     .HasPrincipalKey(x => x.Id);
             });
@@ -38,6 +39,9 @@ namespace FactorioTech.Web.Data
                     .HasForeignKey(e => e.BlueprintId)
                     .HasPrincipalKey(e => e.Id);
 
+                entity.HasOne(e => e.LatestVersion!).WithMany()
+                    .HasPrincipalKey(e => e.Id);
+
                 entity.HasAlternateKey(e => new { e.OwnerId, e.Slug });
             });
 
@@ -46,7 +50,7 @@ namespace FactorioTech.Web.Data
                 entity.Property(e => e.Payload)
                     .HasConversion(
                         envelope => JsonSerializer.Serialize(envelope, BlueprintConverter.JsonSerializerOptions),
-                        json => JsonSerializer.Deserialize<FactorioApi.Envelope>(json, BlueprintConverter.JsonSerializerOptions)!)
+                        json => JsonSerializer.Deserialize<FactorioApi.BlueprintEnvelope>(json, BlueprintConverter.JsonSerializerOptions)!)
                     .HasColumnType("jsonb");
 
                 entity.HasAlternateKey(e => e.Hash);
@@ -57,8 +61,8 @@ namespace FactorioTech.Web.Data
         {
             builder.Entity<User>(entity =>
             {
-                entity.Property(e => e.UserName).IsRequired();
-                entity.Property(e => e.NormalizedUserName).IsRequired();
+                entity.Property(e => e.UserName).HasMaxLength(100).IsRequired();
+                entity.Property(e => e.NormalizedUserName).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.Email).IsRequired();
                 entity.Property(e => e.NormalizedEmail).IsRequired();
             });

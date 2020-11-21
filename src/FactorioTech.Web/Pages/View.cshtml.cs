@@ -3,10 +3,12 @@ using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Web.Pages.Blueprints
+namespace FactorioTech.Web.Pages
 {
     public class ViewModel : PageModel
     {
@@ -18,23 +20,30 @@ namespace FactorioTech.Web.Pages.Blueprints
         }
 
         public Blueprint? Blueprint { get; set; }
-        public BlueprintVersion? LatestVersion { get; set; }
+
+        public IList<BlueprintVersion>? Versions { get; set; }
+
+        public DateTimeZone TimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
 
         public async Task<IActionResult> OnGetAsync(string user, string slug)
         {
-            Blueprint = await _ctx.Users
-                .Where(u => u.UserName == user.ToLowerInvariant())
-                .Join(_ctx.Blueprints, u => u.Id, bp => bp.OwnerId, (u, bp) => bp)
-                .Where(bp => bp.Slug == slug.ToLowerInvariant())
+            Blueprint = await _ctx.Blueprints
+                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant())
+                .Include(bp => bp.Owner)
+                .Include(bp => bp.LatestVersion)
+                .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (Blueprint == null)
                 return NotFound("Blueprint does not exist :(");
 
-            LatestVersion = await _ctx.BlueprintVersions
+            // todo: payload has to move out of the version or these queries are too expensive
+            Versions = await _ctx.BlueprintVersions
                 .Where(v => v.BlueprintId == Blueprint.Id)
                 .OrderByDescending(v => v.CreatedAt)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
+
+            ViewData["Title"] = $"{Blueprint.Owner!.UserName}/{Blueprint.Slug}: {Blueprint.Title}";
 
             return Page();
         }

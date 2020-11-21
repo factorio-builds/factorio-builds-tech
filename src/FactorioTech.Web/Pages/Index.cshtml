@@ -1,28 +1,22 @@
 @page
 @model IndexModel
-
 @using Humanizer
 
-@{ ViewData["Title"] = "Home page"; }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-
-<div class="card-deck">
-    @foreach (var blueprint in Model.Blueprints)
-    {
-        <div class="card">
-            <img src="https://placekitten.com/500/500" class="card-img-top">
-            <div class="card-body">
-                <p class="card-text">
-                    <a asp-page="Blueprints/View" asp-route-user="dan" asp-route-slug="@blueprint.Slug" class="stretched-link">@blueprint.Title</a>
-                </p>
+<div class="container">
+    <div class="row no-gutters">
+        @foreach (var blueprint in Model.Blueprints)
+        {
+            <div class="col col-6 col-sm-4 col-md-3 col-lg-2">
+                <div class="card m-1 p-1">
+                    <img src="https://placekitten.com/500/500" class="card-img-top" loading="lazy" />
+                    <p class="card-text text-truncate mb-0 ml-1 mr-1">
+                        <a asp-page="View" asp-route-user="@blueprint.OwnerSlug" asp-route-slug="@blueprint.Slug" asp-route-hash="@null" class="stretched-link">
+                            @blueprint.Title
+                        </a>
+                    </p>
+                    <small class="text-muted m-1">updated @blueprint.CreatedAt.InZone(Model.TimeZone).ToDateTimeOffset().Humanize()</small>
+                </div>
             </div>
-            <div class="card-footer">
-                <p class="card-text"><small class="text-muted">Updated @blueprint.CreatedAt.InZone(Model.TimeZone).ToDateTimeOffset().Humanize()</small></p>
-            </div>
-        </div>
-    }
+        }
+    </div>
 </div>

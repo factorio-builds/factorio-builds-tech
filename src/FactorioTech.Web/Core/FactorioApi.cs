@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -6,16 +7,31 @@ namespace FactorioTech.Web.Core
 {
     public static class FactorioApi
     {
-        public record Envelope
+        public sealed class BlueprintEnvelope
         {
             [JsonPropertyName("blueprint")]
             public Blueprint? Blueprint { get; init; }
 
             [JsonPropertyName("blueprint_book")]
             public BlueprintBook? BlueprintBook { get; init; }
+
+            [JsonPropertyName("index")]
+            public int? Index { get; init; }
+
+            [JsonIgnore]
+            public string Item => Blueprint?.Item ?? BlueprintBook?.Item ?? string.Empty;
+
+            [JsonIgnore]
+            public string? Label => Blueprint?.Label ?? BlueprintBook?.Label ?? null;
+
+            [JsonIgnore]
+            public string? Description => Blueprint?.Description ?? BlueprintBook?.Description ?? null;
+
+            [JsonIgnore]
+            public IEnumerable<Icon>? Icons => Blueprint?.Icons ?? BlueprintBook?.Icons ?? null;
         }
 
-        public record BlueprintBook
+        public sealed class BlueprintBook
         {
             [JsonPropertyName("item")]
             public string Item { get; init; } = string.Empty;
@@ -23,29 +39,26 @@ namespace FactorioTech.Web.Core
             [JsonPropertyName("label")]
             public string? Label { get; init; }
 
+            [JsonPropertyName("description")]
+            public string? Description { get; init; }
+
             [JsonPropertyName("active_index")]
             public int? ActiveIndex { get; init; }
+
+            [JsonPropertyName("icons")]
+            public IEnumerable<Icon>? Icons { get; init; }
 
             [JsonPropertyName("version")]
             public long Version { get; init; }
 
             [JsonPropertyName("blueprints")]
-            public IEnumerable<BookItem> Blueprints { get; init; } = Enumerable.Empty<BookItem>();
-        }
-
-        public record BookItem
-        {
-            [JsonPropertyName("blueprint")]
-            public Blueprint Blueprint { get; init; } = new();
-
-            [JsonPropertyName("index")]
-            public int Index { get; init; }
+            public IEnumerable<BlueprintEnvelope> Blueprints { get; init; } = Enumerable.Empty<BlueprintEnvelope>();
         }
 
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Blueprint_object
         /// </summary>
-        public record Blueprint
+        public sealed class Blueprint
         {
             [JsonPropertyName("item")]
             public string Item { get; init; } = string.Empty;
@@ -84,7 +97,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Entity_object
         /// </summary>
-        public record Entity
+        public sealed class Entity
         {
             /// <summary>
             /// Index of the entity, 1-based.
@@ -260,7 +273,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Tile_object
         /// </summary>
-        public record Tile
+        public sealed class Tile
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -272,7 +285,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Icon_object
         /// </summary>
-        public record Icon
+        public sealed class Icon
         {
             [JsonPropertyName("index")]
             public int Index { get; init; }
@@ -284,7 +297,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#SignalID_object
         /// </summary>
-        public record SignalId
+        public sealed class SignalId
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -296,7 +309,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Position_object
         /// </summary>
-        public record Position
+        public sealed class Position
         {
             [JsonPropertyName("x")]
             public float X { get; init; }
@@ -308,7 +321,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Color_object
         /// </summary>
-        public record Color
+        public sealed class Color
         {
             [JsonPropertyName("r")]
             public float R { get; init; }
@@ -326,19 +339,19 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Schedule_object
         /// </summary>
-        public record Schedule
+        public sealed class Schedule
         {
             [JsonPropertyName("schedules")]
-            public IEnumerable<ScheduleRecord> Schedules { get; init; } = Enumerable.Empty<ScheduleRecord>();
+            public IEnumerable<Scheduleclass> Schedules { get; init; } = Enumerable.Empty<Scheduleclass>();
 
             [JsonPropertyName("locomotives")]
             public IEnumerable<int> Locomotives { get; init; } = Enumerable.Empty<int>();
         }
 
         /// <summary>
-        /// https://wiki.factorio.com/Blueprint_string_format#Schedule_Record_object
+        /// https://wiki.factorio.com/Blueprint_string_format#Schedule_class_object
         /// </summary>
-        public record ScheduleRecord
+        public sealed class Scheduleclass
         {
             [JsonPropertyName("station")]
             public string Station { get; init; } = string.Empty;
@@ -350,7 +363,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Wait_Condition_object
         /// </summary>
-        public record WaitCondition
+        public sealed class WaitCondition
         {
             [JsonPropertyName("type")]
             public string Type { get; init; } = string.Empty;
@@ -369,7 +382,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Connection_object
         /// </summary>
-        public record Connection
+        public sealed class Connection
         {
             [JsonPropertyName("first")]
             public ConnectionPoint First { get; init; } = new();
@@ -381,7 +394,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Connection_point_object
         /// </summary>
-        public record ConnectionPoint
+        public sealed class ConnectionPoint
         {
             [JsonPropertyName("red")]
             public ConnectionData Red { get; init; } = new();
@@ -393,7 +406,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Connection_data_object
         /// </summary>
-        public record ConnectionData
+        public sealed class ConnectionData
         {
             [JsonPropertyName("entity_id")]
             public int EntityId { get; init; }
@@ -405,7 +418,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Inventory_object
         /// </summary>
-        public record Inventory
+        public sealed class Inventory
         {
             [JsonPropertyName("filters")]
             public IEnumerable<ItemFilter> Filters { get; init; } = Enumerable.Empty<ItemFilter>();
@@ -417,7 +430,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Logistic_filter_object
         /// </summary>
-        public record LogisticFilter
+        public sealed class LogisticFilter
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -432,7 +445,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Item_filter_object
         /// </summary>
-        public record ItemFilter
+        public sealed class ItemFilter
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -444,7 +457,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Infinity_settings_object
         /// </summary>
-        public record InfinitySettings
+        public sealed class InfinitySettings
         {
             [JsonPropertyName("remove_unfiltered_items")]
             public bool RemoveUnfilteredItems { get; init; }
@@ -456,7 +469,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Infinity_filter_object
         /// </summary>
-        public record InfinityFilter
+        public sealed class InfinityFilter
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -474,7 +487,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Speaker_parameter_object
         /// </summary>
-        public record SpeakerParameter
+        public sealed class SpeakerParameter
         {
             [JsonPropertyName("playback_volume")]
             public float PlaybackVolume { get; init; }
@@ -489,7 +502,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Speaker_alert_parameter_object
         /// </summary>
-        public record SpeakerAlertParameter
+        public sealed class SpeakerAlertParameter
         {
             [JsonPropertyName("show_alert")]
             public bool ShowAlert { get; init; }

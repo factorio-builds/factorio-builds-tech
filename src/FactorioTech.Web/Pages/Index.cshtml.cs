@@ -27,6 +27,7 @@ namespace FactorioTech.Web.Pages
         {
             Blueprints = await _ctx.Blueprints
                 .OrderByDescending(x => x.CreatedAt)
+                .AsNoTracking()
                 .Take(100)
                 .ToListAsync();
 

@@ -1,28 +1,61 @@
 @using FactorioTech.Web.Core;
 
-@if (Envelope.Blueprint != null)
+@if (Envelope?.Blueprint != null)
 {
-    <BlueprintCard Blueprint="@Envelope.Blueprint" ShowCopyButton="@ShowCopyButton" />
+    <BlueprintCard Blueprint="@Envelope.Blueprint" />
 }
-else if (Envelope.BlueprintBook != null)
+else if (Envelope?.BlueprintBook != null)
 {
-    <h3>@Envelope.BlueprintBook.Label</h3>
-    <p>(contains @Envelope.BlueprintBook.Blueprints.Count() blueprints)</p>
+    var tempId = Guid.NewGuid();
 
-    @foreach (var blueprint in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index).Select(i => i.Blueprint))
-    {
-        <BlueprintCard Blueprint="@blueprint" ShowCopyButton="@ShowCopyButton" />
-    }
+    <div class="card mb-1">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="media mb-2">
+                        <BlueprintIcons Icons="Envelope.Icons" Type="blueprint-book" />
+                        <div class="media-body">
+                            <h5 class="card-title mt-2 mb-0">@(Envelope.Label ?? "(no title)")</h5>
+                            <small class="text-muted">Contains @Envelope.BlueprintBook.Blueprints.Count() blueprints</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn-toolbar float-right" role="toolbar">
+                        <div class="btn-group mr-2" role="group">
+                            <button type="button" class="btn btn-sm btn-light border">
+                                Copy to clipboard
+                            </button>
+                        </div>
+                        <div class="btn-group mr-2" role="group">
+                            <button type="button" class="btn btn-sm btn-light border"
+                                    data-toggle="collapse" data-target="#collapse-book-@tempId"
+                                    aria-expanded="false" aria-controls="collapse-book-@tempId">
+                                Expand
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="card-text">@(Envelope.Description ?? "(no description)")</p>
+
+            <div class="collapse" id="collapse-book-@tempId">
+                @foreach (var envelope in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index))
+                {
+                    <BlueprintEnvelope Envelope="@envelope" />
+                }
+            </div>
+        </div>
+    </div>
 }
 else
 {
     <p>Invalid blueprint envelope.</p>
 }
 
+
 @code {
     [Parameter]
-    public FactorioApi.Envelope Envelope { get; set; } = null!;
-
-    [Parameter]
-    public bool ShowCopyButton { get; set; }
+    public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
 }

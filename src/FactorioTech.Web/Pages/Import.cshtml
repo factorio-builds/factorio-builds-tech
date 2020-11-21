@@ -52,9 +52,9 @@ else
 
 @if (Model.Envelope != null)
 {
-    @(  await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.ServerPrerendered, new {
+    @(
+        await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
             Envelope = Model.Envelope,
-            ShowCopyButton = false,
         })
     )
 }

@@ -13,7 +13,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Web.Pages.Blueprints
+namespace FactorioTech.Web.Pages
 {
     public class ImportModel : PageModel
     {
@@ -38,7 +38,7 @@ namespace FactorioTech.Web.Pages.Blueprints
 
         public CreateInputModel CreateInput { get; set; } = new();
 
-        public FactorioApi.Envelope? Envelope { get; set; }
+        public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
 
         public class ImportInputModel
         {
@@ -89,6 +89,8 @@ namespace FactorioTech.Web.Pages.Blueprints
             };
 
             BlueprintString = null;
+
+            ViewData["Title"] = "Import blueprint string";
         }
 
         public async Task<IActionResult> OnPostAsync([FromForm]ImportInputModel importInput)
@@ -99,10 +101,14 @@ namespace FactorioTech.Web.Pages.Blueprints
                 return Page();
             }
 
-            var result = await _blueprintConverter.Decode(importInput.BlueprintString);
-
-            Envelope = result.Match(HandleBlueprint, HandleBook);
+            Envelope = await _blueprintConverter.Decode(importInput.BlueprintString);
             BlueprintString = importInput.BlueprintString;
+            CreateInput = new CreateInputModel
+            {
+                Slug = Envelope.Label?.ToSlug() ?? string.Empty,
+                Title = Envelope.Label ?? string.Empty,
+                Description = Envelope.Description,
+            };
 
             return Page();
         }
@@ -142,9 +148,12 @@ namespace FactorioTech.Web.Pages.Blueprints
             var result = await _blueprintConverter.Decode(BlueprintString);
             var currentInstant = SystemClock.Instance.GetCurrentInstant();
 
+            //var user = await _ctx.Users.FindAsync(User.GetUserId());
+
             var blueprint = new Blueprint(
                 Guid.NewGuid(),
                 User.GetUserId(),
+                User.GetUserName(),
                 currentInstant,
                 createInput.Slug.ToLowerInvariant(),
                 createInput.Title,
@@ -161,6 +170,9 @@ namespace FactorioTech.Web.Pages.Blueprints
             _ctx.Add(version);
             await _ctx.SaveChangesAsync();
 
+            blueprint.LatestVersion = version;
+            await _ctx.SaveChangesAsync();
+
             return RedirectToPage("./View", new
             {
                 user = User.GetUserName(),
@@ -175,34 +187,8 @@ namespace FactorioTech.Web.Pages.Blueprints
         }
 
         private async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
-            await _ctx.Users
-                .Where(u => u.Id == User.GetUserId())
-                .Join(_ctx.Blueprints, u => u.Id, bp => bp.OwnerId, (u, bp) => bp)
-                .Where(bp => bp.Slug == slug.ToLowerInvariant())
-                .AnyAsync();
-
-        private FactorioApi.Envelope HandleBlueprint(FactorioApi.Blueprint payload)
-        {
-            CreateInput = new CreateInputModel
-            {
-                Slug = payload.Label?.ToSlug() ?? string.Empty,
-                Title = payload.Label ?? string.Empty,
-                Description = payload.Description,
-            };
-
-            return new FactorioApi.Envelope { Blueprint = payload };
-        }
-
-        private FactorioApi.Envelope HandleBook(FactorioApi.BlueprintBook payload)
-        {
-            CreateInput = new CreateInputModel
-            {
-                Slug = payload.Label?.ToSlug() ?? string.Empty,
-                Title = payload.Label ?? string.Empty,
-                Description = null,
-            };
-
-            return new FactorioApi.Envelope { BlueprintBook = payload };
-        }
+            await _ctx.Blueprints.AnyAsync(bp =>
+                    bp.Slug == slug.ToLowerInvariant()
+                    && bp.OwnerId == userId);
     }
 }
