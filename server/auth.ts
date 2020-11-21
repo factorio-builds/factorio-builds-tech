@@ -8,7 +8,7 @@ export const authRoutes = express.Router()
 authRoutes.get(
   "/login",
   passport.authenticate("discord", {
-    scope: ["identify", "email", "guilds", "guilds.join"],
+    scope: ["identify"],
   }),
   (req, res) => {
     const backURL = req.header("Referer") || "/"
@@ -40,7 +40,7 @@ export const discordStrategy = new DiscordStrategy(
     clientID: process.env.DISCORD_CLIENT_ID as string,
     clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
     callbackURL: "http://localhost:3000/auth/discord/callback",
-    scope: ["identify", "email"],
+    scope: ["identify"],
   },
   async function (_accessToken, _refreshToken, profile, cb) {
     const userRepository = await UserRepository()
