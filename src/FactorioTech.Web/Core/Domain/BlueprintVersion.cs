@@ -1,5 +1,4 @@
 using NodaTime;
-using OneOf;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,29 +18,24 @@ namespace FactorioTech.Web.Core.Domain
         [Required]
         [MaxLength(32)]
         [MinLength(32)]
-        public string Hash { get; set; }
+        public string Hash { get; init; }
 
         [Required]
-        public FactorioApi.BlueprintEnvelope Payload { get; init; }
+        public BlueprintPayload? Payload { get; init; }
 
-        public BlueprintVersion(Guid id, Guid blueprintId, Instant createdAt, string hash, OneOf<FactorioApi.Blueprint, FactorioApi.BlueprintBook> payload)
+        public BlueprintVersion(Guid id, Guid blueprintId, Instant createdAt, BlueprintPayload payload)
         {
             Id = id;
             BlueprintId = blueprintId;
             CreatedAt = createdAt;
-            Hash = hash;
-            Payload = payload.Match(
-                blueprint => new FactorioApi.BlueprintEnvelope { Blueprint = blueprint },
-                book => new FactorioApi.BlueprintEnvelope { BlueprintBook = book });
-        }
-
-        public BlueprintVersion(Guid id, Guid blueprintId, Instant createdAt, string hash, FactorioApi.BlueprintEnvelope payload)
-        {
-            Id = id;
-            BlueprintId = blueprintId;
-            CreatedAt = createdAt;
-            Hash = hash;
+            Hash = payload.Hash;
             Payload = payload;
         }
+
+#pragma warning disable 8618 // required for EF
+        private BlueprintVersion()
+        {
+        }
+#pragma warning restore 8618
     }
 }

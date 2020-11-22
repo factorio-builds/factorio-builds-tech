@@ -109,7 +109,7 @@
 
 @(
     await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
-        Envelope = blueprint.LatestVersion!.Payload,
+        Envelope = blueprint.LatestVersion!.Payload!.Envelope,
     })
 )
 

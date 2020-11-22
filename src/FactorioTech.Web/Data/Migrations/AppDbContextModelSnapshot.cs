@@ -62,6 +62,37 @@ namespace FactorioTech.Web.Data.Migrations
                     b.ToTable("Blueprints");
                 });
 
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintPayload", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Encoded")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Envelope")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("VersionId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasAlternateKey("Hash");
+
+                    b.HasAlternateKey("VersionId");
+
+                    b.ToTable("BlueprintPayloads");
+                });
+
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -78,10 +109,6 @@ namespace FactorioTech.Web.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
-
-                    b.Property<string>("Payload")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
 
@@ -313,6 +340,17 @@ namespace FactorioTech.Web.Data.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintPayload", b =>
+                {
+                    b.HasOne("FactorioTech.Web.Core.Domain.BlueprintVersion", "Version")
+                        .WithOne("Payload")
+                        .HasForeignKey("FactorioTech.Web.Core.Domain.BlueprintPayload", "VersionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Version");
+                });
+
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>
                 {
                     b.HasOne("FactorioTech.Web.Core.Domain.Blueprint", null)
@@ -370,6 +408,12 @@ namespace FactorioTech.Web.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>
+                {
+                    b.Navigation("Payload")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

@@ -12,6 +12,7 @@ namespace FactorioTech.Web.Data
     {
         public DbSet<Blueprint> Blueprints { get; set; }
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
+        public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
 
 #pragma warning disable 8618
         public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -47,12 +48,18 @@ namespace FactorioTech.Web.Data
 
             builder.Entity<BlueprintVersion>(entity =>
             {
-                entity.Property(e => e.Payload)
+                entity.HasAlternateKey(e => e.Hash);
+            });
+
+            builder.Entity<BlueprintPayload>(entity =>
+            {
+                entity.Property(e => e.Envelope)
                     .HasConversion(
                         envelope => JsonSerializer.Serialize(envelope, BlueprintConverter.JsonSerializerOptions),
                         json => JsonSerializer.Deserialize<FactorioApi.BlueprintEnvelope>(json, BlueprintConverter.JsonSerializerOptions)!)
                     .HasColumnType("jsonb");
 
+                entity.HasAlternateKey(e => e.VersionId);
                 entity.HasAlternateKey(e => e.Hash);
             });
         }

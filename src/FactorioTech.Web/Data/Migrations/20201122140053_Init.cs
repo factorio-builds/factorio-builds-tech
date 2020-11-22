@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -29,8 +29,8 @@ namespace FactorioTech.Web.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                    NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    UserName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    NormalizedUserName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     NormalizedEmail = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
@@ -163,6 +163,7 @@ namespace FactorioTech.Web.Data.Migrations
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<Instant>(type: "timestamp", nullable: false),
                     Slug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    OwnerSlug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     LatestVersionId = table.Column<Guid>(type: "uuid", nullable: true)
@@ -186,8 +187,7 @@ namespace FactorioTech.Web.Data.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     BlueprintId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<Instant>(type: "timestamp", nullable: false),
-                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    Payload = table.Column<string>(type: "jsonb", nullable: false)
+                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -197,6 +197,29 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_BlueprintVersions_Blueprints_BlueprintId",
                         column: x => x.BlueprintId,
                         principalTable: "Blueprints",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BlueprintPayloads",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Encoded = table.Column<string>(type: "text", nullable: false),
+                    Envelope = table.Column<string>(type: "jsonb", nullable: false),
+                    VersionId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlueprintPayloads", x => x.Id);
+                    table.UniqueConstraint("AK_BlueprintPayloads_Hash", x => x.Hash);
+                    table.UniqueConstraint("AK_BlueprintPayloads_VersionId", x => x.VersionId);
+                    table.ForeignKey(
+                        name: "FK_BlueprintPayloads_BlueprintVersions_VersionId",
+                        column: x => x.VersionId,
+                        principalTable: "BlueprintVersions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -281,6 +304,9 @@ namespace FactorioTech.Web.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "BlueprintPayloads");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

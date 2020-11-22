@@ -30,14 +30,13 @@ namespace FactorioTech.Web.Pages
             Blueprint = await _ctx.Blueprints
                 .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant())
                 .Include(bp => bp.Owner)
-                .Include(bp => bp.LatestVersion)
+                .Include(bp => bp.LatestVersion!).ThenInclude(v => v.Payload!)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (Blueprint == null)
                 return NotFound("Blueprint does not exist :(");
 
-            // todo: payload has to move out of the version or these queries are too expensive
             Versions = await _ctx.BlueprintVersions
                 .Where(v => v.BlueprintId == Blueprint.Id)
                 .OrderByDescending(v => v.CreatedAt)

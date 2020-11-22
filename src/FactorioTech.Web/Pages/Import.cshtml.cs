@@ -121,6 +121,8 @@ namespace FactorioTech.Web.Pages
                 return Page();
             }
 
+            createInput.Slug = createInput.Slug.ToLowerInvariant();
+
             var hash = Utils.ComputeHash(BlueprintString);
             var potentialDupe = await _ctx.BlueprintVersions
                 .Where(x => x.Hash == hash)
@@ -148,35 +150,44 @@ namespace FactorioTech.Web.Pages
             var result = await _blueprintConverter.Decode(BlueprintString);
             var currentInstant = SystemClock.Instance.GetCurrentInstant();
 
-            //var user = await _ctx.Users.FindAsync(User.GetUserId());
+            await using (var tx = await _ctx.Database.BeginTransactionAsync())
+            {
+                var blueprint = new Blueprint(
+                    Guid.NewGuid(),
+                    User.GetUserId(),
+                    User.GetUserName(),
+                    currentInstant,
+                    createInput.Slug,
+                    createInput.Title,
+                    createInput.Description);
 
-            var blueprint = new Blueprint(
-                Guid.NewGuid(),
-                User.GetUserId(),
-                User.GetUserName(),
-                currentInstant,
-                createInput.Slug.ToLowerInvariant(),
-                createInput.Title,
-                createInput.Description);
+                var payload = new BlueprintPayload(
+                    Guid.NewGuid(),
+                    hash,
+                    BlueprintString,
+                    result);
 
-            var version = new BlueprintVersion(
-                Guid.NewGuid(),
-                blueprint.Id,
-                currentInstant,
-                hash,
-                result);
+                var version = new BlueprintVersion(
+                    Guid.NewGuid(),
+                    blueprint.Id,
+                    currentInstant,
+                    payload);
 
-            _ctx.Add(blueprint);
-            _ctx.Add(version);
-            await _ctx.SaveChangesAsync();
+                _ctx.Add(blueprint);
+                _ctx.Add(version);
+                await _ctx.SaveChangesAsync();
 
-            blueprint.LatestVersion = version;
-            await _ctx.SaveChangesAsync();
+                blueprint.LatestVersion = version;
+
+                await _ctx.SaveChangesAsync();
+
+                await tx.CommitAsync();
+            }
 
             return RedirectToPage("./View", new
             {
                 user = User.GetUserName(),
-                slug = blueprint.Slug,
+                slug = createInput.Slug,
             });
         }
 
@@ -187,8 +198,6 @@ namespace FactorioTech.Web.Pages
         }
 
         private async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
-            await _ctx.Blueprints.AnyAsync(bp =>
-                    bp.Slug == slug.ToLowerInvariant()
-                    && bp.OwnerId == userId);
+            await _ctx.Blueprints.AnyAsync(bp => bp.Slug == slug && bp.OwnerId == userId);
     }
 }
