@@ -15,21 +15,24 @@
             </li>
             <li class="ml-auto">
                 <div class="btn-group ml-2" role="group">
-                    <button type="button" class="btn btn-sm btn-light border">Star</button>
-                    <button type="button" class="btn btn-sm btn-light border" disabled>42</button>
+                    <button type="button" class="btn btn-sm btn-default">Star</button>
+                    <button type="button" class="btn btn-sm btn-default" disabled>42</button>
                 </div>
             </li>
             @if (User.GetUserId() == blueprint.OwnerId)
             {
                 <li>
                     <div class="btn-group ml-2" role="group">
-                        <button type="button" class="btn btn-sm btn-light border">Edit</button>
+                        <button type="button" class="btn btn-sm btn-default">Edit</button>
                     </div>
                 </li>
             }
             <li>
                 <div class="btn-group ml-2" role="group">
-                    <button type="button" class="btn btn-sm btn-success">Copy to clipboard</button>
+                    <button type="button" class="btn btn-sm btn-success"
+                            data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                        Copy to clipboard
+                    </button>
                 </div>
             </li>
         </ol>
@@ -46,17 +49,20 @@
         <div class="col-md-4">
             <div class="btn-toolbar float-right" role="toolbar">
                 <div class="btn-group ml-2" role="group">
-                    <button type="button" class="btn btn-sm btn-light border">Star</button>
-                    <button type="button" class="btn btn-sm btn-light border" disabled>42</button>
+                    <button type="button" class="btn btn-sm btn-default">Star</button>
+                    <button type="button" class="btn btn-sm btn-default" disabled>42</button>
                 </div>
                 @if (User.GetUserId() == blueprint.OwnerId)
                 {
                     <div class="btn-group ml-2" role="group">
-                        <button type="button" class="btn btn-sm btn-light border">Edit</button>
+                        <button type="button" class="btn btn-sm btn-default">Edit</button>
                     </div>
                 }
                 <div class="btn-group ml-2" role="group">
-                    <button type="button" class="btn btn-sm btn-success">Copy to clipboard</button>
+                    <button type="button" class="btn btn-sm btn-success"
+                            data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                        Copy to clipboard
+                    </button>
                 </div>
             </div>
         </div>

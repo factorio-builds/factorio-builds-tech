@@ -4,6 +4,13 @@
 /*@import "node_modules/@fortawesome/fontawesome-free/scss/solid";*/
 /*@import "node_modules/@fortawesome/fontawesome-free/scss/brands";*/
 
+@import "node_modules/dark-bootstrap-theme/src/darkVariables";
+@import "variables";
+
 @import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/dark-bootstrap-theme/src/fixes";
+@import "node_modules/dark-bootstrap-theme/src/customStyles/allCustomStyles";
+
+@import "fixes";
 
 @import "blueprints";
