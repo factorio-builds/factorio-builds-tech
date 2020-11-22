@@ -55,6 +55,7 @@ else
     @(
         await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
             Envelope = Model.Envelope,
+            MetadataCache = Model.MetadataCache,
         })
     )
 }

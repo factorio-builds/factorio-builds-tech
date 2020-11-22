@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -7,7 +6,7 @@ namespace FactorioTech.Web.Core
 {
     public static class FactorioApi
     {
-        public sealed class BlueprintEnvelope
+        public sealed class BlueprintEnvelope : ICanHaveMetadata
         {
             [JsonPropertyName("blueprint")]
             public Blueprint? Blueprint { get; init; }
@@ -31,7 +30,7 @@ namespace FactorioTech.Web.Core
             public IEnumerable<Icon>? Icons => Blueprint?.Icons ?? BlueprintBook?.Icons ?? null;
         }
 
-        public sealed class BlueprintBook
+        public sealed class BlueprintBook : ICanHaveMetadata
         {
             [JsonPropertyName("item")]
             public string Item { get; init; } = string.Empty;
@@ -42,11 +41,11 @@ namespace FactorioTech.Web.Core
             [JsonPropertyName("description")]
             public string? Description { get; init; }
 
-            [JsonPropertyName("active_index")]
-            public int? ActiveIndex { get; init; }
-
             [JsonPropertyName("icons")]
             public IEnumerable<Icon>? Icons { get; init; }
+
+            [JsonPropertyName("active_index")]
+            public int? ActiveIndex { get; init; }
 
             [JsonPropertyName("version")]
             public long Version { get; init; }
@@ -58,7 +57,7 @@ namespace FactorioTech.Web.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Blueprint_object
         /// </summary>
-        public sealed class Blueprint
+        public sealed class Blueprint : ICanHaveMetadata
         {
             [JsonPropertyName("item")]
             public string Item { get; init; } = string.Empty;

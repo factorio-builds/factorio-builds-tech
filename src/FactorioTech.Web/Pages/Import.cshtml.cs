@@ -20,14 +20,17 @@ namespace FactorioTech.Web.Pages
         private readonly ILogger<ImportModel> _logger;
         private readonly AppDbContext _ctx;
         private readonly BlueprintConverter _blueprintConverter;
+        private readonly ImageService _imageService;
 
         public ImportModel(
             ILogger<ImportModel> logger,
             AppDbContext ctx,
-            BlueprintConverter blueprintConverter)
+            BlueprintConverter blueprintConverter,
+            ImageService imageService)
         {
             _logger = logger;
             _blueprintConverter = blueprintConverter;
+            _imageService = imageService;
             _ctx = ctx;
         }
 
@@ -39,6 +42,8 @@ namespace FactorioTech.Web.Pages
         public CreateInputModel CreateInput { get; set; } = new();
 
         public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
+
+        public BlueprintMetadataCache MetadataCache { get; } = new();
 
         public class ImportInputModel
         {
@@ -110,6 +115,9 @@ namespace FactorioTech.Web.Pages
                 Description = Envelope.Description,
             };
 
+            var metadata = new BlueprintMetadata(BlueprintString, Utils.ComputeHash(BlueprintString));
+            MetadataCache.TryAdd(Envelope, metadata);
+
             return Page();
         }
 
@@ -180,9 +188,13 @@ namespace FactorioTech.Web.Pages
                 blueprint.LatestVersion = version;
 
                 await _ctx.SaveChangesAsync();
-
                 await tx.CommitAsync();
             }
+
+            var metadata = new BlueprintMetadata(BlueprintString, hash);
+            MetadataCache.TryAdd(result, metadata);
+
+            await _imageService.SaveAllBlueprintRenderings(MetadataCache, result);
 
             return RedirectToPage("./View", new
             {

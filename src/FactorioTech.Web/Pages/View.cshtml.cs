@@ -1,3 +1,4 @@
+using FactorioTech.Web.Core;
 using FactorioTech.Web.Core.Domain;
 using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,11 @@ namespace FactorioTech.Web.Pages
 
         public Blueprint? Blueprint { get; set; }
 
+        public BlueprintMetadata? Metadata { get; set; }
+
         public IList<BlueprintVersion>? Versions { get; set; }
+
+        public BlueprintMetadataCache MetadataCache { get; } = new();
 
         public DateTimeZone TimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
 
@@ -43,6 +48,12 @@ namespace FactorioTech.Web.Pages
                 .ToListAsync();
 
             ViewData["Title"] = $"{Blueprint.Owner!.UserName}/{Blueprint.Slug}: {Blueprint.Title}";
+
+            if (Blueprint.LatestVersion?.Payload != null)
+            {
+                Metadata = new BlueprintMetadata(Blueprint.LatestVersion.Payload.Encoded, Blueprint.LatestVersion.Payload.Hash);
+                MetadataCache.TryAdd(Blueprint.LatestVersion.Payload.Envelope, Metadata);
+            }
 
             return Page();
         }

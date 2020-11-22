@@ -54,9 +54,29 @@
             }
         }
 
+        .is-icon {
+            width: 16px;
+            height: 16px;
+        }
+
         .is-1 {
-            top: 12px;
+            top: 10px;
             left: 18px;
+        }
+
+        .is-2 {
+            top: 10px;
+            left: 34px;
+        }
+
+        .is-3 {
+            top: 28px;
+            left: 18px;
+        }
+
+        .is-4 {
+            top: 28px;
+            left: 34px;
         }
     }
 }

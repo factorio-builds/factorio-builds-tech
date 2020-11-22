@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -8,31 +9,55 @@ namespace FactorioTech.Web.Core
     public class ImageService
     {
         private readonly ILogger<ImageService> _logger;
+        private readonly BlueprintConverter _converter;
         private readonly FbsrClient _fbsrClient;
 
-        public ImageService(ILogger<ImageService> logger, FbsrClient fbsrClient)
+        public ImageService(
+            ILogger<ImageService> logger,
+            BlueprintConverter converter,
+            FbsrClient fbsrClient)
         {
             _logger = logger;
+            _converter = converter;
             _fbsrClient = fbsrClient;
         }
 
-        public async Task<string> SaveBlueprintRendering(string blueprint)
+        public async Task SaveAllBlueprintRenderings(BlueprintMetadataCache metadataCache, FactorioApi.BlueprintEnvelope envelope)
         {
-            var hash = Utils.ComputeHash(blueprint);
-            var imageFqfn = GetImageFqfn(hash);
+            if (envelope.BlueprintBook != null)
+            {
+                foreach (var inner in envelope.BlueprintBook.Blueprints)
+                {
+                    await SaveAllBlueprintRenderings(metadataCache, inner);
+                }
+            }
+            else if (envelope.Blueprint != null)
+            {
+                if (!metadataCache.TryGetValue(envelope.Blueprint, out var metadata))
+                {
+                    var encoded = await _converter.Encode(envelope.Blueprint);
+                    metadata = new BlueprintMetadata(encoded, Utils.ComputeHash(encoded));
+                    metadataCache.TryAdd(envelope.Blueprint, metadata);
+                }
+
+                await SaveBlueprintRendering(metadata);
+            }
+        }
+
+        public async Task SaveBlueprintRendering(BlueprintMetadata blueprintMetadata)
+        {
+            var imageFqfn = GetImageFqfn(blueprintMetadata.Hash);
 
             if (File.Exists(imageFqfn))
             {
                 _logger.LogWarning(
                     "Attempted to save new blueprint rendering with hash {Hash}, but the file already exists at {ImageFqfn}",
-                    hash, imageFqfn);
-
-                return hash;
+                    blueprintMetadata.Hash, imageFqfn);
             }
 
             try
             {
-                var image = await _fbsrClient.FetchBlueprintRendering(blueprint);
+                var image = await _fbsrClient.FetchBlueprintRendering(blueprintMetadata.Encoded);
 
                 await using var file = new FileStream(imageFqfn, FileMode.Create);
                 await file.WriteAsync(image);
@@ -41,8 +66,6 @@ namespace FactorioTech.Web.Core
             {
                 _logger.LogError(ex, "Failed to fetch or save blueprint rendering");
             }
-
-            return hash;
         }
 
         public Stream GetBlueprintRendering(string hash)

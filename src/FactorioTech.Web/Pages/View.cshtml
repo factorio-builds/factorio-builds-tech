@@ -79,6 +79,11 @@
             <p>@blueprint.Description</p>
 
             <details>
+                <summary>Blueprint String</summary>
+                <code>@Model.Metadata?.Encoded</code>
+            </details>
+
+            <details>
                 <summary>Version History</summary>
                 <ul class="list-group list-group-flush">
                     @foreach (var version in Model.Versions!)
@@ -109,7 +114,8 @@
 
 @(
     await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
-        Envelope = blueprint.LatestVersion!.Payload!.Envelope,
+        Envelope = blueprint.LatestVersion?.Payload?.Envelope,
+        MetadataCache = Model.MetadataCache,
     })
 )
 

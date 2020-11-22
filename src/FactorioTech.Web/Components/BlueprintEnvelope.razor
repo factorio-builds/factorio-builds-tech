@@ -58,4 +58,12 @@ else
 @code {
     [Parameter]
     public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
+
+    [Parameter]
+    public BlueprintMetadataCache MetadataCache { get; set; } = new BlueprintMetadataCache();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await MetadataCache.EnsureInitialized(Envelope);
+    }
 }

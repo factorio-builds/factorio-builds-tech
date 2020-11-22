@@ -20,7 +20,7 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task SimpleBlueprintIsDecoded()
         {
-            var converter = new BlueprintConverter(new NullLogger<BlueprintConverter>());
+            var converter = new BlueprintConverter();
             var result = await converter.Decode(TestData.SimpleBlueprintEncoded);
 
             result.Blueprint.Should().BeEquivalentTo(TestData.SimpleBlueprint);
@@ -35,8 +35,8 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task SimpleBlueprintBookIsDecoded()
         {
-            var service = new BlueprintConverter(new NullLogger<BlueprintConverter>());
-            var result = await service.Decode(TestData.SimpleBookEncoded);
+            var converter = new BlueprintConverter();
+            var result = await converter.Decode(TestData.SimpleBookEncoded);
 
             result.Blueprint.Should().BeNull();
             result.BlueprintBook.Should().BeEquivalentTo(TestData.SimpleBook);
@@ -50,8 +50,8 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task AdvancedBlueprintBookIsDecoded()
         {
-            var service = new BlueprintConverter(new NullLogger<BlueprintConverter>());
-            var result = await service.Decode(TestData.AdvancedBookEncoded);
+            var converter = new BlueprintConverter();
+            var result = await converter.Decode(TestData.AdvancedBookEncoded);
 
             result.Blueprint.Should().BeNull();
             result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook);
@@ -65,7 +65,7 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task SimpleBlueprintIsEncoded()
         {
-            var converter = new BlueprintConverter(new NullLogger<BlueprintConverter>());
+            var converter = new BlueprintConverter();
             var encoded = await converter.Encode(TestData.SimpleBlueprint);
             _output.WriteLine($"Encoded blueprint string:\n{encoded}");
 
@@ -79,7 +79,7 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task SimpleBlueprintBookIsEncoded()
         {
-            var converter = new BlueprintConverter(new NullLogger<BlueprintConverter>());
+            var converter = new BlueprintConverter();
             var encoded = await converter.Encode(TestData.SimpleBook);
             _output.WriteLine($"Encoded blueprint string:\n{encoded}");
 
@@ -93,7 +93,7 @@ namespace FactorioTech.Tests
         [Fact]
         public async Task AdvancedBlueprintBookIsEncoded()
         {
-            var converter = new BlueprintConverter(new NullLogger<BlueprintConverter>());
+            var converter = new BlueprintConverter();
             var encoded = await converter.Encode(TestData.AdvancedBook);
             _output.WriteLine($"Encoded blueprint string:\n{encoded}");
 

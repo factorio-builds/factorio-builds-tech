@@ -1,5 +1,4 @@
 using Ionic.Zlib;
-using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -28,13 +27,6 @@ namespace FactorioTech.Web.Core
             IgnoreNullValues = true,
             WriteIndented = false,
         };
-
-        private readonly ILogger<BlueprintConverter> _logger;
-
-        public BlueprintConverter(ILogger<BlueprintConverter> logger)
-        {
-            _logger = logger;
-        }
 
         public async Task<FactorioApi.BlueprintEnvelope> Decode(string blueprint)
         {
@@ -71,9 +63,7 @@ namespace FactorioTech.Web.Core
                 using var debugReader = new StreamReader(debugInflater);
                 var debugJson = await debugReader.ReadToEndAsync();
 
-                _logger.LogError(ex, "JSON: {Json}", debugJson);
-
-                throw;
+                throw new Exception($"JSON: {debugJson}", ex);
             }
         }
 
