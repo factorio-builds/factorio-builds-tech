@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux"
 import { GetServerSideProps, NextPage } from "next"
+import { IsNull, Not } from "typeorm"
 import BuildCardList from "../components/BuildCardList"
 import BuildListLookupStats from "../components/BuildListLookupStats"
 import Filters from "../components/Filters"
@@ -38,10 +39,12 @@ const IndexPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
     const buildRepository = await BuildRepository()
-    const builds = await buildRepository.find().catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
+    const builds = await buildRepository
+      .find({ image: Not(IsNull()) })
+      .catch((error) => {
+        console.error(error)
+        throw new Error("Cannot find build data")
+      })
 
     const deserializedBuilds: Build[] = JSON.parse(JSON.stringify(builds))
 

@@ -42,7 +42,7 @@ export class Build {
   @JoinColumn({ name: "ownerId", referencedColumnName: "id" })
   owner!: User
 
-  @Column("jsonb")
+  @Column({ type: "jsonb", nullable: true })
   image!: IImage
 
   @Column({ type: "integer", default: 0 })

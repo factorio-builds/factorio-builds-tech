@@ -100,21 +100,15 @@ export async function createBuildUseCase({
   files,
 }: ICreateParameters): Promise<Build> {
   const buildId = uuidv4()
-  const { uploadedFile, dimensions } = await handleFile(buildId, files.image)
   const owner = await getUserById(ownerId)
 
-  return saveBuild({
+  const build: Build = {
     id: buildId,
     name: fields.name as string,
     blueprint: fields.blueprint as string,
     description: fields.description as string,
     // @ts-ignore
     json: {},
-    image: {
-      src: uploadedFile.Location,
-      width: dimensions.width || 0,
-      height: dimensions.height || 0,
-    },
     metadata: {
       state: fields.state as EState,
       // @ts-ignore
@@ -126,7 +120,21 @@ export async function createBuildUseCase({
       area: 0,
     },
     owner: owner as User,
-  })
+  }
+
+  if (files.image) {
+    const { uploadedFile, dimensions } = await handleFile(buildId, files.image)
+
+    if (uploadedFile && dimensions) {
+      build.image = {
+        src: uploadedFile.Location,
+        width: dimensions.width as number,
+        height: dimensions.height as number,
+      }
+    }
+  }
+
+  return saveBuild(build)
 }
 
 // TODO: validate ownership
