@@ -1,39 +1,13 @@
-import { useSelector } from "react-redux"
 import { GetServerSideProps, NextPage } from "next"
 import { IsNull, Not } from "typeorm"
-import BuildCardList from "../components/BuildCardList"
-import BuildListLookupStats from "../components/BuildListLookupStats"
-import Filters from "../components/Filters"
-import Layout from "../components/Layout"
-import SearchInput from "../components/SearchInput"
 import { Build } from "../db/entities/build.entity"
 import { BuildRepository } from "../db/repository/build.repository"
-import { filteredBuildsSelector } from "../redux/selectors/builds"
-import { IStoreState, wrapper } from "../redux/store"
+import BuildListPage from "../pages-components/BuildListPage"
+import { wrapper } from "../redux/store"
 import { decodeBlueprint, isBook } from "../utils/blueprint"
 
 const IndexPage: NextPage = () => {
-  const filteredBuilds = useSelector((store: IStoreState) =>
-    filteredBuildsSelector(store)
-  )
-
-  return (
-    <Layout
-      sidebar={
-        <>
-          <SearchInput />
-          <Filters />
-        </>
-      }
-    >
-      <BuildListLookupStats
-        count={filteredBuilds.count}
-        totalCount={filteredBuilds.totalCount}
-        lookupTime={filteredBuilds.lookupTime}
-      />
-      <BuildCardList items={filteredBuilds.builds} />
-    </Layout>
-  )
+  return <BuildListPage />
 }
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(

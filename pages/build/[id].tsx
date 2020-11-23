@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next"
 import Layout from "../../components/Layout"
-import BuildPage from "../../components/BuildPage"
+import BuildPage from "../../pages-components/BuildPage"
 import { BuildRepository } from "../../db/repository/build.repository"
 import { Build } from "../../db/entities/build.entity"
 import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"

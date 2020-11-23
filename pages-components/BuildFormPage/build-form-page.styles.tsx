@@ -1,6 +1,6 @@
 import styled from "styled-components"
+import Stacker from "../../components/Stacker"
 import { COLOR } from "../../design/tokens/color"
-import Stacker from "../Stacker"
 
 export const Row = styled.div`
   display: flex;
