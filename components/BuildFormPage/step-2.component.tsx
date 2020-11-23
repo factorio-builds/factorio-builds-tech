@@ -7,6 +7,7 @@ import ImageUpload from "../ImageUpload"
 import Input from "../Input"
 import InputGroup from "../InputGroup"
 import ItemIcon from "../ItemIcon"
+import Spinner from "../Spinner"
 import Stacker from "../Stacker"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
@@ -58,6 +59,7 @@ const CATEGORY_MAP = [
 
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
+  submitStatus: { loading: boolean; error: boolean | string }
 }
 
 const Step2: React.FC<IStep2Props> = (props) => {
@@ -144,7 +146,12 @@ const Step2: React.FC<IStep2Props> = (props) => {
           </InputGroup>
 
           <SC.ButtonsStack gutter={24} orientation="horizontal">
-            <Button variant="success">Save build</Button>
+            <Button variant="success" disabled={props.submitStatus.loading}>
+              <Stacker gutter={10} orientation="horizontal">
+                <span>Save build</span>
+                {props.submitStatus.loading && <Spinner />}
+              </Stacker>
+            </Button>
           </SC.ButtonsStack>
         </Stacker>
       </SC.Content>

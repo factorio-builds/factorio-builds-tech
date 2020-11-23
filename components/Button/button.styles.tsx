@@ -1,6 +1,7 @@
 import styled from "styled-components"
 
 export const ButtonWrapper = styled.button`
+  display: flex;
   padding: 9px 13px;
   color: #fff;
   font-size: 17px;
