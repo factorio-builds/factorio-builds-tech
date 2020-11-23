@@ -1,0 +1,100 @@
+@page "/{user}/{slug}/{hash?}"
+@model BlueprintModel
+@using Humanizer
+
+@inject SignInManager<User> SignInManager
+
+<div class="container blueprint">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="/User" asp-route-user="@Model.Blueprint.Owner!.UserName">@Model.Blueprint.Owner!.UserName</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <a asp-page="/Blueprint" asp-route-user="@Model.Blueprint.Owner!.UserName" asp-route-slug="@Model.Blueprint.Slug" asp-route-hash="@null">
+                    @Model.Blueprint.Slug
+                </a>
+            </li>
+            <li class="ml-auto">
+                <div class="btn-group ml-2" role="group">
+                    <button type="button" class="btn btn-sm btn-default">Star</button>
+                    <button type="button" class="btn btn-sm btn-default" disabled>42</button>
+                </div>
+            </li>
+            @if (SignInManager.IsSignedIn(User) && User.GetUserId() == Model.Blueprint.OwnerId)
+            {
+                <li>
+                    <div class="btn-group ml-2" role="group">
+                        <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#import-modal-@Model.Blueprint.Slug">
+                            Add version…
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default">Edit</button>
+                    </div>
+                </li>
+            }
+            <li>
+                <div class="btn-group ml-2" role="group">
+                    <button type="button" class="btn btn-sm btn-success"
+                            data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                        Copy to clipboard
+                    </button>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">@Model.Blueprint.Title</h1>
+            <small class="text-muted">
+                by <a asp-page="/User" asp-route-user="@Model.Blueprint.Owner.UserName">@Model.Blueprint.Owner.DisplayName</a>
+                &bull; created @Model.Blueprint.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()
+                @if (Model.Blueprint.CreatedAt != Model.Blueprint.LatestVersion!.CreatedAt)
+                {
+                    <text>&bull; updated @Model.Blueprint.LatestVersion!.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</text>
+                }
+            </small>
+            <p>@Model.Blueprint.Description</p>
+
+            <details>
+                <summary>Blueprint String</summary>
+                <code>@Model.Metadata?.Encoded</code>
+            </details>
+
+            <details>
+                <summary>Version History</summary>
+                <ul class="list-group list-group-flush">
+                    @foreach (var version in Model.Versions!)
+                    {
+                        <li class="list-group-item">
+                            <h5 class="mb-0">
+                                <a asp-page="/Blueprint" asp-route-user="@Model.Blueprint.Owner.UserName"
+                                   asp-route-slug="@Model.Blueprint.Slug" asp-route-hash="@version.Hash">
+                                    @version.Hash
+                                </a>
+                                @if (version.Id == Model.Blueprint.LatestVersion.Id)
+                                {
+                                    <text>(current version)</text>
+                                }
+                            </h5>
+                            <small class="text-muted">Updated @version.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
+                            <p>This is my new and awesome version!</p>
+                        </li>
+                    }
+                </ul>
+            </details>
+        </div>
+        <div class="col-md-4">
+            <img src="https://placekitten.com/500/500" class="img-thumbnail" loading="lazy" />
+        </div>
+    </div>
+</div>
+
+<partial name="_ImportModalPartial" model="Model.ImportInput" />
+
+@(
+    await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
+        Envelope = Model.Blueprint.LatestVersion?.Payload?.Envelope,
+        MetadataCache = Model.MetadataCache,
+    })
+)

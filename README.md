@@ -12,7 +12,7 @@ The one and only [Factorio](https://www.factorio.com) blueprints hub: https://fa
 
 ## Factorio Game Data
 
-The Factorio game data is expected to present in a Docker volume called `factorio`.
+The Factorio game data is expected to be present in a Docker volume called `factorio`.
 You can download this data either using Steam or from the official website: https://www.factorio.com/download
 (note that the headless version does **not** work, as it doesn't include all necessary assets!).
 

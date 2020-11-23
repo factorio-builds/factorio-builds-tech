@@ -33,7 +33,8 @@ else
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
                 </div>
-                <input asp-for="CreateInput.Slug" class="form-control" aria-describedby="slug-username-addon" />
+                <input asp-for="CreateInput.Slug" class="form-control" aria-describedby="slug-username-addon"
+                       readonly="@Model.ParentBlueprintId.HasValue" />
             </div>
             <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
         </div>

@@ -63,8 +63,6 @@ namespace FactorioTech.Web.Pages.Account
             public string? DisplayName{ get; set; }
         }
 
-        public IActionResult OnGetAsync() => RedirectToPage("./Login");
-
         public IActionResult OnPost(string? provider, string? returnUrl = null)
         {
             // Request a redirect to the external login provider.

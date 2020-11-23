@@ -3,7 +3,6 @@ using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,15 +18,12 @@ namespace FactorioTech.Web.Pages
             _ctx = ctx;
         }
 
-        public DateTimeZone TimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
-
-        public IEnumerable<Blueprint> Blueprints { get; set; } = Enumerable.Empty<Blueprint>();
+        public IEnumerable<Blueprint> Blueprints { get; private set; } = Enumerable.Empty<Blueprint>();
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Blueprints = await _ctx.Blueprints
+            Blueprints = await _ctx.Blueprints.AsNoTracking()
                 .OrderByDescending(x => x.CreatedAt)
-                .AsNoTracking()
                 .Take(100)
                 .ToListAsync();
 

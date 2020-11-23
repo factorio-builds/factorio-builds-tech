@@ -20,6 +20,8 @@ namespace FactorioTech.Web.Core.Domain
         [MinLength(32)]
         public string Hash { get; init; }
 
+        // navigation properties -> will be null if not included explicitly
+
         [Required]
         public BlueprintPayload? Payload { get; init; }
 

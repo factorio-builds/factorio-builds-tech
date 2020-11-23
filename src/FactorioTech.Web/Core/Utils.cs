@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -6,6 +7,15 @@ namespace FactorioTech.Web.Core
 {
     public static class Utils
     {
+        /// <summary>
+        /// Shamelessly stolen from Kotlin
+        ///
+        ///     inline fun <T, R> T.let(block: (T) -> R): R
+        ///
+        /// see https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/let.html
+        /// </summary>
+        public static R Let<T, R>(this T v, Func<T, R> f) => f(v);
+
         public static string ComputeHash(string input) =>
             string.Join(string.Empty, MD5.Create()
                 .ComputeHash(Encoding.UTF8.GetBytes(input))

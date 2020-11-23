@@ -16,7 +16,7 @@ function copyJs() {
             "node_modules/jquery/dist/**/*.js",
             "node_modules/jquery-validation/dist/**/*.js",
             "node_modules/jquery-validation-unobtrusive/dist/**/*.js",
-        ]).pipe(dest("wwwroot/js"));
+        ]).pipe(dest("wwwroot/dist/js"));
 }
 
 function buildScss() {
@@ -27,11 +27,11 @@ function buildScss() {
         .pipe(csso())
         .pipe(rename({ suffix: ".min" }))
         .pipe(write("."))
-        .pipe(dest("wwwroot/css"));
+        .pipe(dest("wwwroot/dist/css"));
 }
 
 exports.clean = () =>
-    del(["wwwroot"]);
+    del(["wwwroot/dist"]);
 
 exports.build =
     parallel(copyJs, buildScss);

@@ -21,7 +21,11 @@ namespace FactorioTech.Web.Extensions
             var principal = await base.CreateAsync(user);
             if (principal.Identity is ClaimsIdentity identity)
             {
-                identity.AddClaim(new Claim("urn:factorio-tech:displayname", user.DisplayName ?? user.UserName));
+                identity.AddClaims(new Claim[]
+                {
+                    new("urn:factorio-tech:displayname", user.DisplayName ?? user.UserName),
+                    new("urn:factorio-tech:timezone", "Europe/Berlin"),
+                });
             }
 
             return principal;

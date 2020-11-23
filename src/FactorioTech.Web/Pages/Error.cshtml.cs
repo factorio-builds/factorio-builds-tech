@@ -12,6 +12,10 @@ namespace FactorioTech.Web.Pages
 
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-        public void OnGet() => RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        public void OnGet()
+        {
+            ViewData["Title"] = "An error has occurred";
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+        }
     }
 }

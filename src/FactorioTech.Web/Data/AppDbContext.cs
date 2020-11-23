@@ -28,10 +28,10 @@ namespace FactorioTech.Web.Data
 
             builder.Entity<User>(entity =>
             {
-                entity.HasMany<Blueprint>()
-                    .WithOne(x => x.Owner!)
-                    .HasForeignKey(x => x.OwnerId)
-                    .HasPrincipalKey(x => x.Id);
+                entity.HasMany(e => e.Blueprints!)
+                    .WithOne(e => e.Owner!)
+                    .HasForeignKey(e => e.OwnerId)
+                    .HasPrincipalKey(e => e.Id);
             });
 
             builder.Entity<Blueprint>(entity =>

@@ -2,6 +2,7 @@ using FactorioTech.Web.Core;
 using FactorioTech.Web.Core.Domain;
 using FactorioTech.Web.Data;
 using FactorioTech.Web.Extensions;
+using FactorioTech.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -34,26 +35,13 @@ namespace FactorioTech.Web.Pages
             _ctx = ctx;
         }
 
-        [TempData]
-        public string? BlueprintString { get; set; }
-
+        [TempData] public string? BlueprintString { get; set; }
+        [TempData] public Guid? ParentBlueprintId { get; set; }
+        public Blueprint? ParentBlueprint { get; set; }
         public ImportInputModel ImportInput { get; set; } = new();
-
         public CreateInputModel CreateInput { get; set; } = new();
-
         public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
-
         public BlueprintMetadataCache MetadataCache { get; } = new();
-
-        public class ImportInputModel
-        {
-            [Required]
-            [RegularExpression(
-                // base64 starting with "0"
-                "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
-                ErrorMessage = "This doesn't appear to be a valid blueprint string.")]
-            public string BlueprintString { get; set; } = string.Empty;
-        }
 
         public class CreateInputModel
         {
@@ -108,11 +96,23 @@ namespace FactorioTech.Web.Pages
 
             Envelope = await _blueprintConverter.Decode(importInput.BlueprintString);
             BlueprintString = importInput.BlueprintString;
+
+            if (!string.IsNullOrWhiteSpace(importInput.ParentSlug))
+            {
+                ParentBlueprint = await _ctx.Blueprints.AsNoTracking()
+                    .Where(bp =>
+                        bp.OwnerId == User.GetUserId()
+                        && bp.Slug == importInput.ParentSlug.ToLowerInvariant())
+                    .FirstOrDefaultAsync();
+
+                ParentBlueprintId = ParentBlueprint?.Id;
+            }
+
             CreateInput = new CreateInputModel
             {
-                Slug = Envelope.Label?.ToSlug() ?? string.Empty,
-                Title = Envelope.Label ?? string.Empty,
-                Description = Envelope.Description,
+                Slug = ParentBlueprint?.Slug ?? Envelope.Label?.ToSlug() ?? string.Empty,
+                Title = ParentBlueprint?.Title ?? Envelope.Label ?? string.Empty,
+                Description = ParentBlueprint?.Title ?? Envelope.Description,
             };
 
             var metadata = new BlueprintMetadata(BlueprintString, Utils.ComputeHash(BlueprintString));

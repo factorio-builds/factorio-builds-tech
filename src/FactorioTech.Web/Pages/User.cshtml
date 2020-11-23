@@ -1,0 +1,49 @@
+@page "/{user}"
+@model UserModel
+@using Humanizer
+
+@inject SignInManager<User> SignInManager
+
+<div class="container blueprint">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="/User" asp-route-user="@Model.SelectedUser.UserName">@Model.SelectedUser.UserName</a>
+            </li>
+            <li class="ml-auto">
+                <div class="btn-group ml-2" role="group">
+                    @if (SignInManager.IsSignedIn(User) && User.GetUserId() == Model.SelectedUser.Id)
+                    {
+                        <a class="btn btn-sm btn-default" asp-page="/Account/Manage/Index">Edit</a>
+                    } else
+                    {
+                        <button type="button" class="btn btn-sm btn-default">Star</button>
+                        <button type="button" class="btn btn-sm btn-default" disabled>42</button>
+                    }
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">@(Model.SelectedUser.DisplayName ?? Model.SelectedUser.UserName)</h1>
+            <small class="text-muted">member since xxxx</small>
+        </div>
+
+        <div class="col-md-4">
+            <img src="https://placekitten.com/500/500" class="img-thumbnail" loading="lazy" />
+        </div>
+    </div>
+
+    <ul class="list-group">
+        @foreach (var blueprint in Model.SelectedUser.Blueprints!)
+        {
+            <li class="list-group-item">
+                <a asp-page="/Blueprint" asp-route-user="@blueprint.OwnerSlug" asp-route-slug="@blueprint.Slug" asp-route-hash="@null">
+                    @blueprint.Title
+                </a>
+            </li>
+        }
+    </ul>
+</div>

@@ -3,33 +3,37 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@(ViewData["Title"] ?? "FactorioTech")</title>
+    <title>@ViewData["Title"] ⚙️ factorio.tech</title>
 
-    <link rel="stylesheet" href="~/css/main.min.css" />
+    <link rel="stylesheet" href="~/dist/css/main.min.css" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-page="/Index">FactorioTech</a>
+                <a class="navbar-brand" asp-page="/Index">⚙️ factorio.tech</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse">
+                    <form class="form-inline">
+                        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                    <ul class="navbar-nav ml-sm-2">
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Privacy">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-page="/Import">Import blueprint</a>
+                            <button type="button" class="btn btn-outline-success"
+                                    data-toggle="modal" data-target="#import-modal-new">
+                                Import blueprint
+                            </button>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav ml-auto">
+                        <partial name="_LoginPartial" />
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -41,18 +45,21 @@
     </div>
 
     <footer class="footer text-muted">
-        <div class="container">
-            &copy; 2020 - FactorioTech - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        <div class="container d-flex justify-content-between">
+            <p>&copy; @DateTime.UtcNow.Year <a asp-page="/Index">factorio.tech</a></p>
+            <p>Made with ⚙️ in Europe</p>
         </div>
     </footer>
 
+    <partial name="_ImportModalPartial" model="new ImportInputModel()" />
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
-            asp-fallback-src="~/js/jquery.min.js" asp-fallback-test="window.jQuery"
+            asp-fallback-src="~/dist/js/jquery.min.js" asp-fallback-test="window.jQuery"
             integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
             crossorigin="anonymous">
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"
-            asp-fallback-src="~/js/bootstrap.bundle.min.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+            asp-fallback-src="~/dist/js/bootstrap.bundle.min.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
             integrity="sha512-iceXjjbmB2rwoX93Ka6HAHP+B76IY1z0o3h+N1PeDtRSsyeetU3/0QKJqGyPJcX63zysNehggFwMC/bi7dvMig=="
             crossorigin="anonymous">
     </script>
