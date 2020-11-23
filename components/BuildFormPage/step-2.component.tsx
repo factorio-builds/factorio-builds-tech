@@ -7,6 +7,7 @@ import ImageUpload from "../ImageUpload"
 import Input from "../Input"
 import InputGroup from "../InputGroup"
 import ItemIcon from "../ItemIcon"
+import Spinner from "../Spinner"
 import Stacker from "../Stacker"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
@@ -146,7 +147,10 @@ const Step2: React.FC<IStep2Props> = (props) => {
 
           <SC.ButtonsStack gutter={24} orientation="horizontal">
             <Button variant="success" disabled={props.submitStatus.loading}>
-              Save build
+              <Stacker gutter={10} orientation="horizontal">
+                <span>Save build</span>
+                {props.submitStatus.loading && <Spinner />}
+              </Stacker>
             </Button>
           </SC.ButtonsStack>
         </Stacker>
