@@ -4,12 +4,12 @@ import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
+import Layout from "../../components/Layout"
 import { Build } from "../../db/entities/build.entity"
 import Caret from "../../icons/caret"
 import { IStoreState } from "../../redux/store"
 import { ERole } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
-import Layout from "../Layout"
 import * as SC from "./build-page.styles"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
