@@ -1,12 +1,12 @@
 import React from "react"
 import { useUID } from "react-uid"
 import { FieldProps } from "formik"
-import Checkbox from "../Checkbox"
+import FormikCheckbox from "../FormikCheckbox"
+import FormikInput from "../FormikInput"
+import FormikSelect from "../FormikSelect"
 import InputWrapper from "../InputWrapper"
-import Select from "../Select"
-import * as SC from "./input.styles"
 
-interface IInputProps extends FieldProps {
+interface IFormikInputProps extends FieldProps {
   label: string
   prefix: JSX.Element
   placeholder: string
@@ -17,10 +17,11 @@ interface IInputProps extends FieldProps {
   validFeedback?: string
 }
 
-const Input: React.FC<IInputProps> = ({
+const FormikInputWrapper: React.FC<IFormikInputProps> = ({
   prefix,
   field,
   form,
+  meta,
   type,
   size,
   ...props
@@ -29,6 +30,8 @@ const Input: React.FC<IInputProps> = ({
 
   const isTouched = form.touched[field.name]
   const error = isTouched && form.errors[field.name]
+
+  const formikProps = { field, form, meta }
 
   return (
     <InputWrapper
@@ -44,31 +47,30 @@ const Input: React.FC<IInputProps> = ({
       validFeedback={isTouched && !error ? props.validFeedback : undefined}
       uid={uid}
     >
-      {type === "text" && <SC.StyledInput {...field} id={uid} />}
-      {type === "textarea" && <SC.StyledTextarea {...field} id={uid} />}
+      {(type === "text" || type === "textarea") && (
+        <FormikInput {...formikProps} type={type} id={uid} />
+      )}
       {type === "checkbox" && (
-        <Checkbox
+        <FormikCheckbox
+          {...formikProps}
           {...props}
           prefix={prefix}
           label={props.label}
-          form={form}
-          field={field}
-          meta={props.meta}
           id={uid}
         />
       )}
       {type === "select" && (
-        <Select {...props} form={form} field={field} id={uid} />
+        <FormikSelect {...formikProps} {...props} id={uid} />
       )}
     </InputWrapper>
   )
 }
 
-Input.defaultProps = {
+FormikInputWrapper.defaultProps = {
   type: "text",
   size: "large",
   required: false,
   inline: false,
 }
 
-export default Input
+export default FormikInputWrapper
