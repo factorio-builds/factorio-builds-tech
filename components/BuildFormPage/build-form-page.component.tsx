@@ -168,13 +168,13 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           .then((res) => {
             if (props.type === "EDIT") {
               dispatch({
-                type: "EDIT_BUILD",
-                payload: res.data,
+                type: "UPDATE_BUILD",
+                payload: res.data.result,
               })
             } else {
               dispatch({
                 type: "CREATE_BUILD",
-                payload: res.data,
+                payload: res.data.result,
               })
             }
             setSubmit({
