@@ -139,6 +139,10 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const [step, setStep] = useState<1 | 2>(1)
+  const [submit, setSubmit] = useState({
+    loading: false,
+    error: false,
+  })
 
   const initialValues = createInitialValues(props.build)
 
@@ -152,6 +156,10 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
       onSubmit={(values) => {
         const endpoint =
           props.type === "EDIT" ? `build/${props.build.id}` : `build`
+        setSubmit({
+          loading: true,
+          error: false,
+        })
         axios({
           url: `http://localhost:3000/api/${endpoint}`,
           method: props.type === "EDIT" ? "PUT" : "POST",
@@ -169,11 +177,17 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                 payload: res.data,
               })
             }
+            setSubmit({
+              loading: false,
+              error: false,
+            })
             router.push("/")
           })
           .catch((err) => {
-            // TODO: handle me
-            console.log(err)
+            setSubmit({
+              loading: false,
+              error: err,
+            })
           })
       }}
     >
@@ -194,7 +208,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
               )}
 
               {(step === 2 || props.type === "EDIT") && (
-                <Step2 formikProps={formikProps} />
+                <Step2 formikProps={formikProps} submitStatus={submit} />
               )}
             </Form>
           </Layout>

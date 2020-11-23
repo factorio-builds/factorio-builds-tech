@@ -58,6 +58,7 @@ const CATEGORY_MAP = [
 
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
+  submitStatus: { loading: boolean; error: boolean | string }
 }
 
 const Step2: React.FC<IStep2Props> = (props) => {
@@ -144,7 +145,9 @@ const Step2: React.FC<IStep2Props> = (props) => {
           </InputGroup>
 
           <SC.ButtonsStack gutter={24} orientation="horizontal">
-            <Button variant="success">Save build</Button>
+            <Button variant="success" disabled={props.submitStatus.loading}>
+              Save build
+            </Button>
           </SC.ButtonsStack>
         </Stacker>
       </SC.Content>
