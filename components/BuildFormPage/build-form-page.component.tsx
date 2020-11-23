@@ -181,7 +181,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
               loading: false,
               error: false,
             })
-            router.push("/")
+            router.push(`/build/${res.data.result.id}`)
           })
           .catch((err) => {
             setSubmit({
