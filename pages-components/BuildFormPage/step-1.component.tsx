@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { Field, FormikProps } from "formik"
 import Button from "../../components/Button"
-import Input from "../../components/Input"
+import Input from "../../components/FormikInputWrapper"
 import Stacker from "../../components/Stacker"
 import {
   decodeBlueprint,

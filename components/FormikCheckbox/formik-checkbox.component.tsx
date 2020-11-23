@@ -1,9 +1,9 @@
 import React from "react"
 import cx from "classnames"
 import { FieldProps } from "formik"
-import * as SC from "./checkbox.styles"
+import * as SC from "./formik-checkbox.styles"
 
-interface ICheckboxProps extends FieldProps {
+interface IFormikCheckboxProps extends FieldProps {
   id: string
   label: string
   prefix: JSX.Element
@@ -11,7 +11,7 @@ interface ICheckboxProps extends FieldProps {
   inline?: boolean
 }
 
-const Checkbox: React.FC<ICheckboxProps> = (props) => {
+const FormikCheckbox: React.FC<IFormikCheckboxProps> = (props) => {
   return (
     <SC.CheckboxWrapper className={cx({ "is-checked": props.field.checked })}>
       <SC.HiddenCheckbox
@@ -39,8 +39,8 @@ const Checkbox: React.FC<ICheckboxProps> = (props) => {
   )
 }
 
-Checkbox.defaultProps = {
+FormikCheckbox.defaultProps = {
   inline: false,
 }
 
-export default Checkbox
+export default FormikCheckbox
