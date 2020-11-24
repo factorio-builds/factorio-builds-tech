@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from "react-redux"
 import cx from "classnames"
 import { IStoreState } from "../../../redux/store"
 import { ECategory, EFilterType, EState } from "../../../types"
-import * as SC from "./filter-checkbox.styles"
+import * as SC from "./filter.styles"
 
-interface IFilterCheckboxProps {
+interface IFilterProps {
   filterType: EFilterType
   text: string
   name: EState | ECategory
 }
 
-function FilterCheckbox(props: IFilterCheckboxProps): JSX.Element {
+function Filter(props: IFilterProps): JSX.Element {
   const checked = useSelector(
     // TODO: fix types
     // @ts-ignore
@@ -30,11 +30,11 @@ function FilterCheckbox(props: IFilterCheckboxProps): JSX.Element {
   }
 
   return (
-    <SC.FilterCheckboxWrapper onClick={toggleChecked}>
+    <SC.FilterWrapper onClick={toggleChecked}>
       <SC.Square className={cx({ "is-checked": checked })} />
       <SC.Text>{props.text}</SC.Text>
-    </SC.FilterCheckboxWrapper>
+    </SC.FilterWrapper>
   )
 }
 
-export default FilterCheckbox
+export default Filter

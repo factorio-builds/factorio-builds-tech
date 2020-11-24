@@ -13,7 +13,7 @@ export const Square = styled.div`
   }
 `
 
-export const FilterCheckboxWrapper = styled.div`
+export const FilterWrapper = styled.div`
   display: flex;
   cursor: pointer;
   margin: 16px 0;
