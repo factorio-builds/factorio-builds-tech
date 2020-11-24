@@ -4,7 +4,7 @@ import BuildCardList from "../../components/ui/BuildCardList"
 import BuildListLookupStats from "../../components/ui/BuildListLookupStats"
 import FilterList from "../../components/ui/FilterList"
 import Layout from "../../components/ui/Layout"
-import SearchInput from "../../components/ui/SearchInput"
+import Search from "../../components/ui/Search"
 import { filteredBuildsSelector } from "../../redux/selectors/builds"
 import { IStoreState } from "../../redux/store"
 
@@ -17,7 +17,7 @@ function BuildListPage(): JSX.Element {
     <Layout
       sidebar={
         <>
-          <SearchInput />
+          <Search />
           <FilterList />
         </>
       }

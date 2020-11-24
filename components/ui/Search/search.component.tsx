@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux"
 import cx from "classnames"
 import { useDebouncedEffect } from "../../../hooks/useDebouncedEffect"
 import { IStoreState } from "../../../redux/store"
-import * as SC from "./search-input.styles"
+import * as SC from "./search.styles"
 
-const SearchInput = (): JSX.Element => {
+const Search = (): JSX.Element => {
   const dispatch = useDispatch()
   const query = useSelector((state: IStoreState) => state.filters.query)
   const [input, setInput] = useState(query)
@@ -34,7 +34,7 @@ const SearchInput = (): JSX.Element => {
   }
 
   return (
-    <SC.SearchInputWrapper className={cx({ "is-focused": focused })}>
+    <SC.SearchWrapper className={cx({ "is-focused": focused })}>
       <SC.StyledSearchIcon />
       <SC.SearchInput
         value={input}
@@ -43,8 +43,8 @@ const SearchInput = (): JSX.Element => {
         onFocus={setFocus}
         onBlur={clearFocus}
       />
-    </SC.SearchInputWrapper>
+    </SC.SearchWrapper>
   )
 }
 
-export default SearchInput
+export default Search

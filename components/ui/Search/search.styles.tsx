@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { COLOR } from "../../../design/tokens/color"
 import SearchIcon from "../../../icons/search-icon"
 
-export const SearchInputWrapper = styled.div`
+export const SearchWrapper = styled.div`
   display: flex;
   background: #fff;
   color: ${COLOR.GREY300};
