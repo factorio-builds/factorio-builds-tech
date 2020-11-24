@@ -1,41 +1,58 @@
 import React from "react"
-import cx from "classnames"
-import { FieldProps } from "formik"
-import * as SC from "./formik-checkbox.styles"
+import { FieldProps, useFormikContext } from "formik"
+import Checkbox from "../Checkbox/checkbox.component"
 
 interface IFormikCheckboxProps extends FieldProps {
   id: string
   label: string
   prefix: JSX.Element
-  text?: string
   inline?: boolean
 }
 
 const FormikCheckbox: React.FC<IFormikCheckboxProps> = (props) => {
+  const context = useFormikContext()
+  const name = props.field.name
+  const value = props.field.value
+  // @ts-ignore
+  const isArray = Array.isArray(context.initialValues[name])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isArray) {
+      handleChangeMulti(e)
+    } else {
+      handleChangeSingle(e)
+    }
+  }
+
+  const handleChangeSingle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    context.setFieldValue(name, e.target.checked)
+  }
+
+  const handleChangeMulti = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // @ts-ignore
+    const formValues = context.values[name] as string[]
+    const isChecked = e.target.checked
+
+    if (isChecked) {
+      context.setFieldValue(name, [...formValues, value])
+    } else {
+      context.setFieldValue(
+        name,
+        formValues.filter((v) => v !== value)
+      )
+    }
+  }
+
   return (
-    <SC.CheckboxWrapper className={cx({ "is-checked": props.field.checked })}>
-      <SC.HiddenCheckbox
-        {...props.field}
-        id={props.id}
-        type="checkbox"
-        name={props.field.name}
-        value={props.field.value}
-        checked={props.field.checked}
-      />
-      <SC.Label
-        htmlFor={props.id}
-        className={cx({ "is-inline": props.inline })}
-      >
-        {props.field.checked}
-        <SC.Square />
-        {props.label && (
-          <SC.Text>
-            {props.prefix && <SC.Prefix>{props.prefix}</SC.Prefix>}
-            {props.label}
-          </SC.Text>
-        )}
-      </SC.Label>
-    </SC.CheckboxWrapper>
+    <Checkbox
+      id={props.id}
+      label={props.label}
+      prefix={props.prefix}
+      value={value}
+      checked={Boolean(props.field.checked)}
+      onChange={handleChange}
+      inline={props.inline}
+    />
   )
 }
 
