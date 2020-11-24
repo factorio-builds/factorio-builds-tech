@@ -2,7 +2,7 @@
 
 @if (Envelope?.Blueprint != null)
 {
-    <BlueprintCard Blueprint="@Envelope.Blueprint" />
+    <BlueprintCard Blueprint="@Envelope.Blueprint" VersionId="@VersionId" />
 }
 else if (Envelope?.BlueprintBook != null)
 {
@@ -44,7 +44,7 @@ else if (Envelope?.BlueprintBook != null)
             <div class="collapse" id="collapse-book-@tempId">
                 @foreach (var envelope in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index))
                 {
-                    <BlueprintEnvelope Envelope="@envelope" />
+                    <BlueprintEnvelope Envelope="@envelope" VersionId="@VersionId" />
                 }
             </div>
         </div>
@@ -57,6 +57,9 @@ else
 
 
 @code {
+    [Parameter]
+    public Guid? VersionId { get; set; }
+
     [Parameter]
     public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
 

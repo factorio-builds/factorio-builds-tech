@@ -32,8 +32,11 @@ namespace FactorioTech.Web.Core
 
         public sealed class BlueprintBook : ICanHaveMetadata
         {
+            [JsonPropertyName("version")]
+            public long Version { get; init; }
+
             [JsonPropertyName("item")]
-            public string Item { get; init; } = string.Empty;
+            public string Item { get; init; } = "blueprint-book";
 
             [JsonPropertyName("label")]
             public string? Label { get; init; }
@@ -47,9 +50,6 @@ namespace FactorioTech.Web.Core
             [JsonPropertyName("active_index")]
             public int? ActiveIndex { get; init; }
 
-            [JsonPropertyName("version")]
-            public long Version { get; init; }
-
             [JsonPropertyName("blueprints")]
             public IEnumerable<BlueprintEnvelope> Blueprints { get; init; } = Enumerable.Empty<BlueprintEnvelope>();
         }
@@ -59,14 +59,14 @@ namespace FactorioTech.Web.Core
         /// </summary>
         public sealed class Blueprint : ICanHaveMetadata
         {
+            [JsonPropertyName("version")]
+            public long Version { get; init; }
+
             [JsonPropertyName("item")]
-            public string Item { get; init; } = string.Empty;
+            public string Item { get; init; } = "blueprint";
 
             [JsonPropertyName("entities")]
             public IEnumerable<Entity> Entities { get; init; } = Enumerable.Empty<Entity>();
-
-            [JsonPropertyName("version")]
-            public long Version { get; init; }
 
             [JsonPropertyName("label")]
             public string? Label { get; init; }
@@ -99,12 +99,6 @@ namespace FactorioTech.Web.Core
         public sealed class Entity
         {
             /// <summary>
-            /// Index of the entity, 1-based.
-            /// </summary>
-            [JsonPropertyName("entity_number")]
-            public int EntityNumber { get; init; }
-
-            /// <summary>
             /// Prototype name of the entity (e.g. "offshore-pump").
             /// </summary>
             [JsonPropertyName("name")]
@@ -115,6 +109,12 @@ namespace FactorioTech.Web.Core
             /// </summary>
             [JsonPropertyName("position")]
             public Position Position { get; init; } = new();
+
+            /// <summary>
+            /// Index of the entity, 1-based.
+            /// </summary>
+            [JsonPropertyName("entity_number")]
+            public int? EntityNumber { get; init; }
 
             /// <summary>
             /// Direction of the entity, uint (optional).
@@ -134,7 +134,11 @@ namespace FactorioTech.Web.Core
             [JsonPropertyName("connections")]
             public Connection? Connections { get; init; }
 
-            // control_behaviour // todo docs missing
+            /// <summary>
+            /// (docs missing)
+            /// </summary>
+            [JsonPropertyName("control_behavior")]
+            public ControlBehavior? ControlBehavior { get; init; }
 
             /// <summary>
             /// Item requests by this entity, this is what defines the item-request-proxy when the blueprint is placed, optional. #Item request object
@@ -311,10 +315,10 @@ namespace FactorioTech.Web.Core
         public sealed class Position
         {
             [JsonPropertyName("x")]
-            public float X { get; init; }
+            public float? X { get; init; }
 
             [JsonPropertyName("y")]
-            public float Y { get; init; }
+            public float? Y { get; init; }
         }
 
         /// <summary>
@@ -323,16 +327,16 @@ namespace FactorioTech.Web.Core
         public sealed class Color
         {
             [JsonPropertyName("r")]
-            public float R { get; init; }
+            public float? R { get; init; }
 
             [JsonPropertyName("g")]
-            public float G { get; init; }
+            public float? G { get; init; }
 
             [JsonPropertyName("b")]
-            public float B { get; init; }
+            public float? B { get; init; }
 
             [JsonPropertyName("a")]
-            public float A { get; init; }
+            public float? A { get; init; }
         }
 
         /// <summary>
@@ -341,22 +345,22 @@ namespace FactorioTech.Web.Core
         public sealed class Schedule
         {
             [JsonPropertyName("schedules")]
-            public IEnumerable<Scheduleclass> Schedules { get; init; } = Enumerable.Empty<Scheduleclass>();
+            public IEnumerable<ScheduleClass>? Schedules { get; init; }
 
             [JsonPropertyName("locomotives")]
-            public IEnumerable<int> Locomotives { get; init; } = Enumerable.Empty<int>();
+            public IEnumerable<int>? Locomotives { get; init; }
         }
 
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Schedule_class_object
         /// </summary>
-        public sealed class Scheduleclass
+        public sealed class ScheduleClass
         {
             [JsonPropertyName("station")]
-            public string Station { get; init; } = string.Empty;
+            public string? Station { get; init; }
 
             [JsonPropertyName("wait_conditions")]
-            public IEnumerable<WaitCondition> WaitConditions { get; init; } = Enumerable.Empty<WaitCondition>();
+            public IEnumerable<WaitCondition>? WaitConditions { get; init; }
         }
 
         /// <summary>
@@ -365,17 +369,16 @@ namespace FactorioTech.Web.Core
         public sealed class WaitCondition
         {
             [JsonPropertyName("type")]
-            public string Type { get; init; } = string.Empty;
+            public string? Type { get; init; }
 
             [JsonPropertyName("compare_type")]
-            public string CompareType { get; init; } = string.Empty;
+            public string? CompareType { get; init; }
 
             [JsonPropertyName("ticks")]
             public uint? Ticks { get; init; }
 
-            // todo docs missing
-            //[JsonPropertyName("condition")]
-            //public CircuitCondition? Condition { get; init; }
+            [JsonPropertyName("condition")]
+            public CircuitCondition? Condition { get; init; }
         }
 
         /// <summary>
@@ -383,11 +386,11 @@ namespace FactorioTech.Web.Core
         /// </summary>
         public sealed class Connection
         {
-            [JsonPropertyName("first")]
-            public ConnectionPoint First { get; init; } = new();
+            [JsonPropertyName("1")]
+            public ConnectionPoint? First { get; init; }
 
-            [JsonPropertyName("second")]
-            public ConnectionPoint Second { get; init; } = new();
+            [JsonPropertyName("2")]
+            public ConnectionPoint? Second { get; init; }
         }
 
         /// <summary>
@@ -396,10 +399,10 @@ namespace FactorioTech.Web.Core
         public sealed class ConnectionPoint
         {
             [JsonPropertyName("red")]
-            public ConnectionData Red { get; init; } = new();
+            public IEnumerable<ConnectionData>? Red { get; init; }
 
             [JsonPropertyName("green")]
-            public ConnectionData Green { get; init; } = new();
+            public IEnumerable<ConnectionData>? Green { get; init; }
         }
 
         /// <summary>
@@ -408,10 +411,10 @@ namespace FactorioTech.Web.Core
         public sealed class ConnectionData
         {
             [JsonPropertyName("entity_id")]
-            public int EntityId { get; init; }
+            public int? EntityId { get; init; }
 
             [JsonPropertyName("circuit_id")]
-            public int CircuitId { get; init; }
+            public int? CircuitId { get; init; }
         }
 
         /// <summary>
@@ -420,7 +423,7 @@ namespace FactorioTech.Web.Core
         public sealed class Inventory
         {
             [JsonPropertyName("filters")]
-            public IEnumerable<ItemFilter> Filters { get; init; } = Enumerable.Empty<ItemFilter>();
+            public IEnumerable<ItemFilter>? Filters { get; init; }
 
             [JsonPropertyName("bar")]
             public int? Bar { get; init; }
@@ -432,13 +435,16 @@ namespace FactorioTech.Web.Core
         public sealed class LogisticFilter
         {
             [JsonPropertyName("name")]
-            public string Name { get; init; } = string.Empty;
+            public string? Name { get; init; }
+
+            [JsonPropertyName("signal")]
+            public SignalId? Signal { get; init; }
 
             [JsonPropertyName("index")]
-            public int Index { get; init; }
+            public int? Index { get; init; }
 
             [JsonPropertyName("count")]
-            public int Count { get; init; }
+            public int? Count { get; init; }
         }
 
         /// <summary>
@@ -447,10 +453,10 @@ namespace FactorioTech.Web.Core
         public sealed class ItemFilter
         {
             [JsonPropertyName("name")]
-            public string Name { get; init; } = string.Empty;
+            public string? Name { get; init; }
 
             [JsonPropertyName("index")]
-            public int Index { get; init; }
+            public int? Index { get; init; }
         }
 
         /// <summary>
@@ -459,10 +465,10 @@ namespace FactorioTech.Web.Core
         public sealed class InfinitySettings
         {
             [JsonPropertyName("remove_unfiltered_items")]
-            public bool RemoveUnfilteredItems { get; init; }
+            public bool? RemoveUnfilteredItems { get; init; }
 
             [JsonPropertyName("filters")]
-            public IEnumerable<InfinityFilter> Filters { get; init; } = Enumerable.Empty<InfinityFilter>();
+            public IEnumerable<InfinityFilter>? Filters { get; init; }
         }
 
         /// <summary>
@@ -471,16 +477,16 @@ namespace FactorioTech.Web.Core
         public sealed class InfinityFilter
         {
             [JsonPropertyName("name")]
-            public string Name { get; init; } = string.Empty;
+            public string? Name { get; init; }
 
             [JsonPropertyName("count")]
-            public int Count { get; init; }
+            public int? Count { get; init; }
 
             [JsonPropertyName("mode")]
-            public string Mode { get; init; } = string.Empty;
+            public string? Mode { get; init; }
 
             [JsonPropertyName("index")]
-            public int Index { get; init; }
+            public int? Index { get; init; }
         }
 
         /// <summary>
@@ -489,13 +495,13 @@ namespace FactorioTech.Web.Core
         public sealed class SpeakerParameter
         {
             [JsonPropertyName("playback_volume")]
-            public float PlaybackVolume { get; init; }
+            public float? PlaybackVolume { get; init; }
 
             [JsonPropertyName("playback_globally")]
-            public bool PlaybackGlobally { get; init; }
+            public bool? PlaybackGlobally { get; init; }
 
             [JsonPropertyName("allow_polyphony")]
-            public bool AllowPolyphony { get; init; }
+            public bool? AllowPolyphony { get; init; }
         }
 
         /// <summary>
@@ -504,16 +510,79 @@ namespace FactorioTech.Web.Core
         public sealed class SpeakerAlertParameter
         {
             [JsonPropertyName("show_alert")]
-            public bool ShowAlert { get; init; }
+            public bool? ShowAlert { get; init; }
 
             [JsonPropertyName("show_on_map")]
-            public bool ShowOnMap { get; init; }
+            public bool? ShowOnMap { get; init; }
 
             [JsonPropertyName("icons_signal_id")]
             public SignalId? IconSiglnalId { get; init; }
 
             [JsonPropertyName("alert_message")]
             public string? AlertMessage { get; init; }
+        }
+
+        /// <summary>
+        /// (docs missing)
+        /// </summary>
+        public sealed class ControlBehavior
+        {
+            [JsonPropertyName("circuit_condition")]
+            public CircuitCondition? CircuitCondition { get; init; }
+
+            [JsonPropertyName("arithmetic_conditions")]
+            public CircuitCondition? ArithmeticConditions { get; init; }
+
+            [JsonPropertyName("decider_conditions")]
+            public CircuitCondition? DeciderConditions { get; init; }
+
+            [JsonPropertyName("train_stopped_signal")]
+            public SignalId? TrainStoppedSignal { get; init; }
+
+            [JsonPropertyName("use_colors")]
+            public bool? UseColors { get; init; }
+
+            [JsonPropertyName("read_from_train")]
+            public bool? ReadFromTrain { get; init; }
+
+            [JsonPropertyName("read_robot_stats")]
+            public bool? ReadRobotStats { get; init; }
+
+            [JsonPropertyName("circuit_mode_of_operation")]
+            public int? CircuitModeOfOperation { get; init; }
+
+            [JsonPropertyName("filters")]
+            public IEnumerable<LogisticFilter>? Filters { get; init; }
+        }
+
+        /// <summary>
+        /// (docs missing)
+        /// </summary>
+        public sealed class CircuitCondition
+        {
+            [JsonPropertyName("constant")]
+            public int? Constant { get; init; }
+
+            [JsonPropertyName("second_constant")]
+            public int? SecondConstant { get; init; }
+
+            [JsonPropertyName("operation")]
+            public string? Operation { get; init; }
+
+            [JsonPropertyName("comparator")]
+            public string? Comparator { get; init; }
+
+            [JsonPropertyName("first_signal")]
+            public SignalId? FirstSignal { get; init; }
+        
+            [JsonPropertyName("second_signal")]
+            public SignalId? SecondSignal { get; init; }
+
+            [JsonPropertyName("output_signal")]
+            public SignalId? OutputSignal { get; init; }
+
+            [JsonPropertyName("copy_count_from_input")]
+            public bool? CopyCountFromInput { get; init; }
         }
     }
 }

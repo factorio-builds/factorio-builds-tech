@@ -70,7 +70,7 @@ namespace FactorioTech.Web.Core
         public async Task<string> Encode(FactorioApi.Blueprint blueprint) =>
             await Encode(new FactorioApi.BlueprintEnvelope { Blueprint = blueprint });
 
-        public async Task<string> Encode(FactorioApi.BlueprintBook book) => 
+        public async Task<string> Encode(FactorioApi.BlueprintBook book) =>
             await Encode(new FactorioApi.BlueprintEnvelope { BlueprintBook = book });
 
         public async Task<string> Encode(FactorioApi.BlueprintEnvelope envelope)
@@ -78,6 +78,15 @@ namespace FactorioTech.Web.Core
             await using var json = new MemoryStream();
             await JsonSerializer.SerializeAsync(json, envelope, JsonSerializerOptions);
             json.Seek(0, SeekOrigin.Begin);
+
+#if DEBUG
+            // set a breakpoint here and manually step into the if block to debug the json
+            if (!json.CanRead)
+            {
+                var debugJson = System.Text.Encoding.UTF8.GetString(json.ToArray());
+                json.Seek(0, SeekOrigin.Begin);
+            }
+#endif
 
             await using var compressed = new MemoryStream();
             await using var compresser = new ZlibStream(compressed, CompressionMode.Compress, CompressionLevel.Level9)

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,10 @@ namespace FactorioTech.Web.Core.Domain
 {
     public class User : IdentityUser<Guid>
     {
-        //[Required]
-        //public Instant RegisteredAt { get; init; }
+        [Required]
+        public Instant RegisteredAt { get; init; }
 
-        //[Required]
-        //public string TimeZone { get; set; } = "Europe/Berlin";
+        public DateTimeZone? TimeZone { get; set; }
 
         [MinLength(3)]
         [MaxLength(256)]
@@ -21,5 +21,7 @@ namespace FactorioTech.Web.Core.Domain
         // navigation properties -> will be null if not included explicitly
 
         public IEnumerable<Blueprint>? Blueprints { get; set; }
+
+        public IEnumerable<Blueprint>? Favorites { get; set; }
     }
 }

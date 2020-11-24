@@ -28,6 +28,8 @@ namespace FactorioTech.Web.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RegisteredAt = table.Column<Instant>(type: "timestamp", nullable: false),
+                    TimeZone = table.Column<string>(type: "text", nullable: true),
                     DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     UserName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     NormalizedUserName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -202,6 +204,31 @@ namespace FactorioTech.Web.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Favorites",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BlueprintId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<Instant>(type: "timestamp", nullable: false, defaultValueSql: "timezone('utc', now())")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favorites", x => new { x.UserId, x.BlueprintId });
+                    table.ForeignKey(
+                        name: "FK_Favorites_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Favorites_Blueprints_BlueprintId",
+                        column: x => x.BlueprintId,
+                        principalTable: "Blueprints",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BlueprintPayloads",
                 columns: table => new
                 {
@@ -271,6 +298,11 @@ namespace FactorioTech.Web.Data.Migrations
                 table: "BlueprintVersions",
                 column: "BlueprintId");
 
+            migrationBuilder.CreateIndex(
+                name: "IX_Favorites_BlueprintId",
+                table: "Favorites",
+                column: "BlueprintId");
+
             migrationBuilder.AddForeignKey(
                 name: "FK_Blueprints_BlueprintVersions_LatestVersionId",
                 table: "Blueprints",
@@ -307,6 +339,9 @@ namespace FactorioTech.Web.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "BlueprintPayloads");
+
+            migrationBuilder.DropTable(
+                name: "Favorites");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -94,6 +94,7 @@
 
 @(
     await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
+        VersionId = Model.Blueprint.LatestVersion?.Id,
         Envelope = Model.Blueprint.LatestVersion?.Payload?.Envelope,
         MetadataCache = Model.MetadataCache,
     })

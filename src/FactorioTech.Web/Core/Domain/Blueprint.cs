@@ -1,5 +1,6 @@
 using NodaTime;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Web.Core.Domain
@@ -32,6 +33,7 @@ namespace FactorioTech.Web.Core.Domain
         // navigation properties -> will be null if not included explicitly
         public User? Owner { get; private set; }
         public BlueprintVersion? LatestVersion { get; set; }
+        public IEnumerable<User>? Followers { get; set; }
 
         public Blueprint(Guid id, Guid ownerId, string ownerSlug, Instant createdAt, string slug, string title, string? description)
         {

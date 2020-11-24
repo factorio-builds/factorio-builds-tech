@@ -24,11 +24,7 @@ namespace FactorioTech.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //var appConfig = _configuration.Get<AppConfig>();
-            //if (appConfig == null)
-            //    throw new Exception("Failed to parse configuration");
-
-            //services.Configure<AppConfig>(_configuration);
+            services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
             services.Configure<RouteOptions>(options =>

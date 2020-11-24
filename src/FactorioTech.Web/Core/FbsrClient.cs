@@ -1,4 +1,7 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -14,10 +17,10 @@ namespace FactorioTech.Web.Core
             public bool ShowInfoPanels { get; init; } = true;
             public int? MaxWidth { get; init; }
             public int? MaxHeight { get; init; }
-            public float Quality { get; init; } = 1;
         }
 
         private readonly ILogger<FbsrClient> _logger;
+        private readonly AppConfig _appConfig;
         private readonly HttpClient _httpClient;
 
         private static readonly JsonSerializerOptions _options = new()
@@ -26,24 +29,34 @@ namespace FactorioTech.Web.Core
             IgnoreNullValues = true,
         };
 
-        public FbsrClient(ILogger<FbsrClient> logger, HttpClient httpClient)
+        public FbsrClient(
+            ILogger<FbsrClient> logger,
+            IOptions<AppConfig> appConfigMonitor,
+            HttpClient httpClient)
         {
             _logger = logger;
+            _appConfig = appConfigMonitor.Value;
             _httpClient = httpClient;
         }
 
-        public async Task<byte[]> FetchBlueprintRendering(string blueprint)
+        public async Task<Stream> FetchBlueprintRendering(string blueprint)
         {
-            var response = await _httpClient.PostAsJsonAsync(AppConfig.FbsrWrapperUri, new RenderRequest
+            var response = await _httpClient.PostAsJsonAsync(_appConfig.FbsrWrapperUri, new RenderRequest
             {
                 Blueprint = blueprint,
                 MaxWidth = 1110,
                 MaxHeight = 1440,
                 ShowInfoPanels = false,
-                Quality = 1,
             }, _options);
 
-            return await response.Content.ReadAsByteArrayAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Error response from fbsr-wrapper {StatusCode} {Exception}", response.StatusCode, body);
+                throw new Exception($"Error response from fbsr-wrapper: {response.StatusCode}");
+            }
+
+            return await response.Content.ReadAsStreamAsync();
         }
     }
 }

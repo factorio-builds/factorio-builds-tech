@@ -118,6 +118,8 @@ namespace FactorioTech.Web.Pages
             var metadata = new BlueprintMetadata(BlueprintString, Utils.ComputeHash(BlueprintString));
             MetadataCache.TryAdd(Envelope, metadata);
 
+            await _imageService.SaveAllBlueprintRenderings(MetadataCache, Envelope);
+
             return Page();
         }
 
@@ -194,9 +196,7 @@ namespace FactorioTech.Web.Pages
             var metadata = new BlueprintMetadata(BlueprintString, hash);
             MetadataCache.TryAdd(result, metadata);
 
-            await _imageService.SaveAllBlueprintRenderings(MetadataCache, result);
-
-            return RedirectToPage("./View", new
+            return RedirectToPage("./Blueprint", new
             {
                 user = User.GetUserName(),
                 slug = createInput.Slug,

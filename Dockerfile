@@ -1,14 +1,22 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
  && apt-get install -y --no-install-recommends nodejs \
  && echo "node version: $(node --version)" \
  && echo "npm version: $(npm --version)" \
  && rm -rf /var/lib/apt/lists/*
 
+WORKDIR /app/src/FactorioTech.Web
+COPY src/FactorioTech.Web/package*.json ./
+COPY src/FactorioTech.Web/gulpfile.js .
+
+RUN npm install
+
 WORKDIR /app
 COPY FactorioTech.sln .
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
+COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
+
 RUN dotnet restore
 
 COPY . .

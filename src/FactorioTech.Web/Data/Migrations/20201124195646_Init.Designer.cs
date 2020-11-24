@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FactorioTech.Web.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201122140053_Init")]
+    [Migration("20201124195646_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,6 +121,26 @@ namespace FactorioTech.Web.Data.Migrations
                     b.ToTable("BlueprintVersions");
                 });
 
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.Favorite", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BlueprintId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Instant>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.HasKey("UserId", "BlueprintId");
+
+                    b.HasIndex("BlueprintId");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.Role", b =>
                 {
                     b.Property<Guid>("Id")
@@ -200,7 +220,13 @@ namespace FactorioTech.Web.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<Instant>("RegisteredAt")
+                        .HasColumnType("timestamp");
+
                     b.Property<string>("SecurityStamp")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TimeZone")
                         .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -332,7 +358,7 @@ namespace FactorioTech.Web.Data.Migrations
                         .HasForeignKey("LatestVersionId");
 
                     b.HasOne("FactorioTech.Web.Core.Domain.User", "Owner")
-                        .WithMany()
+                        .WithMany("Blueprints")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -360,6 +386,25 @@ namespace FactorioTech.Web.Data.Migrations
                         .HasForeignKey("BlueprintId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.Favorite", b =>
+                {
+                    b.HasOne("FactorioTech.Web.Core.Domain.Blueprint", "Blueprint")
+                        .WithMany()
+                        .HasForeignKey("BlueprintId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FactorioTech.Web.Core.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blueprint");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -417,6 +462,11 @@ namespace FactorioTech.Web.Data.Migrations
                 {
                     b.Navigation("Payload")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.User", b =>
+                {
+                    b.Navigation("Blueprints");
                 });
 #pragma warning restore 612, 618
         }

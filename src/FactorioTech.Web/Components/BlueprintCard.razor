@@ -62,7 +62,7 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
-                <img src="/api/files/blueprint/@(metadata.Hash).jpg" class="img-thumbnail" loading="lazy" />
+                <img src="@renderingUri" class="img-thumbnail" loading="lazy" />
             </div>
             <div class="col-md-8">
                 <div class="tab-content">
@@ -100,6 +100,9 @@
 
 @code {
     [Parameter]
+    public Guid? VersionId { get; set; }
+
+    [Parameter]
     public FactorioApi.Blueprint Blueprint { get; set; } = null!;
 
     [Parameter]
@@ -107,6 +110,7 @@
 
     private BlueprintMetadata metadata = new BlueprintMetadata(string.Empty, string.Empty);
     private int entitiesCount;
+    private string? renderingUri;
 
     protected override async Task OnInitializedAsync()
     {
@@ -114,6 +118,15 @@
         await MetadataCache.EnsureInitialized(Blueprint);
 
         metadata = MetadataCache[Blueprint];
+
+        var uriParts = new []
+        {
+            "/api/files/blueprint",
+            VersionId?.ToString(),
+            $"{metadata.Hash}.png",
+        };
+
+        renderingUri = string.Join('/', uriParts.Where(x => x != null));
     }
 
     public IDictionary<string, int> GetEntityStats(FactorioApi.Blueprint blueprint) =>

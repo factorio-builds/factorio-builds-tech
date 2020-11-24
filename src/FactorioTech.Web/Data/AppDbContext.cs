@@ -3,6 +3,7 @@ using FactorioTech.Web.Core.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using System;
 using System.Text.Json;
 
@@ -13,6 +14,7 @@ namespace FactorioTech.Web.Data
         public DbSet<Blueprint> Blueprints { get; set; }
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
         public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
 
 #pragma warning disable 8618
         public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -32,6 +34,28 @@ namespace FactorioTech.Web.Data
                     .WithOne(e => e.Owner!)
                     .HasForeignKey(e => e.OwnerId)
                     .HasPrincipalKey(e => e.Id);
+
+                entity.HasMany(e => e.Favorites)
+                    .WithMany(e => e.Followers)
+                    .UsingEntity<Favorite>(
+                        je => je.HasOne(e => e.Blueprint!).WithMany()
+                            .HasForeignKey(x => x.BlueprintId)
+                            .HasPrincipalKey(x => x.Id),
+                        je => je.HasOne(e => e.User!).WithMany()
+                            .HasForeignKey(x => x.UserId)
+                            .HasPrincipalKey(x => x.Id))
+                    .HasKey(e => new { e.UserId, e.BlueprintId });
+
+                entity.Property(e => e.TimeZone)
+                    .HasConversion(
+                        tz => tz!.Id,
+                        tz => DateTimeZoneProviders.Tzdb[tz]);
+            });
+
+            builder.Entity<Favorite>(entity =>
+            {
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("timezone('utc', now())");
             });
 
             builder.Entity<Blueprint>(entity =>

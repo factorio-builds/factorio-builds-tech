@@ -6,6 +6,7 @@
 # App specific
 **/wwwroot/dist/
 *.secret.json
+secrets/
 
 # User-specific files
 *.rsuser

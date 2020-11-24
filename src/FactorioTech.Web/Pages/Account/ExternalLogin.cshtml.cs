@@ -65,7 +65,6 @@ namespace FactorioTech.Web.Pages.Account
 
         public IActionResult OnPost(string? provider, string? returnUrl = null)
         {
-            // Request a redirect to the external login provider.
             var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
@@ -124,7 +123,6 @@ namespace FactorioTech.Web.Pages.Account
         {
             ReturnUrl = returnUrl ?? Url.Content("~/");
 
-            // Get the information about the user from the external login provider
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
@@ -162,7 +160,6 @@ namespace FactorioTech.Web.Pages.Account
                         await _emailSender.SendEmail(Input.Email, "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)
                         {
                             return RedirectToPage("./RegisterConfirmation", new { Input.Email });
@@ -173,6 +170,7 @@ namespace FactorioTech.Web.Pages.Account
                         return LocalRedirect(ReturnUrl);
                     }
                 }
+
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);

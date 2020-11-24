@@ -7,8 +7,6 @@ namespace FactorioTech.Web.Extensions
 {
     public static class IdentityExtensions
     {
-        public static readonly DateTimeZone DefaulTimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
-
         public static Guid GetUserId(this ClaimsPrincipal principal) =>
             Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
                 ? userId : throw new Exception("UserId not found in Principal");
@@ -24,6 +22,6 @@ namespace FactorioTech.Web.Extensions
         public static DateTimeZone GetTimeZone(this ClaimsPrincipal? principal) =>
             principal?.FindFirstValue("urn:factorio-tech:displayname")
             ?.Let(DateTimeZoneProviders.Tzdb.GetZoneOrNull)
-            ?? DefaulTimeZone;
+            ?? AppConfig.DefaulTimeZone;
     }
 }

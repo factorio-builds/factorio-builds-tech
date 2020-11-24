@@ -5,7 +5,47 @@ volumes:
     external: true
     name: factorio
 
+secrets:
+  OAuthProviders__GitHub__ClientId:
+    file: ./secrets/OAuthProviders__GitHub__ClientId
+  OAuthProviders__GitHub__ClientSecret:
+    file: ./secrets/OAuthProviders__GitHub__ClientSecret
+
 services:
+  # web:
+  #   image: factorio-tech/web
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - factorio:/factorio:ro
+  #     # - /etc/localtime:/etc/localtime:ro
+  #   secrets:
+  #     - OAuthProviders__GitHub__ClientId
+  #     - OAuthProviders__GitHub__ClientSecret
+  #   environment:
+  #     ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+  #     AppConfig__FactorioDir: "/factorio"
+  #     AppConfig__WorkingDir: "/tmp"
+  #     AppConfig__FbsrWrapperUri: "http://fbsr:8080"
+  #   depends_on:
+  #     - fbsr
+  #     - postgres
+
+  fbsr:
+    image: factorio-tech/fbsr-wrapper
+    build:
+      context: ./fbsr-wrapper
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - factorio:/factorio:ro
+      # - /etc/localtime:/etc/localtime:ro
+
   postgres:
     image: postgres
     ports:
@@ -16,14 +56,6 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-
-  fbsr:
-    image: fbsr-wrapper
-    ports:
-      - "8080:8080"
-    volumes:
-      - factorio:/factorio:ro
-      # - /etc/localtime:/etc/localtime:ro
 
   # grafana:
   #   container_name: grafana

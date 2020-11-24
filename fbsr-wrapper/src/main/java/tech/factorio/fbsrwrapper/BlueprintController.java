@@ -7,6 +7,7 @@ import com.demod.fbsr.TaskReporting;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -32,38 +32,41 @@ public class BlueprintController {
         public Boolean showInfoPanels;
         public Integer maxWidth;
         public Integer maxHeight;
-        public Float quality;
     }
 
     @PostMapping
-    public ResponseEntity<?> render(@RequestBody RenderRequest request) throws IOException {
+    public ResponseEntity<?> render(@RequestBody RenderRequest request) {
         var options = new JSONObject();
         options.put("show-info-panels", request.showInfoPanels);
         options.put("max-width", request.maxWidth);
         options.put("max-height", request.maxHeight);
 
-        var blueprint = new Blueprint(BlueprintStringData.decode(request.blueprint));
-        var image = FBSR.renderBlueprint(blueprint, new TaskReporting(), options);
-        var jpeg = convertToJpeg(image, (request.quality != null) ? request.quality : 1f);
+        try {
+            var blueprint = new Blueprint(BlueprintStringData.decode(request.blueprint));
+            var image = FBSR.renderBlueprint(blueprint, new TaskReporting(), options);
+            var output = writeImage(image);
 
-        return ResponseEntity.ok()
-            .contentType(MediaType.IMAGE_JPEG)
-            .body(jpeg);
+            return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(output);
+        } catch (Throwable ex) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(ex);
+        }
     }
 
-    private byte[] convertToJpeg(BufferedImage image, float quality) throws IOException {
-        var jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
-        var jpgWriteParam = jpgWriter.getDefaultWriteParam();
-        jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        jpgWriteParam.setCompressionQuality(quality);
+    private byte[] writeImage(BufferedImage image) throws IOException {
+        var writer = ImageIO.getImageWritersByFormatName("png").next();
+        var writeParam = writer.getDefaultWriteParam();
 
         var output = new ByteArrayOutputStream();
-        jpgWriter.setOutput(new MemoryCacheImageOutputStream(output));
+        writer.setOutput(new MemoryCacheImageOutputStream(output));
 
         var outputImage = new IIOImage(image, null, null);
-        jpgWriter.write(null, outputImage, jpgWriteParam);
+        writer.write(null, outputImage, writeParam);
 
         return output.toByteArray();
     }
-
 }
