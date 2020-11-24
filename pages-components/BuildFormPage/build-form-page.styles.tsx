@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import Stacker from "../../components/Stacker"
+import Stacker from "../../components/ui/Stacker"
 import { COLOR } from "../../design/tokens/color"
 
 export const Row = styled.div`
