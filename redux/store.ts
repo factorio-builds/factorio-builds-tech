@@ -54,5 +54,5 @@ export const makeStore: MakeStore<IStoreState, TAction> = () => {
 }
 
 export const wrapper = createWrapper<IStoreState, TAction>(makeStore, {
-  debug: true,
+  debug: process.env.DEBUG_REDUX === "true",
 })
