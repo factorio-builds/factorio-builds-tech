@@ -95,21 +95,23 @@ const Step2: React.FC<IStep2Props> = (props) => {
             validate={validate("blueprint")}
           />
 
-          <Field
-            name="tileable"
-            label="Tileable"
-            type="checkbox"
-            component={Input}
-            validate={validate("tileable")}
-          />
+          <Stacker gutter={8}>
+            <Field
+              name="tileable"
+              label="Tileable"
+              type="checkbox"
+              component={Input}
+              validate={validate("tileable")}
+            />
 
-          <Field
-            name="markedInputs"
-            label="Inputs are marked"
-            type="checkbox"
-            component={Input}
-            validate={validate("markedInputs")}
-          />
+            <Field
+              name="markedInputs"
+              label="Inputs are marked"
+              type="checkbox"
+              component={Input}
+              validate={validate("markedInputs")}
+            />
+          </Stacker>
 
           <Field
             name="state"
@@ -129,20 +131,22 @@ const Step2: React.FC<IStep2Props> = (props) => {
             legend="Categories"
             error={props.formikProps.errors.categories}
           >
-            {CATEGORY_MAP.map((category) => {
-              return (
-                <Field
-                  key={category.value}
-                  name="categories"
-                  label={category.name}
-                  prefix={<ItemIcon itemName={category.icon} />}
-                  type="checkbox"
-                  value={category.value}
-                  component={Input}
-                  validate={validate("categories")}
-                />
-              )
-            })}
+            <Stacker gutter={8}>
+              {CATEGORY_MAP.map((category) => {
+                return (
+                  <Field
+                    key={category.value}
+                    name="categories"
+                    label={category.name}
+                    prefix={<ItemIcon itemName={category.icon} />}
+                    type="checkbox"
+                    value={category.value}
+                    component={Input}
+                    validate={validate("categories")}
+                  />
+                )
+              })}
+            </Stacker>
           </InputGroup>
 
           <SC.ButtonsStack gutter={24} orientation="horizontal">

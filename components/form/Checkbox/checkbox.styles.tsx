@@ -27,7 +27,7 @@ export const HiddenCheckbox = styled.input`
 export const Label = styled.label`
   display: flex;
   align-items: center;
-
+  font-size: 18px;
   font-weight: 700;
 
   &.is-inline {
@@ -38,7 +38,6 @@ export const Label = styled.label`
 export const CheckboxWrapper = styled.div`
   display: flex;
   cursor: pointer;
-  margin: 8px 0;
 
   &:hover ${Square} {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);

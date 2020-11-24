@@ -1,6 +1,6 @@
 import React from "react"
-import { FieldProps } from "formik"
-import * as SC from "./formik-input.styles"
+import { FieldProps, useFormikContext } from "formik"
+import Input from "../Input"
 
 interface IFormikInputProps extends FieldProps {
   id: string
@@ -8,11 +8,25 @@ interface IFormikInputProps extends FieldProps {
 }
 
 const FormikInput: React.FC<IFormikInputProps> = ({ id, field, type }) => {
+  const context = useFormikContext()
+
   if (type === "textarea") {
-    return <SC.StyledTextarea {...field} id={id} />
+    return (
+      <Input.Textarea
+        id={id}
+        onChange={(e) => context.setFieldValue(field.name, e.target.value)}
+        value={field.value}
+      />
+    )
   }
 
-  return <SC.StyledInput {...field} id={id} />
+  return (
+    <Input.Text
+      id={id}
+      onChange={(e) => context.setFieldValue(field.name, e.target.value)}
+      value={field.value}
+    />
+  )
 }
 
 FormikInput.defaultProps = {

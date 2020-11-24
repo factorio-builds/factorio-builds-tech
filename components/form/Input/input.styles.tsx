@@ -15,10 +15,6 @@ const BaseInput = css`
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  &::placeholder {
-    color: ${COLOR.PURPLE500};
-  }
-
   .is-error & {
     border-color: ${COLOR.DANGER} !important;
   }
@@ -29,12 +25,36 @@ const BaseInput = css`
   }
 `
 
-export const StyledInput = styled.input`
+export const StyledInputWrapper = styled.div`
   ${BaseInput};
+  display: flex;
+  align-items: center;
+`
+
+export const StyledInput = styled.input`
+  border: 0;
+  background: transparent;
+  color: ${COLOR.PURPLE700};
+  flex: 1 0 auto;
+  font-size: 18px;
+  line-height: 24px;
+  line-height: 1.8;
+
+  &:focus {
+    outline: 0;
+  }
+
+  &::placeholder {
+    color: ${COLOR.PURPLE500};
+  }
 `
 
 export const StyledTextarea = styled.textarea`
   ${BaseInput};
   resize: vertical;
   min-height: 200px;
+
+  &::placeholder {
+    color: ${COLOR.PURPLE500};
+  }
 `

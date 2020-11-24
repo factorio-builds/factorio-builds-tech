@@ -1,15 +1,14 @@
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import cx from "classnames"
 import { useDebouncedEffect } from "../../../hooks/useDebouncedEffect"
 import { IStoreState } from "../../../redux/store"
+import Input from "../../form/Input"
 import * as SC from "./search.styles"
 
 const Search = (): JSX.Element => {
   const dispatch = useDispatch()
   const query = useSelector((state: IStoreState) => state.filters.query)
   const [input, setInput] = useState(query)
-  const [focused, setFocused] = useState(false)
 
   useDebouncedEffect(
     () => {
@@ -19,14 +18,6 @@ const Search = (): JSX.Element => {
     [input]
   )
 
-  function setFocus(): void {
-    setFocused(true)
-  }
-
-  function clearFocus(): void {
-    setFocused(false)
-  }
-
   // TODO: type properly
   // @ts-ignore
   function handleOnChange(event: KeyboardEvent<HTMLInputElement>): void {
@@ -34,16 +25,13 @@ const Search = (): JSX.Element => {
   }
 
   return (
-    <SC.SearchWrapper className={cx({ "is-focused": focused })}>
-      <SC.StyledSearchIcon />
-      <SC.SearchInput
-        value={input}
-        onChange={handleOnChange}
-        placeholder="Search"
-        onFocus={setFocus}
-        onBlur={clearFocus}
-      />
-    </SC.SearchWrapper>
+    <Input.Text
+      id="filter-search"
+      value={input}
+      placeholder="Search"
+      icon={<SC.StyledSearchIcon />}
+      onChange={handleOnChange}
+    />
   )
 }
 

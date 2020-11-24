@@ -1,9 +1,8 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
-import cx from "classnames"
 import { IStoreState } from "../../../redux/store"
 import { ECategory, EFilterType, EState } from "../../../types"
-import * as SC from "./filter.styles"
+import Checkbox from "../../form/Checkbox"
 
 interface IFilterProps {
   filterType: EFilterType
@@ -30,10 +29,14 @@ function Filter(props: IFilterProps): JSX.Element {
   }
 
   return (
-    <SC.FilterWrapper onClick={toggleChecked}>
-      <SC.Square className={cx({ "is-checked": checked })} />
-      <SC.Text>{props.text}</SC.Text>
-    </SC.FilterWrapper>
+    <Checkbox
+      id={`filter-${props.name}`}
+      label={props.text}
+      value={props.name}
+      checked={checked}
+      onChange={toggleChecked}
+      inline={false}
+    />
   )
 }
 
