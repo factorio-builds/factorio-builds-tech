@@ -4,7 +4,7 @@ import * as SC from "./checkbox.styles"
 interface ICheckboxProps {
   id: string
   label: string
-  prefix: JSX.Element
+  prefix?: JSX.Element
   value: React.ReactText
   checked: boolean
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
