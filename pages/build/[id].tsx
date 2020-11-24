@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next"
-import Layout from "../../components/Layout"
+import Layout from "../../components/ui/Layout"
 import BuildPage from "../../pages-components/BuildPage"
 import { BuildRepository } from "../../db/repository/build.repository"
 import { Build } from "../../db/entities/build.entity"

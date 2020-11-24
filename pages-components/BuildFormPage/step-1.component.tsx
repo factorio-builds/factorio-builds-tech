@@ -1,8 +1,8 @@
 import React, { useMemo } from "react"
 import { Field, FormikProps } from "formik"
-import Button from "../../components/Button"
-import Input from "../../components/FormikInputWrapper"
-import Stacker from "../../components/Stacker"
+import Input from "../../components/form/FormikInputWrapper"
+import Button from "../../components/ui/Button"
+import Stacker from "../../components/ui/Stacker"
 import {
   decodeBlueprint,
   isBook,

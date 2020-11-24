@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next"
 import React from "react"
 import BuildFormPage from "../../../pages-components/BuildFormPage"
-import Layout from "../../../components/Layout"
+import Layout from "../../../components/ui/Layout"
 import { Build } from "../../../db/entities/build.entity"
 import { BuildRepository } from "../../../db/repository/build.repository"
 

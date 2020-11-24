@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next"
-import Layout from "../../components/Layout"
+import Layout from "../../components/ui/Layout"
 import { User } from "../../db/entities/user.entity"
 import { UserRepository } from "../../db/repository/user.repository"
 
