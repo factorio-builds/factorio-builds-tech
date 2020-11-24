@@ -14,10 +14,8 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({ items }) => {
   const COL_GUTTER = GUTTER
   const CONTAINER_WIDTH = 1052 // needs to be dynamic on window resize
 
-  const tempItems = [...items, ...items, ...items, ...items, ...items]
-
   const columns = useDistributeToColumn(
-    tempItems,
+    items,
     COL_COUNT,
     CONTAINER_WIDTH,
     COL_GUTTER
