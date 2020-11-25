@@ -6,6 +6,7 @@ import Checkbox from "../../form/Checkbox"
 
 interface IFilterProps {
   filterType: EFilterType
+  icon?: JSX.Element
   text: string
   name: EState | ECategory
 }
@@ -31,6 +32,7 @@ function Filter(props: IFilterProps): JSX.Element {
   return (
     <Checkbox
       id={`filter-${props.name}`}
+      prefix={props.icon}
       label={props.text}
       value={props.name}
       checked={checked}

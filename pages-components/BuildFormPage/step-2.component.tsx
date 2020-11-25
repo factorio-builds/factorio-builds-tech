@@ -1,14 +1,13 @@
 import React from "react"
 import { Field, FormikProps } from "formik"
-import startCase from "lodash/startCase"
 import Input from "../../components/form/FormikInputWrapper"
 import InputGroup from "../../components/form/InputGroup"
 import Button from "../../components/ui/Button"
 import ImageUpload from "../../components/ui/ImageUpload"
-import ItemIcon from "../../components/ui/ItemIcon"
 import Spinner from "../../components/ui/Spinner"
 import Stacker from "../../components/ui/Stacker"
-import { ECategory, EState } from "../../types"
+import { useCategories } from "../../hooks/useCategories"
+import { EState } from "../../types"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
@@ -28,45 +27,14 @@ const STATE_MAP = [
   },
 ]
 
-function titleCase(value: string): string {
-  return startCase(value.toLowerCase())
-}
-
-// TODO: extract
-const CATEGORY_MAP = [
-  {
-    icon: "splitter",
-    name: titleCase(ECategory.BALANCER),
-    value: ECategory.BALANCER,
-  },
-  {
-    icon: "stone-furnace",
-    name: titleCase(ECategory.SMELTING),
-    value: ECategory.SMELTING,
-  },
-  {
-    icon: "straight-rail",
-    name: titleCase(ECategory.TRAINS),
-    value: ECategory.TRAINS,
-  },
-  {
-    icon: "assembling-machine-1",
-    name: titleCase(ECategory.PRODUCTION),
-    value: ECategory.PRODUCTION,
-  },
-  {
-    icon: "solar-panel",
-    name: titleCase(ECategory.ENERGY),
-    value: ECategory.ENERGY,
-  },
-]
-
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
   submitStatus: { loading: boolean; error: boolean | string }
 }
 
 const Step2: React.FC<IStep2Props> = (props) => {
+  const { categories } = useCategories()
+
   return (
     <SC.Row>
       <SC.Content>
@@ -136,13 +104,13 @@ const Step2: React.FC<IStep2Props> = (props) => {
             error={props.formikProps.errors.categories}
           >
             <Stacker gutter={8}>
-              {CATEGORY_MAP.map((category) => {
+              {categories.map((category) => {
                 return (
                   <Field
                     key={category.value}
                     name="categories"
                     label={category.name}
-                    prefix={<ItemIcon itemName={category.icon} />}
+                    prefix={category.icon}
                     type="checkbox"
                     value={category.value}
                     component={Input}
