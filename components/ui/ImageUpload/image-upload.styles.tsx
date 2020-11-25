@@ -1,5 +1,7 @@
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
+import { ETypo } from "../../../design/tokens/typo"
 import Lamp from "../../../icons/lamp"
 
 export const ImageUploadWrapper = styled.div`
@@ -14,9 +16,7 @@ export const TopRow = styled.div`
 
 // TODO: extract
 export const Label = styled.label`
-  font-size: 18px;
-  line-height: 1.8;
-  font-weight: 700;
+  ${getTypo(ETypo.FORM_LABEL)};
   color: ${COLOR.PURPLE900};
 `
 
@@ -82,10 +82,10 @@ export const ImagePreview = styled.img`
 `
 
 export const Hint = styled.div`
+  ${getTypo(ETypo.FORM_INPUT)};
   position: relative;
   z-index: 1;
   color: ${COLOR.PURPLE700};
-  font-size: 18px;
   letter-spacing: 0.05em;
 `
 
@@ -120,8 +120,8 @@ export const StyledLamp = styled(Lamp)`
 `
 
 export const Feedback = styled.div`
+  ${getTypo(ETypo.FORM_INPUT)};
   padding: 10px 0;
-  font-size: 18px;
 
   svg {
     width: 15px;

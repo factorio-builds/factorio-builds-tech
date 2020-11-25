@@ -1,8 +1,10 @@
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
+import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildListLookupStatWrapper = styled.div`
-  font-size: 18px;
+  ${getTypo(ETypo.BODY)};
   margin-bottom: 20px;
 `
 
@@ -15,6 +17,6 @@ export const Count = styled.div`
 `
 
 export const SortedBy = styled.div`
-  font-size: 13px;
+  ${getTypo(ETypo.METADATA)};
   color: ${COLOR.PURPLE700};
 `

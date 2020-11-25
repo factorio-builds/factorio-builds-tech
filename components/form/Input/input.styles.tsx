@@ -1,15 +1,13 @@
 import styled, { css } from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
+import { ETypo } from "../../../design/tokens/typo"
 
 const BaseInput = css`
   padding: 5px 14px;
   background: ${COLOR.INPUT};
   border: 2px solid ${COLOR.PURPLE500};
   color: ${COLOR.PURPLE700};
-  font-size: 18px;
-  line-height: 24px;
-  line-height: 1.8;
-  font-weight: 400;
 
   &:hover {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
@@ -32,13 +30,12 @@ export const StyledInputWrapper = styled.div`
 `
 
 export const StyledInput = styled.input`
+  ${getTypo(ETypo.FORM_INPUT)};
+  line-height: 1.8;
   border: 0;
   background: transparent;
   color: ${COLOR.PURPLE700};
   flex: 1 0 auto;
-  font-size: 18px;
-  line-height: 24px;
-  line-height: 1.8;
 
   &:focus {
     outline: 0;
@@ -50,7 +47,9 @@ export const StyledInput = styled.input`
 `
 
 export const StyledTextarea = styled.textarea`
+  ${getTypo(ETypo.FORM_INPUT)};
   ${BaseInput};
+  padding: 11px 14px;
   resize: vertical;
   min-height: 200px;
 

@@ -1,11 +1,12 @@
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
+import { ETypo } from "../../../design/tokens/typo"
 
 export const ButtonWrapper = styled.button`
+  ${getTypo(ETypo.BUTTON)};
   display: flex;
   padding: 9px 13px;
   color: #fff;
-  font-size: 17px;
-  font-weight: 400;
   border: none;
   border-radius: 5px;
   cursor: pointer;

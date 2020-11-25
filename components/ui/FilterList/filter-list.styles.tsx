@@ -1,10 +1,11 @@
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
+import { ETypo } from "../../../design/tokens/typo"
 
 export const FilterListWrapper = styled.div``
 
 export const Title = styled.div`
-  font-size: 18px;
-  font-weight: 700;
+  ${getTypo(ETypo.FORM_LABEL)};
   margin-bottom: 16px;
 `
 
