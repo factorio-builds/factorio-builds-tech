@@ -4,6 +4,7 @@ import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
+import BuildSubheader from "../../components/ui/BuildSubheader"
 import Layout from "../../components/ui/Layout"
 import { Build } from "../../db/entities/build.entity"
 import Caret from "../../icons/caret"
@@ -106,14 +107,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     <Layout
       title={build.name}
       subheader={
-        <>
-          <h1>{build.name}</h1>
-          {isBook(blueprintJSON) && (
-            <SC.HeadingSmall>
-              <SC.Book src="/img/blueprint-book.png" /> Blueprint book
-            </SC.HeadingSmall>
-          )}
-        </>
+        <BuildSubheader build={build} isBook={isBook(blueprintJSON)} />
       }
       sidebar={
         <SC.BuildImage>

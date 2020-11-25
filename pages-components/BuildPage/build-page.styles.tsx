@@ -15,19 +15,6 @@ export const BuildImage = styled.div`
   }
 `
 
-// TODO: move?
-export const HeadingSmall = styled.small`
-  ${getTypo(ETypo.PAGE_SUBTITLE)};
-  display: flex;
-  align-items: center;
-  color: ${COLOR.PURPLE500};
-`
-
-export const Book = styled.img`
-  height: 24px;
-  margin-right: 4px;
-`
-
 export const Content = styled.div`
   display: flex;
   gap: 34px;
