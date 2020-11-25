@@ -1,5 +1,7 @@
 import styled from "styled-components"
+import { getTypo } from "../../design/helpers/typo"
 import { COLOR } from "../../design/tokens/color"
+import { ETypo } from "../../design/tokens/typo"
 
 export const Wrapper = styled.div`
   margin-left: -34px;
@@ -15,9 +17,9 @@ export const BuildImage = styled.div`
 
 // TODO: move?
 export const HeadingSmall = styled.small`
+  ${getTypo(ETypo.PAGE_SUBTITLE)};
   display: flex;
   align-items: center;
-  font-weight: 700;
   color: ${COLOR.PURPLE500};
 `
 
@@ -33,7 +35,7 @@ export const Content = styled.div`
 `
 
 export const Aside = styled.aside`
-  font-size: 13px;
+  ${getTypo(ETypo.METADATA)};
   flex: 0 0 250px;
 `
 
@@ -46,9 +48,8 @@ export const AsideGroup = styled.section`
 `
 
 export const AsideGroupTitle = styled.h3`
+  ${getTypo(ETypo.METADATA_TITLE)};
   margin: 0;
-  font-weight: 700;
-  font-size: 13px;
   margin-bottom: 4px;
 `
 
@@ -79,13 +80,12 @@ export const Main = styled.main`
 `
 
 export const MainTitle = styled.h3`
-  font-weight: 700;
+  ${getTypo(ETypo.PAGE_SUBTITLE)};
   margin-top: 0;
-  font-size: 16px;
 `
 
 export const MainContent = styled.div`
-  font-size: 16px;
+  ${getTypo(ETypo.BODY)};
 
   > ::first-child {
     margin-top: 0;
@@ -97,11 +97,11 @@ export const MainContent = styled.div`
 `
 
 export const ExpandBlueprint = styled.button`
+  ${getTypo(ETypo.BUTTON)};
   background: none;
   border: none;
   color: ${COLOR.LINK};
   padding: 0;
-  font-size: 16px;
 `
 
 export const Blueprint = styled.div`

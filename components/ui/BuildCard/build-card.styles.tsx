@@ -1,5 +1,7 @@
 import { transparentize } from "polished"
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
+import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildCardWrapper = styled.div`
   position: relative;
@@ -35,10 +37,9 @@ export const Content = styled.div`
 `
 
 export const Title = styled.h3`
+  ${getTypo(ETypo.CARD_TITLE)};
   display: flex;
   align-items: center;
-  font-weight: 400;
-  font-size: 18px;
   min-height: 28px;
   margin: 0 0 8px;
 
@@ -61,10 +62,10 @@ export const Categories = styled.div`
 `
 
 export const CategoryPill = styled.div`
+  ${getTypo(ETypo.METADATA)};
   background: #fff;
   color: #222;
   border-radius: 16px;
   padding: 4px 8px;
-  font-size: 13px;
   text-transform: lowercase;
 `

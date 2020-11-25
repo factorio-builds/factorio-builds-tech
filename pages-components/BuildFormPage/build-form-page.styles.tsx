@@ -1,6 +1,8 @@
 import styled from "styled-components"
 import Stacker from "../../components/ui/Stacker"
+import { getTypo } from "../../design/helpers/typo"
 import { COLOR } from "../../design/tokens/color"
+import { ETypo } from "../../design/tokens/typo"
 
 export const Row = styled.div`
   display: flex;
@@ -20,11 +22,11 @@ export const ButtonsStack = styled(Stacker)`
 `
 
 export const SkipButton = styled.button`
+  ${getTypo(ETypo.BUTTON)};
   background: none;
   border: none;
   padding: 0;
   color: ${COLOR.PURPLE700};
-  font-size: 17px;
   text-decoration: underline;
   cursor: pointer;
 

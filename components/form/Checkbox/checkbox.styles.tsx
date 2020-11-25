@@ -1,5 +1,7 @@
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
+import { ETypo } from "../../../design/tokens/typo"
 
 export const Square = styled.div`
   position: relative;
@@ -25,10 +27,9 @@ export const HiddenCheckbox = styled.input`
 `
 
 export const Label = styled.label`
+  ${getTypo(ETypo.FORM_LABEL)};
   display: flex;
   align-items: center;
-  font-size: 18px;
-  font-weight: 700;
 
   &.is-inline {
     font-weight: 400;
@@ -62,6 +63,7 @@ export const CheckboxWrapper = styled.div`
 `
 
 export const Text = styled.div`
+  ${getTypo(ETypo.FORM_LABEL)};
   display: flex;
   align-items: center;
   margin-left: 16px;
