@@ -28,31 +28,35 @@ const STATE_MAP = [
   },
 ]
 
+function titleCase(value: string): string {
+  return startCase(value.toLowerCase())
+}
+
 // TODO: extract
 const CATEGORY_MAP = [
   {
     icon: "splitter",
-    name: startCase(ECategory.BALANCER),
+    name: titleCase(ECategory.BALANCER),
     value: ECategory.BALANCER,
   },
   {
     icon: "stone-furnace",
-    name: startCase(ECategory.SMELTING),
+    name: titleCase(ECategory.SMELTING),
     value: ECategory.SMELTING,
   },
   {
     icon: "straight-rail",
-    name: startCase(ECategory.TRAINS),
+    name: titleCase(ECategory.TRAINS),
     value: ECategory.TRAINS,
   },
   {
     icon: "assembling-machine-1",
-    name: startCase(ECategory.PRODUCTION),
+    name: titleCase(ECategory.PRODUCTION),
     value: ECategory.PRODUCTION,
   },
   {
     icon: "solar-panel",
-    name: startCase(ECategory.ENERGY),
+    name: titleCase(ECategory.ENERGY),
     value: ECategory.ENERGY,
   },
 ]
