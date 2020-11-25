@@ -1,10 +1,13 @@
 import React from "react"
-import { EFilterType, EState, ECategory } from "../../../types"
+import { useCategories } from "../../../hooks/useCategories"
+import { EFilterType, EState } from "../../../types"
 import Filter from "../Filter"
 import Stacker from "../Stacker"
 import * as SC from "./filter-list.styles"
 
 function FilterList(): JSX.Element {
+  const { categories } = useCategories()
+
   return (
     <SC.FilterListWrapper>
       <SC.Title>Filter builds</SC.Title>
@@ -27,31 +30,17 @@ function FilterList(): JSX.Element {
       </Stacker>
       <SC.Separator />
       <Stacker gutter={8}>
-        <Filter
-          filterType={EFilterType.CATEGORY}
-          name={ECategory.BALANCER}
-          text="Balancer"
-        />
-        <Filter
-          filterType={EFilterType.CATEGORY}
-          name={ECategory.SMELTING}
-          text="Smelting"
-        />
-        <Filter
-          filterType={EFilterType.CATEGORY}
-          name={ECategory.TRAINS}
-          text="Trains"
-        />
-        <Filter
-          filterType={EFilterType.CATEGORY}
-          name={ECategory.PRODUCTION}
-          text="Production"
-        />
-        <Filter
-          filterType={EFilterType.CATEGORY}
-          name={ECategory.ENERGY}
-          text="Energy"
-        />
+        {categories.map((category) => {
+          return (
+            <Filter
+              key={category.value}
+              icon={category.icon}
+              filterType={EFilterType.CATEGORY}
+              name={category.value}
+              text={category.name}
+            />
+          )
+        })}
       </Stacker>
     </SC.FilterListWrapper>
   )
