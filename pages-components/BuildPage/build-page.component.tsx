@@ -9,7 +9,7 @@ import Layout from "../../components/ui/Layout"
 import { Build } from "../../db/entities/build.entity"
 import Caret from "../../icons/caret"
 import { IStoreState } from "../../redux/store"
-import { ERole } from "../../types"
+import { ERole, EState } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import * as SC from "./build-page.styles"
 
@@ -74,13 +74,13 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
   }
 
-  const formatGameState = (gameState: string) => {
+  const formatGameState = (gameState: EState) => {
     switch (gameState) {
-      case "early_game":
+      case EState.EARLY_GAME:
         return "Early-game"
-      case "mid_game":
+      case EState.MID_GAME:
         return "Mid-game"
-      case "late_game":
+      case EState.LATE_GAME:
         return "Late-game"
     }
   }
