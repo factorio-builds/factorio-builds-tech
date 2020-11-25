@@ -66,12 +66,13 @@ export const Text = styled.div`
   ${getTypo(ETypo.FORM_LABEL)};
   display: flex;
   align-items: center;
-  margin-left: 16px;
+  margin-left: 12px;
 `
 
 export const Prefix = styled.div`
+  display: flex;
   width: 24px;
-  margin-right: 6px;
+  margin-right: 12px;
 
   & img,
   & svg {
