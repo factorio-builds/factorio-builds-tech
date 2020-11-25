@@ -52,7 +52,13 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         },
         singleValue: (provided) => ({
           ...provided,
+          display: "flex",
+          alignItems: "center",
           color: COLOR.PURPLE700,
+          "& img": {
+            width: "20px",
+            marginRight: "8px",
+          },
         }),
         valueContainer: (provided) => ({
           ...provided,
@@ -94,6 +100,8 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         }),
         option: (provided, state) => ({
           ...provided,
+          display: "flex",
+          alignItems: "center",
           fontSize: "18px",
           fontWeight: 400,
           lineHeight: "22px",
@@ -110,6 +118,10 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
           "&:hover": {
             background: COLOR.FOCUSED,
             color: "#241A34 !important",
+          },
+          "& img": {
+            width: "20px",
+            marginRight: "8px",
           },
         }),
       }}

@@ -7,25 +7,9 @@ import ImageUpload from "../../components/ui/ImageUpload"
 import Spinner from "../../components/ui/Spinner"
 import Stacker from "../../components/ui/Stacker"
 import { useCategories } from "../../hooks/useCategories"
-import { EState } from "../../types"
+import { useGameStates } from "../../hooks/useGameStates"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
-
-// TODO: extract
-const STATE_MAP = [
-  {
-    name: "Early-game",
-    value: EState.EARLY_GAME,
-  },
-  {
-    name: "Mid-game",
-    value: EState.MID_GAME,
-  },
-  {
-    name: "Late-game",
-    value: EState.LATE_GAME,
-  },
-]
 
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
@@ -34,6 +18,7 @@ interface IStep2Props {
 
 const Step2: React.FC<IStep2Props> = (props) => {
   const { categories } = useCategories()
+  const { gameStates } = useGameStates()
 
   return (
     <SC.Row>
@@ -91,9 +76,13 @@ const Step2: React.FC<IStep2Props> = (props) => {
             type="select"
             required
             component={Input}
-            options={STATE_MAP.map((state) => ({
-              label: state.name,
-              value: state.value,
+            options={gameStates.map((gameState) => ({
+              label: (
+                <>
+                  {gameState.icon} {gameState.name}
+                </>
+              ),
+              value: gameState.value,
             }))}
             validate={validate("state")}
             size="small"
