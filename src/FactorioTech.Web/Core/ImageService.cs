@@ -1,7 +1,13 @@
+using FactorioTech.Web.Core.Domain;
+using FactorioTech.Web.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Web.Core
@@ -9,6 +15,7 @@ namespace FactorioTech.Web.Core
     public class ImageService
     {
         private readonly ILogger<ImageService> _logger;
+        private readonly AppDbContext _ctx;
         private readonly AppConfig _appConfig;
         private readonly BlueprintConverter _converter;
         private readonly FbsrClient _fbsrClient;
@@ -16,60 +23,68 @@ namespace FactorioTech.Web.Core
         public ImageService(
             ILogger<ImageService> logger,
             IOptions<AppConfig> appConfigMonitor,
+            AppDbContext ctx,
             BlueprintConverter converter,
             FbsrClient fbsrClient)
         {
             _logger = logger;
+            _ctx = ctx;
             _appConfig = appConfigMonitor.Value;
             _converter = converter;
             _fbsrClient = fbsrClient;
         }
 
-        public async Task SaveAllBlueprintRenderings(BlueprintMetadataCache metadataCache, FactorioApi.BlueprintEnvelope envelope)
+        public async Task SaveAllBlueprintRenderings(Guid versionId, PayloadCache cache, FactorioApi.BlueprintEnvelope envelope)
         {
-            if (envelope.BlueprintBook != null)
+            if (envelope.BlueprintBook?.Blueprints != null)
             {
                 foreach (var inner in envelope.BlueprintBook.Blueprints)
                 {
-                    await SaveAllBlueprintRenderings(metadataCache, inner);
+                    await SaveAllBlueprintRenderings(versionId, cache, inner);
                 }
             }
             else if (envelope.Blueprint != null)
             {
-                if (!metadataCache.TryGetValue(envelope.Blueprint, out var metadata))
+                if (!cache.TryGetValue(envelope.Blueprint, out var payload))
                 {
                     var encoded = await _converter.Encode(envelope.Blueprint);
-                    metadata = new BlueprintMetadata(encoded, Utils.ComputeHash(encoded));
-                    metadataCache.TryAdd(envelope.Blueprint, metadata);
+                    payload = new BlueprintPayload(versionId, Hash.Compute(encoded), encoded);
+                    cache.TryAdd(envelope.Blueprint, payload);
                 }
 
-                await SaveBlueprintRendering(metadata);
+                await SaveBlueprintRendering(payload);
             }
         }
 
-        public async Task SaveBlueprintRendering(BlueprintMetadata blueprintMetadata)
+        public async Task SaveBlueprintRendering(BlueprintPayload payload)
         {
-            var imageFqfn = GetImageFqfn(blueprintMetadata.Hash);
-
+            var imageFqfn = GetImageFqfn(payload.Hash);
             if (File.Exists(imageFqfn))
             {
                 _logger.LogWarning(
                     "Attempted to save new blueprint rendering with hash {Hash}, but the file already exists at {ImageFqfn}",
-                    blueprintMetadata.Hash, imageFqfn);
+                    payload.Hash, imageFqfn);
+                return;
+            }
+
+            var baseDir = Path.GetDirectoryName(imageFqfn);
+            if (baseDir != null && !Directory.Exists(baseDir))
+            {
+                Directory.CreateDirectory(baseDir);
             }
 
             try
             {
-                await using var image = await _fbsrClient.FetchBlueprintRendering(blueprintMetadata.Encoded);
+                await using var imageData = await _fbsrClient.FetchBlueprintRendering(payload.Encoded);
+                using var image = await Image.LoadAsync(imageData);
 
-                var baseDir = Path.GetDirectoryName(imageFqfn);
-                if (baseDir != null && !Directory.Exists(baseDir))
+                // quantize to 8bit to reduce size by about 50% (this is lossy but worth it)
+                await image.SaveAsPngAsync(imageFqfn, new PngEncoder
                 {
-                    Directory.CreateDirectory(baseDir);
-                }
-
-                await using var file = new FileStream(imageFqfn, FileMode.Create);
-                await image.CopyToAsync(file);
+                    ColorType = PngColorType.Palette,
+                    CompressionLevel = PngCompressionLevel.BestCompression,
+                    IgnoreMetadata = true,
+                });
             }
             catch (Exception ex)
             {
@@ -77,23 +92,68 @@ namespace FactorioTech.Web.Core
             }
         }
 
-        public Stream? GetBlueprintRendering(string hash)
+        public async Task<Stream?> TryLoadBlueprint(Guid? versionId, Hash hash)
         {
-            var imageFqfn = GetImageFqfn(hash);
+            var image = TryLoadImage(hash);
+            if (image != null)
+                return image;
 
-            if (!File.Exists(imageFqfn))
+            var payload = await _ctx.BlueprintPayloads.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Hash == hash);
+
+            if (payload != null)
             {
-                _logger.LogWarning(
-                    "Attempted to load blueprint rendering with hash {Hash}, but the file does not exist at {ImageFqfn}",
-                    hash, imageFqfn);
-
-                return null;
+                await SaveBlueprintRendering(payload);
+                return TryLoadImage(hash);
             }
 
-            return new FileStream(imageFqfn, FileMode.Open);
+            if (!versionId.HasValue)
+                return null;
+
+            var parentPayload = await _ctx.BlueprintVersions.AsNoTracking()
+                .Where(x => x.VersionId == versionId.Value)
+                .Include(x => x.Payload)
+                .FirstOrDefaultAsync();
+
+            if (parentPayload == null)
+                return null;
+
+            var envelope = await _converter.Decode(parentPayload.Payload!.Encoded);
+            payload = await TryFindEnvelopeWithHash(parentPayload.VersionId, envelope, hash);
+            if (payload == null)
+                return null;
+
+            await SaveBlueprintRendering(payload);
+
+            return TryLoadImage(hash);
         }
 
-        private string GetImageFqfn(string hash) =>
+        private async Task<BlueprintPayload?> TryFindEnvelopeWithHash(Guid versionId, FactorioApi.BlueprintEnvelope envelope, Hash targetHash)
+        {
+            if (envelope.Blueprint != null)
+            {
+                var encoded = await _converter.Encode(envelope.Blueprint);
+                var hash = Hash.Compute(encoded);
+                return hash == targetHash ? new BlueprintPayload(versionId, hash, encoded) : null;
+            }
+
+            if (envelope.BlueprintBook?.Blueprints != null)
+            {
+                foreach (var innerEnvelope in envelope.BlueprintBook.Blueprints)
+                {
+                    var result = await TryFindEnvelopeWithHash(versionId, innerEnvelope, targetHash);
+                    if (result != null)
+                        return result;
+                }
+            }
+         
+            return null;
+        }
+
+        private Stream? TryLoadImage(Hash hash) =>
+            GetImageFqfn(hash).Let(fqfn => File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open) : null);
+
+        private string GetImageFqfn(Hash hash) =>
             Path.Combine(_appConfig.WorkingDir, "blueprints", $"{hash}.png");
     }
 }

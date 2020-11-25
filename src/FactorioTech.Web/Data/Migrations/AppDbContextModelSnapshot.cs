@@ -22,7 +22,7 @@ namespace FactorioTech.Web.Data.Migrations
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.Blueprint", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("BlueprintId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -53,7 +53,10 @@ namespace FactorioTech.Web.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.HasKey("Id");
+                    b.Property<Instant>("UpdatedAt")
+                        .HasColumnType("timestamp");
+
+                    b.HasKey("BlueprintId");
 
                     b.HasAlternateKey("OwnerId", "Slug");
 
@@ -64,38 +67,28 @@ namespace FactorioTech.Web.Data.Migrations
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintPayload", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("VersionId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Encoded")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Envelope")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
                     b.Property<string>("Hash")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.Property<Guid>("VersionId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("VersionId");
 
                     b.HasAlternateKey("Hash");
-
-                    b.HasAlternateKey("VersionId");
 
                     b.ToTable("BlueprintPayloads");
                 });
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("VersionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -105,12 +98,19 @@ namespace FactorioTech.Web.Data.Migrations
                     b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<string>("Hash")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("VersionId");
 
                     b.HasAlternateKey("Hash");
 
@@ -143,7 +143,8 @@ namespace FactorioTech.Web.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("RoleId");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -172,7 +173,8 @@ namespace FactorioTech.Web.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("UserId");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -368,13 +370,11 @@ namespace FactorioTech.Web.Data.Migrations
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintPayload", b =>
                 {
-                    b.HasOne("FactorioTech.Web.Core.Domain.BlueprintVersion", "Version")
+                    b.HasOne("FactorioTech.Web.Core.Domain.BlueprintVersion", null)
                         .WithOne("Payload")
                         .HasForeignKey("FactorioTech.Web.Core.Domain.BlueprintPayload", "VersionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Version");
                 });
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>

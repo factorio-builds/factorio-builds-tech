@@ -87,7 +87,6 @@ namespace FactorioTech.Web.Core
                 json.Seek(0, SeekOrigin.Begin);
             }
 #endif
-
             await using var compressed = new MemoryStream();
             await using var compresser = new ZlibStream(compressed, CompressionMode.Compress, CompressionLevel.Level9)
             {

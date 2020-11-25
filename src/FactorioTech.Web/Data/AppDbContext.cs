@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using System;
-using System.Text.Json;
 
 namespace FactorioTech.Web.Data
 {
@@ -35,12 +34,11 @@ namespace FactorioTech.Web.Data
                     .HasForeignKey(e => e.OwnerId)
                     .HasPrincipalKey(e => e.Id);
 
-                entity.HasMany(e => e.Favorites)
-                    .WithMany(e => e.Followers)
+                entity.HasMany(e => e.Favorites).WithMany(x => x.Followers)
                     .UsingEntity<Favorite>(
                         je => je.HasOne(e => e.Blueprint!).WithMany()
                             .HasForeignKey(x => x.BlueprintId)
-                            .HasPrincipalKey(x => x.Id),
+                            .HasPrincipalKey(x => x.BlueprintId),
                         je => je.HasOne(e => e.User!).WithMany()
                             .HasForeignKey(x => x.UserId)
                             .HasPrincipalKey(x => x.Id))
@@ -60,31 +58,35 @@ namespace FactorioTech.Web.Data
 
             builder.Entity<Blueprint>(entity =>
             {
+                entity.HasAlternateKey(e => new { e.OwnerId, e.Slug });
+
                 entity.HasMany<BlueprintVersion>().WithOne()
                     .HasForeignKey(e => e.BlueprintId)
-                    .HasPrincipalKey(e => e.Id);
+                    .HasPrincipalKey(e => e.BlueprintId);
 
                 entity.HasOne(e => e.LatestVersion!).WithMany()
-                    .HasPrincipalKey(e => e.Id);
-
-                entity.HasAlternateKey(e => new { e.OwnerId, e.Slug });
+                    .HasForeignKey(e => e.LatestVersionId)
+                    .HasPrincipalKey(e => e.VersionId);
             });
 
             builder.Entity<BlueprintVersion>(entity =>
             {
                 entity.HasAlternateKey(e => e.Hash);
+
+                entity.Property(e => e.Hash)
+                    .HasConversion(x => x.ToString(), e => new Hash(e));
             });
 
             builder.Entity<BlueprintPayload>(entity =>
             {
-                entity.Property(e => e.Envelope)
-                    .HasConversion(
-                        envelope => JsonSerializer.Serialize(envelope, BlueprintConverter.JsonSerializerOptions),
-                        json => JsonSerializer.Deserialize<FactorioApi.BlueprintEnvelope>(json, BlueprintConverter.JsonSerializerOptions)!)
-                    .HasColumnType("jsonb");
-
-                entity.HasAlternateKey(e => e.VersionId);
                 entity.HasAlternateKey(e => e.Hash);
+
+                entity.Property(e => e.Hash)
+                    .HasConversion(x => x.ToString(), e => new Hash(e));
+
+                entity.HasOne<BlueprintVersion>().WithOne(e => e.Payload!)
+                    .HasForeignKey<BlueprintPayload>(e => e.VersionId)
+                    .HasPrincipalKey<BlueprintVersion>(e => e.VersionId);
             });
         }
 
@@ -92,6 +94,7 @@ namespace FactorioTech.Web.Data
         {
             builder.Entity<User>(entity =>
             {
+                entity.Property(e => e.Id).HasColumnName("UserId");
                 entity.Property(e => e.UserName).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.NormalizedUserName).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.Email).IsRequired();
@@ -100,6 +103,7 @@ namespace FactorioTech.Web.Data
 
             builder.Entity<Role>(entity =>
             {
+                entity.Property(e => e.Id).HasColumnName("RoleId");
                 entity.Property(e => e.Name).IsRequired();
                 entity.Property(e => e.NormalizedName).IsRequired();
             });

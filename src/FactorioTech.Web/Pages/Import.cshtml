@@ -1,7 +1,7 @@
 @page
 @model ImportModel
 
-<h1>Import Blueprint</h1>
+<h1 class="display-4">Import Blueprint</h1>
 
 @if (Model.BlueprintString == null)
 {
@@ -22,12 +22,6 @@ else
         <div asp-validation-summary="ModelOnly"></div>
 
         <div class="form-group">
-            <label asp-for="CreateInput.Title"></label>
-            <input asp-for="CreateInput.Title" class="form-control" />
-            <span asp-validation-for="CreateInput.Title" class="text-danger"></span>
-        </div>
-
-        <div class="form-group">
             <label asp-for="CreateInput.Slug"></label>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
@@ -40,23 +34,60 @@ else
         </div>
 
         <div class="form-group">
+            <label asp-for="CreateInput.Title"></label>
+            <input asp-for="CreateInput.Title" class="form-control" />
+            <span asp-validation-for="CreateInput.Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
             <label asp-for="CreateInput.Description"></label>
             <textarea asp-for="CreateInput.Description" class="form-control" rows="8"></textarea>
             <span asp-validation-for="CreateInput.Description" class="text-danger"></span>
         </div>
 
-        <button type="submit" asp-page-handler="Create" class="btn btn-primary">Create new blueprint</button>
+        <h2 class="border-bottom pb-2 pt-4">Version Details</h2>
+
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group">
+                    <label asp-for="CreateInput.VersionName"></label>
+                    <input asp-for="CreateInput.VersionName" class="form-control" />
+                    <span asp-validation-for="CreateInput.VersionName" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CreateInput.VersionDescription"></label>
+                    <textarea asp-for="CreateInput.VersionDescription" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="CreateInput.VersionDescription" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-4">
+                <h4>Version naming suggestions</h4>
+                <p>
+                    It’s common practice to prefix your version names with the letter <code>v</code>.
+                    Some good version names might be <code>v1.0</code> or <code>v2.3.4</code>.
+                </p>
+
+                <h4>Semantic versioning</h4>
+                <p>
+                    If you’re new to releasing software (or blueprints), we highly recommend reading about
+                    <a href="https://semver.org/" target="_blank" title="Semantic Versioning">semantic versioning</a>.
+                </p>
+            </div>
+        </div>
+        <button type="submit" asp-page-handler="Create" class="btn btn-primary">Publish new blueprint</button>
     </form>
 
-    <hr />
+    <h2 class="pt-4">Blueprint Content</h2>
 }
 
 @if (Model.Envelope != null)
 {
     @(
         await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
+            VersionId = Guid.Empty,
             Envelope = Model.Envelope,
-            MetadataCache = Model.MetadataCache,
+            PayloadCache = Model.PayloadCache,
         })
     )
 }

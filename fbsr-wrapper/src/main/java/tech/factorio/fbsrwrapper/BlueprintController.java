@@ -7,7 +7,6 @@ import com.demod.fbsr.TaskReporting;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,26 +34,19 @@ public class BlueprintController {
     }
 
     @PostMapping
-    public ResponseEntity<?> render(@RequestBody RenderRequest request) {
+    public ResponseEntity<?> render(@RequestBody RenderRequest request) throws IOException {
         var options = new JSONObject();
         options.put("show-info-panels", request.showInfoPanels);
         options.put("max-width", request.maxWidth);
         options.put("max-height", request.maxHeight);
 
-        try {
-            var blueprint = new Blueprint(BlueprintStringData.decode(request.blueprint));
-            var image = FBSR.renderBlueprint(blueprint, new TaskReporting(), options);
-            var output = writeImage(image);
+        var blueprint = new Blueprint(BlueprintStringData.decode(request.blueprint));
+        var image = FBSR.renderBlueprint(blueprint, new TaskReporting(), options);
+        var output = writeImage(image);
 
-            return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(output);
-        } catch (Throwable ex) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(ex);
-        }
+        return ResponseEntity.ok()
+            .contentType(MediaType.IMAGE_PNG)
+            .body(output);
     }
 
     private byte[] writeImage(BufferedImage image) throws IOException {

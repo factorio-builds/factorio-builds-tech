@@ -28,7 +28,7 @@
     <div class="row mb-4">
         <div class="col-md-8">
             <h1 class="display-4">@(Model.SelectedUser.DisplayName ?? Model.SelectedUser.UserName)</h1>
-            <small class="text-muted">member since xxxx</small>
+            <small class="text-muted">member since @Model.SelectedUser.RegisteredAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
         </div>
 
         <div class="col-md-4">

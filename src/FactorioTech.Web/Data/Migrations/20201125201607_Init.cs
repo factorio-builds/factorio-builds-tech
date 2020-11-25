@@ -13,21 +13,21 @@ namespace FactorioTech.Web.Data.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoles", x => x.RoleId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     RegisteredAt = table.Column<Instant>(type: "timestamp", nullable: false),
                     TimeZone = table.Column<string>(type: "text", nullable: true),
                     DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -48,7 +48,7 @@ namespace FactorioTech.Web.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -68,7 +68,7 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
+                        principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -89,7 +89,7 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_AspNetUserClaims_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -109,7 +109,7 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_AspNetUserLogins_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -127,13 +127,13 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
+                        principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -153,7 +153,7 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -161,9 +161,10 @@ namespace FactorioTech.Web.Data.Migrations
                 name: "Blueprints",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    BlueprintId = table.Column<Guid>(type: "uuid", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<Instant>(type: "timestamp", nullable: false),
+                    UpdatedAt = table.Column<Instant>(type: "timestamp", nullable: false),
                     Slug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     OwnerSlug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -172,13 +173,13 @@ namespace FactorioTech.Web.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Blueprints", x => x.Id);
+                    table.PrimaryKey("PK_Blueprints", x => x.BlueprintId);
                     table.UniqueConstraint("AK_Blueprints_OwnerId_Slug", x => new { x.OwnerId, x.Slug });
                     table.ForeignKey(
                         name: "FK_Blueprints_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -186,20 +187,22 @@ namespace FactorioTech.Web.Data.Migrations
                 name: "BlueprintVersions",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    VersionId = table.Column<Guid>(type: "uuid", nullable: false),
                     BlueprintId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreatedAt = table.Column<Instant>(type: "timestamp", nullable: false),
-                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false)
+                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlueprintVersions", x => x.Id);
+                    table.PrimaryKey("PK_BlueprintVersions", x => x.VersionId);
                     table.UniqueConstraint("AK_BlueprintVersions_Hash", x => x.Hash);
                     table.ForeignKey(
                         name: "FK_BlueprintVersions_Blueprints_BlueprintId",
                         column: x => x.BlueprintId,
                         principalTable: "Blueprints",
-                        principalColumn: "Id",
+                        principalColumn: "BlueprintId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -218,13 +221,13 @@ namespace FactorioTech.Web.Data.Migrations
                         name: "FK_Favorites_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Favorites_Blueprints_BlueprintId",
                         column: x => x.BlueprintId,
                         principalTable: "Blueprints",
-                        principalColumn: "Id",
+                        principalColumn: "BlueprintId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -232,22 +235,19 @@ namespace FactorioTech.Web.Data.Migrations
                 name: "BlueprintPayloads",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    VersionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    Encoded = table.Column<string>(type: "text", nullable: false),
-                    Envelope = table.Column<string>(type: "jsonb", nullable: false),
-                    VersionId = table.Column<Guid>(type: "uuid", nullable: false)
+                    Encoded = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlueprintPayloads", x => x.Id);
+                    table.PrimaryKey("PK_BlueprintPayloads", x => x.VersionId);
                     table.UniqueConstraint("AK_BlueprintPayloads_Hash", x => x.Hash);
-                    table.UniqueConstraint("AK_BlueprintPayloads_VersionId", x => x.VersionId);
                     table.ForeignKey(
                         name: "FK_BlueprintPayloads_BlueprintVersions_VersionId",
                         column: x => x.VersionId,
                         principalTable: "BlueprintVersions",
-                        principalColumn: "Id",
+                        principalColumn: "VersionId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -308,7 +308,7 @@ namespace FactorioTech.Web.Data.Migrations
                 table: "Blueprints",
                 column: "LatestVersionId",
                 principalTable: "BlueprintVersions",
-                principalColumn: "Id",
+                principalColumn: "VersionId",
                 onDelete: ReferentialAction.Restrict);
         }
 

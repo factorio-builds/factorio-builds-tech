@@ -1,13 +1,10 @@
 using FactorioTech.Web.Core;
-using FactorioTech.Web.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -22,43 +19,26 @@ namespace FactorioTech.Web.Controllers
         private static readonly Regex _sanitizer = new ("[^a-zA-Z0-9_-]+", RegexOptions.Compiled);
 
         private readonly AppConfig _appConfig;
-        private readonly AppDbContext _ctx;
         private readonly ImageService _imageService;
-        private readonly BlueprintConverter _converter;
 
         public FileController(
             IOptions<AppConfig> appConfigMonitor,
-            AppDbContext ctx,
-            ImageService imageService,
-            BlueprintConverter converter)
+            ImageService imageService)
         {
             _appConfig = appConfigMonitor.Value;
-            _ctx = ctx;
             _imageService = imageService;
-            _converter = converter;
-        }
-        
-
-        [HttpGet("blueprint/{versionId}/{hash}.png")]
-        [ResponseCache(Duration = OneWeekInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering(Guid versionId, string hash)
-        {
-            var file = _imageService.GetBlueprintRendering(hash);
-            if (file != null)
-                return new FileStreamResult(file, "image/png");
-
-            return await TryFindAndSaveImage(hash, versionId);
         }
 
         [HttpGet("blueprint/{hash}.png")]
+        [HttpGet("blueprint/{versionId}/{hash}.png")]
         [ResponseCache(Duration = OneWeekInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering(string hash)
+        public async Task<IActionResult> GetBlueprintRendering(string hash, Guid? versionId = null)
         {
-            var file = _imageService.GetBlueprintRendering(hash);
+            var file = await _imageService.TryLoadBlueprint(versionId, new Hash(hash));
             if (file != null)
                 return new FileStreamResult(file, "image/png");
 
-            return await TryFindAndSaveImage(hash, null);
+            return NotFound();
         }
 
         [HttpGet("icon/{size:int}/{type}/{key}.png")]
@@ -108,68 +88,6 @@ namespace FactorioTech.Web.Controllers
             output.Seek(0, SeekOrigin.Begin);
 
             return File(output, "image/png");
-        }
-
-        private async Task<IActionResult> TryFindAndSaveImage(string hash, Guid? versionId)
-        {
-            var payload = await _ctx.BlueprintPayloads.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Hash == hash);
-
-            if (payload != null)
-            {
-                await _imageService.SaveBlueprintRendering(new BlueprintMetadata(payload.Encoded, payload.Hash));
-                return FileOrNotFound(hash);
-            }
-
-            if (!versionId.HasValue)
-                return NotFound();
-
-            var parentPayload = await _ctx.BlueprintVersions.AsNoTracking()
-                .Where(x => x.Id == versionId.Value)
-                .Include(x => x.Payload)
-                .FirstOrDefaultAsync();
-
-            if (parentPayload == null)
-                return NotFound();
-
-            var metadata = await TryFindEnvelopeWithHash(parentPayload.Payload!.Envelope, hash);
-            if (metadata == null)
-                return NotFound();
-
-            await _imageService.SaveBlueprintRendering(metadata);
-
-            return FileOrNotFound(hash);
-        }
-
-        private async Task<BlueprintMetadata?> TryFindEnvelopeWithHash(FactorioApi.BlueprintEnvelope envelope, string targetHash)
-        {
-            if (envelope.Blueprint != null)
-            {
-                var encoded = await _converter.Encode(envelope.Blueprint);
-                var hash = Utils.ComputeHash(encoded);
-                return hash == targetHash ? new BlueprintMetadata(encoded, hash) : null;
-            }
-
-            if (envelope.BlueprintBook != null)
-            {
-                foreach (var innerEnvelope in envelope.BlueprintBook.Blueprints)
-                {
-                    var result = await TryFindEnvelopeWithHash(innerEnvelope, targetHash);
-                    if (result != null)
-                        return result;
-                }
-            }
-         
-            return null;
-        }
-
-        private IActionResult FileOrNotFound(string hash)
-        {
-            var file = _imageService.GetBlueprintRendering(hash);
-            if (file != null)
-                return new FileStreamResult(file, "image/png");
-
-            return NotFound();
         }
     }
 }

@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace FactorioTech.Web.Core
 {
@@ -14,12 +12,8 @@ namespace FactorioTech.Web.Core
         ///
         /// see https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/let.html
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static R Let<T, R>(this T v, Func<T, R> f) => f(v);
-
-        public static string ComputeHash(string input) =>
-            string.Join(string.Empty, MD5.Create()
-                .ComputeHash(Encoding.UTF8.GetBytes(input))
-                .Select(b => b.ToString("X2".ToLowerInvariant())));
 
         public static string GetWikiUrlForEntity(string key) =>
             $"https://wiki.factorio.com/{GetWikiKeyForEntity(key)}";

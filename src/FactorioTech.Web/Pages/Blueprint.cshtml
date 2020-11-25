@@ -49,16 +49,16 @@
             <small class="text-muted">
                 by <a asp-page="/User" asp-route-user="@Model.Blueprint.Owner.UserName">@Model.Blueprint.Owner.DisplayName</a>
                 &bull; created @Model.Blueprint.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()
-                @if (Model.Blueprint.CreatedAt != Model.Blueprint.LatestVersion!.CreatedAt)
+                @if (Model.Blueprint.CreatedAt != Model.Blueprint.UpdatedAt)
                 {
-                    <text>&bull; updated @Model.Blueprint.LatestVersion!.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</text>
+                    <text>&bull; updated @Model.Blueprint.UpdatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</text>
                 }
             </small>
             <p>@Model.Blueprint.Description</p>
 
             <details>
                 <summary>Blueprint String</summary>
-                <code>@Model.Metadata?.Encoded</code>
+                <code>@Model.SelectedVersion.Payload?.Encoded</code>
             </details>
 
             <details>
@@ -70,15 +70,18 @@
                             <h5 class="mb-0">
                                 <a asp-page="/Blueprint" asp-route-user="@Model.Blueprint.Owner.UserName"
                                    asp-route-slug="@Model.Blueprint.Slug" asp-route-hash="@version.Hash">
-                                    @version.Hash
+                                    @(version.Name ?? version.Hash.ToString())
                                 </a>
-                                @if (version.Id == Model.Blueprint.LatestVersion.Id)
+                                @if (version.VersionId == Model.SelectedVersion.VersionId)
                                 {
-                                    <text>(current version)</text>
+                                    <text>(selected version)</text>
                                 }
                             </h5>
-                            <small class="text-muted">Updated @version.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
-                            <p>This is my new and awesome version!</p>
+                            <small class="text-muted">Created @version.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
+                            @if (version.Description != null)
+                            {
+                                <p>@version.Description</p>
+                            }
                         </li>
                     }
                 </ul>
@@ -94,8 +97,8 @@
 
 @(
     await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
-        VersionId = Model.Blueprint.LatestVersion?.Id,
-        Envelope = Model.Blueprint.LatestVersion?.Payload?.Envelope,
-        MetadataCache = Model.MetadataCache,
+        VersionId = Model.SelectedVersion.VersionId,
+        Envelope = Model.Envelope,
+        PayloadCache = Model.PayloadCache,
     })
 )

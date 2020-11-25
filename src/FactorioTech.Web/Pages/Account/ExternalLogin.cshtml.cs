@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.ComponentModel;
 
@@ -138,6 +139,7 @@ namespace FactorioTech.Web.Pages.Account
                     UserName = Input.UserName,
                     DisplayName = Input.DisplayName,
                     Email = Input.Email,
+                    RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
                 };
 
                 var result = await _userManager.CreateAsync(user);

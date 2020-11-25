@@ -31,6 +31,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.zalando</groupId>
+            <artifactId>problem-spring-web-starter</artifactId>
+            <version>0.26.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.demod.fbsr</groupId>
             <artifactId>FactorioBlueprintStringRenderer</artifactId>
             <version>0.0.1-SNAPSHOT</version>

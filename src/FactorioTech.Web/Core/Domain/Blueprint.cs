@@ -8,7 +8,7 @@ namespace FactorioTech.Web.Core.Domain
     public class Blueprint
     {
         [Key]
-        public Guid Id { get; init; }
+        public Guid BlueprintId { get; init; }
 
         [Required]
         public Guid OwnerId { get; init; }
@@ -17,33 +17,44 @@ namespace FactorioTech.Web.Core.Domain
         public Instant CreatedAt { get; init; }
 
         [Required]
-        [MaxLength(100)]
-        public string Slug { get; private set; }
+        public Instant UpdatedAt { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string OwnerSlug { get; private set; }
+        public string Slug { get; init; }
 
         [Required]
         [MaxLength(100)]
-        public string Title { get; private set; }
+        public string OwnerSlug { get; init; }
 
-        public string? Description { get; private set; }
+        [Required]
+        [MaxLength(100)]
+        public string Title { get; set; }
+
+        public string? Description { get; set; }
 
         // navigation properties -> will be null if not included explicitly
-        public User? Owner { get; private set; }
         public BlueprintVersion? LatestVersion { get; set; }
-        public IEnumerable<User>? Followers { get; set; }
+        public Guid? LatestVersionId { get; set; }
+        public User? Owner { get; init; }
+        public IEnumerable<User>? Followers { get; init; }
 
-        public Blueprint(Guid id, Guid ownerId, string ownerSlug, Instant createdAt, string slug, string title, string? description)
+        public Blueprint(Guid blueprintId, Guid ownerId, string ownerSlug, Instant createdAt, Instant updatedAt, string slug, string title, string? description)
         {
-            Id = id;
+            BlueprintId = blueprintId;
             OwnerId = ownerId;
             OwnerSlug = ownerSlug;
             CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
             Slug = slug;
             Title = title;
             Description = description;
         }
+
+#pragma warning disable 8618 // required for EF
+        private Blueprint()
+        {
+        }
+#pragma warning restore 8618
     }
 }

@@ -1,10 +1,10 @@
 @using FactorioTech.Web.Core;
 
-@if (Envelope?.Blueprint != null)
+@if (Envelope.Blueprint != null)
 {
     <BlueprintCard Blueprint="@Envelope.Blueprint" VersionId="@VersionId" />
 }
-else if (Envelope?.BlueprintBook != null)
+else if (Envelope.BlueprintBook != null)
 {
     var tempId = Guid.NewGuid();
 
@@ -16,7 +16,7 @@ else if (Envelope?.BlueprintBook != null)
                         <BlueprintIcons Icons="Envelope.Icons" Type="blueprint-book" />
                         <div class="media-body">
                             <h5 class="card-title mt-2 mb-0">@(Envelope.Label ?? "(no title)")</h5>
-                            <small class="text-muted">Contains @Envelope.BlueprintBook.Blueprints.Count() blueprints</small>
+                            <small class="text-muted">Contains @(Envelope.BlueprintBook.Blueprints?.Count() ?? 0) blueprints</small>
                         </div>
                     </div>
                 </div>
@@ -41,12 +41,15 @@ else if (Envelope?.BlueprintBook != null)
 
             <p class="card-text">@(Envelope.Description ?? "(no description)")</p>
 
-            <div class="collapse" id="collapse-book-@tempId">
-                @foreach (var envelope in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index))
-                {
-                    <BlueprintEnvelope Envelope="@envelope" VersionId="@VersionId" />
-                }
-            </div>
+            @if (Envelope.BlueprintBook?.Blueprints != null)
+            {
+                <div class="collapse" id="collapse-book-@tempId">
+                    @foreach (var envelope in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index))
+                    {
+                        <BlueprintEnvelope Envelope="@envelope" VersionId="@VersionId" />
+                    }
+                </div>
+            }
         </div>
     </div>
 }
@@ -58,16 +61,16 @@ else
 
 @code {
     [Parameter]
-    public Guid? VersionId { get; set; }
+    public Guid VersionId { get; set; } = Guid.Empty;
 
     [Parameter]
-    public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
+    public FactorioApi.BlueprintEnvelope Envelope { get; set; } = null!;
 
     [Parameter]
-    public BlueprintMetadataCache MetadataCache { get; set; } = new BlueprintMetadataCache();
+    public PayloadCache PayloadCache { get; set; } = new PayloadCache();
 
     protected override async Task OnInitializedAsync()
     {
-        await MetadataCache.EnsureInitialized(Envelope);
+        await PayloadCache.EnsureInitialized(VersionId, Envelope);
     }
 }

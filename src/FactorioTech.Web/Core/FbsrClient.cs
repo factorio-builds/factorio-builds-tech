@@ -51,8 +51,8 @@ namespace FactorioTech.Web.Core
 
             if (!response.IsSuccessStatusCode)
             {
-                var body = await response.Content.ReadAsStringAsync();
-                _logger.LogError("Error response from fbsr-wrapper {StatusCode} {Exception}", response.StatusCode, body);
+                var problem = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Error response from fbsr-wrapper {StatusCode} {Problem}", response.StatusCode, problem);
                 throw new Exception($"Error response from fbsr-wrapper: {response.StatusCode}");
             }
 

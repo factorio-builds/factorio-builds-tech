@@ -1,7 +1,7 @@
 using FactorioTech.Web.Core;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,7 +23,8 @@ namespace FactorioTech.Tests
             var converter = new BlueprintConverter();
             var result = await converter.Decode(TestData.SimpleBlueprintEncoded);
 
-            result.Blueprint.Should().BeEquivalentTo(TestData.SimpleBlueprint);
+            result.Blueprint.Should().BeEquivalentTo(TestData.SimpleBlueprint, config =>
+                config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
             result.BlueprintBook.Should().BeNull();
 
             result.Item.Should().Be(TestData.SimpleBlueprint.Item);
@@ -39,7 +40,8 @@ namespace FactorioTech.Tests
             var result = await converter.Decode(TestData.SimpleBookEncoded);
 
             result.Blueprint.Should().BeNull();
-            result.BlueprintBook.Should().BeEquivalentTo(TestData.SimpleBook);
+            result.BlueprintBook.Should().BeEquivalentTo(TestData.SimpleBook, config =>
+                config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
 
             result.Item.Should().Be(TestData.SimpleBook.Item);
             result.Label.Should().Be(TestData.SimpleBook.Label);
@@ -54,7 +56,8 @@ namespace FactorioTech.Tests
             var result = await converter.Decode(TestData.AdvancedBookEncoded);
 
             result.Blueprint.Should().BeNull();
-            result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook);
+            result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook, config =>
+                config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
 
             result.Item.Should().Be(TestData.AdvancedBook.Item);
             result.Label.Should().Be(TestData.AdvancedBook.Label);
@@ -73,7 +76,8 @@ namespace FactorioTech.Tests
             encoded.Length.Should().BeCloseTo(TestData.SimpleBlueprintEncoded.Length, allowance);
 
             var result = await converter.Decode(encoded);
-            result.Blueprint.Should().BeEquivalentTo(TestData.SimpleBlueprint);
+            result.Blueprint.Should().BeEquivalentTo(TestData.SimpleBlueprint, config =>
+                config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
         }
 
         [Fact]
@@ -87,7 +91,8 @@ namespace FactorioTech.Tests
             encoded.Length.Should().BeCloseTo(TestData.SimpleBookEncoded.Length, allowance);
 
             var result = await converter.Decode(encoded);
-            result.BlueprintBook.Should().BeEquivalentTo(TestData.SimpleBook);
+            result.BlueprintBook.Should().BeEquivalentTo(TestData.SimpleBook, config =>
+                config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
         }
 
         [Fact]
@@ -101,7 +106,8 @@ namespace FactorioTech.Tests
             encoded.Length.Should().BeCloseTo(TestData.AdvancedBookEncoded.Length, allowance);
 
             var result = await converter.Decode(encoded);
-            result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook);
+            result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook, config =>
+                config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
         }
 
         private static class TestData
@@ -125,70 +131,125 @@ namespace FactorioTech.Tests
                     },
                     new()
                     {
-                        Index = 2, Signal = new FactorioApi.SignalId { Type = "item", Name = "spidertron" },
+                        Index = 2, 
+                        Signal = new FactorioApi.SignalId { Type = "item", Name = "spidertron" },
                     },
                 },
                 Entities = new FactorioApi.Entity[]
                 {
                     new()
                     {
-                        EntityNumber = 1,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 193.5f, Y = 893.5f },
-                        Direction = 2,
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 1 },
+                            { "direction", 2 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  193.5f }, { "y", 893.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 2,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 192.5f, Y = 893.5f },
-                        Direction = 2,
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 2 },
+                            { "direction", 2 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  192.5f }, { "y", 893.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 3,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 194.5f, Y = 893.5f },
-                        Direction = 4,
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 3 },
+                            { "direction", 4 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  194.5f }, { "y", 893.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 4,
                         Name = "medium-electric-pole",
-                        Position = new FactorioApi.Position { X = 193.5f, Y = 894.5f },
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 4 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  193.5f }, { "y", 894.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 5,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 192.5f, Y = 895.5f },
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 5 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  192.5f }, { "y", 895.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 6,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 193.5f, Y = 895.5f },
-                        Direction = 6,
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 6 },
+                            { "direction", 6 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  193.5f }, { "y", 895.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 7,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 192.5f, Y = 894.5f },
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 7 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  192.5f }, { "y", 894.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 8,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 194.5f, Y = 895.5f },
-                        Direction = 6,
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 8 },
+                            { "direction", 6 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  194.5f }, { "y", 895.5f }
+                            } }
+                        }
                     },
                     new()
                     {
-                        EntityNumber = 9,
                         Name = "express-transport-belt",
-                        Position = new FactorioApi.Position { X = 194.5f, Y = 894.5f },
-                        Direction = 4,
+                        ExtensionData = new()
+                        {
+                            { "entity_number", 9 },
+                            { "direction", 4 },
+                            { "position", new Dictionary<string, object>
+                            {
+                                { "x",  194.5f }, { "y", 894.5f }
+                            } }
+                        }
                     },
                 },
             };
@@ -198,7 +259,6 @@ namespace FactorioTech.Tests
                 Item = "blueprint-book",
                 Label = "Simple Blueprint Book",
                 Description = "Just a simple blueprint book with a single blueprint.",
-                ActiveIndex = 0,
                 Version = 281474976710656,
                 Blueprints = new FactorioApi.BlueprintEnvelope[]
                 {
@@ -212,13 +272,16 @@ namespace FactorioTech.Tests
                         Signal = new FactorioApi.SignalId { Type = "item", Name = "spidertron" },
                     },
                 },
+                ExtensionData = new()
+                {
+                    { "active_index", 0 },
+                }
             };
 
             public static readonly FactorioApi.BlueprintBook AdvancedBook = new()
             {
                 Item = "blueprint-book",
                 Label = "Advanced Blueprint Book",
-                ActiveIndex = 0,
                 Version = 281474976710656,
                 Blueprints = new FactorioApi.BlueprintEnvelope[]
                 {
@@ -233,6 +296,10 @@ namespace FactorioTech.Tests
                         Signal = new FactorioApi.SignalId { Type = "item", Name = "power-switch" },
                     },
                 },
+                ExtensionData = new()
+                {
+                    { "active_index", 0 },
+                }
             };
         }
     }
