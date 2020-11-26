@@ -1,6 +1,7 @@
 import React from "react"
 import { Build } from "../../../db/entities/build.entity"
 import { useCategories } from "../../../hooks/useCategories"
+import { useGameStates } from "../../../hooks/useGameStates"
 import Stacker from "../Stacker"
 import * as SC from "./build-subheader.styles"
 
@@ -11,6 +12,9 @@ interface IBuildSubheader {
 
 function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const { getCategory } = useCategories()
+  const { getGameState } = useGameStates()
+
+  const gameState = getGameState(props.build.metadata.state)
 
   return (
     <SC.BuildSubheaderWrapper>
@@ -23,14 +27,17 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
         </SC.Title>
 
         <SC.Subtitle>
-          <Stacker gutter={16}>
+          <Stacker orientation="horizontal" gutter={16}>
+            <SC.Meta>
+              {gameState.icon} {gameState.name}
+            </SC.Meta>
             {props.build.metadata.categories.map((categoryName) => {
               const category = getCategory(categoryName)
 
               return (
-                <SC.Category key={category.name}>
+                <SC.Meta key={category.name}>
                   {category.icon} {category.name}
-                </SC.Category>
+                </SC.Meta>
               )
             })}
           </Stacker>

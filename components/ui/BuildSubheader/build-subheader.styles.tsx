@@ -30,7 +30,7 @@ export const Book = styled.img`
   margin-right: 4px;
 `
 
-export const Category = styled.div`
+export const Meta = styled.div`
   display: flex;
   align-items: center;
 
