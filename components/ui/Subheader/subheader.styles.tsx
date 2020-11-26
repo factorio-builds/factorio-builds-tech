@@ -15,9 +15,23 @@ export const HeaderWrapper = styled.div`
     flex-direction: column;
     justify-content: center;
   }
+`
 
-  h1 {
-    ${getTypo(ETypo.PAGE_HEADER)};
-    margin: 0;
+export const Title = styled.h1`
+  ${getTypo(ETypo.PAGE_HEADER)};
+  display: flex;
+  align-items: center;
+  color: #fff;
+  margin: 0;
+
+  img {
+    width: 32px;
+    height: auto;
+    margin-right: 8px;
   }
+`
+
+export const Subtitle = styled.div`
+  ${getTypo(ETypo.PAGE_SUBTITLE)};
+  color: #a392b5;
 `
