@@ -36,7 +36,7 @@
     "passport-discord": "^0.1.4",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
-    "polished": "^4.0.3",
+    "polished": "^4.0.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
