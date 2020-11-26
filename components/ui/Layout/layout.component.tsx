@@ -26,7 +26,7 @@ const Layout: React.FC<ILayoutProps> = ({
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
     <Header />
-    {subheader && <Subheader>{subheader}</Subheader>}
+    {subheader}
     <Container>
       {sidebar && <Sidebar>{sidebar}</Sidebar>}
       <SC.Content>{children}</SC.Content>

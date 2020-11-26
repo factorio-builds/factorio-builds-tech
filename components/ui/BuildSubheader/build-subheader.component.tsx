@@ -3,6 +3,7 @@ import { Build } from "../../../db/entities/build.entity"
 import { useCategories } from "../../../hooks/useCategories"
 import { useGameStates } from "../../../hooks/useGameStates"
 import Stacker from "../Stacker"
+import Subheader from "../Subheader"
 import * as SC from "./build-subheader.styles"
 
 interface IBuildSubheader {
@@ -17,33 +18,32 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const gameState = getGameState(props.build.metadata.state)
 
   return (
-    <SC.BuildSubheaderWrapper>
-      <Stacker gutter={4}>
-        <SC.Title>
+    <Subheader
+      title={
+        <>
           {props.isBook && (
             <SC.Book src="/img/blueprint-book.png" alt="Blueprint book" />
           )}
           {props.build.name}
-        </SC.Title>
+        </>
+      }
+      subtitle={
+        <Stacker orientation="horizontal" gutter={16}>
+          <SC.Meta>
+            {gameState.icon} {gameState.name}
+          </SC.Meta>
+          {props.build.metadata.categories.map((categoryName) => {
+            const category = getCategory(categoryName)
 
-        <SC.Subtitle>
-          <Stacker orientation="horizontal" gutter={16}>
-            <SC.Meta>
-              {gameState.icon} {gameState.name}
-            </SC.Meta>
-            {props.build.metadata.categories.map((categoryName) => {
-              const category = getCategory(categoryName)
-
-              return (
-                <SC.Meta key={category.name}>
-                  {category.icon} {category.name}
-                </SC.Meta>
-              )
-            })}
-          </Stacker>
-        </SC.Subtitle>
-      </Stacker>
-    </SC.BuildSubheaderWrapper>
+            return (
+              <SC.Meta key={category.name}>
+                {category.icon} {category.name}
+              </SC.Meta>
+            )
+          })}
+        </Stacker>
+      }
+    ></Subheader>
   )
 }
 

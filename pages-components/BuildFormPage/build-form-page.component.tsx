@@ -5,6 +5,7 @@ import { Form, Formik } from "formik"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
 import Layout from "../../components/ui/Layout"
+import Subheader from "../../components/ui/Subheader"
 import { Build } from "../../db/entities/build.entity"
 import { ECategory, EState } from "../../types"
 import { isValidBlueprint } from "../../utils/blueprint"
@@ -195,11 +196,12 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
         return (
           <Layout
             title="Create a build"
-            /* TODO: extract style */
             subheader={
-              <h2 style={{ fontSize: "24px", fontWeight: 700 }}>
-                {props.type === "CREATE" ? "Create a build" : "Edit build"}
-              </h2>
+              <Subheader
+                title={
+                  props.type === "CREATE" ? "Create a build" : "Edit build"
+                }
+              />
             }
           >
             <Form>
