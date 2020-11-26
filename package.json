@@ -63,7 +63,7 @@
     "@types/axios": "^0.14.0",
     "@types/classnames": "^2.2.11",
     "@types/express": "^4.17.9",
-    "@types/express-session": "^1.17.2",
+    "@types/express-session": "^1.17.3",
     "@types/formidable": "^1.0.31",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.165",
