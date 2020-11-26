@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import Stacker from "../../components/ui/Stacker"
 import { getTypo } from "../../design/helpers/typo"
 import { COLOR } from "../../design/tokens/color"
 import { ETypo } from "../../design/tokens/typo"
@@ -46,14 +47,23 @@ export const AsideSubGroup = styled.div`
   }
 `
 
-export const StyledRequiredItem = styled.div`
-  display: flex;
+const StyledStacker = (props: any) => (
+  <Stacker {...props} orientation="horizontal" gutter={5} />
+)
+
+export const WithRequiredItem = styled(StyledStacker)`
+  ${getTypo(ETypo.METADATA)};
   align-items: center;
+`
+
+export const WithItem = styled(StyledStacker)`
+  ${getTypo(ETypo.METADATA_TITLE)};
+  align-items: center;
+  color: #a392b5;
 `
 
 export const IconImg = styled.img`
   width: 20px;
-  margin: 0 5px;
 `
 
 export const EditBuild = styled.span`

@@ -7,9 +7,11 @@ import Link from "next/link"
 import BuildSubheader from "../../components/ui/BuildSubheader"
 import Layout from "../../components/ui/Layout"
 import { Build } from "../../db/entities/build.entity"
+import { useCategories } from "../../hooks/useCategories"
+import { useGameStates } from "../../hooks/useGameStates"
 import Caret from "../../icons/caret"
 import { IStoreState } from "../../redux/store"
-import { ERole, EState } from "../../types"
+import { ERole } from "../../types"
 import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
 import * as SC from "./build-page.styles"
 
@@ -17,11 +19,22 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
   const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${props.itemName}.png`
 
   return (
-    <SC.StyledRequiredItem>
-      {props.count}
+    <SC.WithRequiredItem>
+      <span>{props.count}</span>
       <SC.IconImg src={iconSrc} />
-      {props.itemName.replace(/-/g, " ")}
-    </SC.StyledRequiredItem>
+      <span>{props.itemName.replace(/-/g, " ")}</span>
+    </SC.WithRequiredItem>
+  )
+}
+
+const MetadataWithIcon: React.FC<{ itemName: string }> = (props) => {
+  const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${props.itemName}.png`
+
+  return (
+    <SC.WithItem>
+      <SC.IconImg src={iconSrc} />
+      <span>{props.children}</span>
+    </SC.WithItem>
   )
 }
 
@@ -41,6 +54,8 @@ const AsideGroup: React.FC<{ title?: string }> = (props) => {
 function BuildPage({ build }: IBuildPageProps): JSX.Element {
   const user = useSelector((state: IStoreState) => state.auth.user)
   const [blueprintExpanded, setBlueprintExpanded] = useState(false)
+  const { getGameState } = useGameStates()
+  const { getCategory } = useCategories()
   const [blueprintFormat, setBlueprintFormat] = useState<"base64" | "json">(
     "base64"
   )
@@ -74,17 +89,6 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
   }
 
-  const formatGameState = (gameState: EState) => {
-    switch (gameState) {
-      case EState.EARLY_GAME:
-        return "Early-game"
-      case EState.MID_GAME:
-        return "Mid-game"
-      case EState.LATE_GAME:
-        return "Late-game"
-    }
-  }
-
   const sortedRequiredItems = useMemo(() => {
     return Object.keys(itemsCount)
       .map((itemName) => {
@@ -102,6 +106,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.id === user?.id
+  const state = getGameState(build.metadata.state)
 
   return (
     <Layout
@@ -139,12 +144,23 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               </SC.AsideSubGroup>
             </AsideGroup>
             <AsideGroup title="Categories">
-              {build.metadata.categories.map((category) => (
-                <div key={category}>{category}</div>
-              ))}
+              {build.metadata.categories.map((categoryName) => {
+                const category = getCategory(categoryName)
+
+                return (
+                  <MetadataWithIcon
+                    key={category.value}
+                    itemName={category.iconName}
+                  >
+                    {category.name}
+                  </MetadataWithIcon>
+                )
+              })}
             </AsideGroup>
             <AsideGroup title="Game state">
-              {formatGameState(build.metadata.state)}
+              <MetadataWithIcon itemName={state.iconName}>
+                {state.name}
+              </MetadataWithIcon>
             </AsideGroup>
             {!isBook(blueprintJSON) && (
               <AsideGroup title="Required items">

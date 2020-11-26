@@ -2,15 +2,16 @@ import { useMemo } from "react"
 import ItemIcon from "../components/ui/ItemIcon"
 import { EState } from "../types"
 
-interface ICategoryData {
+interface IGameStateData {
+  iconName: string
   icon: JSX.Element
   name: string
   value: EState
 }
 
 interface IUseGameStates {
-  gameStates: ICategoryData[]
-  getGameState: (value: EState) => ICategoryData
+  gameStates: IGameStateData[]
+  getGameState: (value: EState) => IGameStateData
 }
 
 export function useGameStates(): IUseGameStates {
@@ -18,16 +19,19 @@ export function useGameStates(): IUseGameStates {
 
   const gameStates = [
     {
+      iconName: "underground-belt",
       icon: getIcon("underground-belt"),
       name: "Early-game",
       value: EState.EARLY_GAME,
     },
     {
+      iconName: "fast-underground-belt",
       icon: getIcon("fast-underground-belt"),
       name: "Mid-game",
       value: EState.MID_GAME,
     },
     {
+      iconName: "express-underground-belt",
       icon: getIcon("express-underground-belt"),
       name: "Late-game",
       value: EState.LATE_GAME,
