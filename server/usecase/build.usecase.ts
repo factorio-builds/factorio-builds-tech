@@ -36,13 +36,12 @@ interface IIncrementViewParameters {
   ip: string
 }
 
-async function handleFile(
-  id: string,
-  file: File
-): Promise<{
+interface IUploadedFile {
   uploadedFile: ManagedUpload.SendData
   dimensions: ISizeCalculationResult
-}> {
+}
+
+async function handleFile(id: string, file: File): Promise<IUploadedFile> {
   const uploadedFile = await uploadFile(id, file.path).catch(console.error)
   const dimensions = await imageSizeAsync(file.path)
 
@@ -94,14 +93,17 @@ async function saveBuild(build: Build) {
   return buildRepository.save(toSave)
 }
 
-export async function createBuildUseCase({
-  ownerId,
+async function buildMapper({
+  buildId,
   fields,
-  files,
-}: ICreateParameters): Promise<Build> {
-  const buildId = uuidv4()
-  const owner = await getUserById(ownerId)
-
+  image,
+  owner,
+}: {
+  buildId: string
+  fields: Fields
+  image: IUploadedFile | void
+  owner?: User
+}): Promise<Build> {
   const build: Build = {
     id: buildId,
     name: fields.name as string,
@@ -119,20 +121,42 @@ export async function createBuildUseCase({
       tileable: Boolean(fields.tileable as string),
       area: 0,
     },
-    owner: owner as User,
   }
 
-  if (files.image) {
-    const { uploadedFile, dimensions } = await handleFile(buildId, files.image)
+  if (owner) {
+    build.owner = owner
+  }
 
-    if (uploadedFile && dimensions) {
-      build.image = {
-        src: uploadedFile.Location,
-        width: dimensions.width as number,
-        height: dimensions.height as number,
-      }
+  if (image) {
+    build.image = {
+      src: image.uploadedFile.Location,
+      width: image.dimensions.width as number,
+      height: image.dimensions.height as number,
     }
   }
+
+  return build
+}
+
+export async function createBuildUseCase({
+  ownerId,
+  fields,
+  files,
+}: ICreateParameters): Promise<Build> {
+  const buildId = uuidv4()
+  const owner = await getUserById(ownerId)
+
+  if (!owner) {
+    throw new EntityNotFoundException("User not found")
+  }
+
+  let image: IUploadedFile | void
+
+  if (files.image) {
+    image = await handleFile(buildId, files.image)
+  }
+
+  const build = await buildMapper({ buildId, fields, image, owner })
 
   return saveBuild(build)
 }
@@ -159,33 +183,15 @@ export async function updateBuildUseCase({
     throw new EntityPermissonException("You do not own that build")
   }
 
+  let image: IUploadedFile | void
+
   if (files.image) {
-    const { uploadedFile, dimensions } = await handleFile(buildId, files.image)
-
-    if (uploadedFile && dimensions) {
-      build.image = {
-        src: uploadedFile.Location,
-        width: dimensions.width as number,
-        height: dimensions.height as number,
-      }
-    }
+    image = await handleFile(buildId, files.image)
   }
 
-  build.name = fields.name as string
-  build.blueprint = fields.blueprint as string
-  build.description = fields.description as string
-  build.metadata = {
-    ...build.metadata,
-    state: fields.state as EState,
-    // @ts-ignore
-    categories: JSON.parse(fields.categories).length
-      ? JSON.parse(fields.categories as string)
-      : [],
-    markedInputs: Boolean(fields.markedInputs as string),
-    tileable: Boolean(fields.tileable as string),
-  }
+  const updatedBuild = await buildMapper({ buildId, fields, image })
 
-  return saveBuild(build)
+  return saveBuild(updatedBuild)
 }
 
 export async function viewBuildIncrementUseCase({
