@@ -12,7 +12,7 @@ import { useGameStates } from "../../hooks/useGameStates"
 import Caret from "../../icons/caret"
 import { IStoreState } from "../../redux/store"
 import { ERole } from "../../types"
-import { decodeBlueprint, getCountPerItem, isBook } from "../../utils/blueprint"
+import { getCountPerItem, isBook } from "../../utils/blueprint"
 import * as SC from "./build-page.styles"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
@@ -64,19 +64,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     setBlueprintExpanded((expanded) => !expanded)
   }
 
-  const blueprintJSON = decodeBlueprint(build.blueprint)
-
-  const blueprintData = useMemo(() => {
-    if (blueprintFormat === "json") {
-      return JSON.stringify(blueprintJSON, null, 1)
-    }
-
-    return build.blueprint
-  }, [build.blueprint, blueprintFormat])
-
   const itemsCount = useMemo(() => {
-    if (!isBook(blueprintJSON)) {
-      return getCountPerItem(blueprintJSON.blueprint)
+    if (!isBook(build.json)) {
+      return getCountPerItem(build.json.blueprint)
     }
     return {}
   }, [build.blueprint])
@@ -111,9 +101,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
   return (
     <Layout
       title={build.name}
-      subheader={
-        <BuildSubheader build={build} isBook={isBook(blueprintJSON)} />
-      }
+      subheader={<BuildSubheader build={build} isBook={isBook(build.json)} />}
       sidebar={
         <SC.BuildImage>
           {build.image ? <img src={build.image.src} alt="" /> : "No image"}
@@ -162,7 +150,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                 {state.name}
               </MetadataWithIcon>
             </AsideGroup>
-            {!isBook(blueprintJSON) && (
+            {!isBook(build.json) && (
               <AsideGroup title="Required items">
                 {sortedRequiredItems.map((item) => {
                   return (
@@ -176,9 +164,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               </AsideGroup>
             )}
 
-            {isBook(blueprintJSON) && (
+            {isBook(build.json) && (
               <AsideGroup title="Blueprints">
-                {blueprintJSON.blueprint_book.blueprints.map((bp, index) => {
+                {build.json.blueprint_book.blueprints.map((bp, index) => {
                   return <div key={index}>{bp.blueprint.label}</div>
                 })}
               </AsideGroup>
@@ -217,7 +205,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                   </SC.Toggler>
                 </SC.TogglerWrapper>
                 <SC.BlueprintData
-                  value={blueprintData}
+                  value={
+                    blueprintFormat === "json"
+                      ? JSON.stringify(build.json, null, 1)
+                      : build.blueprint
+                  }
                   rows={5}
                   readOnly
                   onClick={(e) => e.currentTarget.select()}
