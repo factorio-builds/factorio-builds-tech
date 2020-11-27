@@ -3,7 +3,6 @@ import Head from "next/head"
 import Container from "../Container"
 import Header from "../Header"
 import Sidebar from "../Sidebar"
-import Subheader from "../Subheader"
 import * as SC from "./layout.styles"
 
 interface ILayoutProps {
