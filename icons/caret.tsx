@@ -1,11 +1,14 @@
 import * as React from "react"
 import { COLOR } from "../design/tokens/color"
 
-const Caret: React.FC<{ inverted?: boolean }> = (props) => {
+const Caret: React.FC<{ inverted?: boolean }> = ({
+  inverted,
+  ...restProps
+}) => {
   return (
     <svg
-      {...props}
-      style={{ transform: props.inverted ? "rotate(180deg)" : undefined }}
+      {...restProps}
+      style={{ transform: inverted ? "rotate(180deg)" : undefined }}
       width="11"
       height="11"
       viewBox="0 0 11 11"
