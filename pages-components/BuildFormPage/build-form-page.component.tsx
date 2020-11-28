@@ -53,6 +53,8 @@ const createInitialValues = (build?: Build): IFormValues => {
     return baseInitialValues
   }
 
+  var img = build.image ? build.image.src : null;
+
   return {
     name: build.name,
     blueprint: build.blueprint,
@@ -61,7 +63,7 @@ const createInitialValues = (build?: Build): IFormValues => {
     tileable: build.metadata.tileable,
     markedInputs: build.metadata.markedInputs,
     categories: build.metadata.categories,
-    image: build.image.src,
+    image: img
   }
 }
 
