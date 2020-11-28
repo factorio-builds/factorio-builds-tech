@@ -1,7 +1,44 @@
 version: '3'
 services:
+  app:
+    environment:
+      - POSTGRES_DB=factorio-dev
+      - POSTGRES_USER=factorio
+      - POSTGRES_PASSWORD=foobar
+    env_file: .env.production
+    container_name: app
+    build: .
+    networks:
+      app-network:
+        ipv4_address: 10.5.0.10
+    ports:
+      - '3000:3000'
+
   redis:
     container_name: redis-cache
     image: redis
+    networks:
+      app-network:
+        ipv4_address: 10.5.0.20
     ports:
       - '6379:6379'
+
+  database:
+    environment:
+      - POSTGRES_DB=factorio-dev
+      - POSTGRES_USER=factorio
+      - POSTGRES_PASSWORD=foobar
+    container_name: database
+    image: postgres
+    networks:
+      app-network:
+        ipv4_address: 10.5.0.30
+    ports:
+      - '5432:5432'
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 10.5.0.0/16
