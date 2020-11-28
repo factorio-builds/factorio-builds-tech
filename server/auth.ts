@@ -39,7 +39,7 @@ export const discordStrategy = new DiscordStrategy(
   {
     clientID: process.env.DISCORD_CLIENT_ID as string,
     clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
-    callbackURL: "http://localhost:3000/auth/discord/callback",
+    callbackURL: `${process.env.APP_URL}/auth/discord/callback`,
     scope: ["identify"],
   },
   async function (_accessToken, _refreshToken, profile, cb) {

@@ -42,7 +42,9 @@ const port = process.env.PORT || 3000
     })
     server.listen(port, (err?: any) => {
       if (err) throw err
-      console.info(`> Ready on localhost:${port} - env ${process.env.NODE_ENV}`)
+      console.info(
+        `> Ready on ${process.env.APP_URL} - env ${process.env.NODE_ENV}`
+      )
     })
   } catch (e) {
     console.error(e)

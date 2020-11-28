@@ -164,7 +164,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           error: false,
         })
         axios({
-          url: `http://localhost:3000/api/${endpoint}`,
+          url: `${process.env.APP_ENDPOINT}/api/${endpoint}`,
           method: props.type === "EDIT" ? "PUT" : "POST",
           data: toFormData(values as IValidFormValues),
         })
