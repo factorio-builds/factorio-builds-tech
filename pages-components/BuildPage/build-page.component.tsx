@@ -176,7 +176,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             <SC.MainTitle>Description</SC.MainTitle>
 
             <SC.MainContent>
-              <ReactMarkdown source={build.description} />
+              {build.description ? (
+                <ReactMarkdown source={build.description} />
+              ) : (
+                <em>No description provided</em>
+              )}
               <p>ID: {build.id}</p>
             </SC.MainContent>
 
