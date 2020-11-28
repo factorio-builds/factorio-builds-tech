@@ -1,4 +1,5 @@
 using NodaTime;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -34,12 +35,14 @@ namespace FactorioTech.Web.Core.Domain
         public string? Description { get; set; }
 
         // navigation properties -> will be null if not included explicitly
+        public ICollection<Tag>? Tags { get; set; }
         public BlueprintVersion? LatestVersion { get; set; }
         public Guid? LatestVersionId { get; set; }
         public User? Owner { get; init; }
         public IEnumerable<User>? Followers { get; init; }
+        public NpgsqlTsVector? SearchVector { get; set; }
 
-        public Blueprint(Guid blueprintId, Guid ownerId, string ownerSlug, Instant createdAt, Instant updatedAt, string slug, string title, string? description)
+        public Blueprint(Guid blueprintId, Guid ownerId, string ownerSlug, Instant createdAt, Instant updatedAt, string slug, IEnumerable<Tag> tags, string title, string? description)
         {
             BlueprintId = blueprintId;
             OwnerId = ownerId;
@@ -47,6 +50,7 @@ namespace FactorioTech.Web.Core.Domain
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
             Slug = slug;
+            Tags = new HashSet<Tag>(tags);
             Title = title;
             Description = description;
         }

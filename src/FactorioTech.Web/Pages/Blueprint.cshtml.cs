@@ -24,17 +24,20 @@ namespace FactorioTech.Web.Pages
             _converter = converter;
         }
 
+        [TempData]
+        public string? StatusMessage { get; set; }
+
         public Blueprint Blueprint { get; private set; } = null!;
         public BlueprintVersion SelectedVersion { get; private set; } = null!;
         public IList<BlueprintVersion> Versions { get; private set; } = null!;
         public FactorioApi.BlueprintEnvelope Envelope { get; private set; } = null!;
 
         public PayloadCache PayloadCache { get; } = new();
-        public ImportInputModel ImportInput { get; set; } = new();
+        public ImportInputModel ImportInput { get; private set; } = new();
 
         public async Task<IActionResult> OnGetAsync(string user, string slug, string? hash)
         {
-            var query = _ctx.Blueprints.AsNoTracking()
+            var query = _ctx.Blueprints
                 .Where(bp => bp.Slug == slug.ToLowerInvariant()
                              && bp.OwnerSlug == user.ToLowerInvariant());
 
@@ -49,6 +52,9 @@ namespace FactorioTech.Web.Pages
 
             if (Blueprint == null)
                 return RedirectToPage("/NotFound");
+
+            // don't include in the initial query as this will cause a massive cross join
+            await _ctx.Entry(Blueprint).Collection(e => e.Tags).LoadAsync();
 
             Versions = await _ctx.BlueprintVersions.AsNoTracking()
                 .Where(v => v.BlueprintId == Blueprint.BlueprintId)
@@ -68,7 +74,7 @@ namespace FactorioTech.Web.Pages
 
                 if (SelectedVersion == null)
                 {
-                    // todo: add version not found error message
+                    StatusMessage = $"The version <strong>{hash}</strong> could not be found in this blueprint. Displaying the latest version.";
                     return RedirectToPage(new { user, slug, hash = (string?)null });
                 }
             }

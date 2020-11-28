@@ -48,7 +48,7 @@ namespace FactorioTech.Web.Core
                 if (!cache.TryGetValue(envelope.Blueprint, out var payload))
                 {
                     var encoded = await _converter.Encode(envelope.Blueprint);
-                    payload = new BlueprintPayload(versionId, Hash.Compute(encoded), encoded);
+                    payload = new BlueprintPayload(Hash.Compute(encoded), encoded);
                     cache.TryAdd(envelope.Blueprint, payload);
                 }
 
@@ -119,7 +119,7 @@ namespace FactorioTech.Web.Core
                 return null;
 
             var envelope = await _converter.Decode(parentPayload.Payload!.Encoded);
-            payload = await TryFindEnvelopeWithHash(parentPayload.VersionId, envelope, hash);
+            payload = await TryFindEnvelopeWithHash(envelope, hash);
             if (payload == null)
                 return null;
 
@@ -128,20 +128,21 @@ namespace FactorioTech.Web.Core
             return TryLoadImage(hash);
         }
 
-        private async Task<BlueprintPayload?> TryFindEnvelopeWithHash(Guid versionId, FactorioApi.BlueprintEnvelope envelope, Hash targetHash)
+        private async Task<BlueprintPayload?> TryFindEnvelopeWithHash(FactorioApi.BlueprintEnvelope envelope, Hash targetHash)
         {
             if (envelope.Blueprint != null)
             {
                 var encoded = await _converter.Encode(envelope.Blueprint);
-                var hash = Hash.Compute(encoded);
-                return hash == targetHash ? new BlueprintPayload(versionId, hash, encoded) : null;
+                return Hash.Compute(encoded) == targetHash
+                    ? new BlueprintPayload(targetHash, encoded)
+                    : null;
             }
 
             if (envelope.BlueprintBook?.Blueprints != null)
             {
                 foreach (var innerEnvelope in envelope.BlueprintBook.Blueprints)
                 {
-                    var result = await TryFindEnvelopeWithHash(versionId, innerEnvelope, targetHash);
+                    var result = await TryFindEnvelopeWithHash(innerEnvelope, targetHash);
                     if (result != null)
                         return result;
                 }

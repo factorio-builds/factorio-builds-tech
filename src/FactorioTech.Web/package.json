@@ -9,17 +9,21 @@
     "watch": "gulp watch"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.1",
     "bootstrap": "^4.5.3",
     "dark-bootstrap-theme": "^4.0.3",
     "jquery": "^3.5.1",
+    "jquery-ajax-unobtrusive": "^3.2.6",
     "jquery-validation": "^1.19.2",
     "jquery-validation-unobtrusive": "^3.2.11",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "selectize": "github:selectize/selectize.js"
   },
   "devDependencies": {
     "del": "^6.0.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^7.0.1",
+    "gulp-babel-minify": "^0.5.1",
     "gulp-cli": "^2.3.0",
     "gulp-csso": "^4.0.1",
     "gulp-dart-sass": "^1.0.2",

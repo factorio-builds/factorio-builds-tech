@@ -27,18 +27,18 @@ namespace FactorioTech.Web.Core.Domain
 
         // navigation properties -> will be null if not included explicitly
 
-        [Required]
         public BlueprintPayload? Payload { get; init; }
 
-        public BlueprintVersion(Guid versionId, Guid blueprintId, Instant createdAt, string? name, string? description, BlueprintPayload payload)
+        public Blueprint? Blueprint { get; init; }
+
+        public BlueprintVersion(Guid versionId, Guid blueprintId, Instant createdAt, Hash hash, string? name, string? description)
         {
             VersionId = versionId;
             BlueprintId = blueprintId;
             CreatedAt = createdAt;
-            Hash = payload.Hash;
+            Hash = hash;
             Name = name;
             Description = description;
-            Payload = payload;
         }
 
 #pragma warning disable 8618 // required for EF

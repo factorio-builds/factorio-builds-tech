@@ -23,6 +23,7 @@
                     <div class="btn-group mr-2" role="group">
                         <button type="button" class="btn btn-sm btn-default"
                                 data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                            <i class="fas fa-copy"></i>
                             Copy to clipboard
                         </button>
                     </div>
@@ -109,14 +110,14 @@
     [Parameter]
     public PayloadCache PayloadCache { get; set; } = new PayloadCache();
 
-    private BlueprintPayload payload = new BlueprintPayload(Guid.Empty, Hash.Empty, string.Empty);
+    private BlueprintPayload payload = new BlueprintPayload(Hash.Empty, string.Empty);
     private string renderingUri = string.Empty;
     private int entitiesCount;
 
     protected override async Task OnInitializedAsync()
     {
         entitiesCount = Blueprint.Entities.Count();
-        payload = await PayloadCache.EnsureInitialized(VersionId, Blueprint);
+        payload = await PayloadCache.EnsureInitialized(Blueprint);
         renderingUri = VersionId == Guid.Empty
             ? $"/api/files/blueprint/{payload.Hash}.png"
             : $"/api/files/blueprint/{VersionId}/{payload.Hash}.png";

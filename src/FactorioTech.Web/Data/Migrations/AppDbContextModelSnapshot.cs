@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 
 namespace FactorioTech.Web.Data.Migrations
 {
@@ -43,6 +44,12 @@ namespace FactorioTech.Web.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Title", "Description", "Slug" });
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -62,26 +69,23 @@ namespace FactorioTech.Web.Data.Migrations
 
                     b.HasIndex("LatestVersionId");
 
+                    b.HasIndex("SearchVector")
+                        .HasMethod("GIN");
+
                     b.ToTable("Blueprints");
                 });
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintPayload", b =>
                 {
-                    b.Property<Guid>("VersionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Hash")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<string>("Encoded")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Hash")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.HasKey("VersionId");
-
-                    b.HasAlternateKey("Hash");
+                    b.HasKey("Hash");
 
                     b.ToTable("BlueprintPayloads");
                 });
@@ -111,8 +115,6 @@ namespace FactorioTech.Web.Data.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.HasKey("VersionId");
-
-                    b.HasAlternateKey("Hash");
 
                     b.HasIndex("BlueprintId");
 
@@ -167,6 +169,20 @@ namespace FactorioTech.Web.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
+                });
+
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.Tag", b =>
+                {
+                    b.Property<Guid>("BlueprintId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(56)
+                        .HasColumnType("character varying(56)");
+
+                    b.HasKey("BlueprintId", "Value");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.User", b =>
@@ -372,7 +388,8 @@ namespace FactorioTech.Web.Data.Migrations
                 {
                     b.HasOne("FactorioTech.Web.Core.Domain.BlueprintVersion", null)
                         .WithOne("Payload")
-                        .HasForeignKey("FactorioTech.Web.Core.Domain.BlueprintPayload", "VersionId")
+                        .HasForeignKey("FactorioTech.Web.Core.Domain.BlueprintPayload", "Hash")
+                        .HasPrincipalKey("FactorioTech.Web.Core.Domain.BlueprintVersion", "Hash")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -403,6 +420,15 @@ namespace FactorioTech.Web.Data.Migrations
                     b.Navigation("Blueprint");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.Tag", b =>
+                {
+                    b.HasOne("FactorioTech.Web.Core.Domain.Blueprint", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("BlueprintId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -456,10 +482,14 @@ namespace FactorioTech.Web.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FactorioTech.Web.Core.Domain.Blueprint", b =>
+                {
+                    b.Navigation("Tags");
+                });
+
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.BlueprintVersion", b =>
                 {
-                    b.Navigation("Payload")
-                        .IsRequired();
+                    b.Navigation("Payload");
                 });
 
             modelBuilder.Entity("FactorioTech.Web.Core.Domain.User", b =>

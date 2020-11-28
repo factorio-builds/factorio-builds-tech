@@ -3,6 +3,8 @@
 
 <h1 class="display-4">Import Blueprint</h1>
 
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+
 @if (Model.BlueprintString == null)
 {
     <form method="post">
@@ -10,7 +12,7 @@
 
         <p>Paste your blueprint string in the text area below.</p>
         <div class="form-group">
-            <textarea asp-for="ImportInput.BlueprintString" class="form-control" rows="8"></textarea>
+            <textarea asp-for="ImportInput.BlueprintString" class="form-control text-monospace" rows="16"></textarea>
             <span asp-validation-for="ImportInput.BlueprintString"></span>
         </div>
         <button type="submit" class="btn btn-primary">Continue</button>
@@ -25,9 +27,9 @@ else
             <label asp-for="CreateInput.Slug"></label>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
+                    <span class="input-group-text text-monospace" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
                 </div>
-                <input asp-for="CreateInput.Slug" class="form-control" aria-describedby="slug-username-addon"
+                <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon"
                        readonly="@Model.ParentBlueprintId.HasValue" />
             </div>
             <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
@@ -40,8 +42,17 @@ else
         </div>
 
         <div class="form-group">
+            <label asp-for="CreateInput.Tags"></label>
+            <select asp-for="CreateInput.Tags" multiple="multiple" style="display:none" placeholder="Select at least one tag…"
+                    data-role="blueprint-tags" asp-items="@Model.AvailableTags">
+            </select>
+            <span asp-validation-for="CreateInput.Tags" class="text-danger"></span>
+        </div>
+
+
+        <div class="form-group">
             <label asp-for="CreateInput.Description"></label>
-            <textarea asp-for="CreateInput.Description" class="form-control" rows="8"></textarea>
+            <textarea asp-for="CreateInput.Description" class="form-control text-monospace" rows="8"></textarea>
             <span asp-validation-for="CreateInput.Description" class="text-danger"></span>
         </div>
 

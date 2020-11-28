@@ -69,7 +69,6 @@ namespace FactorioTech.Web
                 options.AccessDeniedPath = "/Account/AccessDenied";
             });
 
-            services.AddServerSideBlazor();
             services.AddRazorPages()
                 .AddSessionStateTempDataProvider();
 
@@ -78,8 +77,9 @@ namespace FactorioTech.Web
 
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
-            services.AddTransient<ImageService>();
             services.AddTransient<BlueprintConverter>();
+            services.AddTransient<ImageService>();
+            services.AddTransient<BlueprintService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

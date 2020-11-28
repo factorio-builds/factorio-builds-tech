@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 @RestController
 @RequestMapping("")
@@ -34,7 +35,7 @@ public class BlueprintController {
     }
 
     @PostMapping
-    public ResponseEntity<?> render(@RequestBody RenderRequest request) throws IOException {
+    public ResponseEntity<?> render(@RequestBody RenderRequest request, HttpServletResponse response) throws IOException {
         var options = new JSONObject();
         options.put("show-info-panels", request.showInfoPanels);
         options.put("max-width", request.maxWidth);
@@ -42,23 +43,15 @@ public class BlueprintController {
 
         var blueprint = new Blueprint(BlueprintStringData.decode(request.blueprint));
         var image = FBSR.renderBlueprint(blueprint, new TaskReporting(), options);
-        var output = writeImage(image);
+        writeImage(image, response.getOutputStream());
 
-        return ResponseEntity.ok()
-            .contentType(MediaType.IMAGE_PNG)
-            .body(output);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).build();
     }
 
-    private byte[] writeImage(BufferedImage image) throws IOException {
-        var writer = ImageIO.getImageWritersByFormatName("png").next();
-        var writeParam = writer.getDefaultWriteParam();
-
-        var output = new ByteArrayOutputStream();
-        writer.setOutput(new MemoryCacheImageOutputStream(output));
-
+    private void writeImage(BufferedImage image, OutputStream output) throws IOException {
         var outputImage = new IIOImage(image, null, null);
-        writer.write(null, outputImage, writeParam);
-
-        return output.toByteArray();
+        var writer = ImageIO.getImageWritersByFormatName("png").next();
+        writer.setOutput(new MemoryCacheImageOutputStream(output));
+        writer.write(null, outputImage, writer.getDefaultWriteParam());
     }
 }

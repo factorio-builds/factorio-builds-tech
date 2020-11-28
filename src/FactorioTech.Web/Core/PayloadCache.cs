@@ -11,7 +11,7 @@ namespace FactorioTech.Web.Core
 
     public sealed class PayloadCache : Dictionary<IEncodableBlueprint, BlueprintPayload>
     {
-        public async Task<BlueprintPayload> EnsureInitialized(Guid versionId, IEncodableBlueprint item)
+        public async Task<BlueprintPayload> EnsureInitialized(IEncodableBlueprint item)
         {
             if (TryGetValue(item, out var payload))
                 return payload;
@@ -25,7 +25,7 @@ namespace FactorioTech.Web.Core
                 _ => throw new Exception("Invalid item type"),
             };
 
-            payload = new BlueprintPayload(versionId, Hash.Compute(encoded), encoded);
+            payload = new BlueprintPayload(Hash.Compute(encoded), encoded);
             TryAdd(item, payload);
             return payload;
         }

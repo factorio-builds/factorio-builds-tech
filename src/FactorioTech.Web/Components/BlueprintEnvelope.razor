@@ -24,7 +24,8 @@ else if (Envelope.BlueprintBook != null)
                     <div class="btn-toolbar float-right" role="toolbar">
                         <div class="btn-group mr-2" role="group">
                             <button type="button" class="btn btn-sm btn-default"
-                                data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                                    data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                                <i class="fas fa-copy"></i>
                                 Copy to clipboard
                             </button>
                         </div>
@@ -32,6 +33,7 @@ else if (Envelope.BlueprintBook != null)
                             <button type="button" class="btn btn-sm btn-default"
                                     data-toggle="collapse" data-target="#collapse-book-@tempId"
                                     aria-expanded="false" aria-controls="collapse-book-@tempId">
+                                <i class="fas fa-chevron-down"></i>
                                 Expand
                             </button>
                         </div>
@@ -71,6 +73,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await PayloadCache.EnsureInitialized(VersionId, Envelope);
+        await PayloadCache.EnsureInitialized(Envelope);
     }
 }

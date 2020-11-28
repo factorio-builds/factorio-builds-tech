@@ -20,7 +20,6 @@ public class FbsrWrapperApplication {
         }
     }
 
-
     public static void main(String[] args) {
         SpringApplication.run(FbsrWrapperApplication.class, args);
     }

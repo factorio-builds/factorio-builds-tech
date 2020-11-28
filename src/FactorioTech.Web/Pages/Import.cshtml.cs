@@ -6,11 +6,13 @@ using FactorioTech.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using SluggyUnidecode;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -38,13 +40,21 @@ namespace FactorioTech.Web.Pages
             _ctx = ctx;
         }
 
-        [TempData] public string? BlueprintString { get; set; }
-        [TempData] public Guid? ParentBlueprintId { get; set; }
-        public Blueprint? ParentBlueprint { get; set; }
-        public ImportInputModel ImportInput { get; set; } = new();
-        public CreateInputModel CreateInput { get; set; } = new();
-        public FactorioApi.BlueprintEnvelope? Envelope { get; set; }
+        [TempData]
+        public string? StatusMessage { get; set; }
+
+        [TempData]
+        public string? BlueprintString { get; set; }
+
+        [TempData]
+        public Guid? ParentBlueprintId { get; set; }
+        
+        public ImportInputModel ImportInput { get; private set; } = new();
+        public CreateInputModel CreateInput { get; private set; } = new();
+        public Blueprint? ParentBlueprint { get; private set; }
+        public FactorioApi.BlueprintEnvelope? Envelope { get; private set; }
         public PayloadCache PayloadCache { get; } = new();
+        public IEnumerable<SelectListItem> AvailableTags { get; private set; } = Tags.All.Select(tag => new SelectListItem(tag, tag));
 
         public class CreateInputModel
         {
@@ -71,6 +81,10 @@ namespace FactorioTech.Web.Pages
 
             [DisplayName("Description")]
             public string? VersionDescription { get; set; }
+
+            [Required]
+            [DisplayName("Tags")]
+            public IEnumerable<string>? Tags { get; set; }
         }
 
         public void OnGet()
@@ -120,7 +134,7 @@ namespace FactorioTech.Web.Pages
                 CreateInput.VersionDescription = "The first release of this blueprint.";
             }
 
-            var payload = new BlueprintPayload(Guid.Empty, Hash.Compute(BlueprintString), BlueprintString);
+            var payload = new BlueprintPayload(Hash.Compute(BlueprintString), BlueprintString);
             PayloadCache.TryAdd(Envelope, payload);
 
             await _imageService.SaveAllBlueprintRenderings(Guid.Empty, PayloadCache, Envelope);
@@ -132,9 +146,11 @@ namespace FactorioTech.Web.Pages
 
         public async Task<IActionResult> OnPostCreateAsync([FromForm]CreateInputModel createInput)
         {
+            CreateInput = createInput;
+
             if (!ModelState.IsValid || BlueprintString == null)
             {
-                CreateInput = createInput;
+                TempData.Keep(nameof(BlueprintString));
                 return Page();
             }
 
@@ -144,15 +160,21 @@ namespace FactorioTech.Web.Pages
             var potentialDupe = await _ctx.BlueprintVersions
                 .AsNoTracking()
                 .Where(x => x.Hash == hash)
-                .Select(x => new { x.VersionId, x.BlueprintId })
+                .Select(x => new
+                {
+                    x.VersionId,
+                    x.BlueprintId,
+                    Slug = $"{x.Blueprint!.OwnerSlug}/{x.Blueprint.Slug}",
+                })
                 .FirstOrDefaultAsync();
 
             if (potentialDupe != null)
             {
-                _logger.LogWarning("Attempted to save duplicate version {VersionId} for blueprint {BlueprintId}",
-                    potentialDupe.VersionId, potentialDupe.BlueprintId);
+                _logger.LogWarning("Attempted to save duplicate payload with hash {Hash}. The hash already exists in {VersionId} of blueprint {BlueprintId}",
+                    hash, potentialDupe.VersionId, potentialDupe.BlueprintId);
 
-                // todo: add error message
+                StatusMessage = $"Error: This blueprint string has already been imported as <a href=\"/{potentialDupe.Slug}\">{potentialDupe.Slug}</a>.";
+                TempData.Keep(nameof(BlueprintString));
                 return Page();
             }
 
@@ -170,10 +192,11 @@ namespace FactorioTech.Web.Pages
 
                     if (blueprint == null)
                     {
-                        _logger.LogWarning("Attempted to add version to unknown blueprint:{BlueprintId}",
+                        _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}",
                             ParentBlueprintId);
 
-                        // todo add error message: parent blueprint not found
+                        StatusMessage = "Error: The specified blueprint does not exist.";
+                        TempData.Keep(nameof(BlueprintString));
                         return Page();
                     }
 
@@ -182,8 +205,12 @@ namespace FactorioTech.Web.Pages
                         _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
                             blueprint.BlueprintId, blueprint.OwnerId);
 
-                        // todo add error message: parent blueprint is owned by different user
-                        return Page();
+                        StatusMessage = "Error: This blueprint is not yours!";
+                        return RedirectToPage("/Blueprint", new
+                        {
+                            user = blueprint.OwnerSlug,
+                            slug = blueprint.Slug,
+                        });
                     }
 
                     blueprint.UpdatedAt = currentInstant;
@@ -197,9 +224,15 @@ namespace FactorioTech.Web.Pages
                         _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
                             User.GetUserName(), createInput.Slug);
 
-                        // todo: add error message
+                        StatusMessage = "Error: You already have a blueprint with this slug. Did you intend to add a version to that blueprint instead?";
+                        TempData.Keep(nameof(BlueprintString));
                         return Page();
                     }
+
+                    var tags = createInput.Tags?
+                            .Where(t => Tags.All.Contains(t))
+                            .Select(t => new Tag(t))
+                        ?? Enumerable.Empty<Tag>();
 
                     blueprint = new Blueprint(
                         Guid.NewGuid(),
@@ -208,16 +241,14 @@ namespace FactorioTech.Web.Pages
                         currentInstant,
                         currentInstant,
                         createInput.Slug,
+                        tags,
                         createInput.Title.Trim(),
                         createInput.Description?.Trim());
 
                     _ctx.Add(blueprint);
                 }
 
-                var payload = new BlueprintPayload(
-                    Guid.NewGuid(),
-                    hash,
-                    BlueprintString);
+                var payload = new BlueprintPayload(hash, BlueprintString);
 
                 _ctx.Add(payload);
 
@@ -225,9 +256,9 @@ namespace FactorioTech.Web.Pages
                     Guid.NewGuid(),
                     blueprint.BlueprintId,
                     currentInstant,
+                    hash,
                     createInput.VersionName?.Trim(),
-                    createInput.VersionDescription?.Trim(),
-                    payload);
+                    createInput.VersionDescription?.Trim());
 
                 _ctx.Add(version);
 
@@ -240,6 +271,10 @@ namespace FactorioTech.Web.Pages
 
                 PayloadCache.TryAdd(result, payload);
             }
+
+            StatusMessage = ParentBlueprintId == null
+                ? "The blueprint has been published."
+                : "The version has been added to the blueprint.";
 
             return RedirectToPage("./Blueprint", new
             {

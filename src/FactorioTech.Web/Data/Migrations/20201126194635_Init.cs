@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 
 namespace FactorioTech.Web.Data.Migrations
 {
@@ -169,7 +170,10 @@ namespace FactorioTech.Web.Data.Migrations
                     OwnerSlug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    LatestVersionId = table.Column<Guid>(type: "uuid", nullable: true)
+                    LatestVersionId = table.Column<Guid>(type: "uuid", nullable: true),
+                    SearchVector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: true)
+                        .Annotation("Npgsql:TsVectorConfig", "english")
+                        .Annotation("Npgsql:TsVectorProperties", new[] { "Title", "Description", "Slug" })
                 },
                 constraints: table =>
                 {
@@ -232,22 +236,38 @@ namespace FactorioTech.Web.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Value = table.Column<string>(type: "character varying(56)", maxLength: 56, nullable: false),
+                    BlueprintId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => new { x.BlueprintId, x.Value });
+                    table.ForeignKey(
+                        name: "FK_Tags_Blueprints_BlueprintId",
+                        column: x => x.BlueprintId,
+                        principalTable: "Blueprints",
+                        principalColumn: "BlueprintId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BlueprintPayloads",
                 columns: table => new
                 {
-                    VersionId = table.Column<Guid>(type: "uuid", nullable: false),
                     Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
                     Encoded = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlueprintPayloads", x => x.VersionId);
-                    table.UniqueConstraint("AK_BlueprintPayloads_Hash", x => x.Hash);
+                    table.PrimaryKey("PK_BlueprintPayloads", x => x.Hash);
                     table.ForeignKey(
-                        name: "FK_BlueprintPayloads_BlueprintVersions_VersionId",
-                        column: x => x.VersionId,
+                        name: "FK_BlueprintPayloads_BlueprintVersions_Hash",
+                        column: x => x.Hash,
                         principalTable: "BlueprintVersions",
-                        principalColumn: "VersionId",
+                        principalColumn: "Hash",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -294,6 +314,12 @@ namespace FactorioTech.Web.Data.Migrations
                 column: "LatestVersionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Blueprints_SearchVector",
+                table: "Blueprints",
+                column: "SearchVector")
+                .Annotation("Npgsql:IndexMethod", "GIN");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_BlueprintVersions_BlueprintId",
                 table: "BlueprintVersions",
                 column: "BlueprintId");
@@ -310,6 +336,13 @@ namespace FactorioTech.Web.Data.Migrations
                 principalTable: "BlueprintVersions",
                 principalColumn: "VersionId",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.Sql(@"
+                CREATE TRIGGER Blueprints_Update_SearchVector
+                BEFORE INSERT OR UPDATE
+                ON ""Blueprints"" FOR EACH ROW EXECUTE PROCEDURE
+                    tsvector_update_trigger(""SearchVector"", 'pg_catalog.english', ""Title"", ""Description"", ""Slug"");
+            ");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -342,6 +375,9 @@ namespace FactorioTech.Web.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Favorites");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

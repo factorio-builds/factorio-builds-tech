@@ -1,4 +1,5 @@
 using FactorioTech.Web.Core;
+using FactorioTech.Web.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
@@ -14,7 +15,7 @@ namespace FactorioTech.Web.Controllers
     [Route("api/files")]
     public class FileController : ControllerBase
     {
-        private const int OneWeekInSeconds = 60 * 60 * 24 * 7;
+        private const int OneMonthInSeconds = 2629800;
 
         private static readonly Regex _sanitizer = new ("[^a-zA-Z0-9_-]+", RegexOptions.Compiled);
 
@@ -31,7 +32,7 @@ namespace FactorioTech.Web.Controllers
 
         [HttpGet("blueprint/{hash}.png")]
         [HttpGet("blueprint/{versionId}/{hash}.png")]
-        [ResponseCache(Duration = OneWeekInSeconds, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetBlueprintRendering(string hash, Guid? versionId = null)
         {
             var file = await _imageService.TryLoadBlueprint(versionId, new Hash(hash));
@@ -42,7 +43,7 @@ namespace FactorioTech.Web.Controllers
         }
 
         [HttpGet("icon/{size:int}/{type}/{key}.png")]
-        [ResponseCache(Duration = OneWeekInSeconds, Location = ResponseCacheLocation.Any)]
+        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetGameIcon(int size, string type, string key)
         {
             var sanitized = _sanitizer.Replace(key, string.Empty) switch

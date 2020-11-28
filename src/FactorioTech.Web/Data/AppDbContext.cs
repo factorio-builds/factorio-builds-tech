@@ -1,4 +1,3 @@
-using FactorioTech.Web.Core;
 using FactorioTech.Web.Core.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -14,6 +13,7 @@ namespace FactorioTech.Web.Data
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
         public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
 #pragma warning disable 8618
         public AppDbContext(DbContextOptions<AppDbContext> options)
@@ -60,33 +60,47 @@ namespace FactorioTech.Web.Data
             {
                 entity.HasAlternateKey(e => new { e.OwnerId, e.Slug });
 
-                entity.HasMany<BlueprintVersion>().WithOne()
-                    .HasForeignKey(e => e.BlueprintId)
-                    .HasPrincipalKey(e => e.BlueprintId);
-
                 entity.HasOne(e => e.LatestVersion!).WithMany()
                     .HasForeignKey(e => e.LatestVersionId)
                     .HasPrincipalKey(e => e.VersionId);
+
+                entity.HasMany(e => e.Tags).WithOne()
+                    .HasForeignKey(e => e.BlueprintId)
+                    .HasPrincipalKey(e => e.BlueprintId);
+
+                entity.HasGeneratedTsVectorColumn(
+                        e => e.SearchVector,
+                        "english",
+                        e => new { e.Title, e.Description, e.Slug })
+                    .HasIndex(b => b.SearchVector)
+                    .HasMethod("GIN");
             });
 
             builder.Entity<BlueprintVersion>(entity =>
             {
                 entity.HasAlternateKey(e => e.Hash);
 
+                entity.HasOne(x => x.Blueprint!).WithMany()
+                    .HasForeignKey(e => e.BlueprintId)
+                    .HasPrincipalKey(e => e.BlueprintId);
+
                 entity.Property(e => e.Hash)
-                    .HasConversion(x => x.ToString(), e => new Hash(e));
+                    .HasConversion(e => e.ToString(), e => new Hash(e));
             });
 
             builder.Entity<BlueprintPayload>(entity =>
             {
-                entity.HasAlternateKey(e => e.Hash);
-
                 entity.Property(e => e.Hash)
-                    .HasConversion(x => x.ToString(), e => new Hash(e));
+                    .HasConversion(e => e.ToString(), e => new Hash(e));
 
                 entity.HasOne<BlueprintVersion>().WithOne(e => e.Payload!)
-                    .HasForeignKey<BlueprintPayload>(e => e.VersionId)
-                    .HasPrincipalKey<BlueprintVersion>(e => e.VersionId);
+                    .HasForeignKey<BlueprintPayload>(e => e.Hash)
+                    .HasPrincipalKey<BlueprintVersion>(e => e.Hash);
+            });
+
+            builder.Entity<Tag>(entity =>
+            {
+                entity.HasKey(e => new { e.BlueprintId, e.Value });
             });
         }
 

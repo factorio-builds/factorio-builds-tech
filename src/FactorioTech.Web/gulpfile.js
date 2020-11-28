@@ -4,19 +4,34 @@
 
 const { src, dest, watch, parallel } = require("gulp");
 const { init, write } = require("gulp-sourcemaps");
-const sass = require("gulp-dart-sass");
-const csso = require("gulp-csso");
-const rename = require("gulp-rename");
 const autoprefixer = require("gulp-autoprefixer");
+const csso = require("gulp-csso");
+const minify = require("gulp-babel-minify");
+const rename = require("gulp-rename");
+const sass = require("gulp-dart-sass");
 const del = require("del");
 
 function copyJs() {
     return src([
-            "node_modules/bootstrap/dist/js/**/*.js",
-            "node_modules/jquery/dist/**/*.js",
-            "node_modules/jquery-validation/dist/**/*.js",
-            "node_modules/jquery-validation-unobtrusive/dist/**/*.js",
+            "node_modules/bootstrap/dist/js/**/*.min.js",
+            "node_modules/jquery/dist/**/*.min.js",
+            "node_modules/jquery-validation/dist/**/*.min.js",
+            "node_modules/jquery-validation-unobtrusive/dist/**/*.min.js",
+            "node_modules/jquery-ajax-unobtrusive/dist/**/*.min.js",
+            "node_modules/selectize/dist/js/**/*.js", // todo current build is broken; doesn't contain min
         ]).pipe(dest("wwwroot/dist/js"));
+}
+
+function copyFonts() {
+    return src("node_modules/@fortawesome/fontawesome-free/webfonts/*")
+        .pipe(dest("wwwroot/dist/webfonts"));
+}
+
+function buildJs() {
+    return src("site.js")
+        .pipe(minify())
+        .pipe(rename({ suffix: ".min" }))
+        .pipe(dest("wwwroot/dist/js"));
 }
 
 function buildScss() {
@@ -34,7 +49,9 @@ exports.clean = () =>
     del(["wwwroot/dist"]);
 
 exports.build =
-    parallel(copyJs, buildScss);
+    parallel(copyJs, copyFonts, buildJs, buildScss);
 
 exports.watch = () =>
-    watch("scss/**/*.scss", buildScss);
+    watch(
+        ["scss/**/*.scss", "site.js"],
+        parallel(buildJs, buildScss));

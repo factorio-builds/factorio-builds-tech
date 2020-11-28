@@ -3,7 +3,8 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbar-user-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle" href="#" id="navbar-user-dropdown" role="button" tabindex="3"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             @(User.GetDisplayName() ?? User.GetUserName())
         </a>
         <div class="dropdown-menu" aria-labelledby="navbar-user-dropdown">
@@ -21,7 +22,9 @@
 else
 {
     <li class="nav-item">
-        <a class="nav-link" href="#" data-toggle="modal" data-target="#login-modal">Sign in or register</a>
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#login-modal" tabindex="3">
+            Sign in or register
+        </a>
     </li>
 
     <div class="modal fade" id="login-modal" tabindex="-1" 
