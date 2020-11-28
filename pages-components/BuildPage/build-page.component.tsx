@@ -176,8 +176,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             <SC.MainTitle>Description</SC.MainTitle>
 
             <SC.MainContent>
-              <ReactMarkdown source={build.description} />
-              <p>ID: {build.id}</p>
+              {build.description ? (
+                <ReactMarkdown source={build.description} />
+              ) : (
+                <em>No description provided</em>
+              )}
             </SC.MainContent>
 
             <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
