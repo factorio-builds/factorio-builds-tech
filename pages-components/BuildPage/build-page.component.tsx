@@ -181,7 +181,6 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               ) : (
                 <em>No description provided</em>
               )}
-              <p>ID: {build.id}</p>
             </SC.MainContent>
 
             <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
