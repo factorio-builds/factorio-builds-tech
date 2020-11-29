@@ -16,13 +16,17 @@
                 </a>
             </li>
             <li class="ml-auto">
-                <div class="btn-group ml-2" role="group">
-                    <button type="button" class="btn btn-sm btn-default">
-                        <i class="fas fa-heart"></i>
-                        Favorite
-                    </button>
-                    <button type="button" class="btn btn-sm btn-default" disabled>42</button>
-                </div>
+                <form method="post" asp-page-handler="Favorite" data-ajax="true" data-ajax-update="#favorites-count">
+                    <div class="btn-group ml-2" role="group">
+                        <button type="submit" class="btn btn-sm btn-default">
+                            <i class="fas fa-heart"></i>
+                            Favorite
+                        </button>
+                        <button id="favorites-count" type="button" class="btn btn-sm btn-default" disabled>@Model.Blueprint.FollowerCount</button>
+                    </div>
+                    <input type="hidden" name="BlueprintId" value="@Model.Blueprint.BlueprintId" />
+                    <input type="hidden" name="Current" value="@Model.Blueprint.FollowerCount" />
+                </form>
             </li>
             @if (SignInManager.IsSignedIn(User) && User.GetUserId() == Model.Blueprint.OwnerId)
             {
@@ -68,6 +72,7 @@
                 {
                     <text>&bull; updated @Model.Blueprint.UpdatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</text>
                 }
+                &bull; Game version: <strong>@Model.SelectedVersion.GameVersion.ToString(3)</strong>
             </small>
             @if (Model.Blueprint.Tags?.Any() == true)
             {
@@ -119,7 +124,7 @@
     </div>
 </div>
 
-<partial name="_ImportModalPartial" model="Model.ImportInput" />
+<partial name="_ImportModal" model="Model.ImportInput" />
 
 @(
     await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {

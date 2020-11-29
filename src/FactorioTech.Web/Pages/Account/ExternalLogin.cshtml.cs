@@ -1,5 +1,5 @@
-using FactorioTech.Web.Core;
-using FactorioTech.Web.Core.Domain;
+using FactorioTech.Core;
+using FactorioTech.Core.Domain;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;

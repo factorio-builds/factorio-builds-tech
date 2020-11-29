@@ -1,4 +1,4 @@
-using FactorioTech.Web.Core;
+using FactorioTech.Core;
 using NodaTime;
 using System;
 using System.Security.Claims;

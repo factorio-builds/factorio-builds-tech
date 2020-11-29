@@ -1,10 +1,12 @@
-using FactorioTech.Web.Core;
-using FactorioTech.Web.Core.Domain;
-using FactorioTech.Web.Data;
+using FactorioTech.Core;
+using FactorioTech.Core.Data;
+using FactorioTech.Core.Domain;
+using FactorioTech.Web.Extensions;
 using FactorioTech.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +33,6 @@ namespace FactorioTech.Web.Pages
         public BlueprintVersion SelectedVersion { get; private set; } = null!;
         public IList<BlueprintVersion> Versions { get; private set; } = null!;
         public FactorioApi.BlueprintEnvelope Envelope { get; private set; } = null!;
-
         public PayloadCache PayloadCache { get; } = new();
         public ImportInputModel ImportInput { get; private set; } = new();
 
@@ -90,6 +91,31 @@ namespace FactorioTech.Web.Pages
             ViewData["Title"] = $"{Blueprint.Owner!.UserName}/{Blueprint.Slug}: {Blueprint.Title}";
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostFavoriteAsync(Guid blueprintId)
+        {
+            var favorite = await _ctx.Favorites.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.BlueprintId == blueprintId && x.UserId == User.GetUserId());
+
+            if (favorite != null)
+            {
+                _ctx.Remove(favorite);
+            }
+            else
+            {
+                _ctx.Add(new Favorite
+                {
+                    BlueprintId = blueprintId,
+                    UserId = User.GetUserId(),
+                });
+            }
+
+            await _ctx.SaveChangesAsync();
+
+            var count = await _ctx.Favorites.CountAsync(x => x.BlueprintId == blueprintId);
+
+            return Partial("_PlainText", count);
         }
     }
 }

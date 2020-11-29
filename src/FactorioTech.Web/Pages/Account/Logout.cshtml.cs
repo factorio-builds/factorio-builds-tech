@@ -1,4 +1,4 @@
-using FactorioTech.Web.Core.Domain;
+using FactorioTech.Core.Domain;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

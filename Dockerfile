@@ -14,6 +14,7 @@ RUN npm install
 
 WORKDIR /app
 COPY FactorioTech.sln .
+COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
 
@@ -27,15 +28,15 @@ ARG build_sha=""
 ARG build_uri=""
 
 RUN echo "\
-namespace FactorioTech.Web { \n\
+namespace FactorioTech.Core { \n\
     public class BuildInformation { \n\
         public const string Version = \"${version}\"; \n\
         public const string Branch = \"${build_branch}\"; \n\
         public const string Sha = \"${build_sha}\"; \n\
         public const string Uri = \"${build_uri}\"; \n\
     } \n\
-}" > src/FactorioTech.Web/BuildInformation.cs \
- && cat /app/src/FactorioTech.Web/BuildInformation.cs
+}" > src/FactorioTech.Core/BuildInformation.cs \
+ && cat /app/src/FactorioTech.Core/BuildInformation.cs
 
 WORKDIR /app/src/FactorioTech.Web
 RUN dotnet publish -c Release -o /app/publish --no-restore

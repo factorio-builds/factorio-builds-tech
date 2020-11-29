@@ -1,8 +1,9 @@
-using FactorioTech.Web.Core;
-using FactorioTech.Web.Core.Domain;
+using FactorioTech.Core;
+using FactorioTech.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,9 +29,10 @@ namespace FactorioTech.Web.Pages
 
         public IEnumerable<SelectListItem> SortFieldOptions { get; } = new List<SelectListItem>
         {
-            new() { Value = "title", Text = "Title"},
-            new() { Value = "created", Text = "Created" },
+            new() { Value = "favorites", Text = "Favorites" },
             new() { Value = "updated", Text = "Updated" },
+            new() { Value = "created", Text = "Created" },
+            new() { Value = "title", Text = "Title"},
         };
 
         public IEnumerable<SelectListItem> SortDirectionOptions { get; } = new List<SelectListItem>
@@ -46,7 +48,7 @@ namespace FactorioTech.Web.Pages
             [FromQuery(Name = "sort")]string? sortCsv = null)
         {
             var sort = ParseSort(sortCsv);
-            var tags = tagsCsv?.Split(',') ?? new string[0];
+            var tags = tagsCsv?.Split(',') ?? Array.Empty<string>();
 
             Blueprints = await _blueprintService.GetBlueprints((currentPage, PageSize), sort, tags, queryStr);
 
@@ -67,10 +69,10 @@ namespace FactorioTech.Web.Pages
             Blueprints = await _blueprintService.GetBlueprints(
                 (currentPage, PageSize),
                 ParseSort(sortCsv),
-                tagsCsv?.Split(',') ?? new string[0],
+                tagsCsv?.Split(',') ?? Array.Empty<string>(),
                 queryStr);
 
-            return Partial("_BlueprintListPartial", Blueprints);
+            return Partial("_BlueprintList", Blueprints);
         }
 
         private static (string Field, string Direction) ParseSort(string? csv)

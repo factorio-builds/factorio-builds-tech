@@ -1,5 +1,5 @@
-using FactorioTech.Web.Core.Domain;
-using FactorioTech.Web.Data;
+using FactorioTech.Core.Data;
+using FactorioTech.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;

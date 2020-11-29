@@ -1,5 +1,3 @@
-@using FactorioTech.Web.Core;
-@using FactorioTech.Web.Core.Domain;
 @using Humanizer;
 @using System.Text;
 
@@ -110,7 +108,7 @@
     [Parameter]
     public PayloadCache PayloadCache { get; set; } = new PayloadCache();
 
-    private BlueprintPayload payload = new BlueprintPayload(Hash.Empty, string.Empty);
+    private BlueprintPayload payload = new BlueprintPayload(Hash.Empty, string.Empty, new Version());
     private string renderingUri = string.Empty;
     private int entitiesCount;
 

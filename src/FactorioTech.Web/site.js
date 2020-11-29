@@ -1,27 +1,6 @@
 $(() => {
     $('[data-toggle="tooltip"]').tooltip();
 
-    //$('input[data-role="blueprint-tags"]').selectize({
-    //    plugins: ['remove_button', 'restore_on_backspace'],
-    //    allowEmptyOption: false,
-    //    delimiter: ' ',
-    //    options: [],
-    //    create: function (x) {
-    //        return { value: x, text: x }
-    //    },
-    //    onInitialize: function() {
-    //        const options = this.$input.data('options');
-    //        if (options) {
-    //            const that = this;
-    //            options.split(',').forEach(function (x) {
-    //                that.addOption({ value: x, text: x });
-    //            });
-
-    //            this.blur();
-    //        }
-    //    }
-    //});
-
     $('select[data-role="blueprint-tags"]').selectize({
         plugins: ['remove_button'],
         persist: false,

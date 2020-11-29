@@ -1,6 +1,6 @@
-using FactorioTech.Web.Core;
-using FactorioTech.Web.Core.Domain;
-using FactorioTech.Web.Data;
+using FactorioTech.Core;
+using FactorioTech.Core.Data;
+using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

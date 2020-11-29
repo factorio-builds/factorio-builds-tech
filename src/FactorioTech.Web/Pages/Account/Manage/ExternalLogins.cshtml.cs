@@ -1,4 +1,4 @@
-using FactorioTech.Web.Core.Domain;
+using FactorioTech.Core.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,0 +1,12 @@
+.nav-tabs .nav-link {
+    border-bottom: 0;
+}
+
+
+#import-description-preview-content {
+    background: $input-bg;
+    border: $input-border-width solid $input-border-color;
+    border-radius: $input-border-radius;
+    padding: 0.5em 1em;
+    min-height: 8rem;
+}

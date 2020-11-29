@@ -1,5 +1,5 @@
-using FactorioTech.Web.Core;
-using FactorioTech.Web.Core.Domain;
+using FactorioTech.Core;
+using FactorioTech.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;

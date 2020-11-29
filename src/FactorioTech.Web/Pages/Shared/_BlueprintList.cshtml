@@ -1,0 +1,21 @@
+@model IEnumerable<Blueprint>
+@using Humanizer
+
+@foreach (var blueprint in Model)
+{
+    <div class="col col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="card m-1 p-1">
+            <img src="https://placekitten.com/500/500" class="card-img-top" loading="lazy" />
+            <p class="card-text text-truncate text-secondary mb-0 ml-1 mr-1">
+                <a class="stretched-link"
+                   asp-page="/Blueprint" asp-route-user="@blueprint.OwnerSlug" asp-route-slug="@blueprint.Slug" asp-route-hash="@null">
+                    @blueprint.Title
+                </a>
+            </p>
+            <small class="text-muted m-1">
+                <i class="fa fa-heart"></i> @blueprint.FollowerCount
+                <i class="fa fa-clock"></i> @blueprint.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()
+            </small>
+        </div>
+    </div>
+}

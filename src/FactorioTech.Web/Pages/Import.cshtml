@@ -48,13 +48,36 @@ else
             </select>
             <span asp-validation-for="CreateInput.Tags" class="text-danger"></span>
         </div>
-
-
+        
         <div class="form-group">
             <label asp-for="CreateInput.Description"></label>
-            <textarea asp-for="CreateInput.Description" class="form-control text-monospace" rows="8"></textarea>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="import-description-editor-tab" href="#import-description-editor-content" role="tab"
+                        data-toggle="tab" aria-controls="import-description-editor-content" aria-selected="true">
+                        Markdown
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="import-description-preview-tab" href="#import-description-preview-content" role="tab"
+                        data-toggle="tab" aria-controls="import-description-preview-content" aria-selected="false">
+                        Preview
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="import-description-editor-content" role="tabpanel"
+                        aria-labelledby="import-description-editor-tab">
+                        <textarea asp-for="CreateInput.Description" id="import-description" class="form-control text-monospace" rows="8"></textarea>
+                </div>
+                <div class="tab-pane fade" id="import-description-preview-content" role="tabpanel"
+                    aria-labelledby="import-description-preview-tab">
+                    <markdown>CreateInput.Description</markdown>
+                </div>
+            </div>
             <span asp-validation-for="CreateInput.Description" class="text-danger"></span>
         </div>
+
 
         <h2 class="border-bottom pb-2 pt-4">Version Details</h2>
 
@@ -104,5 +127,19 @@ else
 }
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScripts" />
+
+    <script>
+        $(() => {
+            $('a[data-toggle="tab"]').on('shown.bs.tab', e => {
+                const tab = $(e.target).attr('aria-controls');
+                if (tab === 'import-description-preview-content') {
+                    $('#import-description-preview-content').load('/import?handler=preview', {
+                        "content": $('#import-description').val(),
+                        "__RequestVerificationToken": $('input[name="__RequestVerificationToken"').val()
+                    });
+                }
+            });
+        });
+    </script>
 }
