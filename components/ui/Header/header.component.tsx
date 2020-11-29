@@ -3,6 +3,7 @@ import { useSelector } from "react-redux"
 import Link from "next/link"
 import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
+import UserDropdown from "../UserDropdown"
 import * as SC from "./header.styles"
 
 function Header(): JSX.Element {
@@ -26,13 +27,7 @@ function Header(): JSX.Element {
             </Link>
           )}
 
-          {user && (
-            <Link href="/logout">
-              <SC.InnerLink>Logout</SC.InnerLink>
-            </Link>
-          )}
-
-          {user && <span>{user.name}</span>}
+          {user && <UserDropdown user={user} />}
         </SC.StyledStacker>
       </Container>
     </SC.HeaderWrapper>
