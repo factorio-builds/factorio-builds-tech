@@ -150,6 +150,14 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                 {state.name}
               </MetadataWithIcon>
             </AsideGroup>
+            <AsideGroup title="Extra">
+              <SC.AsideSubGroup>
+                Inputs are marked: {build.metadata.markedInputs ? "yes" : "no"}
+              </SC.AsideSubGroup>
+              <SC.AsideSubGroup>
+                Tileable: {build.metadata.tileable ? "yes" : "no"}
+              </SC.AsideSubGroup>
+            </AsideGroup>
             {!isBook(build.json) && (
               <AsideGroup title="Required items">
                 {sortedRequiredItems.map((item) => {
