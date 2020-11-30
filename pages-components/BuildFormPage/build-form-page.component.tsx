@@ -157,14 +157,15 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     <Formik<IFormValues>
       initialValues={initialValues}
       onSubmit={(values) => {
-        const endpoint =
-          props.type === "EDIT" ? `build/${props.build.id}` : `build`
         setSubmit({
           loading: true,
           error: false,
         })
         axios({
-          url: `${process.env.APP_URL}/api/${endpoint}`,
+          url:
+            props.type === "EDIT"
+              ? `/api/build/${props.build.id}`
+              : "/api/build",
           method: props.type === "EDIT" ? "PUT" : "POST",
           data: toFormData(values as IValidFormValues),
         })
