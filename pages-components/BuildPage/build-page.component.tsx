@@ -6,6 +6,7 @@ import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
 import BuildSubheader from "../../components/ui/BuildSubheader"
 import Layout from "../../components/ui/Layout"
+import Stacker from "../../components/ui/Stacker"
 import { Build } from "../../db/entities/build.entity"
 import { useCategories } from "../../hooks/useCategories"
 import { useGameStates } from "../../hooks/useGameStates"
@@ -181,52 +182,54 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             )}
           </SC.Aside>
           <SC.Main>
-            <SC.MainTitle>Description</SC.MainTitle>
+            <Stacker gutter={8}>
+              <SC.MainTitle>Description</SC.MainTitle>
 
-            <SC.MainContent>
-              {build.description ? (
-                <ReactMarkdown source={build.description} />
-              ) : (
-                <em>No description provided</em>
+              <SC.MainContent>
+                {build.description ? (
+                  <ReactMarkdown source={build.description} />
+                ) : (
+                  <em>No description provided</em>
+                )}
+              </SC.MainContent>
+
+              <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
+                expand blueprint <Caret inverted={blueprintExpanded} />
+              </SC.ExpandBlueprint>
+
+              {blueprintExpanded && (
+                <SC.Blueprint>
+                  <SC.TogglerWrapper>
+                    <SC.Toggler
+                      className={cx({
+                        "is-selected": blueprintFormat === "base64",
+                      })}
+                      onClick={() => setBlueprintFormat("base64")}
+                    >
+                      base64
+                    </SC.Toggler>
+                    <SC.Toggler
+                      className={cx({
+                        "is-selected": blueprintFormat === "json",
+                      })}
+                      onClick={() => setBlueprintFormat("json")}
+                    >
+                      json
+                    </SC.Toggler>
+                  </SC.TogglerWrapper>
+                  <SC.BlueprintData
+                    value={
+                      blueprintFormat === "json"
+                        ? JSON.stringify(build.json, null, 1)
+                        : build.blueprint
+                    }
+                    rows={5}
+                    readOnly
+                    onClick={(e) => e.currentTarget.select()}
+                  />
+                </SC.Blueprint>
               )}
-            </SC.MainContent>
-
-            <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
-              expand blueprint <Caret inverted={blueprintExpanded} />
-            </SC.ExpandBlueprint>
-
-            {blueprintExpanded && (
-              <SC.Blueprint>
-                <SC.TogglerWrapper>
-                  <SC.Toggler
-                    className={cx({
-                      "is-selected": blueprintFormat === "base64",
-                    })}
-                    onClick={() => setBlueprintFormat("base64")}
-                  >
-                    base64
-                  </SC.Toggler>
-                  <SC.Toggler
-                    className={cx({
-                      "is-selected": blueprintFormat === "json",
-                    })}
-                    onClick={() => setBlueprintFormat("json")}
-                  >
-                    json
-                  </SC.Toggler>
-                </SC.TogglerWrapper>
-                <SC.BlueprintData
-                  value={
-                    blueprintFormat === "json"
-                      ? JSON.stringify(build.json, null, 1)
-                      : build.blueprint
-                  }
-                  rows={5}
-                  readOnly
-                  onClick={(e) => e.currentTarget.select()}
-                />
-              </SC.Blueprint>
-            )}
+            </Stacker>
           </SC.Main>
         </SC.Content>
       </SC.Wrapper>

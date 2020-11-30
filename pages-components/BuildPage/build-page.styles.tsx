@@ -78,7 +78,7 @@ export const Main = styled.main`
 
 export const MainTitle = styled.h3`
   ${getTypo(ETypo.PAGE_SUBTITLE)};
-  margin-top: 0;
+  margin: 0;
 `
 
 export const MainContent = styled.div`
@@ -100,6 +100,7 @@ export const ExpandBlueprint = styled.button`
   border: none;
   color: ${COLOR.LINK};
   padding: 0;
+  align-self: flex-start;
 `
 
 export const Blueprint = styled.div`
