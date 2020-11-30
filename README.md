@@ -25,7 +25,32 @@ This project aims to be a website and tool to share and browse [blueprints](http
   https://classic.yarnpkg.com/lang/en/
 - Docker<br />
   https://www.docker.com/products/docker-desktop
+- Discord develoepr account and application<br />
+  https://discord.com/developers/applications
+- AWS account (or credentials provided by us)
 
 ### Get started
 
-Incoming
+From the terminal, in the checked out directory:
+
+- Duplicate the env file<br />
+  `cp .env.example .env`
+- Fill `.env` file with your AWS and Discord credentials<br />
+  `AWS_S3_BUCKET=""`<br />
+  `AWS_ACCESS_KEY_ID=""`<br />
+  `AWS_SECRET_ACCESS_KEY=""`<br />
+  `DISCORD_CLIENT_ID=""`<br />
+  `DISCORD_CLIENT_SECRET=""`
+- Install dependencies<br />
+  `yarn`
+- Start Docker<br />
+  `docker-compose -f docker-compose.yml up`
+- Index the search engine<br />
+  `yarn search:index`
+- Migrate/seed the database<br />
+  `yarn typeorm schema:sync`<br />
+  `yarn db:seed:run`
+- Start the dev server<br />
+  `yarn dev`
+
+Having problems with setting up the project? Open an issue!
