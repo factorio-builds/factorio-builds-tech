@@ -95,6 +95,7 @@ export const MainContent = styled.div`
 
 export const ExpandBlueprint = styled.button`
   ${getTypo(ETypo.BUTTON)};
+  cursor: pointer;
   background: none;
   border: none;
   color: ${COLOR.LINK};
