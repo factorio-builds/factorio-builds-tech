@@ -1,7 +1,19 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "plugins": ["react", "@typescript-eslint", "prettier", "jsx-a11y", "import"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -12,8 +24,17 @@
     "prettier/@typescript-eslint"
   ],
   "rules": {
+    "@typescript-eslint/ban-ts-comment": 1,
     "react/prop-types": 0,
     "react/react-in-jsx-scope": 0,
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"],
+        "specialLink": ["hrefLeft", "hrefRight"],
+        "aspects": ["invalidHref", "preferButton"]
+      }
+    ],
     "import/order": [
       2,
       {

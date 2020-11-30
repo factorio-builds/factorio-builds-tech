@@ -8,7 +8,7 @@ interface IUsersIndexPage {
   users: User[]
 }
 
-const UsersIndexPage = ({ users }: IUsersIndexPage) => (
+const UsersIndexPage = ({ users }: IUsersIndexPage): JSX.Element => (
   <Layout title="Users">
     <h1>Users List</h1>
     <p>You are currently on: /users</p>
