@@ -1,16 +1,18 @@
-import React, { useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
 import BuildSubheader from "../../components/ui/BuildSubheader"
+import Button from "../../components/ui/Button"
 import Layout from "../../components/ui/Layout"
 import Stacker from "../../components/ui/Stacker"
 import { Build } from "../../db/entities/build.entity"
 import { useCategories } from "../../hooks/useCategories"
 import { useGameStates } from "../../hooks/useGameStates"
 import Caret from "../../icons/caret"
+import Copy from "../../icons/copy"
 import { IStoreState } from "../../redux/store"
 import { ERole } from "../../types"
 import { getCountPerItem, isBook } from "../../utils/blueprint"
@@ -95,6 +97,10 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       })
   }, [itemsCount])
 
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(build.blueprint)
+  }, [build.blueprint])
+
   const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.id === user?.id
   const state = getGameState(build.metadata.state)
@@ -112,6 +118,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Content>
           <SC.Aside>
+            <SC.CopyClipboardWrapper>
+              <Button variant="alt" onClick={copyToClipboard}>
+                <Copy /> copy to clipboard
+              </Button>
+            </SC.CopyClipboardWrapper>
             {(isAdmin || ownedByMe) && (
               <AsideGroup>
                 <Link href={`/build/${build.id}/edit`}>

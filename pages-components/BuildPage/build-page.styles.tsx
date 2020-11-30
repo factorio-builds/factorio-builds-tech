@@ -27,6 +27,10 @@ export const Aside = styled.aside`
   flex: 0 0 250px;
 `
 
+export const CopyClipboardWrapper = styled.div`
+  margin-bottom: 16px;
+`
+
 export const AsideGroup = styled.section`
   & + & {
     margin-top: 8px;

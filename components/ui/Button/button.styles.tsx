@@ -5,11 +5,17 @@ import { ETypo } from "../../../design/tokens/typo"
 export const ButtonWrapper = styled.button`
   ${getTypo(ETypo.BUTTON)};
   display: flex;
+  align-items: center;
   padding: 9px 13px;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+
+  img,
+  svg {
+    margin-right: 8px;
+  }
 
   &[disabled] {
     pointer-events: none;
@@ -27,5 +33,13 @@ export const ButtonWrapper = styled.button`
 
   &.variant-success:hover {
     background: linear-gradient(#47b34c, #2b592d);
+  }
+
+  &.variant-alt {
+    background: linear-gradient(#2ca0ba, #246b7a);
+  }
+
+  &.variant-alt:hover {
+    background: linear-gradient(#25879d, #1f5d6a);
   }
 `
