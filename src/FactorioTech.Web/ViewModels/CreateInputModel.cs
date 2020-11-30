@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -6,6 +7,16 @@ namespace FactorioTech.Web.ViewModels
 {
     public class CreateInputModel
     {
+        public class ImageData
+        {
+            public IFormFile? Uploaded { get; set; }
+            public string? Hash { get; set; }
+            public int X { get; set; }
+            public int Y { get; set; }
+            public int W { get; set; }
+            public int H { get; set; }
+        }
+
         [Required]
         [StringLength(100, MinimumLength = 3)]
         [RegularExpression("[a-z0-9_-]+",
@@ -22,7 +33,7 @@ namespace FactorioTech.Web.ViewModels
         public string Title { get; set; } = string.Empty;
 
         public string? Description { get; set; }
-            
+
         [DisplayName("Version name or number")]
         [StringLength(100, MinimumLength = 2)]
         public string? VersionName { get; set; }
@@ -31,7 +42,8 @@ namespace FactorioTech.Web.ViewModels
         public string? VersionDescription { get; set; }
 
         [Required]
-        [DisplayName("Tags")]
         public IEnumerable<string>? Tags { get; set; }
+
+        public ImageData Image { get; set; } = new();
     }
 }

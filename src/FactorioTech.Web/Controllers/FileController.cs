@@ -12,12 +12,11 @@ using System.Threading.Tasks;
 namespace FactorioTech.Web.Controllers
 {
     [ApiController]
-    [Route("api/files")]
+    [Route("files")]
     public class FileController : ControllerBase
     {
+        private const int OneDayInSeconds = 86400;
         private const int OneMonthInSeconds = 2629800;
-
-        private static readonly Regex _sanitizer = new ("[^a-zA-Z0-9_-]+", RegexOptions.Compiled);
 
         private readonly AppConfig _appConfig;
         private readonly ImageService _imageService;
@@ -30,29 +29,41 @@ namespace FactorioTech.Web.Controllers
             _imageService = imageService;
         }
 
-        [HttpGet("blueprint/{hash}.png")]
-        [HttpGet("blueprint/{versionId}/{hash}.png")]
+        [HttpGet("cover/{blueprintId}")]
+        [ResponseCache(Duration = OneDayInSeconds, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> GetBlueprintCover(Guid blueprintId)
+        {
+            var (file, format) = await _imageService.TryLoadCover(blueprintId);
+            if (file == null)
+                return NotFound();
+
+            return File(file, format);
+        }
+
+        [HttpGet("rendering/{hash}.png")]
+        [HttpGet("rendering/{versionId}/{hash}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetBlueprintRendering(string hash, Guid? versionId = null)
         {
-            var file = await _imageService.TryLoadBlueprint(versionId, new Hash(hash));
-            if (file != null)
-                return new FileStreamResult(file, "image/png");
+            var file = await _imageService.TryLoadRendering(versionId, new Hash(hash));
+            if (file == null)
+                return NotFound();
 
-            return NotFound();
+            return File(file, "image/png");
         }
 
         [HttpGet("icon/{size:int}/{type}/{key}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetGameIcon(int size, string type, string key)
         {
-            var sanitized = _sanitizer.Replace(key, string.Empty) switch
-            {
-                "heat-exchanger" => "heat-boiler",
-                "stone-wall" => "wall",
-                "straight-rail" => "rail",
-                { } s => s,
-            };
+            var sanitized = Regex.Replace(key, "[^a-zA-Z0-9_-]+", string.Empty, RegexOptions.Compiled)
+                switch
+                {
+                    "heat-exchanger" => "heat-boiler",
+                    "stone-wall" => "wall",
+                    "straight-rail" => "rail",
+                    { } s => s,
+                };
 
             var fileName = type switch
             {

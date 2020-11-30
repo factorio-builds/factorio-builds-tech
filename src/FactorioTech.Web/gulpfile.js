@@ -18,8 +18,20 @@ function copyJs() {
             "node_modules/jquery-validation/dist/**/*.min.js",
             "node_modules/jquery-validation-unobtrusive/dist/**/*.min.js",
             "node_modules/jquery-ajax-unobtrusive/dist/**/*.min.js",
+            "node_modules/cropperjs/dist/**/*.min.js",
             "node_modules/selectize/dist/js/**/*.js", // todo current build is broken; doesn't contain min
-        ]).pipe(dest("wwwroot/dist/js"));
+        ])
+        .pipe(dest("wwwroot/dist/js"));
+}
+
+function copyAce() {
+    return src([
+            "node_modules/ace-builds/src-min/ace.js",
+            "node_modules/ace-builds/src-min/mode-markdown.js",
+            "node_modules/ace-builds/src-min/theme-twilight.js"
+        ])
+        .pipe(rename({ suffix: ".min" }))
+        .pipe(dest("wwwroot/dist/js"));
 }
 
 function copyFonts() {
@@ -49,7 +61,7 @@ exports.clean = () =>
     del(["wwwroot/dist"]);
 
 exports.build =
-    parallel(copyJs, copyFonts, buildJs, buildScss);
+    parallel(copyJs, copyAce, copyFonts, buildJs, buildScss);
 
 exports.watch = () =>
     watch(

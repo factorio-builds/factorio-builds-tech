@@ -44,8 +44,8 @@ namespace FactorioTech.Core
             var response = await _httpClient.PostAsJsonAsync(_appConfig.FbsrWrapperUri, new RenderRequest
             {
                 Blueprint = blueprint,
-                MaxWidth = 1110,
-                MaxHeight = 1440,
+                MaxWidth = AppConfig.Rendering.MaxWidth,
+                MaxHeight = AppConfig.Rendering.MaxHeight,
                 ShowInfoPanels = false,
             }, _options);
 

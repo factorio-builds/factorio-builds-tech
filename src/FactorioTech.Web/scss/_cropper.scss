@@ -1,0 +1,11 @@
+/*$cropper-image-path: '../images' !default;*/
+@import "node_modules/cropperjs/src/css/cropper";
+
+#blueprint-image-cropper {
+    display: block;
+    max-width: 100%;
+}
+
+#blueprint-image-selected {
+    cursor: pointer;
+}

@@ -90,6 +90,11 @@ namespace FactorioTech.Web.Pages
                 ParentBlueprintId = ParentBlueprint?.BlueprintId;
             }
 
+            var payload = new BlueprintPayload(Hash.Compute(BlueprintString), BlueprintString, new Version());
+            PayloadCache.TryAdd(Envelope, payload);
+
+            await _imageService.SaveAllBlueprintRenderings(Guid.Empty, PayloadCache, Envelope);
+
             CreateInput = new CreateInputModel
             {
                 Slug = ParentBlueprint?.Slug ?? Envelope.Label?.ToSlug() ?? string.Empty,
@@ -101,12 +106,8 @@ namespace FactorioTech.Web.Pages
             {
                 CreateInput.VersionName = "v1.0";
                 CreateInput.VersionDescription = "The first release of this blueprint.";
+                CreateInput.Image.Hash = PayloadCache.First(kvp => kvp.Key is FactorioApi.Blueprint).Value.Hash.ToString();
             }
-
-            var payload = new BlueprintPayload(Hash.Compute(BlueprintString), BlueprintString, new Version());
-            PayloadCache.TryAdd(Envelope, payload);
-
-            await _imageService.SaveAllBlueprintRenderings(Guid.Empty, PayloadCache, Envelope);
 
             TempData.Keep(nameof(BlueprintString));
 
@@ -119,6 +120,15 @@ namespace FactorioTech.Web.Pages
 
             if (!ModelState.IsValid || BlueprintString == null)
             {
+                TempData.Keep(nameof(BlueprintString));
+                return Page();
+            }
+
+            if (ParentBlueprintId != null
+                && createInput.Image.Uploaded == null
+                && createInput.Image.Hash == null)
+            {
+                StatusMessage = "Error: You must select a blueprint rendering as blueprint image or upload a new image.";
                 TempData.Keep(nameof(BlueprintString));
                 return Page();
             }
@@ -144,6 +154,21 @@ namespace FactorioTech.Web.Pages
                     StatusMessage = ParentBlueprintId == null
                         ? "The blueprint has been published."
                         : "The version has been added to the blueprint.";
+
+                    if (createInput.Image.Uploaded != null)
+                    {
+                        await _imageService.SaveCroppedCover(
+                            success.Blueprint.BlueprintId,
+                            createInput.Image.Uploaded.OpenReadStream(),
+                            (createInput.Image.X, createInput.Image.Y, createInput.Image.W, createInput.Image.H));
+                    }
+                    else if (createInput.Image.Hash != null)
+                    {
+                        await _imageService.SaveCroppedCover(
+                            success.Blueprint.BlueprintId,
+                            success.Blueprint.LatestVersionId!.Value, Hash.Parse(createInput.Image.Hash),
+                            (createInput.Image.X, createInput.Image.Y, createInput.Image.W, createInput.Image.H));
+                    }
 
                     return RedirectToPage("./Blueprint", new
                     {

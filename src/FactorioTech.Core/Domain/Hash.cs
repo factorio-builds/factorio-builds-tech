@@ -1,6 +1,8 @@
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FactorioTech.Core.Domain
 {
@@ -11,6 +13,11 @@ namespace FactorioTech.Core.Domain
         public Hash(string value) => _value = value;
 
         public static Hash Empty => new(string.Empty);
+
+        public static Hash Parse(string value) =>
+            Regex.IsMatch(value, "^[a-f0-9]{32}$", RegexOptions.Compiled)
+                ? new Hash(value)
+                : throw new ArgumentOutOfRangeException(nameof(value), "The provided input is not a valid hash.");
 
         public static Hash Compute(string input) =>
             new(string.Join(string.Empty, MD5.Create()
