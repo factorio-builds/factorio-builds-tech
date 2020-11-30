@@ -1,15 +1,18 @@
-import React, { useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import ReactMarkdown from "react-markdown"
 import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Link from "next/link"
 import BuildSubheader from "../../components/ui/BuildSubheader"
+import Button from "../../components/ui/Button"
 import Layout from "../../components/ui/Layout"
+import Stacker from "../../components/ui/Stacker"
 import { Build } from "../../db/entities/build.entity"
 import { useCategories } from "../../hooks/useCategories"
 import { useGameStates } from "../../hooks/useGameStates"
 import Caret from "../../icons/caret"
+import Copy from "../../icons/copy"
 import { IStoreState } from "../../redux/store"
 import { ERole } from "../../types"
 import { getCountPerItem, isBook } from "../../utils/blueprint"
@@ -94,6 +97,10 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       })
   }, [itemsCount])
 
+  const copyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(build.blueprint)
+  }, [build.blueprint])
+
   const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.id === user?.id
   const state = getGameState(build.metadata.state)
@@ -111,6 +118,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <SC.Wrapper>
         <SC.Content>
           <SC.Aside>
+            <SC.CopyClipboardWrapper>
+              <Button variant="alt" onClick={copyToClipboard}>
+                <Copy /> copy to clipboard
+              </Button>
+            </SC.CopyClipboardWrapper>
             {(isAdmin || ownedByMe) && (
               <AsideGroup>
                 <Link href={`/build/${build.id}/edit`}>
@@ -150,6 +162,14 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                 {state.name}
               </MetadataWithIcon>
             </AsideGroup>
+            <AsideGroup title="Extra">
+              <SC.AsideSubGroup>
+                Inputs are marked: {build.metadata.markedInputs ? "yes" : "no"}
+              </SC.AsideSubGroup>
+              <SC.AsideSubGroup>
+                Tileable: {build.metadata.tileable ? "yes" : "no"}
+              </SC.AsideSubGroup>
+            </AsideGroup>
             {!isBook(build.json) && (
               <AsideGroup title="Required items">
                 {sortedRequiredItems.map((item) => {
@@ -173,52 +193,54 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             )}
           </SC.Aside>
           <SC.Main>
-            <SC.MainTitle>Description</SC.MainTitle>
+            <Stacker gutter={8}>
+              <SC.MainTitle>Description</SC.MainTitle>
 
-            <SC.MainContent>
-              {build.description ? (
-                <ReactMarkdown source={build.description} />
-              ) : (
-                <em>No description provided</em>
+              <SC.MainContent>
+                {build.description ? (
+                  <ReactMarkdown source={build.description} />
+                ) : (
+                  <em>No description provided</em>
+                )}
+              </SC.MainContent>
+
+              <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
+                expand blueprint <Caret inverted={blueprintExpanded} />
+              </SC.ExpandBlueprint>
+
+              {blueprintExpanded && (
+                <SC.Blueprint>
+                  <SC.TogglerWrapper>
+                    <SC.Toggler
+                      className={cx({
+                        "is-selected": blueprintFormat === "base64",
+                      })}
+                      onClick={() => setBlueprintFormat("base64")}
+                    >
+                      base64
+                    </SC.Toggler>
+                    <SC.Toggler
+                      className={cx({
+                        "is-selected": blueprintFormat === "json",
+                      })}
+                      onClick={() => setBlueprintFormat("json")}
+                    >
+                      json
+                    </SC.Toggler>
+                  </SC.TogglerWrapper>
+                  <SC.BlueprintData
+                    value={
+                      blueprintFormat === "json"
+                        ? JSON.stringify(build.json, null, 1)
+                        : build.blueprint
+                    }
+                    rows={5}
+                    readOnly
+                    onClick={(e) => e.currentTarget.select()}
+                  />
+                </SC.Blueprint>
               )}
-            </SC.MainContent>
-
-            <SC.ExpandBlueprint onClick={toggleExpandBlueprint}>
-              expand blueprint <Caret inverted={blueprintExpanded} />
-            </SC.ExpandBlueprint>
-
-            {blueprintExpanded && (
-              <SC.Blueprint>
-                <SC.TogglerWrapper>
-                  <SC.Toggler
-                    className={cx({
-                      "is-selected": blueprintFormat === "base64",
-                    })}
-                    onClick={() => setBlueprintFormat("base64")}
-                  >
-                    base64
-                  </SC.Toggler>
-                  <SC.Toggler
-                    className={cx({
-                      "is-selected": blueprintFormat === "json",
-                    })}
-                    onClick={() => setBlueprintFormat("json")}
-                  >
-                    json
-                  </SC.Toggler>
-                </SC.TogglerWrapper>
-                <SC.BlueprintData
-                  value={
-                    blueprintFormat === "json"
-                      ? JSON.stringify(build.json, null, 1)
-                      : build.blueprint
-                  }
-                  rows={5}
-                  readOnly
-                  onClick={(e) => e.currentTarget.select()}
-                />
-              </SC.Blueprint>
-            )}
+            </Stacker>
           </SC.Main>
         </SC.Content>
       </SC.Wrapper>

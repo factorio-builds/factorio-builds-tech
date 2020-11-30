@@ -27,6 +27,10 @@ export const Aside = styled.aside`
   flex: 0 0 250px;
 `
 
+export const CopyClipboardWrapper = styled.div`
+  margin-bottom: 16px;
+`
+
 export const AsideGroup = styled.section`
   & + & {
     margin-top: 8px;
@@ -78,7 +82,7 @@ export const Main = styled.main`
 
 export const MainTitle = styled.h3`
   ${getTypo(ETypo.PAGE_SUBTITLE)};
-  margin-top: 0;
+  margin: 0;
 `
 
 export const MainContent = styled.div`
@@ -95,10 +99,12 @@ export const MainContent = styled.div`
 
 export const ExpandBlueprint = styled.button`
   ${getTypo(ETypo.BUTTON)};
+  cursor: pointer;
   background: none;
   border: none;
   color: ${COLOR.LINK};
   padding: 0;
+  align-self: flex-start;
 `
 
 export const Blueprint = styled.div`

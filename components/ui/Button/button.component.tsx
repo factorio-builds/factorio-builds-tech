@@ -2,7 +2,7 @@ import React from "react"
 import * as SC from "./button.styles"
 
 interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
-  variant?: "success" | "default"
+  variant?: "success" | "alt" | "default"
 }
 
 const Button: React.FC<IButtonProps> = ({
