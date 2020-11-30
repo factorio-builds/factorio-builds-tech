@@ -8,7 +8,7 @@ interface IUsersPageProps {
   errors?: string
 }
 
-const UsersPage = ({ user, errors }: IUsersPageProps) => {
+const UsersPage = ({ user, errors }: IUsersPageProps): JSX.Element => {
   if (errors || !user) {
     return (
       <Layout title="Error">

@@ -44,12 +44,12 @@ export function isValidBlueprint(blueprintString: string): boolean {
   }
 }
 
-export function getCountPerItem(blueprint: IBlueprint) {
+export function getCountPerItem(blueprint: IBlueprint): Record<string, number> {
   return blueprint.entities.reduce((acc, curr) => {
     const count = acc[curr.name] || 0
     return {
       ...acc,
       [curr.name]: count + 1,
     }
-  }, {} as { [name: string]: number })
+  }, {} as Record<string, number>)
 }
