@@ -1,0 +1,28 @@
+replicaCount: 2
+
+image:
+  repository: traefik/whoami
+  pullPolicy: IfNotPresent
+  tag: latest
+
+postgres:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: latest
+  diskName: factorio-tech-postgres
+  diskURI: /subscriptions/86a2bd69-00a4-460d-9fda-b2850d41137f/resourceGroups/factorio-tech/providers/Microsoft.Compute/disks/factorio-tech-postgres
+
+imagePullSecrets: []
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+serviceAccount: {}

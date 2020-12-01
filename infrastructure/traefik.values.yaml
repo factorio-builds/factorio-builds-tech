@@ -1,0 +1,29 @@
+additionalArguments:
+  - --certificatesresolvers.letsencrypt.acme.email=hello@factorio.tech
+  - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
+  - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
+  # - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+
+persistence:
+  enabled: true
+  storageClass: default
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+
+ports:
+  web:
+    redirectTo: websecure
+  websecure:
+    tls:
+      enabled: true
+      certResolver: letsencrypt
+
+# see https://github.com/traefik/traefik/issues/6972
+initContainers:
+  - name: volume-permissions
+    image: busybox:1.31.1
+    command: ["sh", "-c", "chmod -Rv 600 /data/*"]
+    volumeMounts:
+      - name: data
+        mountPath: /data
