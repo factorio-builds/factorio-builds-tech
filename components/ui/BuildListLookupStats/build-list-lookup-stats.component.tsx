@@ -18,7 +18,6 @@ const BuildListLookupStats: React.FC<IBuildListLookupStatProps> = ({
       <SC.Count>
         Displaying {count} out of {totalCount} builds
       </SC.Count>
-      <SC.SortedBy>Sorted by relevancy</SC.SortedBy>
     </SC.BuildListLookupStatWrapper>
   )
 }
