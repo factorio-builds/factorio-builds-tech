@@ -4,7 +4,6 @@ import { Build } from "../db/entities/build.entity"
 import { BuildRepository } from "../db/repository/build.repository"
 import BuildListPage from "../pages-components/BuildListPage"
 import { wrapper } from "../redux/store"
-import { decodeBlueprint, isBook } from "../utils/blueprint"
 
 const IndexPage: NextPage = () => {
   return <BuildListPage />
@@ -22,18 +21,9 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
 
     const deserializedBuilds: Build[] = JSON.parse(JSON.stringify(builds))
 
-    // temp until part of data structure/metadata
-    const tempBuilds = deserializedBuilds.map((build) => {
-      const decodedBlueprint = decodeBlueprint(build.blueprint)
-      return {
-        ...build,
-        isBook: isBook(decodedBlueprint),
-      }
-    })
-
     ctx.store.dispatch({
       type: "SET_BUILDS",
-      payload: tempBuilds,
+      payload: deserializedBuilds,
     })
 
     return { props: {} }

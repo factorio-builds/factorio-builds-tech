@@ -31,6 +31,7 @@ export interface IMetadata {
   state: EState
   categories: ECategory[]
   markedInputs: boolean
+  isBook: boolean
 }
 
 export interface IImage {
