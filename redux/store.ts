@@ -1,5 +1,11 @@
 import { createWrapper, HYDRATE, MakeStore } from "next-redux-wrapper"
-import { createStore, applyMiddleware, Action, combineReducers } from "redux"
+import {
+  createStore,
+  applyMiddleware,
+  Action,
+  combineReducers,
+  Reducer,
+} from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import reducers from "./reducer"
 import { IStoreAuthState, TAuthAction } from "./reducers/auth"
@@ -25,7 +31,7 @@ export const makeStore: MakeStore<IStoreState, TAction> = () => {
     ...reducers,
   })
 
-  const reducer = (state: IStoreState, action: TAction): IStoreState => {
+  const reducer: Reducer<IStoreState, TAction> = (state, action) => {
     if (action.type === HYDRATE) {
       const nextState: IStoreState = {
         ...state, // use previous state
@@ -37,7 +43,6 @@ export const makeStore: MakeStore<IStoreState, TAction> = () => {
     }
   }
 
-  // @ts-ignore
   const store = createStore(reducer, composeWithDevTools(applyMiddleware()))
 
   // @ts-ignore
