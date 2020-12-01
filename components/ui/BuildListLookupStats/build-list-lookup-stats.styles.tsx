@@ -15,8 +15,3 @@ export const LookupTime = styled.div`
 export const Count = styled.div`
   color: ${COLOR.PURPLE700};
 `
-
-export const SortedBy = styled.div`
-  ${getTypo(ETypo.METADATA)};
-  color: ${COLOR.PURPLE700};
-`

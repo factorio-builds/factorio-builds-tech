@@ -6,6 +6,12 @@ export enum EFilterType {
   "CATEGORY",
 }
 
+export enum ESortType {
+  "RELEVANCY" = "RELEVANCY",
+  "VIEWS" = "VIEWS",
+  "NEWEST" = "NEWEST",
+}
+
 export enum EState {
   "EARLY_GAME" = "EARLY_GAME",
   "MID_GAME" = "MID_GAME",
