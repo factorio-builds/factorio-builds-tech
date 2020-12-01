@@ -2,6 +2,14 @@ import styled from "styled-components"
 import { COLS, GUTTER } from "./design-tokens"
 
 export const BuildCardListWrapper = styled.div`
+  //
+`
+
+export const Header = styled.div`
+  display: flex;
+`
+
+export const Columns = styled.div`
   --cols: ${COLS};
   --gutter: ${GUTTER}px;
   display: flex;
