@@ -1,4 +1,5 @@
 import * as React from "react"
+import sortBy from "lodash/sortBy"
 import { Build } from "../../../db/entities/build.entity"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
 import { ESortType } from "../../../types"
@@ -27,8 +28,21 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   const COL_GUTTER = GUTTER
   const CONTAINER_WIDTH = 1052 // needs to be dynamic on window resize
 
+  // TODO: send logic to selector
+  const sortedItems = React.useMemo(() => {
+    if (sort === ESortType.NEWEST) {
+      return sortBy(items, [(item) => Date.parse(item.updatedAt)]).reverse()
+    }
+
+    if (sort === ESortType.VIEWS) {
+      return sortBy(items, ["views"]).reverse()
+    }
+
+    return items
+  }, [JSON.stringify(items), sort])
+
   const columns = useDistributeToColumn(
-    items,
+    sortedItems,
     COL_COUNT,
     CONTAINER_WIDTH,
     COL_GUTTER
