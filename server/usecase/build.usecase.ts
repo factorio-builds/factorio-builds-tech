@@ -9,7 +9,7 @@ import { User } from "../../db/entities/user.entity"
 import { BuildRepository } from "../../db/repository/build.repository"
 import { UserRepository } from "../../db/repository/user.repository"
 import { EState } from "../../types"
-import { decodeBlueprint } from "../../utils/blueprint"
+import { decodeBlueprint, isBook } from "../../utils/blueprint"
 import {
   EntityNotFoundException,
   EntityPermissonException,
@@ -106,12 +106,15 @@ async function buildMapper({
   owner?: User
 }): Promise<Build> {
   // @ts-ignore
+  const book = decodeBlueprint(fields.blueprint as string)
+
+  // @ts-ignore
   const build: Build = {
     id: buildId,
     name: fields.name as string,
     blueprint: fields.blueprint as string,
     description: fields.description as string,
-    json: decodeBlueprint(fields.blueprint as string),
+    json: book,
     metadata: {
       state: fields.state as EState,
       // @ts-ignore
@@ -121,6 +124,7 @@ async function buildMapper({
       markedInputs: Boolean(fields.markedInputs as string),
       tileable: Boolean(fields.tileable as string),
       area: 0,
+      isBook: isBook(book)
     },
   }
 

@@ -16,6 +16,7 @@ export const builds: Omit<Build, "owner">[] = [
       tileable: false,
       markedInputs: false,
       area: 43,
+      isBook: true
     },
     image: {
       src:
@@ -41,6 +42,7 @@ export const builds: Omit<Build, "owner">[] = [
       tileable: true,
       markedInputs: false,
       area: 265,
+      isBook: false
     },
     image: {
       src:
@@ -67,6 +69,7 @@ export const builds: Omit<Build, "owner">[] = [
       tileable: true,
       markedInputs: false,
       area: 265,
+      isBook: false
     },
     image: {
       src:
