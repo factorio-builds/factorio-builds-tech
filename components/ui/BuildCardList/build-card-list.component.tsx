@@ -1,8 +1,10 @@
 import * as React from "react"
 import { Build } from "../../../db/entities/build.entity"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
+import { ESortType } from "../../../types"
 import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
+import BuildListSort from "../BuildListSort"
 import * as SC from "./build-card-list.styles"
 import { COLS, GUTTER } from "./design-tokens"
 
@@ -11,6 +13,7 @@ interface IBuildCardListProps {
   count: number
   totalCount: number
   lookupTime: number
+  sort: ESortType
 }
 
 const BuildCardList: React.FC<IBuildCardListProps> = ({
@@ -18,6 +21,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   count,
   totalCount,
   lookupTime,
+  sort,
 }) => {
   const COL_COUNT = COLS
   const COL_GUTTER = GUTTER
@@ -38,6 +42,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
           totalCount={totalCount}
           lookupTime={lookupTime}
         />
+        <BuildListSort sort={sort} />
       </SC.Header>
       <SC.Columns>
         {columns.map((items, i) => (

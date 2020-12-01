@@ -9,9 +9,10 @@ import { filteredBuildsSelector } from "../../redux/selectors/builds"
 import { IStoreState } from "../../redux/store"
 
 function BuildListPage(): JSX.Element {
-  const filteredBuilds = useSelector((store: IStoreState) =>
-    filteredBuildsSelector(store)
-  )
+  const { filteredBuilds, sort } = useSelector((store: IStoreState) => ({
+    filteredBuilds: filteredBuildsSelector(store),
+    sort: store.filters.sort,
+  }))
 
   return (
     <Layout
@@ -27,6 +28,7 @@ function BuildListPage(): JSX.Element {
         count={filteredBuilds.count}
         totalCount={filteredBuilds.totalCount}
         lookupTime={filteredBuilds.lookupTime}
+        sort={sort}
       />
     </Layout>
   )

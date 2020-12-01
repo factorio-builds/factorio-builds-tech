@@ -7,6 +7,8 @@ export const BuildCardListWrapper = styled.div`
 
 export const Header = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 `
 
 export const Columns = styled.div`
