@@ -45,13 +45,13 @@
             }
             <li>
                 <div class="btn-group ml-2" role="group">
-                    <a class="btn btn-sm btn-default"
+                    <a href="/@Model.Blueprint.OwnerSlug/@Model.Blueprint.Slug/raw" class="btn btn-sm btn-default"
                        data-toggle="tooltip" data-placement="top" title="View the raw blueprint string">
                         <i class="fas fa-file-alt"></i>
                         Raw
                     </a>
                     <button type="button" class="btn btn-sm btn-success"
-                            data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
+                            data-toggle="copy-blueprint" data-payload="@Model.SelectedVersion!.Payload!.Encoded">
                         <i class="fas fa-copy"></i>
                         Copy to clipboard
                     </button>
@@ -66,13 +66,17 @@
         <div class="col-md-8">
             <h1 class="display-4">@Model.Blueprint.Title</h1>
             <small class="text-muted">
-                by <a asp-page="/User" asp-route-user="@Model.Blueprint.Owner.UserName">@Model.Blueprint.Owner.DisplayName</a>
+                by <a asp-page="/User" asp-route-user="@Model.Blueprint.Owner.UserName" title="@Model.Blueprint.Owner.DisplayName">@Model.Blueprint.Owner.DisplayName</a>
                 &bull; created @Model.Blueprint.CreatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()
                 @if (Model.Blueprint.CreatedAt != Model.Blueprint.UpdatedAt)
                 {
                     <text>&bull; updated @Model.Blueprint.UpdatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</text>
                 }
-                &bull; Game version: <strong>@Model.SelectedVersion.GameVersion.ToString(3)</strong>
+                &bull; game version:
+                    <a asp-page="/Index" asp-route-version="@Model.SelectedVersion.GameVersion.ToString(2)"
+                       title="View all blueprints for version @Model.SelectedVersion.GameVersion.ToString(2)">
+                        @Model.SelectedVersion.GameVersion.ToString(2)
+                    </a>
             </small>
             @if (Model.Blueprint.Tags?.Any() == true)
             {

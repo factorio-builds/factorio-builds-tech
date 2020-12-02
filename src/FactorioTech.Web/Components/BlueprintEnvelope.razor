@@ -20,13 +20,16 @@ else if (Envelope.BlueprintBook != null)
                 </div>
                 <div class="col-md-4">
                     <div class="btn-toolbar float-right" role="toolbar">
-                        <div class="btn-group mr-2" role="group">
-                            <button type="button" class="btn btn-sm btn-default"
-                                    data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
-                                <i class="fas fa-copy"></i>
-                                Copy to clipboard
-                            </button>
-                        </div>
+                        @if (PayloadCache.TryGetValue(Envelope, out var payload))
+                        {
+                            <div class="btn-group mr-2" role="group">
+                                <button type="button" class="btn btn-sm btn-default"
+                                        data-toggle="copy-blueprint" data-payload="@payload.Encoded">
+                                    <i class="fas fa-copy"></i>
+                                    Copy to clipboard
+                                </button>
+                            </div>
+                        }
                         <div class="btn-group mr-2" role="group">
                             <button type="button" class="btn btn-sm btn-default"
                                     data-toggle="collapse" data-target="#collapse-book-@tempId"

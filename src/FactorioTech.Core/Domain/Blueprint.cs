@@ -18,7 +18,7 @@ namespace FactorioTech.Core.Domain
         public Instant CreatedAt { get; init; }
 
         [Required]
-        public Instant UpdatedAt { get; set; }
+        public Instant UpdatedAt { get; private set; }
 
         [Required]
         [MaxLength(100)]
@@ -30,22 +30,26 @@ namespace FactorioTech.Core.Domain
 
         [Required]
         [MaxLength(100)]
-        public string Title { get; set; }
+        public string Title { get; private set; }
 
-        public string? Description { get; set; }
+        public string? Description { get; private set; }
+
+        [Required]
+        [MaxLength(16)]
+        public string LatestGameVersion { get; private set; }
 
         // navigation properties -> will be null if not included explicitly
 
-        public ICollection<Tag>? Tags { get; set; }
-        public BlueprintVersion? LatestVersion { get; set; }
-        public Guid? LatestVersionId { get; set; }
+        public ICollection<Tag>? Tags { get; init; }
+        public BlueprintVersion? LatestVersion { get; private set; }
+        public Guid? LatestVersionId { get; private set; }
         public User? Owner { get; init; }
         public IEnumerable<User>? Followers { get; init; }
-        public NpgsqlTsVector? SearchVector { get; set; }
+        public NpgsqlTsVector? SearchVector { get; init; }
 
         // computed property -> will be set by the query
 
-        public int FollowerCount { get; set; }
+        public int FollowerCount { get; init; }
 
         public Blueprint(
             Guid blueprintId,
@@ -65,6 +69,7 @@ namespace FactorioTech.Core.Domain
             Tags = new HashSet<Tag>(tags);
             Title = title;
             Description = description;
+            LatestGameVersion = "0.0.0.0";
         }
 
 #pragma warning disable 8618 // required for EF
@@ -72,5 +77,20 @@ namespace FactorioTech.Core.Domain
         {
         }
 #pragma warning restore 8618
+
+        public void UpdateLatestVersion(BlueprintVersion version)
+        {
+            UpdatedAt = version.CreatedAt;
+            LatestVersion = version;
+            LatestVersionId = version.VersionId;
+            LatestGameVersion = version.GameVersion.ToString(4);
+        }
+
+        public void UpdateDetails(Instant now, string title, string? description)
+        {
+            UpdatedAt = now;
+            Title = title;
+            Description = description;
+        }
     }
 }

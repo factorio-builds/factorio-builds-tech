@@ -17,15 +17,18 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="btn-toolbar float-right" role="toolbar">
-                    <div class="btn-group mr-2" role="group">
-                        <button type="button" class="btn btn-sm btn-default"
-                                data-toggle="tooltip" data-placement="top" title="Copy the blueprint string to your clipboard">
-                            <i class="fas fa-copy"></i>
-                            Copy to clipboard
-                        </button>
+                @if (payload.Encoded != null)
+                {
+                    <div class="btn-toolbar float-right" role="toolbar">
+                        <div class="btn-group mr-2" role="group">
+                            <button type="button" class="btn btn-sm btn-default"
+                                    data-toggle="copy-blueprint" data-payload="@payload.Encoded">
+                                <i class="fas fa-copy"></i>
+                                Copy to clipboard
+                            </button>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </div>
         <div class="row align-items-end">

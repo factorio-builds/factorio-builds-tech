@@ -50,7 +50,7 @@ namespace FactorioTech.Tests
             _dbContext.Add(bp);
             await _dbContext.SaveChangesAsync();
 
-            var blueprints = await _service.GetBlueprints((1, 100), ("created", "asc"), Array.Empty<string>(), null);
+            var blueprints = await _service.GetBlueprints((1, 100), ("created", "asc"), Array.Empty<string>(), null, null);
             blueprints.Should().HaveCount(1);
         }
 

@@ -65,7 +65,8 @@ namespace FactorioTech.Core
             (int Current, int Size) page,
             (string Field, string Direction) sort,
             IReadOnlyCollection<string> tags,
-            string? search)
+            string? search,
+            string? version)
         {
             var query = !tags.Any()
                 ? _ctx.Blueprints.AsNoTracking()
@@ -76,6 +77,11 @@ namespace FactorioTech.Core
                         bp => bp.BlueprintId,
                         (t, bp) => bp)
                     .Distinct();
+
+            if (!string.IsNullOrEmpty(version))
+            {
+                query = query.Where(x => x.LatestGameVersion.StartsWith(version));
+            }
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -154,9 +160,10 @@ namespace FactorioTech.Core
                     return new CreateResult.OwnerMismatch(blueprint.BlueprintId, blueprint.Slug, (blueprint.OwnerId, blueprint.OwnerSlug));
                 }
 
-                blueprint.UpdatedAt = currentInstant;
-                blueprint.Title = request.Title.Trim();
-                blueprint.Description = request.Description?.Trim();
+                blueprint.UpdateDetails(
+                    currentInstant,
+                    request.Title.Trim(),
+                    request.Description?.Trim());
             }
             else
             {
@@ -196,7 +203,7 @@ namespace FactorioTech.Core
 
             await _ctx.SaveChangesAsync();
 
-            blueprint.LatestVersion = version;
+            blueprint.UpdateLatestVersion(version);
 
             await _ctx.SaveChangesAsync();
             await tx.CommitAsync();
