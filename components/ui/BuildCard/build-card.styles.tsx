@@ -12,8 +12,7 @@ export const BuildCardWrapper = styled.div`
   cursor: pointer;
 `
 
-export const BackgroundImage = styled.img`
-  display: block;
+export const ImageWrapper = styled.div`
   width: 100%;
   filter: contrast(0.8);
 

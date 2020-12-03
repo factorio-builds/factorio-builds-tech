@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown"
 import { useSelector } from "react-redux"
 import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
+import Image from "next/image"
 import Link from "next/link"
 import BuildSubheader from "../../components/ui/BuildSubheader"
 import Button from "../../components/ui/Button"
@@ -111,7 +112,17 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       subheader={<BuildSubheader build={build} isBook={isBook(build.json)} />}
       sidebar={
         <SC.BuildImage>
-          {build.image ? <img src={build.image.src} alt="" /> : "No image"}
+          {build.image ? (
+            <Image
+              src={build.image.src}
+              alt=""
+              width={build.image.width}
+              height={build.image.height}
+              layout="responsive"
+            />
+          ) : (
+            "No image"
+          )}
         </SC.BuildImage>
       }
     >

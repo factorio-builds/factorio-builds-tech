@@ -1,4 +1,5 @@
 import React from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { Build } from "../../../db/entities/build.entity"
 import { IMetadata } from "../../../types"
@@ -22,7 +23,15 @@ function BuildCard({
   return (
     <Link href={`/build/${id}`}>
       <SC.BuildCardWrapper>
-        <SC.BackgroundImage src={image.src} alt="" />
+        <SC.ImageWrapper>
+          <Image
+            src={image.src}
+            alt=""
+            width={image.width}
+            height={image.height}
+            layout="responsive"
+          />
+        </SC.ImageWrapper>
         <SC.Content>
           <SC.Title>
             {isBook && <SC.Book src="/img/blueprint-book.png" />}
