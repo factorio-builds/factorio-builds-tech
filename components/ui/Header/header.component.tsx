@@ -17,9 +17,11 @@ function Header(): JSX.Element {
         </Link>
 
         <SC.StyledStacker orientation="horizontal" gutter={18}>
-          <Link href="/build/create">
-            <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
-          </Link>
+          {user && (
+            <Link href="/build/create">
+              <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
+            </Link>
+          )}
 
           {!user && (
             <Link href="/login">
