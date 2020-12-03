@@ -1,20 +1,30 @@
 import React from "react"
-import { FieldProps, useFormikContext } from "formik"
+import { FieldProps, FormikHandlers, useField } from "formik"
 import Input from "../Input"
 
 interface IFormikInputProps extends FieldProps {
   id: string
   type: "text" | "textarea"
+  onChange?: FormikHandlers["handleChange"]
+  onKeyPress?: (
+    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void
 }
 
-const FormikInput: React.FC<IFormikInputProps> = ({ id, field, type }) => {
-  const context = useFormikContext()
+const FormikInput: React.FC<IFormikInputProps> = ({
+  id,
+  type,
+  ...restProps
+}) => {
+  const [field] = useField(restProps.field.name)
 
   if (type === "textarea") {
     return (
       <Input.Textarea
         id={id}
-        onChange={(e) => context.setFieldValue(field.name, e.target.value)}
+        name={field.name}
+        onChange={field.onChange}
+        onKeyPress={restProps.onKeyPress}
         value={field.value}
       />
     )
@@ -23,7 +33,9 @@ const FormikInput: React.FC<IFormikInputProps> = ({ id, field, type }) => {
   return (
     <Input.Text
       id={id}
-      onChange={(e) => context.setFieldValue(field.name, e.target.value)}
+      name={field.name}
+      onChange={field.onChange}
+      onKeyPress={restProps.onKeyPress}
       value={field.value}
     />
   )

@@ -1,6 +1,6 @@
 import React from "react"
 import { useUID } from "react-uid"
-import { FieldProps } from "formik"
+import { FieldProps, FormikHandlers } from "formik"
 import FormikCheckbox from "../FormikCheckbox"
 import FormikInput from "../FormikInput"
 import FormikSelect from "../FormikSelect"
@@ -15,6 +15,10 @@ interface IFormikInputProps extends FieldProps {
   required?: boolean
   inline?: boolean
   validFeedback?: string
+  onChange: FormikHandlers["handleChange"]
+  onKeyPress?: (
+    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void
 }
 
 const FormikInputWrapper: React.FC<IFormikInputProps> = ({
@@ -24,6 +28,8 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
   meta,
   type,
   size,
+  onChange,
+  onKeyPress,
   ...props
 }) => {
   const uid = useUID()
@@ -48,7 +54,14 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
       uid={uid}
     >
       {(type === "text" || type === "textarea") && (
-        <FormikInput {...formikProps} type={type} id={uid} />
+        <FormikInput
+          {...formikProps}
+          {...props}
+          onChange={onChange}
+          onKeyPress={onKeyPress}
+          type={type}
+          id={uid}
+        />
       )}
       {type === "checkbox" && (
         <FormikCheckbox

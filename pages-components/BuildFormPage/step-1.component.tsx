@@ -21,12 +21,12 @@ const Step1: React.FC<IStep1Props> = (props) => {
   const stepIsValid = useMemo(() => {
     const isValid = isValidBlueprint(props.formikProps.values.blueprint)
 
-    if (isValid && props.formikProps.touched.blueprint) {
+    if (isValid) {
       return true
     } else {
       return false
     }
-  }, [props.formikProps.touched.blueprint, props.formikProps.values.blueprint])
+  }, [props.formikProps.values.blueprint])
 
   function preFillForm(): void {
     const json = decodeBlueprint(props.formikProps.values.blueprint)
@@ -78,6 +78,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
             required
             component={Input}
             validate={validate("blueprint")}
+            onChange={props.formikProps.handleChange}
             onKeyPress={handleOnKeyPress}
             validFeedback="Found a valid blueprint"
           />
