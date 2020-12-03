@@ -65,7 +65,7 @@
     "@types/express": "^4.17.9",
     "@types/express-session": "^1.17.3",
     "@types/formidable": "^1.0.31",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.16",
     "@types/lodash": "^4.14.165",
     "@types/node": "^12.12.21",
     "@types/pako": "^1.0.1",
