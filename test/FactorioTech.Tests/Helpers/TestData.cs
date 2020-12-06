@@ -1,7 +1,7 @@
 using FactorioTech.Core;
 using System.Collections.Generic;
 
-namespace FactorioTech.Tests
+namespace FactorioTech.Tests.Helpers
 {
     public static class TestData
     {

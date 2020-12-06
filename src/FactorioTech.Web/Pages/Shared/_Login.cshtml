@@ -5,7 +5,7 @@
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbar-user-dropdown" role="button" tabindex="3"
            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            @(User.GetDisplayName() ?? User.GetUserName())
+            @User.GetDisplayName()
         </a>
         <div class="dropdown-menu" aria-labelledby="navbar-user-dropdown">
             <span class="dropdown-item-text"><small class="text-muted">Signed in as @User.GetUserName()</small></span>
@@ -29,7 +29,7 @@ else
 
     <div class="modal fade" id="login-modal" tabindex="-1" 
          aria-labelledby="login-modal-label" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="login-modal-label">Sign in</h5>
@@ -41,9 +41,10 @@ else
                     <form method="post" asp-page="/Account/ExternalLogin" asp-route-returnUrl="@Model.Request.Path">
                         @foreach (var provider in await SignInManager.GetExternalAuthenticationSchemesAsync())
                         {
-                            <button type="submit" class="btn btn-primary"
+                            <button type="submit" class="btn btn-lg btn-primary btn-block"
                                     name="provider" value="@provider.Name"
                                     title="Log in using your @provider.DisplayName account">
+                                <i class="fab fa-@provider.Name.ToLowerInvariant()"></i>
                                 @provider.DisplayName
                             </button>
                         }

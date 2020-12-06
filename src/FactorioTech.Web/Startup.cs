@@ -38,6 +38,11 @@ namespace FactorioTech.Web
                     options.ClientId = _configuration["OAuthProviders:GitHub:ClientId"];
                     options.ClientSecret = _configuration["OAuthProviders:GitHub:ClientSecret"];
                     options.Scope.Add("user:email");
+                }).AddDiscord(options =>
+                {
+                    options.ClientId = _configuration["OAuthProviders:Discord:ClientId"];
+                    options.ClientSecret = _configuration["OAuthProviders:Discord:ClientSecret"];
+                    options.Scope.Add("email");
                 });
 
             services.AddDbContext<AppDbContext>(options =>

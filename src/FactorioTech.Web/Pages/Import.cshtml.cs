@@ -54,7 +54,7 @@ namespace FactorioTech.Web.Pages
         public Blueprint? ParentBlueprint { get; private set; }
         public FactorioApi.BlueprintEnvelope? Envelope { get; private set; }
         public PayloadCache PayloadCache { get; } = new();
-        public IEnumerable<SelectListItem> AvailableTags { get; } = Tags.All.Select(tag => new SelectListItem(tag, tag));
+        public IEnumerable<SelectListItem> TagsSelectItems { get; private set; } = Enumerable.Empty<SelectListItem>();
 
         public void OnGet()
         {
@@ -79,18 +79,41 @@ namespace FactorioTech.Web.Pages
             Envelope = await _blueprintConverter.Decode(importInput.BlueprintString);
             BlueprintString = importInput.BlueprintString;
 
+            var hash = Hash.Compute(BlueprintString);
+            var dupe = await _ctx.BlueprintVersions.AsNoTracking()
+                .Where(x => x.Hash == hash)
+                .Select(x => new
+                {
+                    x.VersionId,
+                    x.BlueprintId,
+                    x.Blueprint!.Slug,
+                    x.Blueprint!.OwnerId,
+                    x.Blueprint!.OwnerSlug,
+                })
+                .FirstOrDefaultAsync();
+
+            if (dupe != null)
+            {
+                var fullSlug = $"{dupe.OwnerSlug}/{dupe.Slug}";
+                StatusMessage = $"Error: This blueprint string has already been imported in <a href=\"/{fullSlug}\">{fullSlug}</a>.";
+                TempData.Keep(nameof(BlueprintString));
+                return RedirectToPage();
+            }
+
             if (!string.IsNullOrWhiteSpace(importInput.ParentSlug))
             {
                 ParentBlueprint = await _ctx.Blueprints.AsNoTracking()
-                    .Where(bp =>
-                        bp.OwnerId == User.GetUserId()
-                        && bp.Slug == importInput.ParentSlug.ToLowerInvariant())
+                    .Where(bp => bp.OwnerId == User.GetUserId() && bp.Slug == importInput.ParentSlug.ToLowerInvariant())
+                    .Include(bp => bp.Tags)
                     .FirstOrDefaultAsync();
 
                 ParentBlueprintId = ParentBlueprint?.BlueprintId;
             }
 
-            var payload = new BlueprintPayload(Hash.Compute(BlueprintString), BlueprintString, new Version());
+            var existingTags = ParentBlueprint?.Tags?.Select(t => t.Value) ?? Enumerable.Empty<string>();
+            TagsSelectItems = Tags.All.Select(tag => new SelectListItem(tag, tag, existingTags.Contains(tag)));
+
+            var payload = new BlueprintPayload(hash, BlueprintString, Utils.DecodeGameVersion(Envelope.Version));
             PayloadCache.TryAdd(Envelope, payload);
 
             await _imageService.SaveAllBlueprintRenderings(Guid.Empty, PayloadCache, Envelope);
@@ -120,15 +143,17 @@ namespace FactorioTech.Web.Pages
 
             if (!ModelState.IsValid || BlueprintString == null)
             {
+                TempData.Keep(nameof(ParentBlueprintId));
                 TempData.Keep(nameof(BlueprintString));
                 return Page();
             }
 
-            if (ParentBlueprintId != null
+            if (ParentBlueprintId == null
                 && createInput.Image.Uploaded == null
                 && createInput.Image.Hash == null)
             {
                 StatusMessage = "Error: You must select a blueprint rendering as blueprint image or upload a new image.";
+                TempData.Keep(nameof(ParentBlueprintId));
                 TempData.Keep(nameof(BlueprintString));
                 return Page();
             }
@@ -177,34 +202,24 @@ namespace FactorioTech.Web.Pages
                     });
 
                 case BlueprintService.CreateResult.DuplicateHash error:
-                    _logger.LogWarning("Attempted to save duplicate payload with hash {Hash}. The hash already exists in {VersionId} of blueprint {BlueprintId}",
-                        hash, error.VersionId, error.BlueprintId);
-
                     var fullSlug = $"{error.Owner.UserName}/{error.Slug}";
-                    StatusMessage = $"Error: This blueprint string has already been imported as <a href=\"/{fullSlug}\">{fullSlug}</a>.";
+                    StatusMessage = $"Error: This blueprint string has already been imported in <a href=\"/{fullSlug}\">{fullSlug}</a>.";
                     TempData.Keep(nameof(BlueprintString));
-                    return Page();
+                    return RedirectToPage();
 
-                case BlueprintService.CreateResult.DuplicateSlug error:
-                    _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
-                        error.Owner.UserName, error.Slug);
-
+                case BlueprintService.CreateResult.DuplicateSlug:
                     StatusMessage = "Error: You already have a blueprint with this slug. Did you intend to add a version to that blueprint instead?";
+                    TempData.Keep(nameof(ParentBlueprintId));
                     TempData.Keep(nameof(BlueprintString));
                     return Page();
 
-                case BlueprintService.CreateResult.ParentNotFound error:
-                    _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}",
-                        error.BlueprintId);
-
+                case BlueprintService.CreateResult.ParentNotFound:
                     StatusMessage = "Error: The specified blueprint does not exist.";
+                    TempData.Keep(nameof(ParentBlueprintId));
                     TempData.Keep(nameof(BlueprintString));
                     return Page();
 
                 case BlueprintService.CreateResult.OwnerMismatch error:
-                    _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
-                        error.BlueprintId, error.Owner.Id);
-
                     StatusMessage = "Error: This blueprint is not yours!";
                     return RedirectToPage("/Blueprint", new
                     {

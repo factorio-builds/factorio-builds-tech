@@ -12,8 +12,8 @@ using NpgsqlTypes;
 namespace FactorioTech.Core.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201202174007_Version")]
-    partial class Version
+    [Migration("20201204173653_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

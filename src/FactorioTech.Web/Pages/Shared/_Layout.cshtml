@@ -10,76 +10,77 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-page="/Index">⚙️ factorio.tech</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse">
-                    <form method="get" asp-page="/Index" class="form-inline">
-                        <input tabindex="1" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
-                    </form>
-                    <ul class="navbar-nav ml-sm-2">
-                        <li class="nav-item">
-                            <button type="button" class="btn btn-outline-success" tabindex="2"
-                                    data-toggle="modal" data-target="#import-modal-new">
-                                <i class="fas fa-cloud-upload-alt"></i>
-                                Import blueprint
-                            </button>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ml-auto">
-                        <partial name="_Login" />
-                    </ul>
-                </div>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark mb-3">
+        <div class="container">
+            <a class="navbar-brand" asp-page="/Index">⚙️ factorio.tech</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse">
+                <form method="get" asp-page="/Index" class="form-inline">
+                    <input tabindex="1" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+                </form>
+                <ul class="navbar-nav ml-sm-2">
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-outline-success" tabindex="2"
+                                data-toggle="modal" data-target="#import-modal-new">
+                            <i class="fas fa-file-import"></i>
+                            Import blueprint
+                        </button>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <partial name="_Login" />
+                </ul>
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="footer text-muted">
-        <div class="container d-flex justify-content-between">
-            <p>&copy; @DateTime.UtcNow.Year <a asp-page="/Index">factorio.tech</a></p>
-            <p>Made with ⚙️ in Europe</p>
         </div>
-    </footer>
+    </nav>
+</header>
 
-    <partial name="_ImportModal" model="new ImportInputModel()" />
+<div class="container">
+    <main role="main" class="pb-3">
+        @RenderBody()
+    </main>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
-            asp-fallback-src="~/dist/js/jquery.min.js" asp-fallback-test="window.jQuery"
-            integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
-            crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"
-            asp-fallback-src="~/dist/js/jquery.unobtrusive-ajax.min"
-            integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg=="
-            crossorigin="anonymous">
+<footer class="footer text-muted">
+    <div class="container d-flex justify-content-between">
+        <p>&copy; @DateTime.UtcNow.Year <a asp-page="/Index">factorio.tech</a></p>
+        <p>Made with ⚙️ in Europe</p>
+    </div>
+</footer>
 
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"
-            asp-fallback-src="~/dist/js/bootstrap.bundle.min.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-            integrity="sha512-iceXjjbmB2rwoX93Ka6HAHP+B76IY1z0o3h+N1PeDtRSsyeetU3/0QKJqGyPJcX63zysNehggFwMC/bi7dvMig=="
-            crossorigin="anonymous">
-    </script>
+<partial name="_ImportModal" model="new ImportInputModel()" />
 
-    @*todo: current build is broken; should be ~/dist/js/standalone/selectize.min.js*@
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.min.js"
-            integrity="xxx"
-            asp-fallback-src="~/dist/js/standalone/selectize.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.selectize"
-            crossorigin="anonymous">
-    </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        asp-fallback-src="~/dist/js/jquery.min.js" asp-fallback-test="window.jQuery"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous">
+</script>
 
-    <script src="~/dist/js/site.min.js" asp-append-version="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajax-unobtrusive/3.2.6/jquery.unobtrusive-ajax.min.js"
+        asp-fallback-src="~/dist/js/jquery.unobtrusive-ajax.min"
+        integrity="sha512-DedNBWPF0hLGUPNbCYfj8qjlEnNE92Fqn7xd3Sscfu7ipy7Zu33unHdugqRD3c4Vj7/yLv+slqZhMls/4Oc7Zg=="
+        crossorigin="anonymous">
+</script>
 
-    @await RenderSectionAsync("Scripts", required: false)
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"
+        asp-fallback-src="~/dist/js/bootstrap.bundle.min.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+        integrity="sha512-iceXjjbmB2rwoX93Ka6HAHP+B76IY1z0o3h+N1PeDtRSsyeetU3/0QKJqGyPJcX63zysNehggFwMC/bi7dvMig=="
+        crossorigin="anonymous">
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js"
+        asp-fallback-src="~/dist/js/standalone/selectize.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.selectize"
+        integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA=="
+        crossorigin="anonymous">
+</script>
+
+<script src="~/dist/js/site.min.js" asp-append-version="true"></script>
+
+@await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

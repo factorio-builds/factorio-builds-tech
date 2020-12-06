@@ -1,21 +1,9 @@
 @charset "utf-8";
 
-@import "node_modules/@fortawesome/fontawesome-free/scss/fontawesome";
-@import "node_modules/@fortawesome/fontawesome-free/scss/solid";
-@import "node_modules/@fortawesome/fontawesome-free/scss/brands";
-
-@import "node_modules/dark-bootstrap-theme/src/darkVariables";
-@import "bootstrap.variables";
-
-@import "node_modules/bootstrap/scss/bootstrap";
-
-@import "node_modules/dark-bootstrap-theme/src/fixes";
-@import "node_modules/dark-bootstrap-theme/src/customStyles/allCustomStyles";
-
-@import "cropper";
-@import "selectize.variables";
-@import "selectize.bootstrap4";
-/*@import "node_modules/selectize/src/scss/selectize.bootstrap4";*/
+@import "integrations/fontawesome";
+@import "integrations/bootstrap";
+@import "integrations/cropper";
+@import "integrations/selectize";
 
 @import "layout";
 @import "blueprints";

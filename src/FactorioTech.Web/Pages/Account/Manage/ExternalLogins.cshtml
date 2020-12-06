@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model ExternalLoginsModel
 @{
     ViewData["Title"] = "Manage your external logins";
@@ -14,7 +14,10 @@
             @foreach (var login in Model.CurrentLogins)
             {
                 <tr>
-                    <td id="@($"login-provider-{login.LoginProvider}")">@login.ProviderDisplayName</td>
+                    <td id="@($"login-provider-{login.LoginProvider}")">
+                        <i class="fab fa-@login.LoginProvider.ToLowerInvariant()"></i>
+                        @login.ProviderDisplayName
+                    </td>
                     <td>
                         @if (Model.ShowRemoveButton)
                         {
@@ -22,7 +25,11 @@
                                 <div>
                                     <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
                                     <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
-                                    <button type="submit" class="btn btn-primary" title="Remove this @login.ProviderDisplayName login from your account">Remove</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            title="Remove this @login.ProviderDisplayName login from your account">
+                                        <i class="fas fa-trash-alt"></i>
+                                        Remove
+                                    </button>
                                 </div>
                             </form>
                         }

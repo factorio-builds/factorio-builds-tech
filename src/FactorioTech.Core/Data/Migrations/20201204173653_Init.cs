@@ -170,6 +170,7 @@ namespace FactorioTech.Core.Data.Migrations
                     OwnerSlug = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    LatestGameVersion = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     LatestVersionId = table.Column<Guid>(type: "uuid", nullable: true),
                     SearchVector = table.Column<NpgsqlTsVector>(type: "tsvector", nullable: true)
                         .Annotation("Npgsql:TsVectorConfig", "english")

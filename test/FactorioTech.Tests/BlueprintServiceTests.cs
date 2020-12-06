@@ -1,11 +1,13 @@
+using DotNet.Testcontainers.Containers.Builders;
+using DotNet.Testcontainers.Containers.Configurations.Databases;
+using DotNet.Testcontainers.Containers.Modules.Databases;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging.Abstractions;
-using NodaTime;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,55 +15,62 @@ using Xunit;
 
 namespace FactorioTech.Tests
 {
-    public class BlueprintServiceTests
+    public class BlueprintServiceTests : IAsyncLifetime
     {
-        private readonly BlueprintService _service;
-        private readonly AppDbContext _dbContext;
+        private AppDbContext _dbContext = null!;
+        private PostgreSqlTestcontainer _postgresContainer = null!;
+        private BlueprintService _service = null!;
 
-        public BlueprintServiceTests()
+        public async Task InitializeAsync()
         {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+            _postgresContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+                .WithDatabase(new PostgreSqlTestcontainerConfiguration("postgres:latest")
+                {
+                    Database = "postgres",
+                    Username = "postgres",
+                    Password = "postgres",
+                }).Build();
 
-            _dbContext = new AppDbContext(optionsBuilder.Options);
+            await _postgresContainer.StartAsync();
 
-            if (_dbContext.Database.IsRelational())
-            {
-                _dbContext.Database.Migrate();
-            }
+            _dbContext = AppDbContextFactory.CreateDbContext(_postgresContainer.ConnectionString);
+            await _dbContext.Database.MigrateAsync();
 
             _service = new BlueprintService(new NullLogger<BlueprintService>(), _dbContext);
         }
 
-        [Fact]
-        public async Task DummyGetTest()
+        public async Task DisposeAsync()
         {
-            var now = SystemClock.Instance.GetCurrentInstant();
-            var bp = new Blueprint(
-                Guid.NewGuid(),
-                (Guid.NewGuid(), "test-user-1"),
-                now, now,
-                "test-1",
-                Tags.All.Take(2).Select(Tag.FromString),
-                "test blueprint 1",
-                null);
-
-            _dbContext.Add(bp);
-            await _dbContext.SaveChangesAsync();
-
-            var blueprints = await _service.GetBlueprints((1, 100), ("created", "asc"), Array.Empty<string>(), null, null);
-            blueprints.Should().HaveCount(1);
+            await _dbContext.DisposeAsync();
+            await _postgresContainer.StopAsync();
+            await _postgresContainer.CleanUpAsync();
+            await _postgresContainer.DisposeAsync();
         }
 
         [Fact]
-        public async Task DummySaveTest()
+        [Trait("Type", "Slow")]
+        public async Task GetBlueprints_ShouldReturnSingleBlueprint()
         {
+            var owner = await new UserBuilder().Save(_dbContext);
+            await new BlueprintBuilder().WithOwner(owner).Save(_dbContext);
+
+            var blueprints = await _service.GetBlueprints((1, 100), ("created", "asc"), Array.Empty<string>(), null, null);
+            blueprints.Should().HaveCount(1);
+
+            blueprints.ElementAt(0).Slug.Should().Be("simple-book");
+            blueprints.ElementAt(0).Title.Should().Be("Simple Blueprint Book");
+        }
+
+        [Fact]
+        [Trait("Type", "Slow")]
+        public async Task CreateOrAddVersion_ShouldSaveBlueprintGraph_WhenAddingANewBlueprint()
+        {
+            var owner = await new UserBuilder().Save(_dbContext);
             var request = new BlueprintService.CreateRequest(
                 "test-1",
                 "test blueprint 1",
-                null,
-                Tags.All.Take(2),
+                "the description",
+                new[] { "/belt/balancer", "/general/early game" },
                 (null, null));
 
             var payload = new BlueprintPayload(
@@ -69,13 +78,62 @@ namespace FactorioTech.Tests
                 TestData.SimpleBookEncoded,
                 Utils.DecodeGameVersion(TestData.SimpleBook.Version));
 
-            var result = await _service.CreateOrAddVersion(request, payload, (Guid.NewGuid(), "test-user-1"), null);
+            var result = await _service.CreateOrAddVersion(request, payload, (owner.Id, owner.UserName), null);
 
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);
             _dbContext.BlueprintPayloads.Should().HaveCount(1);
             _dbContext.BlueprintVersions.Should().HaveCount(1);
+
+            var blueprint = ((BlueprintService.CreateResult.Success)result).Blueprint;
+            blueprint.Slug.Should().Be("test-1");
+            blueprint.Title.Should().Be("test blueprint 1");
+            blueprint.Description.Should().Be("the description");
+            blueprint.CreatedAt.ToDateTimeUtc().Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
+            blueprint.UpdatedAt.Should().Be(blueprint.CreatedAt);
+            blueprint.Tags!.Should().BeEquivalentTo(
+                new Tag("/belt/balancer") { BlueprintId = blueprint.BlueprintId },
+                new Tag("/general/early game") { BlueprintId = blueprint.BlueprintId });
+        }
+
+        [Fact]
+        [Trait("Type", "Slow")]
+        public async Task CreateOrAddVersion_ShouldUpdateBlueprintMetadata_WhenAddingAVersion()
+        {
+            var owner = await new UserBuilder().Save(_dbContext);
+            var existing = await new BlueprintBuilder().WithOwner(owner).Save(_dbContext);
+
+            var request = new BlueprintService.CreateRequest(
+                existing.Slug,
+                "different title",
+                "different description",
+                new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
+                (null, null));
+
+            var payload = new BlueprintPayload(
+                Hash.Compute(TestData.SimpleBlueprintEncoded),
+                TestData.SimpleBlueprintEncoded,
+                Utils.DecodeGameVersion(TestData.SimpleBlueprint.Version));
+
+            var result = await _service.CreateOrAddVersion(request, payload, (owner.Id, owner.UserName), existing.BlueprintId);
+            result.Should().BeOfType<BlueprintService.CreateResult.Success>();
+
+            _dbContext.Blueprints.Should().HaveCount(1);
+            _dbContext.BlueprintPayloads.Should().HaveCount(2);
+            _dbContext.BlueprintVersions.Should().HaveCount(2);
+
+            await Task.Delay(100);
+
+            var blueprint = ((BlueprintService.CreateResult.Success)result).Blueprint;
+            blueprint.Slug.Should().Be(existing.Slug);
+            blueprint.Title.Should().Be("different title");
+            blueprint.Description.Should().Be("different description");
+            blueprint.UpdatedAt.ToDateTimeUtc().Should().BeAfter(existing.UpdatedAt.ToDateTimeUtc());
+            blueprint.Tags!.Should().BeEquivalentTo(
+                new Tag("/belt/balancer") { BlueprintId = blueprint.BlueprintId },
+                new Tag("/general/mid game") { BlueprintId = blueprint.BlueprintId },
+                new Tag("/mods/vanilla") { BlueprintId = blueprint.BlueprintId });
         }
     }
 }

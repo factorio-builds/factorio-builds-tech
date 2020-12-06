@@ -27,15 +27,14 @@ $(() => {
 
     $('[data-toggle="copy-blueprint"').on('click', e => {
         var $input = $('<input>').css({
-          position: "absolute",
-          left:     "-1000px",
-          top:      "-1000px",
+          position: 'absolute',
+          left:     '-1000px',
+          top:      '-1000px'
         });
 
         $input.val($(e.target).attr('data-payload'));
         $('body').append($input);
 
-        $input.focus();
         $input.select();
 
         document.execCommand('copy');
@@ -43,9 +42,11 @@ $(() => {
         $input.remove();
 
         $(e.target).tooltip({
-            title: '✔️ Copied!'
+            trigger: 'manual',
+            title: '✔️ Copied!',
+            delay: { hide: 1500 }
         }).tooltip('show');
 
-        setTimeout(() => $(e.target).tooltip('dispose'), 3000);
+        setTimeout(() => $(e.target).tooltip('hide'), 3000);
     });
 });

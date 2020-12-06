@@ -1,3 +1,5 @@
+@import "node_modules/dark-bootstrap-theme/src/darkVariables";
+
 // Components
 $border-color: $gray-700;
 
@@ -16,3 +18,7 @@ $nav-tabs-link-active-border-color: $gray-900;
 
 // Selectize
 //$select-color-input: $gray-800;
+
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/dark-bootstrap-theme/src/fixes";
+@import "node_modules/dark-bootstrap-theme/src/customStyles/allCustomStyles";

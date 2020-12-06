@@ -31,8 +31,9 @@ else
                         <div class="input-group-prepend">
                             <span class="input-group-text text-monospace" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
                         </div>
-                        <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon"
-                               readonly="@Model.ParentBlueprintId.HasValue" />
+                        <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon" 
+                               readonly="@Model.ParentBlueprintId.HasValue"
+                               data-toggle="@(Model.ParentBlueprintId.HasValue ? "tooltip" : null)" data-title="You can't change the slug at this time." />
                     </div>
                     <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
                 </div>
@@ -46,7 +47,7 @@ else
                 <div class="form-group">
                     <label asp-for="CreateInput.Tags"></label>
                     <select asp-for="CreateInput.Tags" multiple="multiple" style="display:none" placeholder="Select at least one tag…"
-                            data-role="blueprint-tags" asp-items="@Model.AvailableTags">
+                            data-role="blueprint-tags" asp-items="@Model.TagsSelectItems">
                     </select>
                     <span asp-validation-for="CreateInput.Tags" class="text-danger"></span>
                 </div>
@@ -163,7 +164,7 @@ else
             </div>
             <div class="modal-body">
                 <div class="img-container">
-                    <img class="img-fluid" id="blueprint-image-cropper" src="https://placekitten.com/500/500" />
+                    <img class="img-fluid" id="blueprint-image-cropper" />
                 </div>
             </div>
             <div class="modal-footer">
@@ -212,7 +213,7 @@ else
                 fontSize: 16,
                 minLines: 10,
                 maxLines: 20,
-                wrap: true,
+                wrap: true
             });
 
             editor.session.on('change', () => {
@@ -285,7 +286,7 @@ else
 
                     const file = files[0];
                     const reader = new FileReader();
-                    reader.onload = e => {
+                    reader.onload = () => {
                         showCropper(reader.result);
                     };
                     reader.readAsDataURL(file);
@@ -333,9 +334,7 @@ else
                 })
                 .on('click', e => {
                     $input.val(null);
-
-                    const hash = $(e.target).attr('data-hash');
-                    $('#blueprint-image-hash').val(hash);
+                    $('#blueprint-image-hash').val($(e.target).attr('data-hash'));
                     showCropper(e.target.src);
                 });
 
@@ -346,9 +345,8 @@ else
                     $('#blueprint-image-y').val(0);
                     $('#blueprint-image-w').val(Math.round(canvas.width));
                     $('#blueprint-image-h').val(Math.round(canvas.height));
-
                     selectedImg.src = canvas.toDataURL();
-                })
+                });
             }
         });
     </script>

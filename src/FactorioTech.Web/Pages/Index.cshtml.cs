@@ -25,7 +25,7 @@ namespace FactorioTech.Web.Pages
         }
 
         public IEnumerable<Blueprint> Blueprints { get; private set; } = Enumerable.Empty<Blueprint>();
-        public IEnumerable<SelectListItem> AvailableTags { get; private set; } = Enumerable.Empty<SelectListItem>();
+        public IEnumerable<SelectListItem> TagsSelectItems { get; private set; } = Enumerable.Empty<SelectListItem>();
 
         public IEnumerable<SelectListItem> SortFieldOptions { get; } = new List<SelectListItem>
         {
@@ -56,7 +56,7 @@ namespace FactorioTech.Web.Pages
             var (sortField, sortDirection) = ParseSort(sortCsv);
             SortFieldOptions.FirstOrDefault(x => x.Value == sortField)?.Let(item => item.Selected = true);
             SortDirectionOptions.FirstOrDefault(x => x.Value == sortDirection)?.Let(item => item.Selected = true);
-            AvailableTags = Tags.All.Select(tag => new SelectListItem(tag, tag, tags.Contains(tag)));
+            TagsSelectItems = Tags.All.Select(tag => new SelectListItem(tag, tag, tags.Contains(tag)));
 
             return Page();
         }

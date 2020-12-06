@@ -61,7 +61,7 @@ namespace FactorioTech.Core
             _ctx = ctx;
         }
 
-        public async Task<IEnumerable<Blueprint>> GetBlueprints(
+        public async Task<IReadOnlyCollection<Blueprint>> GetBlueprints(
             (int Current, int Size) page,
             (string Field, string Direction) sort,
             IReadOnlyCollection<string> tags,
@@ -112,8 +112,7 @@ namespace FactorioTech.Core
             (Guid Id, string UserName) owner,
             Guid? parentId)
         {
-            var dupe = await _ctx.BlueprintVersions
-                .AsNoTracking()
+            var dupe = await _ctx.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == payload.Hash)
                 .Select(x => new
                 {
@@ -142,6 +141,7 @@ namespace FactorioTech.Core
             if (parentId != null)
             {
                 blueprint = await _ctx.Blueprints
+                    .Include(bp => bp.Tags)
                     .FirstOrDefaultAsync(bp => bp.BlueprintId == parentId);
 
                 if (blueprint == null)
@@ -163,7 +163,8 @@ namespace FactorioTech.Core
                 blueprint.UpdateDetails(
                     currentInstant,
                     request.Title.Trim(),
-                    request.Description?.Trim());
+                    request.Description?.Trim(),
+                    request.Tags.Where(Tags.All.Contains).Select(Tag.FromString).ToHashSet());
             }
             else
             {

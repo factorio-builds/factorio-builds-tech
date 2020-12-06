@@ -5,6 +5,11 @@ namespace FactorioTech.Web.Extensions
 {
     public static class Uris
     {
+        public static string RawBlueprint(string owner, string slug, Hash? hash) =>
+            hash == null
+                ? $"/{owner}/{slug}/raw"
+                : $"/{owner}/{slug}/{hash}/raw";
+
         public static string BlueprintCover(Guid blueprintId) =>
             $"/files/cover/{blueprintId}";
 

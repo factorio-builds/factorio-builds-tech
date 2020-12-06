@@ -1,6 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - \
  && apt-get install -y --no-install-recommends nodejs \
  && echo "node version: $(node --version)" \
  && echo "npm version: $(npm --version)" \
@@ -10,7 +10,11 @@ WORKDIR /app/src/FactorioTech.Web
 COPY src/FactorioTech.Web/package*.json ./
 COPY src/FactorioTech.Web/gulpfile.js .
 
-RUN npm install
+RUN npm install --include=dev
+
+# patch broken imports in selectize module
+RUN sed -i '/@import "..\/..\/node_modules\/bootstrap4/d' \
+    node_modules/selectize/src/scss/selectize.bootstrap4.scss
 
 WORKDIR /app
 COPY FactorioTech.sln .

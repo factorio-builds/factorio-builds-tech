@@ -1,4 +1,5 @@
 using FactorioTech.Core;
+using FactorioTech.Tests.Helpers;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace FactorioTech.Tests
         }
 
         [Fact]
+        [Trait("Type", "Fast")]
         public async Task SimpleBlueprintIsDecoded()
         {
             var converter = new BlueprintConverter();
@@ -41,6 +43,7 @@ namespace FactorioTech.Tests
         }
 
         [Fact]
+        [Trait("Type", "Fast")]
         public async Task SimpleBlueprintBookIsDecoded()
         {
             var converter = new BlueprintConverter();
@@ -57,6 +60,7 @@ namespace FactorioTech.Tests
         }
 
         [Fact]
+        [Trait("Type", "Fast")]
         public async Task AdvancedBlueprintBookIsDecoded()
         {
             var converter = new BlueprintConverter();
@@ -73,6 +77,7 @@ namespace FactorioTech.Tests
         }
 
         [Fact]
+        [Trait("Type", "Fast")]
         public async Task SimpleBlueprintIsEncoded()
         {
             var converter = new BlueprintConverter();
@@ -88,6 +93,7 @@ namespace FactorioTech.Tests
         }
 
         [Fact]
+        [Trait("Type", "Fast")]
         public async Task SimpleBlueprintBookIsEncoded()
         {
             var converter = new BlueprintConverter();
@@ -103,6 +109,7 @@ namespace FactorioTech.Tests
         }
 
         [Fact]
+        [Trait("Type", "Fast")]
         public async Task AdvancedBlueprintBookIsEncoded()
         {
             var converter = new BlueprintConverter();

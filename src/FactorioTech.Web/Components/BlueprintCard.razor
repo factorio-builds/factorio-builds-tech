@@ -17,18 +17,15 @@
                 </div>
             </div>
             <div class="col-md-4">
-                @if (payload.Encoded != null)
-                {
-                    <div class="btn-toolbar float-right" role="toolbar">
-                        <div class="btn-group mr-2" role="group">
-                            <button type="button" class="btn btn-sm btn-default"
-                                    data-toggle="copy-blueprint" data-payload="@payload.Encoded">
-                                <i class="fas fa-copy"></i>
-                                Copy to clipboard
-                            </button>
-                        </div>
+                <div class="btn-toolbar float-right" role="toolbar">
+                    <div class="btn-group mr-2" role="group">
+                        <button type="button" class="btn btn-sm btn-default"
+                                data-toggle="copy-blueprint" data-payload="@payload.Encoded">
+                            <i class="fas fa-copy"></i>
+                            Copy to clipboard
+                        </button>
                     </div>
-                }
+                </div>
             </div>
         </div>
         <div class="row align-items-end">
@@ -49,15 +46,12 @@
                             </a>
                         </li>
                     }
-                    @if (payload.Encoded != null)
-                    {
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link" id="blueprint-tab-@payload.Hash" data-toggle="tab" href="#blueprint-@payload.Hash" role="tab"
-                               aria-controls="blueprint" aria-selected="false">
-                                Blueprint String <span class="badge badge-info">@Encoding.UTF8.GetByteCount(payload.Encoded).Bytes().Humanize("#.##")</span>
-                            </a>
-                        </li>
-                    }
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="blueprint-tab-@payload.Hash" data-toggle="tab" href="#blueprint-@payload.Hash" role="tab"
+                           aria-controls="blueprint" aria-selected="false">
+                            Blueprint String <span class="badge badge-info">@Encoding.UTF8.GetByteCount(payload.Encoded).Bytes().Humanize("#.##")</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -89,12 +83,9 @@
                             </table>
                         </div>
                     }
-                    @if (payload.Encoded != null)
-                    {
-                        <div class="tab-pane fade" id="blueprint-@payload.Hash" role="tabpanel" aria-labelledby="blueprint-tab-@payload.Hash">
-                            <code>@payload.Encoded</code>
-                        </div>
-                    }
+                    <div class="tab-pane fade" id="blueprint-@payload.Hash" role="tabpanel" aria-labelledby="blueprint-tab-@payload.Hash">
+                        <code>@payload.Encoded</code>
+                    </div>
                 </div>
             </div>
         </div>

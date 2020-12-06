@@ -3,6 +3,7 @@ using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FactorioTech.Core.Domain
 {
@@ -66,10 +67,16 @@ namespace FactorioTech.Core.Domain
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
             Slug = slug;
-            Tags = new HashSet<Tag>(tags);
             Title = title;
             Description = description;
             LatestGameVersion = "0.0.0.0";
+            
+            Tags = new HashSet<Tag>();
+            foreach (var tag in tags)
+            {
+                tag.BlueprintId = BlueprintId;
+                Tags.Add(tag);
+            }
         }
 
 #pragma warning disable 8618 // required for EF
@@ -86,11 +93,29 @@ namespace FactorioTech.Core.Domain
             LatestGameVersion = version.GameVersion.ToString(4);
         }
 
-        public void UpdateDetails(Instant now, string title, string? description)
+        public void UpdateDetails(Instant now, string title, string? description, IReadOnlySet<Tag> tags)
         {
             UpdatedAt = now;
             Title = title;
             Description = description;
+
+            if (Tags == null)
+                throw new Exception("Must load tags before updating details!");
+
+            foreach (var tag in tags)
+            {
+                tag.BlueprintId = BlueprintId;
+            }
+
+            foreach (var tag in Tags.Except(tags))
+            {
+                Tags.Remove(tag);
+            }
+
+            foreach (var tag in tags.Except(Tags))
+            {
+                Tags.Add(tag);
+            }
         }
     }
 }
