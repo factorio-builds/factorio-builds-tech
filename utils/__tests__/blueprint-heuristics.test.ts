@@ -4,6 +4,7 @@ import { blueprintHeuristics } from "../blueprint-heuristics"
 import {
   highThroughputTrainStationMock,
   markedInputModulesPurpleScienceMock,
+  robotsSpeedModulesFactoryMock,
 } from "./testdata/blueprintMocks"
 
 describe("blueprint heuristics utils", () => {
@@ -22,6 +23,10 @@ describe("blueprint heuristics utils", () => {
         value: false,
         confidence: 1,
       },
+      withBeacons: {
+        value: true, // this particular blueprint has beacons
+        confidence: 1,
+      },
     })
   })
 
@@ -37,6 +42,32 @@ describe("blueprint heuristics utils", () => {
         confidence: 1,
       },
       isTrains: {
+        value: true,
+        confidence: 1,
+      },
+      withBeacons: {
+        value: false,
+        confidence: 1,
+      },
+    })
+  })
+
+  it("flags blueprint with beacons", () => {
+    const decodedRobotsSpeedModulesFactoryMock = decodeBlueprint(
+      robotsSpeedModulesFactoryMock
+    ) as IDecodedBlueprintData
+    expect(
+      blueprintHeuristics(decodedRobotsSpeedModulesFactoryMock.blueprint)
+    ).toEqual({
+      inputsAreMarked: {
+        value: false,
+        confidence: 1,
+      },
+      isTrains: {
+        value: false,
+        confidence: 1,
+      },
+      withBeacons: {
         value: true,
         confidence: 1,
       },

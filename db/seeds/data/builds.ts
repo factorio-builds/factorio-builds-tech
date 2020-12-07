@@ -15,8 +15,9 @@ export const builds: Omit<Build, "owner">[] = [
       state: EState.LATE_GAME,
       tileable: false,
       markedInputs: false,
+      withBeacons: false,
       area: 43,
-      isBook: true
+      isBook: true,
     },
     image: {
       src:
@@ -41,8 +42,9 @@ export const builds: Omit<Build, "owner">[] = [
       state: EState.LATE_GAME,
       tileable: true,
       markedInputs: false,
+      withBeacons: false,
       area: 265,
-      isBook: false
+      isBook: false,
     },
     image: {
       src:
@@ -68,8 +70,9 @@ export const builds: Omit<Build, "owner">[] = [
       state: EState.MID_GAME,
       tileable: true,
       markedInputs: false,
+      withBeacons: false,
       area: 265,
-      isBook: false
+      isBook: false,
     },
     image: {
       src:

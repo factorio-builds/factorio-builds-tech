@@ -123,8 +123,9 @@ async function buildMapper({
         : [],
       markedInputs: Boolean(fields.markedInputs as string),
       tileable: Boolean(fields.tileable as string),
+      withBeacons: Boolean(fields.withBeacons as string),
       area: 0,
-      isBook: isBook(book)
+      isBook: isBook(book),
     },
   }
 

@@ -37,6 +37,7 @@ export interface IMetadata {
   state: EState
   categories: ECategory[]
   markedInputs: boolean
+  withBeacons: boolean
   isBook: boolean
 }
 
