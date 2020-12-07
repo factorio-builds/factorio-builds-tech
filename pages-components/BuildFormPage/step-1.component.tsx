@@ -8,7 +8,7 @@ import {
   isBook,
   isValidBlueprint,
 } from "../../utils/blueprint"
-import { withMarkedInputs, withBeacons } from "../../utils/blueprint-heuristics"
+import { blueprintHeuristics } from "../../utils/blueprint-heuristics"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
@@ -39,25 +39,25 @@ const Step1: React.FC<IStep1Props> = (props) => {
     // TODO: extract
     // TODO: guess metadata from blueprint content
     if (!isBook(json)) {
+      const bp = json.blueprint
+      const { withMarkedInputs, withBeacons } = blueprintHeuristics(bp)
       props.formikProps.setFieldValue(
         "withMarkedInputs",
-        withMarkedInputs(json.blueprint).value
+        withMarkedInputs.value
       )
-      props.formikProps.setFieldValue(
-        "withBeacons",
-        withBeacons(json.blueprint).value
-      )
+      props.formikProps.setFieldValue("withBeacons", withBeacons.value)
     } else {
+      const blueprints = json.blueprint_book.blueprints
       props.formikProps.setFieldValue(
         "withMarkedInputs",
-        json.blueprint_book.blueprints.some(({ blueprint }) => {
-          return withMarkedInputs(blueprint).value
+        blueprints.some(({ blueprint }) => {
+          return blueprintHeuristics(blueprint).withMarkedInputs.value
         })
       )
       props.formikProps.setFieldValue(
         "withBeacons",
-        json.blueprint_book.blueprints.some(({ blueprint }) => {
-          return withBeacons(blueprint).value
+        blueprints.some(({ blueprint }) => {
+          return blueprintHeuristics(blueprint).withBeacons.value
         })
       )
     }
