@@ -15,7 +15,7 @@ describe("blueprint heuristics utils", () => {
     expect(
       blueprintHeuristics(decodedMarkedInputModulesPurpleScienceMock.blueprint)
     ).toEqual({
-      inputsAreMarked: {
+      withMarkedInputs: {
         value: true,
         confidence: 1,
       },
@@ -37,7 +37,7 @@ describe("blueprint heuristics utils", () => {
     expect(
       blueprintHeuristics(decodedHighThroughputTrainStationMock.blueprint)
     ).toEqual({
-      inputsAreMarked: {
+      withMarkedInputs: {
         value: false,
         confidence: 1,
       },
@@ -59,7 +59,7 @@ describe("blueprint heuristics utils", () => {
     expect(
       blueprintHeuristics(decodedRobotsSpeedModulesFactoryMock.blueprint)
     ).toEqual({
-      inputsAreMarked: {
+      withMarkedInputs: {
         value: false,
         confidence: 1,
       },

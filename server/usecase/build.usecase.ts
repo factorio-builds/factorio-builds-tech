@@ -121,7 +121,7 @@ async function buildMapper({
       categories: JSON.parse(fields.categories).length
         ? JSON.parse(fields.categories as string)
         : [],
-      markedInputs: Boolean(fields.markedInputs as string),
+      withMarkedInputs: Boolean(fields.withMarkedInputs as string),
       tileable: Boolean(fields.tileable as string),
       withBeacons: Boolean(fields.withBeacons as string),
       area: 0,
