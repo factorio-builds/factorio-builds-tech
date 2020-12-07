@@ -10,18 +10,18 @@ namespace FactorioTech.Web.Pages
 {
     public class UserModel : PageModel
     {
-        private readonly AppDbContext _ctx;
+        private readonly AppDbContext _dbContext;
 
-        public UserModel(AppDbContext ctx)
+        public UserModel(AppDbContext dbContext)
         {
-            _ctx = ctx;
+            _dbContext = dbContext;
         }
 
         public User SelectedUser { get; private set; } = null!;
 
         public async Task<IActionResult> OnGetAsync(string user)
         {
-            SelectedUser = await _ctx.Users.AsNoTracking()
+            SelectedUser = await _dbContext.Users.AsNoTracking()
                 .Where(u => u.NormalizedUserName == user.ToUpperInvariant())
                 .Include(u => u.Blueprints)
                 .FirstOrDefaultAsync();

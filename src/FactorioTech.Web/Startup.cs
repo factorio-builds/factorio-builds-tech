@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Linq;
 
 namespace FactorioTech.Web
 {
@@ -32,18 +34,31 @@ namespace FactorioTech.Web
                 options.LowercaseUrls = true;
             });
 
-            services.AddAuthentication()
-                .AddGitHub(options =>
+            var authenticationBuilder = services.AddAuthentication();
+
+            var oAuthProviderConfig = _configuration.Get<OAuthProviderConfig>();
+            if (oAuthProviderConfig?.OAuthProviders?.Any() == false)
+                throw new Exception("Must configure at least one OAuth provider!");
+
+            if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("GitHub", out var gitHubCredentials))
+            {
+                authenticationBuilder.AddGitHub(options =>
                 {
-                    options.ClientId = _configuration["OAuthProviders:GitHub:ClientId"];
-                    options.ClientSecret = _configuration["OAuthProviders:GitHub:ClientSecret"];
+                    options.ClientId = gitHubCredentials.ClientId;
+                    options.ClientSecret = gitHubCredentials.ClientSecret;
                     options.Scope.Add("user:email");
-                }).AddDiscord(options =>
+                });
+            }
+
+            if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("Discord", out var discordCredentials))
+            {
+                authenticationBuilder.AddDiscord(options =>
                 {
-                    options.ClientId = _configuration["OAuthProviders:Discord:ClientId"];
-                    options.ClientSecret = _configuration["OAuthProviders:Discord:ClientSecret"];
+                    options.ClientId = discordCredentials.ClientId;
+                    options.ClientSecret = discordCredentials.ClientSecret;
                     options.Scope.Add("email");
                 });
+            }
 
             services.AddDbContext<AppDbContext>(options =>
             {

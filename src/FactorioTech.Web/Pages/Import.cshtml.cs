@@ -21,14 +21,14 @@ namespace FactorioTech.Web.Pages
     public class ImportModel : PageModel
     {
         private readonly ILogger<ImportModel> _logger;
-        private readonly AppDbContext _ctx;
+        private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
         private readonly ImageService _imageService;
 
         public ImportModel(
             ILogger<ImportModel> logger,
-            AppDbContext ctx,
+            AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
             ImageService imageService)
@@ -37,7 +37,7 @@ namespace FactorioTech.Web.Pages
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
             _imageService = imageService;
-            _ctx = ctx;
+            _dbContext = dbContext;
         }
 
         [TempData]
@@ -80,7 +80,7 @@ namespace FactorioTech.Web.Pages
             BlueprintString = importInput.BlueprintString;
 
             var hash = Hash.Compute(BlueprintString);
-            var dupe = await _ctx.BlueprintVersions.AsNoTracking()
+            var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == hash)
                 .Select(x => new
                 {
@@ -102,7 +102,7 @@ namespace FactorioTech.Web.Pages
 
             if (!string.IsNullOrWhiteSpace(importInput.ParentSlug))
             {
-                ParentBlueprint = await _ctx.Blueprints.AsNoTracking()
+                ParentBlueprint = await _dbContext.Blueprints.AsNoTracking()
                     .Where(bp => bp.OwnerId == User.GetUserId() && bp.Slug == importInput.ParentSlug.ToLowerInvariant())
                     .Include(bp => bp.Tags)
                     .FirstOrDefaultAsync();
@@ -110,7 +110,7 @@ namespace FactorioTech.Web.Pages
                 ParentBlueprintId = ParentBlueprint?.BlueprintId;
             }
 
-            var existingTags = ParentBlueprint?.Tags?.Select(t => t.Value) ?? Enumerable.Empty<string>();
+            var existingTags = ParentBlueprint?.Tags?.Select(t => t.Value).ToHashSet() ?? new HashSet<string>(0);
             TagsSelectItems = Tags.All.Select(tag => new SelectListItem(tag, tag, existingTags.Contains(tag)));
 
             var payload = new BlueprintPayload(hash, BlueprintString, Utils.DecodeGameVersion(Envelope.Version));
@@ -232,7 +232,7 @@ namespace FactorioTech.Web.Pages
             return RedirectToPage("/Error");
         }
 
-        public IActionResult OnPostPreview([FromForm]string content) => 
+        public IActionResult OnPostPreview([FromForm]string content) =>
             Partial("_MarkdownPreview", content);
 
         public async Task<JsonResult> OnPostCheckSlugAsync([FromForm]string slug)

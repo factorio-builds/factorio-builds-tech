@@ -77,26 +77,26 @@ else
                 to format the blueprint description.
             </small>
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="import-description-editor-content" role="tabpanel"
-                     aria-labelledby="import-description-editor-tab">
-                    <input asp-for="CreateInput.Description" id="import-description" type="hidden" />
-                    <div id="import-description-ace">@Model.CreateInput.Description</div>
+                <div class="tab-pane fade show active" id="blueprint-description-editor-content" role="tabpanel"
+                     aria-labelledby="blueprint-description-editor-tab">
+                    <input asp-for="CreateInput.Description" id="blueprint-description" type="hidden" />
+                    <div id="blueprint-description-ace">@Model.CreateInput.Description</div>
                 </div>
-                <div class="tab-pane fade" id="import-description-preview-content" role="tabpanel"
-                     aria-labelledby="import-description-preview-tab">
+                <div class="tab-pane fade" id="blueprint-description-preview-content" role="tabpanel"
+                     aria-labelledby="blueprint-description-preview-tab">
                     <markdown>CreateInput.Description</markdown>
                 </div>
             </div>
             <ul class="nav small justify-content-end" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link active" id="import-description-editor-tab" href="#import-description-editor-content" role="tab"
-                        data-toggle="tab" aria-controls="import-description-editor-content" aria-selected="true">
+                    <a class="nav-link active" id="blueprint-description-editor-tab" href="#blueprint-description-editor-content" role="tab"
+                        data-toggle="tab" aria-controls="blueprint-description-editor-content" aria-selected="true">
                         Source
                     </a>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <a class="nav-link" id="import-description-preview-tab" href="#import-description-preview-content" role="tab"
-                        data-toggle="tab" aria-controls="import-description-preview-content" aria-selected="false">
+                    <a class="nav-link" id="blueprint-description-preview-tab" href="#blueprint-description-preview-content" role="tab"
+                        data-toggle="tab" aria-controls="blueprint-description-preview-content" aria-selected="false">
                         Preview
                     </a>
                 </li>
@@ -152,202 +152,9 @@ else
     )
 }
 
-<div class="modal fade" id="blueprint-image-cropper-modal" tabindex="-1" role="dialog"
-     data-backdrop="static" aria-labelledby="blueprint-image-cropper-modal-label" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="blueprint-image-cropper-modal-label">Adjust image</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="img-container">
-                    <img class="img-fluid" id="blueprint-image-cropper" />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="blueprint-image-cropper-submit">Save</button>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_CropperModal" />
 
 @section Scripts {
     <partial name="_ValidationScripts" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.js"
-            asp-fallback-src="~/dist/js/cropper.min.js" asp-fallback-test="window.Cropper"
-            integrity="sha512-9pGiHYK23sqK5Zm0oF45sNBAX/JqbZEP7bSDHyt+nT3GddF+VFIcYNqREt0GDpmFVZI3LZ17Zu9nMMc9iktkCw=="
-            crossorigin="anonymous">
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js"
-            asp-fallback-src="~/dist/js/ace.min.js" asp-fallback-test="window.ace"
-            integrity="sha512-GoORoNnxst42zE3rYPj4bNBm0Q6ZRXKNH2D9nEmNvVF/z24ywVnijAWVi/09iBiVDQVf3UlZHpzhAJIdd9BXqw=="
-            crossorigin="anonymous">
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-markdown.min.js"
-            asp-fallback-src="~/dist/js/mode-markdown.min.js"
-            integrity="sha512-8euv05RhbuOcZWj/kpF+KtKN7g1CPx7buTZjIBf/rZQz47cduH3DERWoqJFrIYE0TzaIlptz+Ir2BodrmLT8kQ=="
-            crossorigin="anonymous">
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/theme-twilight.min.js"
-            asp-fallback-src="~/dist/js/theme-twilight.min.js"
-            integrity="sha512-2IqbT6swyxY2XnBLoAIUYyxu2Oj1XoS7AafJE/5q3vl0mmXyKxIIyKqh1jZNqZeNsp8uP8JRNtG2Z6sgoadXOA=="
-            crossorigin="anonymous">
-    </script>
-
-    <script>
-        $(() => {
-            // MARKDOWN EDITOR
-
-            const editor = ace.edit('import-description-ace', {
-                theme: 'ace/theme/twilight',
-                mode: 'ace/mode/markdown',
-                selectionStyle: 'text',
-                fontSize: 16,
-                minLines: 10,
-                maxLines: 20,
-                wrap: true
-            });
-
-            editor.session.on('change', () => {
-                $('#import-description').val(editor.getSession().getValue());
-            });
-
-            $('a[data-toggle="tab"]').on('shown.bs.tab', e => {
-                const tab = $(e.target).attr('aria-controls');
-                if (tab === 'import-description-preview-content') {
-                    $('#import-description-preview-content').load('/import?handler=preview', {
-                        "content": $('#import-description').val(),
-                        "__RequestVerificationToken": $('input[name="__RequestVerificationToken"').val()
-                    });
-                }
-            });
-
-            // BLUEPRINT IMAGE CROPPER
-
-            const selectedImg = document.getElementById('blueprint-image-selected');
-            const cropperImg = document.getElementById('blueprint-image-cropper');
-            const $input = $('#blueprint-image-input');
-            const $modal = $('#blueprint-image-cropper-modal');
-
-            const showCropper = url => {
-                cropperImg.src = url;
-                $modal.modal('show');
-            };
-
-            const crop = (url, aspectRatio) => {
-                return new Promise(resolve => {
-                    const inputImage = new Image();
-
-                    inputImage.onload = () => {
-                        const inputWidth = inputImage.naturalWidth;
-                        const inputHeight = inputImage.naturalHeight;
-                        const inputImageAspectRatio = inputWidth / inputHeight;
-
-                        let outputWidth = inputWidth;
-                        let outputHeight = inputHeight;
-                        if (inputImageAspectRatio > aspectRatio) {
-                            outputWidth = inputHeight * aspectRatio;
-                        } else if (inputImageAspectRatio < aspectRatio) {
-                            outputHeight = inputWidth / aspectRatio;
-                        }
-
-                        //const outputX = (outputWidth - inputWidth) * .5;
-                        //const outputY = (outputHeight - inputHeight) * .5;
-                        const outputX = 0;
-                        const outputY = 0;
-
-                        const outputImage = document.createElement('canvas');
-                        outputImage.width = outputWidth;
-                        outputImage.height = outputHeight;
-
-                        const ctx = outputImage.getContext('2d');
-                        ctx.drawImage(inputImage, outputX, outputY);
-                        resolve(outputImage);
-                    };
-
-                    inputImage.src = url;
-                });
-            }
-
-            let cropper;
-
-            $input.on('change', e => {
-                var files = e.target.files;
-                if (files && files.length > 0) {
-                    $('#blueprint-image-hash').val(null);
-
-                    const file = files[0];
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        showCropper(reader.result);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            $modal.on('shown.bs.modal', () => {
-                cropper = new Cropper(cropperImg, {
-                    viewMode: 1,
-                    dragMode: 'move',
-                    aspectRatio: 1,
-                    autoCropArea: 0.8,
-                    restore: false,
-                    guides: true,
-                    center: false,
-                    highlight: false,
-                    cropBoxMovable: false,
-                    cropBoxResizable: false,
-                    toggleDragModeOnDblclick: false,
-                });
-            }).on('hidden.bs.modal', () => {
-                cropper.destroy();
-                cropper = null;
-            });
-
-            $('#blueprint-image-cropper-submit').on('click', () => {
-                $modal.modal('hide');
-
-                if (cropper) {
-                    const data = cropper.getData();
-
-                    $('#blueprint-image-x').val(Math.round(data.x));
-                    $('#blueprint-image-y').val(Math.round(data.y));
-                    $('#blueprint-image-w').val(Math.round(data.width));
-                    $('#blueprint-image-h').val(Math.round(data.height));
-
-                    selectedImg.src = cropper.getCroppedCanvas().toDataURL();
-                }
-            });
-
-            $('.card-body .img-thumbnail')
-                .css('cursor', 'pointer')
-                .tooltip({
-                    title: 'Use this rendering as blueprint image…'
-                })
-                .on('click', e => {
-                    $input.val(null);
-                    $('#blueprint-image-hash').val($(e.target).attr('data-hash'));
-                    showCropper(e.target.src);
-                });
-
-            // initialise new blueprint without image
-            if (selectedImg != null && !selectedImg.src) {
-                crop($('.card-body .img-thumbnail').first().attr('src'), 1).then(canvas => {
-                    $('#blueprint-image-x').val(0);
-                    $('#blueprint-image-y').val(0);
-                    $('#blueprint-image-w').val(Math.round(canvas.width));
-                    $('#blueprint-image-h').val(Math.round(canvas.height));
-                    selectedImg.src = canvas.toDataURL();
-                });
-            }
-        });
-    </script>
+    <partial name="_EditFormScripts" />
 }

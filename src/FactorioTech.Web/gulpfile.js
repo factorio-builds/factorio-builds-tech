@@ -40,14 +40,14 @@ function copyFonts() {
 }
 
 function buildJs() {
-    return src("site.js")
+    return src("wwwroot/src/js/**/*.js")
         .pipe(minify())
         .pipe(rename({ suffix: ".min" }))
         .pipe(dest("wwwroot/dist/js"));
 }
 
 function buildScss() {
-    return src("scss/main.scss")
+    return src("wwwroot/src/scss/main.scss")
         .pipe(sass().on("error", sass.logError))
         .pipe(init())
         .pipe(autoprefixer())
@@ -64,6 +64,4 @@ exports.build =
     parallel(copyJs, copyAce, copyFonts, buildJs, buildScss);
 
 exports.watch = () =>
-    watch(
-        ["scss/**/*.scss", "site.js"],
-        parallel(buildJs, buildScss));
+    watch("wwwroot/src/**/*", parallel(buildJs, buildScss));

@@ -43,7 +43,7 @@ namespace FactorioTech.Core { \n\
  && cat /app/src/FactorioTech.Core/BuildInformation.cs
 
 WORKDIR /app/src/FactorioTech.Web
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish -c Release -o /app/publish --no-restore /p:DebugType=None
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0

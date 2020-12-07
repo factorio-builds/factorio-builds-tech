@@ -16,7 +16,7 @@ namespace FactorioTech.Core
     public class ImageService
     {
         private readonly ILogger<ImageService> _logger;
-        private readonly AppDbContext _ctx;
+        private readonly AppDbContext _dbContext;
         private readonly AppConfig _appConfig;
         private readonly BlueprintConverter _converter;
         private readonly FbsrClient _fbsrClient;
@@ -24,12 +24,12 @@ namespace FactorioTech.Core
         public ImageService(
             ILogger<ImageService> logger,
             IOptions<AppConfig> appConfigMonitor,
-            AppDbContext ctx,
+            AppDbContext dbContext,
             BlueprintConverter converter,
             FbsrClient fbsrClient)
         {
             _logger = logger;
-            _ctx = ctx;
+            _dbContext = dbContext;
             _appConfig = appConfigMonitor.Value;
             _converter = converter;
             _fbsrClient = fbsrClient;
@@ -112,7 +112,7 @@ namespace FactorioTech.Core
             if (image != null)
                 return image;
 
-            var payload = await _ctx.BlueprintPayloads.AsNoTracking()
+            var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Hash == hash);
 
             if (payload != null)
@@ -124,7 +124,7 @@ namespace FactorioTech.Core
             if (!versionId.HasValue)
                 return null;
 
-            var parentPayload = await _ctx.BlueprintVersions.AsNoTracking()
+            var parentPayload = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.VersionId == versionId.Value)
                 .Include(x => x.Payload)
                 .FirstOrDefaultAsync();

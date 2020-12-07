@@ -51,14 +51,14 @@ namespace FactorioTech.Core
         }
 
         private readonly ILogger<BlueprintService> _logger;
-        private readonly AppDbContext _ctx;
+        private readonly AppDbContext _dbContext;
 
         public BlueprintService(
             ILogger<BlueprintService> logger,
-            AppDbContext ctx)
+            AppDbContext dbContext)
         {
             _logger = logger;
-            _ctx = ctx;
+            _dbContext = dbContext;
         }
 
         public async Task<IReadOnlyCollection<Blueprint>> GetBlueprints(
@@ -69,10 +69,10 @@ namespace FactorioTech.Core
             string? version)
         {
             var query = !tags.Any()
-                ? _ctx.Blueprints.AsNoTracking()
-                : _ctx.Tags.AsNoTracking()
+                ? _dbContext.Blueprints.AsNoTracking()
+                : _dbContext.Tags.AsNoTracking()
                     .Where(t => tags.Contains(t.Value))
-                    .Join(_ctx.Blueprints.AsNoTracking(),
+                    .Join(_dbContext.Blueprints.AsNoTracking(),
                         t => t.BlueprintId,
                         bp => bp.BlueprintId,
                         (t, bp) => bp)
@@ -112,7 +112,7 @@ namespace FactorioTech.Core
             (Guid Id, string UserName) owner,
             Guid? parentId)
         {
-            var dupe = await _ctx.BlueprintVersions.AsNoTracking()
+            var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == payload.Hash)
                 .Select(x => new
                 {
@@ -134,13 +134,13 @@ namespace FactorioTech.Core
 
             var currentInstant = SystemClock.Instance.GetCurrentInstant();
 
-            await using var tx = await _ctx.Database.BeginTransactionAsync();
+            await using var tx = await _dbContext.Database.BeginTransactionAsync();
 
             Blueprint? blueprint;
 
             if (parentId != null)
             {
-                blueprint = await _ctx.Blueprints
+                blueprint = await _dbContext.Blueprints
                     .Include(bp => bp.Tags)
                     .FirstOrDefaultAsync(bp => bp.BlueprintId == parentId);
 
@@ -186,10 +186,10 @@ namespace FactorioTech.Core
                     request.Title.Trim(),
                     request.Description?.Trim());
 
-                _ctx.Add(blueprint);
+                _dbContext.Add(blueprint);
             }
 
-            _ctx.Add(payload);
+            _dbContext.Add(payload);
 
             var version = new BlueprintVersion(
                 Guid.NewGuid(),
@@ -200,19 +200,19 @@ namespace FactorioTech.Core
                 request.Version.Name?.Trim(),
                 request.Version.Description?.Trim());
 
-            _ctx.Add(version);
+            _dbContext.Add(version);
 
-            await _ctx.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             blueprint.UpdateLatestVersion(version);
 
-            await _ctx.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             await tx.CommitAsync();
 
             return new CreateResult.Success(blueprint);
         }
 
         public async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
-            await _ctx.Blueprints.AnyAsync(bp => bp.Slug == slug && bp.OwnerId == userId);
+            await _dbContext.Blueprints.AnyAsync(bp => bp.Slug == slug && bp.OwnerId == userId);
     }
 }

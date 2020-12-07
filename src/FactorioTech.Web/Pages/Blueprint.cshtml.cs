@@ -15,14 +15,14 @@ namespace FactorioTech.Web.Pages
 {
     public class BlueprintModel : PageModel
     {
-        private readonly AppDbContext _ctx;
+        private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _converter;
 
         public BlueprintModel(
-            AppDbContext ctx,
+            AppDbContext dbContext,
             BlueprintConverter converter)
         {
-            _ctx = ctx;
+            _dbContext = dbContext;
             _converter = converter;
         }
 
@@ -38,9 +38,8 @@ namespace FactorioTech.Web.Pages
 
         public async Task<IActionResult> OnGetAsync(string user, string slug, string? hash)
         {
-            var query = _ctx.Blueprints
-                .Where(bp => bp.Slug == slug.ToLowerInvariant()
-                             && bp.OwnerSlug == user.ToLowerInvariant());
+            var query = _dbContext.Blueprints
+                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant());
 
             if (hash == null)
             {
@@ -55,9 +54,9 @@ namespace FactorioTech.Web.Pages
                 return RedirectToPage("/NotFound");
 
             // don't include in the initial query as this will cause a massive cross join
-            await _ctx.Entry(Blueprint).Collection(e => e.Tags).LoadAsync();
+            await _dbContext.Entry(Blueprint).Collection(e => e.Tags).LoadAsync();
 
-            Versions = await _ctx.BlueprintVersions.AsNoTracking()
+            Versions = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(v => v.BlueprintId == Blueprint.BlueprintId)
                 .OrderByDescending(v => v.CreatedAt)
                 .ToListAsync();
@@ -68,7 +67,7 @@ namespace FactorioTech.Web.Pages
             }
             else
             {
-                SelectedVersion = await _ctx.BlueprintVersions.AsNoTracking()
+                SelectedVersion = await _dbContext.BlueprintVersions.AsNoTracking()
                     .Where(v => v.BlueprintId == Blueprint.BlueprintId && v.Hash == new Hash(hash))
                     .Include(v => v.Payload)
                     .FirstOrDefaultAsync();
@@ -88,32 +87,32 @@ namespace FactorioTech.Web.Pages
 
             ImportInput.ParentSlug = Blueprint.Slug;
 
-            ViewData["Title"] = $"{Blueprint.Owner!.UserName}/{Blueprint.Slug}: {Blueprint.Title}";
+            ViewData["Title"] = $"{Blueprint.OwnerSlug}/{Blueprint.Slug}: {Blueprint.Title}";
 
             return Page();
         }
 
         public async Task<IActionResult> OnPostFavoriteAsync(Guid blueprintId)
         {
-            var favorite = await _ctx.Favorites.AsNoTracking()
+            var favorite = await _dbContext.Favorites.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.BlueprintId == blueprintId && x.UserId == User.GetUserId());
 
             if (favorite != null)
             {
-                _ctx.Remove(favorite);
+                _dbContext.Remove(favorite);
             }
             else
             {
-                _ctx.Add(new Favorite
+                _dbContext.Add(new Favorite
                 {
                     BlueprintId = blueprintId,
                     UserId = User.GetUserId(),
                 });
             }
 
-            await _ctx.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
-            var count = await _ctx.Favorites.CountAsync(x => x.BlueprintId == blueprintId);
+            var count = await _dbContext.Favorites.CountAsync(x => x.BlueprintId == blueprintId);
 
             return Partial("_PlainText", count);
         }
