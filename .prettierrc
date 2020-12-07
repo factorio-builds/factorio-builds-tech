@@ -8,13 +8,5 @@
   "singleQuote": false,
   "tabWidth": 2,
   "trailingComma": "es5",
-  "useTabs": false,
-  "overrides": [
-    {
-      "files": "src/content/**/*.md",
-      "options": {
-        "semi": true
-      }
-    }
-  ]
+  "useTabs": false
 }
