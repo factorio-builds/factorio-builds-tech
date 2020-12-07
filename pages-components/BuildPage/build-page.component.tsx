@@ -180,6 +180,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               <SC.AsideSubGroup>
                 Tileable: {build.metadata.tileable ? "yes" : "no"}
               </SC.AsideSubGroup>
+              <SC.AsideSubGroup>
+                With beacons: {build.metadata.withBeacons ? "yes" : "no"}
+              </SC.AsideSubGroup>
             </AsideGroup>
             {!isBook(build.json) && (
               <AsideGroup title="Required items">
