@@ -44,10 +44,22 @@ function isTrains(blueprint: IBlueprint): IComputedHeuristic {
   }
 }
 
+export function withBeacons(blueprint: IBlueprint): IComputedHeuristic {
+  const output = blueprint.entities.some((entity) => {
+    return entity.name === "beacon"
+  })
+
+  return {
+    value: output,
+    confidence: 1,
+  }
+}
+
 // TODO: review/observe performance over time
 export function blueprintHeuristics(blueprint: IBlueprint): THeuristics {
   return {
     isTrains: isTrains(blueprint),
     inputsAreMarked: inputsAreMarked(blueprint),
+    withBeacons: withBeacons(blueprint),
   }
 }
