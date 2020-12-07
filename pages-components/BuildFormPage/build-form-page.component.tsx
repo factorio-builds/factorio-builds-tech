@@ -19,6 +19,7 @@ export interface IFormValues {
   state: EState | -1
   tileable: boolean
   markedInputs: boolean
+  withBeacons: boolean
   categories: ECategory[]
   image: File | string | null
 }
@@ -30,6 +31,7 @@ interface IValidFormValues {
   state: EState
   tileable: boolean
   markedInputs: boolean
+  withBeacons: boolean
   categories: ECategory[]
   image: File
 }
@@ -44,6 +46,7 @@ const baseInitialValues: IFormValues = {
   state: -1,
   tileable: false,
   markedInputs: false,
+  withBeacons: false,
   categories: [],
   image: null,
 }
@@ -62,6 +65,7 @@ const createInitialValues = (build?: Build): IFormValues => {
     state: build.metadata.state,
     tileable: build.metadata.tileable,
     markedInputs: build.metadata.markedInputs,
+    withBeacons: build.metadata.withBeacons,
     categories: build.metadata.categories,
     image: img,
   }
@@ -84,6 +88,7 @@ const validation = {
   state: Yup.string().oneOf(Object.keys(EState), "Required"),
   tileable: Yup.boolean(),
   markedInputs: Yup.boolean(),
+  withBeacons: Yup.boolean(),
   categories: Yup.array(),
   image: Yup.mixed()
     .required("A file is required")
@@ -120,6 +125,7 @@ const toFormData = (formValues: IValidFormValues) => {
   formData.append("state", formValues.state)
   formData.append("tileable", String(formValues.tileable))
   formData.append("markedInputs", String(formValues.markedInputs))
+  formData.append("withBeacons", String(formValues.withBeacons))
   formData.append("categories", JSON.stringify(formValues.categories))
   formData.append("image", formValues.image)
 

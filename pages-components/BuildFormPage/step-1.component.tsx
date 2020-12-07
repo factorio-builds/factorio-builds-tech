@@ -8,7 +8,7 @@ import {
   isBook,
   isValidBlueprint,
 } from "../../utils/blueprint"
-import { inputsAreMarked } from "../../utils/blueprint-heuristics"
+import { inputsAreMarked, withBeacons } from "../../utils/blueprint-heuristics"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
@@ -43,11 +43,21 @@ const Step1: React.FC<IStep1Props> = (props) => {
         "markedInputs",
         inputsAreMarked(json.blueprint).value
       )
+      props.formikProps.setFieldValue(
+        "withBeacons",
+        withBeacons(json.blueprint).value
+      )
     } else {
       props.formikProps.setFieldValue(
         "markedInputs",
         json.blueprint_book.blueprints.some(({ blueprint }) => {
           return inputsAreMarked(blueprint).value
+        })
+      )
+      props.formikProps.setFieldValue(
+        "withBeacons",
+        json.blueprint_book.blueprints.some(({ blueprint }) => {
+          return withBeacons(blueprint).value
         })
       )
     }
