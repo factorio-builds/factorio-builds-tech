@@ -10,6 +10,7 @@ export interface IStoreStateFilters {
 export interface IStoreCategoryFilters {
   [ECategory.BALANCER]: boolean
   [ECategory.SMELTING]: boolean
+  [ECategory.REFINERY]: boolean
   [ECategory.TRAINS]: boolean
   [ECategory.PRODUCTION]: boolean
   [ECategory.ENERGY]: boolean
@@ -33,6 +34,7 @@ const initialFiltersState: IStoreFiltersState = {
   [EFilterType.CATEGORY]: {
     [ECategory.BALANCER]: false,
     [ECategory.SMELTING]: false,
+    [ECategory.REFINERY]: false,
     [ECategory.TRAINS]: false,
     [ECategory.PRODUCTION]: false,
     [ECategory.ENERGY]: false,
