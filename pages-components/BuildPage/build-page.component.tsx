@@ -175,7 +175,8 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
             </AsideGroup>
             <AsideGroup title="Extra">
               <SC.AsideSubGroup>
-                Inputs are marked: {build.metadata.markedInputs ? "yes" : "no"}
+                Inputs are marked:
+                {build.metadata.withMarkedInputs ? "yes" : "no"}
               </SC.AsideSubGroup>
               <SC.AsideSubGroup>
                 Tileable: {build.metadata.tileable ? "yes" : "no"}

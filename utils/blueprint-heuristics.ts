@@ -9,7 +9,7 @@ type THeuristics = Record<string, IComputedHeuristic>
 
 // TODO: could be improved to check that the combinator is right next to a belt facing it
 // odds are 99% of cases, a combinator with an item indicates input
-export function inputsAreMarked(blueprint: IBlueprint): IComputedHeuristic {
+export function withMarkedInputs(blueprint: IBlueprint): IComputedHeuristic {
   const output = blueprint.entities.some((entity) => {
     return (
       entity.name === "constant-combinator" &&
@@ -59,7 +59,7 @@ export function withBeacons(blueprint: IBlueprint): IComputedHeuristic {
 export function blueprintHeuristics(blueprint: IBlueprint): THeuristics {
   return {
     isTrains: isTrains(blueprint),
-    inputsAreMarked: inputsAreMarked(blueprint),
+    withMarkedInputs: withMarkedInputs(blueprint),
     withBeacons: withBeacons(blueprint),
   }
 }

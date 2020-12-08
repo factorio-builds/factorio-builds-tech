@@ -18,7 +18,7 @@ export interface IFormValues {
   description: string
   state: EState | -1
   tileable: boolean
-  markedInputs: boolean
+  withMarkedInputs: boolean
   withBeacons: boolean
   categories: ECategory[]
   image: File | string | null
@@ -30,7 +30,7 @@ interface IValidFormValues {
   description: string
   state: EState
   tileable: boolean
-  markedInputs: boolean
+  withMarkedInputs: boolean
   withBeacons: boolean
   categories: ECategory[]
   image: File
@@ -45,7 +45,7 @@ const baseInitialValues: IFormValues = {
   description: "",
   state: -1,
   tileable: false,
-  markedInputs: false,
+  withMarkedInputs: false,
   withBeacons: false,
   categories: [],
   image: null,
@@ -64,7 +64,7 @@ const createInitialValues = (build?: Build): IFormValues => {
     description: build.description,
     state: build.metadata.state,
     tileable: build.metadata.tileable,
-    markedInputs: build.metadata.markedInputs,
+    withMarkedInputs: build.metadata.withMarkedInputs,
     withBeacons: build.metadata.withBeacons,
     categories: build.metadata.categories,
     image: img,
@@ -87,7 +87,7 @@ const validation = {
   description: Yup.string(),
   state: Yup.string().oneOf(Object.keys(EState), "Required"),
   tileable: Yup.boolean(),
-  markedInputs: Yup.boolean(),
+  withMarkedInputs: Yup.boolean(),
   withBeacons: Yup.boolean(),
   categories: Yup.array(),
   image: Yup.mixed()
@@ -124,7 +124,7 @@ const toFormData = (formValues: IValidFormValues) => {
   formData.append("description", formValues.description)
   formData.append("state", formValues.state)
   formData.append("tileable", String(formValues.tileable))
-  formData.append("markedInputs", String(formValues.markedInputs))
+  formData.append("withMarkedInputs", String(formValues.withMarkedInputs))
   formData.append("withBeacons", String(formValues.withBeacons))
   formData.append("categories", JSON.stringify(formValues.categories))
   formData.append("image", formValues.image)
