@@ -3,6 +3,7 @@ import { Field, FormikProps } from "formik"
 import Input from "../../components/form/FormikInputWrapper"
 import Button from "../../components/ui/Button"
 import Stacker from "../../components/ui/Stacker"
+import { IDecodedBlueprintBookData, IDecodedBlueprintData } from "../../types"
 import {
   decodeBlueprint,
   isBook,
@@ -12,34 +13,93 @@ import { blueprintHeuristics } from "../../utils/blueprint-heuristics"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
+interface IBlueprintData {
+  label: string
+  isBook: boolean
+  blueprintCount: number
+  entityCount: number
+}
+
+interface IStepStateValidSingle {
+  isValid: true
+  isBook: false
+  data: IBlueprintData
+  json: IDecodedBlueprintData
+  heuristics: ReturnType<typeof blueprintHeuristics>
+}
+
+interface IStepStateValidBook {
+  isValid: true
+  isBook: true
+  data: IBlueprintData
+  json: IDecodedBlueprintBookData
+  heuristics: Array<ReturnType<typeof blueprintHeuristics>>
+}
+
+interface IStepStateInvalid {
+  isValid: false
+}
+
+type TStepState =
+  | IStepStateValidSingle
+  | IStepStateValidBook
+  | IStepStateInvalid
+
 interface IStep1Props {
   formikProps: FormikProps<IFormValues>
   goToNextStep: () => void
 }
 
 const Step1: React.FC<IStep1Props> = (props) => {
-  const stepIsValid = useMemo(() => {
-    const isValid = isValidBlueprint(props.formikProps.values.blueprint)
+  const stepState: TStepState = useMemo(() => {
+    const bpString = props.formikProps.values.blueprint
+    const isValid = isValidBlueprint(bpString)
 
-    if (isValid) {
-      return true
+    if (!isValid) {
+      return {
+        isValid: false,
+      }
+    }
+
+    const json = decodeBlueprint(bpString)
+
+    if (isBook(json)) {
+      return {
+        isValid: true,
+        isBook: true,
+        json,
+        data: getBlueprintData(json),
+        heuristics: json.blueprint_book.blueprints.map((bp) =>
+          blueprintHeuristics(bp.blueprint)
+        ),
+      }
     } else {
-      return false
+      return {
+        isValid: true,
+        isBook: false,
+        json,
+        data: getBlueprintData(json),
+        heuristics: blueprintHeuristics(json.blueprint),
+      }
     }
   }, [props.formikProps.values.blueprint])
 
   function preFillForm(): void {
-    const json = decodeBlueprint(props.formikProps.values.blueprint)
+    if (!stepState.isValid) {
+      return
+    }
 
-    const bp = isBook(json) ? json.blueprint_book : json.blueprint
+    const bp = stepState.isBook
+      ? stepState.json.blueprint_book
+      : stepState.json.blueprint
 
     props.formikProps.setFieldValue("name", bp.label)
     props.formikProps.setFieldValue("description", bp.description || "")
 
     // TODO: extract
     // TODO: guess metadata from blueprint content
-    if (!isBook(json)) {
-      const bp = json.blueprint
+    if (!stepState.isBook) {
+      const bp = stepState.json.blueprint
       const { withMarkedInputs, withBeacons } = blueprintHeuristics(bp)
       props.formikProps.setFieldValue(
         "withMarkedInputs",
@@ -47,7 +107,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
       )
       props.formikProps.setFieldValue("withBeacons", withBeacons.value)
     } else {
-      const blueprints = json.blueprint_book.blueprints
+      const blueprints = stepState.json.blueprint_book.blueprints
       props.formikProps.setFieldValue(
         "withMarkedInputs",
         blueprints.some(({ blueprint }) => {
@@ -66,8 +126,32 @@ const Step1: React.FC<IStep1Props> = (props) => {
   }
 
   function handleOnKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
-    if (e.key === "Enter" && stepIsValid) {
+    if (e.key === "Enter" && stepState.isValid) {
       preFillForm()
+    }
+  }
+
+  function getBlueprintData(
+    json: IDecodedBlueprintData | IDecodedBlueprintBookData
+  ): IBlueprintData {
+    if (isBook(json)) {
+      const book = json.blueprint_book
+      return {
+        label: book.label,
+        isBook: true,
+        blueprintCount: book.blueprints.length,
+        entityCount: book.blueprints.reduce((acc, curr) => {
+          return acc + curr.blueprint.entities.length
+        }, 0),
+      }
+    } else {
+      const bp = json.blueprint
+      return {
+        label: bp.label,
+        isBook: false,
+        blueprintCount: 1,
+        entityCount: bp.entities.length,
+      }
     }
   }
 
@@ -93,11 +177,14 @@ const Step1: React.FC<IStep1Props> = (props) => {
             validFeedback="Found a valid blueprint"
           />
 
-          {stepIsValid && (
+          {stepState.isValid && (
             <>
+              {/* prettier-ignore */}
               <p>
-                Blueprint with a name of XXXXX, totally YYY entities.Assuming
-                category of ABC, game state of DEF with ZZ% confidence.
+                Blueprint with a name of <b>{stepState.data.label}</b>, totalling <b>{stepState.data.entityCount}</b> entities.<br />
+                {stepState.data.isBook && <>Found a <b>blueprint book</b>, with <b>{stepState.data.blueprintCount}</b> blueprints.</>}
+                {!stepState.data.isBook && <>Found a <b>single blueprint</b>.</>}
+                {/*Assuming category of ABC, game state of DEF with ZZ% confidence.*/}
               </p>
 
               <p>You’ll get to adjust everything on the next screen.</p>
@@ -108,12 +195,12 @@ const Step1: React.FC<IStep1Props> = (props) => {
             <Button
               variant="success"
               type="button"
-              disabled={!stepIsValid}
+              disabled={!stepState.isValid}
               onClick={preFillForm}
             >
               Continue
             </Button>
-            {!stepIsValid && (
+            {!stepState.isValid && (
               <SC.SkipButton onClick={props.goToNextStep}>
                 or skip
               </SC.SkipButton>
