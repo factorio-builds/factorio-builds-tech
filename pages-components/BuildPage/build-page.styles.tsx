@@ -60,6 +60,10 @@ export const WithRequiredItem = styled(StyledStacker)`
   align-items: center;
 `
 
+export const BlueprintItem = styled(StyledStacker)`
+  align-items: center;
+`
+
 export const WithItem = styled(StyledStacker)`
   ${getTypo(ETypo.METADATA_TITLE)};
   align-items: center;

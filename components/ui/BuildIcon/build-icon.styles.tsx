@@ -8,13 +8,13 @@ export const BuildIconWrapper = styled.div`
   align-items: center;
   width: 40px;
   height: 40px;
+  flex: 0 0 40px;
   background: linear-gradient(135deg, #235581, #133756);
   border: 2px dashed #7fbace;
   margin-right: 8px;
 
   img {
-    margin: 0;
-    margin: 5%;
+    margin: 5% !important;
   }
 
   &.is-large img {
