@@ -6,7 +6,16 @@ interface IItemIconProps {
 }
 
 const ItemIcon: React.FC<IItemIconProps> = (props) => {
-  const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${props.itemName}.png`
+  const nameFix = React.useMemo(() => {
+    switch (props.itemName) {
+      case "rail":
+        return "straight-rail"
+      default:
+        return props.itemName
+    }
+  }, [props.itemName])
+
+  const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${nameFix}.png`
 
   return <SC.ItemIconWrapper src={iconSrc} />
 }

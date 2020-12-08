@@ -5,6 +5,7 @@ import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
+import BuildIcon from "../../components/ui/BuildIcon"
 import BuildSubheader from "../../components/ui/BuildSubheader"
 import Button from "../../components/ui/Button"
 import Layout from "../../components/ui/Layout"
@@ -201,9 +202,18 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
             {isBook(build.json) && (
               <AsideGroup title="Blueprints">
-                {build.json.blueprint_book.blueprints.map((bp, index) => {
-                  return <div key={index}>{bp.blueprint.label}</div>
-                })}
+                <Stacker gutter={4}>
+                  {build.json.blueprint_book.blueprints.map((bp, index) => {
+                    return (
+                      <SC.BlueprintItem key={index}>
+                        {bp.blueprint.icons && (
+                          <BuildIcon icons={bp.blueprint.icons} />
+                        )}
+                        {bp.blueprint.label}
+                      </SC.BlueprintItem>
+                    )
+                  })}
+                </Stacker>
               </AsideGroup>
             )}
           </SC.Aside>
