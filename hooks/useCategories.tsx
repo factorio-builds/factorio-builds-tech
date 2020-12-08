@@ -36,6 +36,12 @@ export function useCategories(): IUseCategories {
       value: ECategory.SMELTING,
     },
     {
+      iconName: "oil-refinery",
+      icon: getIcon("oil-refinery"),
+      name: titleCase(ECategory.REFINERY),
+      value: ECategory.REFINERY,
+    },
+    {
       iconName: "straight-rail",
       icon: getIcon("straight-rail"),
       name: titleCase(ECategory.TRAINS),

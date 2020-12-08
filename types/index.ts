@@ -21,6 +21,7 @@ export enum EState {
 export enum ECategory {
   "BALANCER" = "BALANCER",
   "SMELTING" = "SMELTING",
+  "REFINERY" = "REFINERY",
   "TRAINS" = "TRAINS",
   "PRODUCTION" = "PRODUCTION",
   "ENERGY" = "ENERGY",
