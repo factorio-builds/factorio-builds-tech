@@ -24,15 +24,7 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "nuget"
-    directory: "/src/FactorioTech.Core/"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "nuget"
-    directory: "/src/FactorioTech.Web/"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "nuget"
-    directory: "/test/FactorioTech.Tests/"
+    directory: "/"
     schedule:
       interval: "daily"
   
