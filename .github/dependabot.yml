@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "gitsubmodule"
-    directory: "/fbsr-wrapper/deps/"
+    directory: "/"
     schedule:
       interval: "daily"
   - package-ecosystem: "terraform"
