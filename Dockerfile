@@ -1,14 +1,7 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-
-RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - \
- && apt-get install -y --no-install-recommends nodejs \
- && echo "node version: $(node --version)" \
- && echo "npm version: $(npm --version)" \
- && rm -rf /var/lib/apt/lists/*
+FROM dstockhammer/dotnet-sdk-node-npm:5.0 AS build
 
 WORKDIR /app/src/FactorioTech.Web
 COPY src/FactorioTech.Web/package*.json ./
-COPY src/FactorioTech.Web/gulpfile.js .
 
 RUN npm install --include=dev
 
@@ -20,6 +13,7 @@ WORKDIR /app
 COPY FactorioTech.sln .
 COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
+COPY src/FactorioTech.Web/gulpfile.js src/FactorioTech.Web/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
 
 RUN dotnet restore
