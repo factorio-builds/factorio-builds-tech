@@ -15,7 +15,6 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
   return (
     <ReactSelect<{ value: string; label: string }>
       placeholder={props.placeholder}
-      // @ts-ignore
       options={props.options}
       menuPlacement="auto"
       onChange={(fieldValue) => {
