@@ -18,9 +18,7 @@ const Search = (): JSX.Element => {
     [input]
   )
 
-  // TODO: type properly
-  // @ts-ignore
-  function handleOnChange(event: KeyboardEvent<HTMLInputElement>): void {
+  function handleOnChange(event: React.ChangeEvent<HTMLInputElement>): void {
     setInput(event.target.value)
   }
 

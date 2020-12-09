@@ -20,8 +20,7 @@ interface IImagePreview {
 function toImage(buffer: ArrayBuffer) {
   const arrayBufferView = new Uint8Array(buffer)
   const blob = new Blob([arrayBufferView], { type: "image/jpeg" })
-  // @ts-ignore
-  const urlCreator = window.URL || window.webkitURL!
+  const urlCreator = window.URL || window.webkitURL
   return urlCreator.createObjectURL(blob)
 }
 
