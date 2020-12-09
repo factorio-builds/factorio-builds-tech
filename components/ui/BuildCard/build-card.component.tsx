@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { Build } from "../../../db/entities/build.entity"
 import { IMetadata } from "../../../types"
+import WithIcons from "../WithIcons"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
@@ -35,7 +36,7 @@ function BuildCard({
         <SC.Content>
           <SC.Title>
             {isBook && <SC.Book src="/img/blueprint-book.png" />}
-            {name}
+            <WithIcons input={name} />
           </SC.Title>
           <SC.Categories>
             {categories.map((category) => {

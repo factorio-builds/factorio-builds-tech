@@ -5,6 +5,7 @@ import { useGameStates } from "../../../hooks/useGameStates"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import Subheader from "../Subheader"
+import WithIcons from "../WithIcons"
 import * as SC from "./build-subheader.styles"
 
 interface IBuildSubheader {
@@ -30,7 +31,8 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
           {props.isBook && (
             <SC.Book src="/img/blueprint-book.png" alt="Blueprint book" />
           )}
-          {icons && <BuildIcon icons={icons} />} {props.build.name}
+          {icons && <BuildIcon icons={icons} />}
+          <WithIcons input={props.build.name} />
         </>
       }
       subtitle={
