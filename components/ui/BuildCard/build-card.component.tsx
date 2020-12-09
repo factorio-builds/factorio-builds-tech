@@ -2,12 +2,14 @@ import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Build } from "../../../db/entities/build.entity"
-import { IMetadata } from "../../../types"
+import { IBlueprintIcon, IMetadata } from "../../../types"
+import BuildIcon from "../BuildIcon"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
   name: Build["name"]
+  icons: IBlueprintIcon[] | void
   isBook: boolean
   categories: IMetadata["categories"]
   image: Build["image"]
@@ -16,6 +18,7 @@ interface IBuildCardProps {
 
 function BuildCard({
   name,
+  icons,
   isBook,
   categories = [],
   image,
@@ -36,6 +39,7 @@ function BuildCard({
         <SC.Content>
           <SC.Title>
             {isBook && <SC.Book src="/img/blueprint-book.png" />}
+            {icons && <BuildIcon icons={icons} />}
             <WithIcons input={name} />
           </SC.Title>
           <SC.Categories>
