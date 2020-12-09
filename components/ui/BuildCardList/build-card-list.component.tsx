@@ -3,6 +3,7 @@ import sortBy from "lodash/sortBy"
 import { Build } from "../../../db/entities/build.entity"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
 import { ESortType } from "../../../types"
+import { getIcons } from "../../../utils/build"
 import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
 import BuildListSort from "../BuildListSort"
@@ -66,6 +67,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
                 <BuildCard
                   name={item.name}
                   categories={item.metadata.categories}
+                  icons={getIcons(item)}
                   // @ts-ignore
                   isBook={item.metadata.isBook}
                   image={item.image}
