@@ -112,6 +112,7 @@ export interface IBlueprintBook {
     blueprint: IBlueprint
     index: number
   }>
+  icons: Array<IBlueprintIcon>
   label: string
   description?: string
   version: number

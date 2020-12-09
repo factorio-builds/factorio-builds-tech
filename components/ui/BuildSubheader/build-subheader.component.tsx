@@ -2,6 +2,7 @@ import React from "react"
 import { Build } from "../../../db/entities/build.entity"
 import { useCategories } from "../../../hooks/useCategories"
 import { useGameStates } from "../../../hooks/useGameStates"
+import { getIcons } from "../../../utils/build"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import Subheader from "../Subheader"
@@ -18,11 +19,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const { getGameState } = useGameStates()
 
   const gameState = getGameState(props.build.metadata.state)
-  const icons = props.build.metadata.isBook
-    ? // @ts-ignore
-      props.build.json.blueprint_book!.icons
-    : // @ts-ignore
-      props.build.json.blueprint!.icons
+  const icons = getIcons(props.build)
 
   return (
     <Subheader
