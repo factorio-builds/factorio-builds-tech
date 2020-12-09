@@ -4,6 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "gitsubmodule"
+    directory: "/fbsr-wrapper/deps/"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "terraform"
     directory: "/infrastructure/"
     schedule:
@@ -30,10 +34,6 @@ updates:
     directory: "/fbsr-wrapper/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "gitsubmodule"
-    directory: "/fbsr-wrapper/deps/"
-    schedule:
-      interval: "daily"
   - package-ecosystem: "maven"
     directory: "/fbsr-wrapper/"
     schedule:
