@@ -14,12 +14,12 @@ function WithIcons(props: IWithIcons): JSX.Element {
 
     return parts.map((part, index) => {
       if (!part.match(regex)) {
-        return <span>{part}</span>
+        return <span key={index}>{part}</span>
       }
 
       const match = part.match(itemRegex)
       if (!match || !match[1]) {
-        return <span>{part}</span>
+        return <span key={index}>{part}</span>
       }
 
       return <ItemIcon key={index} itemName={match[1]} />
