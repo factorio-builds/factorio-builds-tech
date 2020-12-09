@@ -18,6 +18,7 @@ import Copy from "../../icons/copy"
 import { IStoreState } from "../../redux/store"
 import { ERole } from "../../types"
 import { getCountPerItem, isBook } from "../../utils/blueprint"
+import { getIcons } from "../../utils/build"
 import * as SC from "./build-page.styles"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
@@ -204,11 +205,10 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               <AsideGroup title="Blueprints">
                 <Stacker gutter={4}>
                   {build.json.blueprint_book.blueprints.map((bp, index) => {
+                    const icons = getIcons(bp.blueprint)
                     return (
                       <SC.BlueprintItem key={index}>
-                        {bp.blueprint.icons && (
-                          <BuildIcon icons={bp.blueprint.icons} />
-                        )}
+                        {icons && <BuildIcon icons={icons} />}
                         {bp.blueprint.label}
                       </SC.BlueprintItem>
                     )
