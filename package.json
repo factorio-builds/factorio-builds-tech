@@ -55,7 +55,7 @@
     "typeorm-seeding": "^1.6.1",
     "uid-safe": "^2.1.5",
     "uuid": "^8.3.2",
-    "yup": "^0.31.1"
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.12.1",
