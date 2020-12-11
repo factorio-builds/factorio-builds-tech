@@ -76,7 +76,7 @@
     "@types/react-redux": "^7.1.12",
     "@types/react-select": "^3.0.28",
     "@types/redis": "^2.8.28",
-    "@types/styled-components": "^5.1.4",
+    "@types/styled-components": "^5.1.5",
     "@types/text-encoding": "^0.0.35",
     "@types/uid-safe": "^2.1.2",
     "@types/uuid": "^8.3.0",
