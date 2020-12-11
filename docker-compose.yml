@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   app:
     environment:
@@ -12,7 +12,7 @@ services:
       app-network:
         ipv4_address: 10.5.0.10
     ports:
-      - '3000:3000'
+      - "3000:3000"
 
   redis:
     container_name: redis-cache
@@ -21,7 +21,7 @@ services:
       app-network:
         ipv4_address: 10.5.0.20
     ports:
-      - '6379:6379'
+      - "6379:6379"
 
   database:
     environment:
@@ -34,11 +34,11 @@ services:
       app-network:
         ipv4_address: 10.5.0.30
     ports:
-      - '5432:5432'
+      - "5432:5432"
 
 networks:
   app-network:
     driver: bridge
     ipam:
       config:
-      - subnet: 10.5.0.0/16
+        - subnet: 10.5.0.0/16
