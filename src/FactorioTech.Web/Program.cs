@@ -43,6 +43,8 @@ namespace FactorioTech.Web
             {
                 config.AddJsonFile("appsettings.secret.json", optional: true, reloadOnChange: false);
                 config.AddKeyPerFile("/run/secrets", optional: true, reloadOnChange: false);
+                config.AddKeyPerFile("/config", optional: true, reloadOnChange: false);
+                config.AddKeyPerFile("/secrets", optional: true, reloadOnChange: false);
             })
             .ConfigureWebHostDefaults(builder =>
             {

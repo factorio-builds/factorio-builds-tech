@@ -17,30 +17,46 @@ spec:
         {{- include "factorio-tech.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: web
     spec:
-      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "factorio-tech.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        - name: default-container-registry
       containers:
         - name: {{ include "factorio-tech.fullname" . }}-web
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.imageNamespace }}/web:{{ .Chart.AppVersion }}"
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: app-data
+              mountPath: /data
+              readOnly: false
+            - name: factorio-data
+              mountPath: /factorio
+              readOnly: true
+          env:
+            - name: ConnectionStrings__Postgres
+              value: Host=postgres;Database=postgres;Username=postgres;Password=postgres
+            - name: AppConfig__FactorioDir
+              value: /factorio/Factorio_1.0.0
+            - name: AppConfig__WorkingDir
+              value: /data
+            - name: AppConfig__FbsrWrapperUri
+              value: http://fbsr-wrapper
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "factorio-tech.fullname" . }}-web
+        - name: app-data
+          azureFile:
+            secretName: app-data-share
+            shareName: app-data
+            readOnly: false
+        - name: factorio-data
+          azureFile:
+            secretName: factorio-data-share
+            shareName: factorio-data
+            readOnly: true

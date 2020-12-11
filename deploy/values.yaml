@@ -1,9 +1,8 @@
-replicaCount: 2
+imageNamespace: ghcr.io/dstockhammer/factorio-tech
 
-image:
-  repository: traefik/whoami
-  pullPolicy: IfNotPresent
-  tag: latest
+replicas:
+ web: 1
+ fbsrWrapper: 1
 
 postgres:
   repository: postgres
@@ -11,8 +10,6 @@ postgres:
   tag: latest
   diskName: factorio-tech-postgres
   diskURI: /subscriptions/86a2bd69-00a4-460d-9fda-b2850d41137f/resourceGroups/factorio-tech/providers/Microsoft.Compute/disks/factorio-tech-postgres
-
-imagePullSecrets: []
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -24,5 +21,3 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
-serviceAccount: {}

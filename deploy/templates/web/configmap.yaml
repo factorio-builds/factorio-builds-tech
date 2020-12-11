@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-web
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+data:
+  ConnectionStrings__Postgres: Host=postgres;Database=postgres;Username=postgres;Password=postgres
+  AppConfig__FactorioDir: /factorio/Factorio_1.0.0
+  AppConfig__WorkingDir: /data
+  AppConfig__FbsrWrapperUri: http://fbsr-wrapper

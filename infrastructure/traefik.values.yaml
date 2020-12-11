@@ -7,9 +7,6 @@ additionalArguments:
 persistence:
   enabled: true
   storageClass: default
-  mountOptions:
-    - dir_mode=0777
-    - file_mode=0777
 
 ports:
   web:

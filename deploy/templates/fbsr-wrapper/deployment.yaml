@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: fbsr-wrapper
+spec:
+  replicas: {{ .Values.replicas.fbsrWrapper }}
+  selector:
+    matchLabels:
+      {{- include "factorio-tech.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: fbsr-wrapper
+  template:
+    metadata:
+      labels:
+        {{- include "factorio-tech.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: fbsr-wrapper
+    spec:
+      imagePullSecrets:
+        - name: default-container-registry
+      containers:
+        - name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+          image: "{{ .Values.imageNamespace }}/fbsr-wrapper:{{ .Chart.AppVersion }}"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: factorio-data
+              mountPath: /factorio
+              readOnly: true
+      volumes:
+        - name: factorio-data
+          azureFile:
+            secretName: factorio-data-share
+            shareName: factorio-data
+            readOnly: true

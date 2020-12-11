@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 using System.Linq;
 
@@ -26,6 +27,18 @@ namespace FactorioTech.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            if (services == null)
+            {
+                Log.Fatal("services is null");
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (_configuration == null)
+            {
+                Log.Fatal("_configuration is null");
+                throw new ArgumentNullException(nameof(_configuration));
+            }
+
             services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
@@ -60,13 +73,11 @@ namespace FactorioTech.Web
                 });
             }
 
+            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseNpgsql(
-                    _configuration.GetConnectionString("Postgres"),
-                    o => o.UseNodaTime());
-
-            }).AddDatabaseDeveloperPageExceptionFilter();
+                options.UseNpgsql(_configuration.GetConnectionString("Postgres"), o => o.UseNodaTime());
+            });
 
             services.AddIdentityCore<User>()
                 .AddDefaultTokenProviders()
@@ -74,6 +85,13 @@ namespace FactorioTech.Web
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<AppDbContext>();
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = AppConfig.Policies.Slug.AllowedCharacters;
+            });
+
+            services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
             services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomUserClaimsPrincipalFactory>();
 
             services.AddAuthentication(options =>

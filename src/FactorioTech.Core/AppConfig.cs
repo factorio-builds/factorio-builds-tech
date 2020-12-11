@@ -1,5 +1,6 @@
 using NodaTime;
 using System;
+using System.Collections.Generic;
 
 namespace FactorioTech.Core
 {
@@ -17,6 +18,19 @@ namespace FactorioTech.Core
         {
             public const int MaxWidth = 1440;
             public const int MaxHeight = 1440;
+        }
+        
+        public static class Policies
+        {
+            public static class Slug
+            {
+                public const int MinimumLength = 3;
+                public const int MaximumLength = 100;
+                public const string AllowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+                public const string AllowedCharactersRegex = "[a-zA-Z0-9_-]+";
+                public const string AllowedCharactersErrorMessage = "Only latin characters (a-z and A-Z), digits (0-9), underscore (_) and hyphen (-) are allowed.";
+                public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "delete", "edit", "import" };
+            }
         }
 
         public Uri FbsrWrapperUri { get; init; } = new("http://localhost:8080");

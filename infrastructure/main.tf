@@ -1,3 +1,7 @@
+###
+# PROVIDERS
+#
+
 provider "azurerm" {
    features {}
    subscription_id = var.subscription_id
@@ -23,9 +27,33 @@ provider "helm" {
   }
 }
 
+###
+# STATIC RESOURCES
+#
+
 resource "azurerm_resource_group" "main" {
   name     = var.name
   location = var.location
+}
+
+resource "azurerm_storage_account" "main" {
+  name                     = "factoriotech"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_storage_share" "factorio_data" {
+  name                 = "factorio-data"
+  storage_account_name = azurerm_storage_account.main.name
+  quota                = 2 // GiB
+}
+
+resource "azurerm_storage_share" "app_data" {
+  name                 = "app-data"
+  storage_account_name = azurerm_storage_account.main.name
+  quota                = 10 // GiB
 }
 
 resource "azurerm_log_analytics_workspace" "main" {
@@ -71,6 +99,10 @@ resource "azurerm_managed_disk" "postgres" {
   create_option        = "Empty"
   disk_size_gb         = var.postgres_disk_size_gb
 }
+
+###
+# KUBERNETES
+#
 
 resource "azurerm_kubernetes_cluster" "main" {
   name                = var.name
@@ -122,7 +154,13 @@ resource "azurerm_kubernetes_cluster" "main" {
 }
 
 resource "azurerm_role_assignment" "kubernetes_to_ingress_ip" {
-  scope                = azurerm_resource_group.main.id
+  scope                = azurerm_public_ip.ingress.id
+  principal_id         = azurerm_kubernetes_cluster.main.identity.0.principal_id
+  role_definition_name = "Contributor"
+}
+
+resource "azurerm_role_assignment" "kubernetes_to_storage" {
+  scope                = azurerm_storage_account.main.id
   principal_id         = azurerm_kubernetes_cluster.main.identity.0.principal_id
   role_definition_name = "Contributor"
 }
@@ -132,6 +170,10 @@ resource "azurerm_role_assignment" "kubernetes_to_postgres_disk" {
   principal_id         = azurerm_kubernetes_cluster.main.identity.0.principal_id
   role_definition_name = "Contributor"
 }
+
+###
+# CLUSTER RESOURCES
+#
 
 resource "helm_release" "kubernetes-dashboard" {
   name       = "kubernetes-dashboard"
@@ -202,4 +244,46 @@ resource "kubernetes_secret" "application_insights" {
   data = {
     instrumentation_key = azurerm_application_insights.main.instrumentation_key
   }
+}
+
+resource "kubernetes_secret" "factorio_data" {
+  metadata {
+    name = "factorio-data-share"
+  }
+
+  data = {
+    azurestorageaccountname = azurerm_storage_account.main.name
+    azurestorageaccountkey = azurerm_storage_account.main.primary_access_key
+  }
+}
+
+resource "kubernetes_secret" "app_data" {
+  metadata {
+    name = "app-data-share"
+  }
+
+  data = {
+    azurestorageaccountname = azurerm_storage_account.main.name
+    azurestorageaccountkey = azurerm_storage_account.main.primary_access_key
+  }
+}
+
+resource "kubernetes_secret" "container_registry" {
+  metadata {
+    name = "default-container-registry"
+  }
+
+  data = {
+    ".dockerconfigjson" = <<DOCKER
+{
+  "auths": {
+    "${var.container_registry_server}": {
+      "auth": "${base64encode("${var.container_registry_username}:${var.container_registry_password}")}"
+    }
+  }
+}
+DOCKER
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
 }

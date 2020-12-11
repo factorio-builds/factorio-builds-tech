@@ -1,3 +1,4 @@
+using FactorioTech.Core;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,9 +19,9 @@ namespace FactorioTech.Web.ViewModels
         }
 
         [Required]
-        [StringLength(100, MinimumLength = 3)]
-        [RegularExpression("[a-z0-9_-]+",
-            ErrorMessage = "Only lowercase latin characters (a-z), digits (0-9), underscore (_) and hyphen (-) are allowed.")]
+        [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+        [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex,
+            ErrorMessage = AppConfig.Policies.Slug.AllowedCharactersErrorMessage)]
         //[PageRemote( // todo: doesn't work nested due to prefixed __RequestVerificationToken :(
         //    PageHandler ="CheckSlug",
         //    HttpMethod = nameof(HttpMethod.Post),

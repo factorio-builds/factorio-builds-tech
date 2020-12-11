@@ -213,6 +213,12 @@ namespace FactorioTech.Web.Pages
                     TempData.Keep(nameof(BlueprintString));
                     return Page();
 
+                case BlueprintService.CreateResult.InvalidSlug:
+                    StatusMessage = "Error: That slug is not allowed. Please choose a different one!";
+                    TempData.Keep(nameof(ParentBlueprintId));
+                    TempData.Keep(nameof(BlueprintString));
+                    return Page();
+
                 case BlueprintService.CreateResult.ParentNotFound:
                     StatusMessage = "Error: The specified blueprint does not exist.";
                     TempData.Keep(nameof(ParentBlueprintId));
