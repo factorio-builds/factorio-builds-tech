@@ -15,3 +15,8 @@ services:
     image: postgres
     ports:
       - "5432:5432"
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
