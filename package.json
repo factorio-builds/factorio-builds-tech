@@ -29,6 +29,7 @@
     "formik": "^2.2.6",
     "image-size": "^0.9.3",
     "lodash": "^4.17.20",
+    "meilisearch": "^0.16.1",
     "next": "latest",
     "next-redux-wrapper": "^6.0.2",
     "pako": "^2.0.2",
