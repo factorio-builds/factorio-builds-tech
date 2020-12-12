@@ -33,7 +33,6 @@ export const syncIndexes = async (
 }
 
 const mapBuildToIndexDocument = (build: Build): IBuildIndexDocument => {
-  console.log(typeof build.metadata)
   return {
     id: build.id,
     name: build.name,
