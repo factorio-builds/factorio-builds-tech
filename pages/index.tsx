@@ -1,5 +1,4 @@
 import { GetServerSideProps, NextPage } from "next"
-import { IsNull, Not } from "typeorm"
 import { Build } from "../db/entities/build.entity"
 import { BuildRepository } from "../db/repository/build.repository"
 import BuildListPage from "../pages-components/BuildListPage"
@@ -12,8 +11,14 @@ const IndexPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
     const buildRepository = await BuildRepository()
-    const builds = await buildRepository
-      .find({ image: Not(IsNull()) })
+    const builds = await buildRepository.createQueryBuilder("build").select([
+      "build.id",
+      "build.name",
+      "build.metadata",
+      "build.image"
+    ])
+      .where("build.image IS NOT NULL")
+      .getMany()
       .catch((error) => {
         console.error(error)
         throw new Error("Cannot find build data")
