@@ -1,5 +1,4 @@
 import { GetServerSideProps, NextPage } from "next"
-import { IsNull, Not } from "typeorm"
 import { Build } from "../db/entities/build.entity"
 import { BuildRepository } from "../db/repository/build.repository"
 import BuildListPage from "../pages-components/BuildListPage"
@@ -16,7 +15,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       "build.id",
       "build.name",
       "build.metadata",
-      "build.blueprint",
       "build.image"
     ])
       .where("build.image IS NOT NULL")
