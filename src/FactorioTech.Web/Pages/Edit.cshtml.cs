@@ -46,7 +46,7 @@ namespace FactorioTech.Web.Pages
                 .FirstOrDefaultAsync();
 
             if (Blueprint == null)
-                return RedirectToPage("/NotFound");
+                return NotFound();
 
             var existingTags = Blueprint.Tags!.Select(t => t.Value).ToHashSet();
             TagsSelectItems = Tags.All.Select(tag => new SelectListItem(tag, tag, existingTags.Contains(tag)));

@@ -102,9 +102,8 @@ namespace FactorioTech.Web
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Account/Login";
-                options.LogoutPath = "/Account/Logout";
-                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
             });
 
             services.AddRazorPages()
@@ -129,9 +128,11 @@ namespace FactorioTech.Web
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Errors/500");
                 app.UseHsts();
             }
+
+            app.UseStatusCodePagesWithReExecute("/Errors/{0}");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

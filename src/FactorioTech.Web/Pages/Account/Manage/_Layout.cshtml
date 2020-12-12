@@ -2,9 +2,8 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
-<h2>Manage your account</h2>
-
-<div>
+<div class="container manage-account">
+    <h1 class="display-4">Manage your account</h1>
     <h4>Change your account settings</h4>
     <hr />
     <div class="row">
@@ -18,5 +17,5 @@
 </div>
 
 @section Scripts {
-    @RenderSection("Scripts", required: false)
+    @await RenderSectionAsync("Scripts", required: false)
 }

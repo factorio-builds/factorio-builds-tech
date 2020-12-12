@@ -32,18 +32,16 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    <partial name="_Login" />
+                    <partial name="_UserNavbar" />
                 </ul>
             </div>
         </div>
     </nav>
 </header>
 
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
+<main role="main" class="pb-3">
+    @RenderBody()
+</main>
 
 <footer class="footer text-muted">
     <div class="container d-flex justify-content-between">
@@ -70,7 +68,7 @@
         crossorigin="anonymous">
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.0/js/standalone/selectize.js"
-        asp-fallback-src="~/dist/js/standalone/selectize.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.selectize"
+        asp-fallback-src="~/dist/js/selectize.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.selectize"
         integrity="sha512-B03hDxgZPMBobOrnBhFiKvf8XCO7IRNa26/WiQK9lU+grXd5WXVHq3togZ67YLcUnNdrtoBbn5bi0GhYd0ivCA=="
         crossorigin="anonymous">
 </script>

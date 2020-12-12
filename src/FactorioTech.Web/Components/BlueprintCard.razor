@@ -59,7 +59,9 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
-                <img src="@Uris.BlueprintRendering(payload.Hash, VersionId)" data-hash="@payload.Hash" class="img-thumbnail" loading="lazy" />
+                <a href="@Uris.BlueprintRendering(payload.Hash, VersionId)" data-lightbox="@(BookHash ?? payload.Hash)" data-title="@(Blueprint.Label ?? "(no title)")">
+                    <img src="@Uris.BlueprintRendering(payload.Hash, VersionId)" data-hash="@payload.Hash" class="img-thumbnail" loading="lazy" />
+                </a>
             </div>
             <div class="col-md-8">
                 <div class="tab-content">
@@ -94,15 +96,18 @@
 
 @code {
     [Parameter]
+    public Hash? BookHash { get; set; }
+
+    [Parameter]
     public Guid VersionId { get; set; } = Guid.Empty;
 
     [Parameter]
     public FactorioApi.Blueprint Blueprint { get; set; } = null!;
 
     [Parameter]
-    public PayloadCache PayloadCache { get; set; } = new PayloadCache();
+    public PayloadCache PayloadCache { get; set; } = new();
 
-    private BlueprintPayload payload = new BlueprintPayload(Hash.Empty, string.Empty, new Version());
+    private BlueprintPayload payload = new(Hash.Empty, string.Empty, new Version());
     private int entitiesCount;
 
     protected override async Task OnInitializedAsync()

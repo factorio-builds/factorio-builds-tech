@@ -51,7 +51,7 @@ namespace FactorioTech.Web.Pages
                 .FirstOrDefaultAsync();
 
             if (Blueprint == null)
-                return RedirectToPage("/NotFound");
+                return NotFound();
 
             // don't include in the initial query as this will cause a massive cross join
             await _dbContext.Entry(Blueprint).Collection(e => e.Tags).LoadAsync();

@@ -1,14 +1,13 @@
 @page
 @model LogoutModel
-@{
-    ViewData["Title"] = "Log out";
-}
+@{ ViewData["Title"] = "Log out"; }
 
-<h1>@ViewData["Title"]</h1>
-@{
-    if (User.Identity?.IsAuthenticated == true)
+<div class="container">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+
+    @if (User.Identity?.IsAuthenticated == true)
     {
-        <form class="form-inline" asp-page="./Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+        <form class="form-inline" asp-page="./Logout" asp-route-returnUrl="@Url.Page("/")" method="post">
             <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
         </form>
     }
@@ -16,4 +15,4 @@
     {
         <p>You have successfully logged out of the application.</p>
     }
-}
+</div>

@@ -11,13 +11,15 @@ namespace FactorioTech.Web.Pages.Account
     [AllowAnonymous]
     public class LogoutModel : PageModel
     {
-        private readonly SignInManager<User> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
+        private readonly SignInManager<User> _signInManager;
 
-        public LogoutModel(SignInManager<User> signInManager, ILogger<LogoutModel> logger)
+        public LogoutModel(
+            ILogger<LogoutModel> logger,
+            SignInManager<User> signInManager)
         {
-            _signInManager = signInManager;
             _logger = logger;
+            _signInManager = signInManager;
         }
 
         public void OnGet()
