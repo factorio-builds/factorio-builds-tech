@@ -27,8 +27,6 @@ RUN apt-get update \
     fontconfig \
  && rm -rf /var/lib/apt/lists/*
 
-# COPY target/*.jar /app.jar
-
 COPY --from=build /app/target/*.jar /app.jar
 COPY config.docker.json config.json
 

@@ -22,16 +22,22 @@ spec:
       containers:
         - name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
           image: "{{ .Values.imageNamespace }}/fbsr-wrapper:{{ .Chart.AppVersion }}"
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
           volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
             - name: factorio-data
               mountPath: /factorio
               readOnly: true
       volumes:
+        - name: config
+          configMap:
+            name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
         - name: factorio-data
           azureFile:
             secretName: factorio-data-share

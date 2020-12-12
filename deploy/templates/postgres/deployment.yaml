@@ -26,10 +26,10 @@ spec:
               containerPort: 5432
               protocol: TCP
           env:
-            - name: POSTGRES_DB
-              value: postgres
+            - name: POSTGRES_DB_FILE
+              value: /var/secrets/database
             - name: POSTGRES_USER_FILE
-              value: /var/secrets/user
+              value: /var/secrets/username
             - name: POSTGRES_PASSWORD_FILE
               value: /var/secrets/password
           volumeMounts:

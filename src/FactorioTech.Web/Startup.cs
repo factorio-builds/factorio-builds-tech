@@ -50,7 +50,7 @@ namespace FactorioTech.Web
             var authenticationBuilder = services.AddAuthentication();
 
             var oAuthProviderConfig = _configuration.Get<OAuthProviderConfig>();
-            if (oAuthProviderConfig?.OAuthProviders?.Any() == false)
+            if (oAuthProviderConfig?.OAuthProviders?.Any() != true)
                 throw new Exception("Must configure at least one OAuth provider!");
 
             if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("GitHub", out var gitHubCredentials))

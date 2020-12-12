@@ -2,7 +2,7 @@ additionalArguments:
   - --certificatesresolvers.letsencrypt.acme.email=hello@factorio.tech
   - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
   - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
-  # - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+  - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
 
 persistence:
   enabled: true

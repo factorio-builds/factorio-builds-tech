@@ -13,6 +13,7 @@ secrets:
 
 services:
   web:
+    # image: ghcr.io/dstockhammer/factorio-tech/web:ci
     image: factorio-tech/web
     build:
       context: .
@@ -36,6 +37,7 @@ services:
       - postgres
 
   fbsr:
+    # image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
     image: factorio-tech/fbsr-wrapper
     build:
       context: ./fbsr-wrapper

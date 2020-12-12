@@ -14,4 +14,3 @@ spec:
   selector:
     {{- include "factorio-tech.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: postgres
-

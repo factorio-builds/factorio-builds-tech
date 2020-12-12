@@ -14,5 +14,3 @@ spec:
       services:
       - name: {{ include "factorio-tech.fullname" . }}-web
         port: 80
-  # tls: # I think this is not required...
-  #   certResolver: letsencrypt
