@@ -16,7 +16,9 @@ interface IBuildIndexDocument {
 export const syncIndexes = async (
   buildsToIndex: Build[]
 ): Promise<EnqueuedUpdate> => {
-  const buildsIndex = client.getIndex<IBuildIndexDocument>("builds")
+  const buildsIndex = await client.getOrCreateIndex<IBuildIndexDocument>(
+    "builds"
+  )
 
   console.info("*** DELETING ALL DOCUMENTS FROM BUILDS INDEX ***")
   await buildsIndex.deleteAllDocuments()
