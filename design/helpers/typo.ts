@@ -7,10 +7,10 @@ function typoMapper(typo: ETypo): EFontScale {
       return EFontScale.F1
     case ETypo.FORM_LABEL:
     case ETypo.BODY_TITLE:
+    case ETypo.CARD_TITLE:
       return EFontScale.F2B
     case ETypo.BODY:
     case ETypo.FORM_INPUT:
-    case ETypo.CARD_TITLE:
       return EFontScale.F2
     case ETypo.BUTTON:
     case ETypo.HEADER:

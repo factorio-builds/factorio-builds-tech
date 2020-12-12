@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Build } from "../../../db/entities/build.entity"
 import { IBlueprintIcon, IMetadata } from "../../../types"
 import BuildIcon from "../BuildIcon"
+import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-card.styles"
 
@@ -42,13 +43,11 @@ function BuildCard({
             {icons && <BuildIcon icons={icons} />}
             <WithIcons input={name} />
           </SC.Title>
-          <SC.Categories>
+          <Stacker orientation="horizontal" gutter={8}>
             {categories.map((category) => {
-              return (
-                <SC.CategoryPill key={category}>{category}</SC.CategoryPill>
-              )
+              return <SC.Category key={category}>{category}</SC.Category>
             })}
-          </SC.Categories>
+          </Stacker>
         </SC.Content>
       </SC.BuildCardWrapper>
     </Link>

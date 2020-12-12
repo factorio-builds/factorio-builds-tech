@@ -37,17 +37,14 @@ export const Content = styled.div`
 
 export const Title = styled.h3`
   ${getTypo(ETypo.CARD_TITLE)};
+  line-height: 1.1;
   display: flex;
   align-items: center;
   min-height: 28px;
-  margin: 0 0 8px;
+  margin: 0 0 4px;
 
   a {
     color: #fff;
-  }
-
-  ${BuildCardWrapper}:hover & {
-    text-decoration: underline;
   }
 `
 
@@ -56,15 +53,8 @@ export const Book = styled.img`
   margin-right: 4px;
 `
 
-export const Categories = styled.div`
-  display: flex;
-`
-
-export const CategoryPill = styled.div`
+export const Category = styled.div`
   ${getTypo(ETypo.METADATA)};
-  background: #fff;
-  color: #222;
-  border-radius: 16px;
-  padding: 4px 8px;
+  color: #a392b5;
   text-transform: lowercase;
 `
