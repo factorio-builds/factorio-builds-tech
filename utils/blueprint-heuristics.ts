@@ -13,7 +13,7 @@ export function withMarkedInputs(blueprint: IBlueprint): IComputedHeuristic {
   const output = blueprint.entities.some((entity) => {
     return (
       entity.name === "constant-combinator" &&
-      entity.control_behavior.filters.some((filter) => {
+      entity.control_behavior?.filters.some((filter) => {
         return filter.signal.type === "item"
       })
     )
