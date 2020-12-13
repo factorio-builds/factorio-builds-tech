@@ -40,7 +40,7 @@ function BuildCard({
         <SC.Content>
           <SC.Title>
             {isBook && <SC.Book src="/img/blueprint-book.png" />}
-            {icons.length && <BuildIcon icons={icons} />}
+            {icons.length > 0 && <BuildIcon icons={icons} />}
             <WithIcons input={name} />
           </SC.Title>
           <Stacker orientation="horizontal" gutter={8}>
