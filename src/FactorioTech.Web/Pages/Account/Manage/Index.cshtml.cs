@@ -1,3 +1,4 @@
+using FactorioTech.Core;
 using FactorioTech.Core.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -34,8 +35,9 @@ namespace FactorioTech.Web.Pages.Account.Manage
             public string Email { get; set; } = string.Empty;
 
             [Required]
-            [StringLength(100, MinimumLength = 3)]
-            [RegularExpression("[a-z0-9_-]+")]
+            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex,
+                ErrorMessage = AppConfig.Policies.Slug.AllowedCharactersErrorMessage)]
             [DisplayName("Username")]
             public string UserName { get; set; } = string.Empty;
 

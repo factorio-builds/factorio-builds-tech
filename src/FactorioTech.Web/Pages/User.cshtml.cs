@@ -27,7 +27,7 @@ namespace FactorioTech.Web.Pages
                 .FirstOrDefaultAsync();
 
             if (SelectedUser == null)
-                return RedirectToPage("/NotFound");
+                return NotFound();
 
             return Page();
         }

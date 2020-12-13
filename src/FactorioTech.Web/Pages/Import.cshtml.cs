@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SluggyUnidecode;
 using System;
 using System.Collections.Generic;
@@ -20,20 +19,17 @@ namespace FactorioTech.Web.Pages
     [Authorize]
     public class ImportModel : PageModel
     {
-        private readonly ILogger<ImportModel> _logger;
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
         private readonly ImageService _imageService;
 
         public ImportModel(
-            ILogger<ImportModel> logger,
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
             ImageService imageService)
         {
-            _logger = logger;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
             _imageService = imageService;
@@ -213,6 +209,12 @@ namespace FactorioTech.Web.Pages
                     TempData.Keep(nameof(BlueprintString));
                     return Page();
 
+                case BlueprintService.CreateResult.InvalidSlug:
+                    StatusMessage = "Error: That slug is not allowed. Please choose a different one!";
+                    TempData.Keep(nameof(ParentBlueprintId));
+                    TempData.Keep(nameof(BlueprintString));
+                    return Page();
+
                 case BlueprintService.CreateResult.ParentNotFound:
                     StatusMessage = "Error: The specified blueprint does not exist.";
                     TempData.Keep(nameof(ParentBlueprintId));
@@ -228,8 +230,7 @@ namespace FactorioTech.Web.Pages
                     });
             }
 
-            _logger.LogCritical($"Failed to parse {nameof(CreatedResult)} of type {result.GetType().Name}");
-            return RedirectToPage("/Error");
+            throw new Exception($"Failed to parse {nameof(CreatedResult)} of type {result.GetType().Name}");
         }
 
         public IActionResult OnPostPreview([FromForm]string content) =>

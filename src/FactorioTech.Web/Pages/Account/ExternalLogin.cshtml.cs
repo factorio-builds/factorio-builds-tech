@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using NodaTime;
+using SluggyUnidecode;
 using System;
 using System.ComponentModel;
 
@@ -54,8 +55,9 @@ namespace FactorioTech.Web.Pages.Account
             public string Email { get; set; } = string.Empty;
 
             [Required]
-            [StringLength(100, MinimumLength = 3)]
-            [RegularExpression("[a-z0-9_-]+")]
+            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex,
+                ErrorMessage = AppConfig.Policies.Slug.AllowedCharactersErrorMessage)]
             [DisplayName("Username")]
             public string UserName { get; set; } = string.Empty;
 
@@ -114,6 +116,8 @@ namespace FactorioTech.Web.Pages.Account
                 _ => new InputModel
                 {
                     Email = info.Principal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty,
+                    UserName = info.Principal.FindFirst(ClaimTypes.Name)?.Value.ToSlug() ?? string.Empty,
+                    DisplayName = info.Principal.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty,
                 },
             };
 

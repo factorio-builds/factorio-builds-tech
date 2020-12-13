@@ -37,6 +37,10 @@ namespace FactorioTech.Core
                     (Guid Id, string UserName) Owner)
                 : CreateResult { }
 
+            public sealed record InvalidSlug(
+                    string Slug)
+                : CreateResult { }
+
             public sealed record ParentNotFound(
                     Guid BlueprintId)
                 : CreateResult { }
@@ -112,6 +116,9 @@ namespace FactorioTech.Core
             (Guid Id, string UserName) owner,
             Guid? parentId)
         {
+            if (AppConfig.Policies.Slug.Blocklist.Contains(request.Slug.ToLowerInvariant()))
+                return new CreateResult.InvalidSlug(request.Slug);
+
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == payload.Hash)
                 .Select(x => new

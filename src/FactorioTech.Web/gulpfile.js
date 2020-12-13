@@ -13,13 +13,14 @@ const del = require("del");
 
 function copyJs() {
     return src([
-            "node_modules/bootstrap/dist/js/**/*.min.js",
-            "node_modules/jquery/dist/**/*.min.js",
-            "node_modules/jquery-validation/dist/**/*.min.js",
-            "node_modules/jquery-validation-unobtrusive/dist/**/*.min.js",
-            "node_modules/jquery-ajax-unobtrusive/dist/**/*.min.js",
-            "node_modules/cropperjs/dist/**/*.min.js",
-            "node_modules/selectize/dist/js/**/*.js", // todo current build is broken; doesn't contain min
+            "node_modules/jquery/dist/jquery.min.js",
+            "node_modules/jquery-validation/dist/jquery.validate.min.js",
+            "node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js",
+            "node_modules/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.min.js",
+            "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+            "node_modules/cropperjs/dist/cropper.min.js",
+            "node_modules/lightbox2/dist/js/lightbox.min.js",
+            "node_modules/selectize/dist/js/standalone/selectize.js", // todo: no min version?
         ])
         .pipe(dest("wwwroot/dist/js"));
 }
@@ -28,10 +29,15 @@ function copyAce() {
     return src([
             "node_modules/ace-builds/src-min/ace.js",
             "node_modules/ace-builds/src-min/mode-markdown.js",
-            "node_modules/ace-builds/src-min/theme-twilight.js"
+            "node_modules/ace-builds/src-min/theme-twilight.js",
         ])
         .pipe(rename({ suffix: ".min" }))
         .pipe(dest("wwwroot/dist/js"));
+}
+
+function copyImages() {
+    return src("node_modules/lightbox2/dist/images/*")
+        .pipe(dest("wwwroot/dist/images"));
 }
 
 function copyFonts() {
@@ -61,7 +67,7 @@ exports.clean = () =>
     del(["wwwroot/dist"]);
 
 exports.build =
-    parallel(copyJs, copyAce, copyFonts, buildJs, buildScss);
+    parallel(copyJs, copyAce, copyImages, copyFonts, buildJs, buildScss);
 
 exports.watch = () =>
     watch("wwwroot/src/**/*", parallel(buildJs, buildScss));

@@ -22,6 +22,6 @@ namespace FactorioTech.Web.Extensions
         public static DateTimeZone GetTimeZone(this ClaimsPrincipal? principal) =>
             principal?.FindFirstValue("urn:factorio-tech:displayname")
             ?.Let(DateTimeZoneProviders.Tzdb.GetZoneOrNull)
-            ?? AppConfig.DefaulTimeZone;
+            ?? AppConfig.DefaultTimeZone;
     }
 }

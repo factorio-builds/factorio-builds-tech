@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FactorioTech.Web.Pages.Account
+namespace FactorioTech.Web.Pages.Errors
 {
     public class AccessDeniedModel : PageModel
     {

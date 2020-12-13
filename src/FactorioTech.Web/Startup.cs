@@ -4,12 +4,14 @@ using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 using System.Linq;
 
@@ -26,6 +28,18 @@ namespace FactorioTech.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            if (services == null)
+            {
+                Log.Fatal("services is null");
+                throw new ArgumentNullException(nameof(services));
+            }
+
+            if (_configuration == null)
+            {
+                Log.Fatal("_configuration is null");
+                throw new ArgumentNullException(nameof(_configuration));
+            }
+
             services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
@@ -37,7 +51,7 @@ namespace FactorioTech.Web
             var authenticationBuilder = services.AddAuthentication();
 
             var oAuthProviderConfig = _configuration.Get<OAuthProviderConfig>();
-            if (oAuthProviderConfig?.OAuthProviders?.Any() == false)
+            if (oAuthProviderConfig?.OAuthProviders?.Any() != true)
                 throw new Exception("Must configure at least one OAuth provider!");
 
             if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("GitHub", out var gitHubCredentials))
@@ -60,13 +74,11 @@ namespace FactorioTech.Web
                 });
             }
 
+            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseNpgsql(
-                    _configuration.GetConnectionString("Postgres"),
-                    o => o.UseNodaTime());
-
-            }).AddDatabaseDeveloperPageExceptionFilter();
+                options.UseNpgsql(_configuration.GetConnectionString("Postgres"), o => o.UseNodaTime());
+            });
 
             services.AddIdentityCore<User>()
                 .AddDefaultTokenProviders()
@@ -74,6 +86,13 @@ namespace FactorioTech.Web
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<AppDbContext>();
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = AppConfig.Policies.Slug.AllowedCharacters;
+            });
+
+            services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
             services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomUserClaimsPrincipalFactory>();
 
             services.AddAuthentication(options =>
@@ -84,9 +103,8 @@ namespace FactorioTech.Web
 
             services.ConfigureApplicationCookie(options =>
             {
-                options.LoginPath = "/Account/Login";
-                options.LogoutPath = "/Account/Logout";
-                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
             });
 
             services.AddRazorPages()
@@ -94,6 +112,11 @@ namespace FactorioTech.Web
 
             services.AddHttpClient();
             services.AddSession();
+
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ApplicationVersion = BuildInformation.Version;
+            });
 
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
@@ -104,6 +127,11 @@ namespace FactorioTech.Web
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -111,9 +139,11 @@ namespace FactorioTech.Web
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Errors/500");
                 app.UseHsts();
             }
+
+            app.UseStatusCodePagesWithReExecute("/Errors/{0}");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

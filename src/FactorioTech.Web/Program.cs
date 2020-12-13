@@ -1,5 +1,7 @@
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -38,11 +40,16 @@ namespace FactorioTech.Web
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args)
-            .UseSerilog()
+            .UseSerilog((_, services, logger) =>
+            {
+                logger.WriteTo.ApplicationInsights(services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
+            })
             .ConfigureAppConfiguration(config =>
             {
                 config.AddJsonFile("appsettings.secret.json", optional: true, reloadOnChange: false);
                 config.AddKeyPerFile("/run/secrets", optional: true, reloadOnChange: false);
+                config.AddKeyPerFile("/config", optional: true, reloadOnChange: false);
+                config.AddKeyPerFile("/secrets", optional: true, reloadOnChange: false);
             })
             .ConfigureWebHostDefaults(builder =>
             {

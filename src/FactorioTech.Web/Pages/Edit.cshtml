@@ -1,89 +1,94 @@
 @page "/{user}/{slug}/edit"
 @model EditModel
 
-<form method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly"></div>
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="form-group">
-                <label asp-for="CreateInput.Slug"></label>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text text-monospace" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
+<div class="container edit-blueprint">
+    <h1 class="display-4">Edit Blueprint</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly"></div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label asp-for="CreateInput.Slug"></label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text text-monospace" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
+                        </div>
+                        <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon"/>
                     </div>
-                    <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon" />
+                    <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="CreateInput.Title"></label>
-                <input asp-for="CreateInput.Title" class="form-control" />
-                <span asp-validation-for="CreateInput.Title" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="CreateInput.Title"></label>
+                    <input asp-for="CreateInput.Title" class="form-control"/>
+                    <span asp-validation-for="CreateInput.Title" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="CreateInput.Tags"></label>
-                <select asp-for="CreateInput.Tags" multiple="multiple" style="display:none" placeholder="Select at least one tag…"
-                        data-role="blueprint-tags" asp-items="@Model.TagsSelectItems">
-                </select>
-                <span asp-validation-for="CreateInput.Tags" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="CreateInput.Tags"></label>
+                    <select asp-for="CreateInput.Tags" multiple="multiple" style="display: none" placeholder="Select at least one tag…"
+                            data-role="blueprint-tags" asp-items="@Model.TagsSelectItems">
+                    </select>
+                    <span asp-validation-for="CreateInput.Tags" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-0">
+                    <label for="blueprint-image-input">
+                        <img src="@Uris.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" id="blueprint-image-selected"
+                             data-toggle="tooltip" data-placement="bottom"
+                             title="Click here to upload a different image or select a blueprint rendering from the blueprint contents below!"/>
+                    </label>
+                    <input asp-for="CreateInput.Image.Uploaded" type="file" id="blueprint-image-input" class="sr-only" accept="image/*"/>
+                    <input asp-for="CreateInput.Image.Hash" type="hidden" id="blueprint-image-hash"/>
+                    <input asp-for="CreateInput.Image.X" type="hidden" id="blueprint-image-x"/>
+                    <input asp-for="CreateInput.Image.Y" type="hidden" id="blueprint-image-y"/>
+                    <input asp-for="CreateInput.Image.W" type="hidden" id="blueprint-image-w"/>
+                    <input asp-for="CreateInput.Image.H" type="hidden" id="blueprint-image-h"/>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group mb-0">
-                <label for="blueprint-image-input">
-                    <img src="@Uris.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" id="blueprint-image-selected"
-                         data-toggle="tooltip" data-placement="bottom"
-                         title="Click here to upload a different image or select a blueprint rendering from the blueprint contents below!" />
-                </label>
-                <input asp-for="CreateInput.Image.Uploaded" type="file" id="blueprint-image-input" class="sr-only" accept="image/*" />
-                <input asp-for="CreateInput.Image.Hash" type="hidden" id="blueprint-image-hash" />
-                <input asp-for="CreateInput.Image.X" type="hidden" id="blueprint-image-x" />
-                <input asp-for="CreateInput.Image.Y" type="hidden" id="blueprint-image-y" />
-                <input asp-for="CreateInput.Image.W" type="hidden" id="blueprint-image-w" />
-                <input asp-for="CreateInput.Image.H" type="hidden" id="blueprint-image-h" />
-            </div>
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label asp-for="CreateInput.Description" class="mb-0"></label>
-        <small class="form-text text-muted mb-2">
-            You can use <a href="https://guides.github.com/features/mastering-markdown" title="Mastering Markdown" target="_blank">Markdown</a>
-            to format the blueprint description.
-        </small>
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="blueprint-description-editor-content" role="tabpanel"
-                 aria-labelledby="blueprint-description-editor-tab">
-                <input asp-for="CreateInput.Description" id="blueprint-description" type="hidden" />
-                <div id="blueprint-description-ace">@Model.CreateInput.Description</div>
+        <div class="form-group">
+            <label asp-for="CreateInput.Description" class="mb-0"></label>
+            <small class="form-text text-muted mb-2">
+                You can use <a href="https://guides.github.com/features/mastering-markdown" title="Mastering Markdown" target="_blank">Markdown</a>
+                to format the blueprint description.
+            </small>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="blueprint-description-editor-content" role="tabpanel"
+                     aria-labelledby="blueprint-description-editor-tab">
+                    <input asp-for="CreateInput.Description" id="blueprint-description" type="hidden"/>
+                    <div id="blueprint-description-ace">@Model.CreateInput.Description</div>
+                </div>
+                <div class="tab-pane fade" id="blueprint-description-preview-content" role="tabpanel"
+                     aria-labelledby="blueprint-description-preview-tab">
+                    <markdown>CreateInput.Description</markdown>
+                </div>
             </div>
-            <div class="tab-pane fade" id="blueprint-description-preview-content" role="tabpanel"
-                 aria-labelledby="blueprint-description-preview-tab">
-                <markdown>CreateInput.Description</markdown>
-            </div>
+            <ul class="nav small justify-content-end" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="blueprint-description-editor-tab" href="#blueprint-description-editor-content" role="tab"
+                       data-toggle="tab" aria-controls="blueprint-description-editor-content" aria-selected="true">
+                        Source
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="blueprint-description-preview-tab" href="#blueprint-description-preview-content" role="tab"
+                       data-toggle="tab" aria-controls="blueprint-description-preview-content" aria-selected="false">
+                        Preview
+                    </a>
+                </li>
+            </ul>
+            <span asp-validation-for="CreateInput.Description" class="text-danger"></span>
         </div>
-        <ul class="nav small justify-content-end" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link active" id="blueprint-description-editor-tab" href="#blueprint-description-editor-content" role="tab"
-                   data-toggle="tab" aria-controls="blueprint-description-editor-content" aria-selected="true">
-                    Source
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="blueprint-description-preview-tab" href="#blueprint-description-preview-content" role="tab"
-                   data-toggle="tab" aria-controls="blueprint-description-preview-content" aria-selected="false">
-                    Preview
-                </a>
-            </li>
-        </ul>
-        <span asp-validation-for="CreateInput.Description" class="text-danger"></span>
-    </div>
 
-    <button type="submit" class="btn btn-primary">Save changes</button>
-</form>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </form>
+</div>
 
 <partial name="_CropperModal" />
 

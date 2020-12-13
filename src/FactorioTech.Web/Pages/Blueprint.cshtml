@@ -4,7 +4,7 @@
 
 @inject SignInManager<User> SignInManager
 
-<div class="container blueprint">
+<div class="container view-blueprint">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -71,10 +71,10 @@
                     <text>&bull; updated @Model.Blueprint.UpdatedAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</text>
                 }
                 &bull; game version:
-                    <a asp-page="/Index" asp-route-version="@Model.SelectedVersion.GameVersion.ToString(2)"
-                       title="Factorio game version @Model.SelectedVersion.GameVersion.ToString()">
-                        @Model.SelectedVersion.GameVersion.ToString(2)
-                    </a>
+                <a asp-page="/Index" asp-route-version="@Model.SelectedVersion.GameVersion.ToString(2)"
+                   title="Factorio game version @Model.SelectedVersion.GameVersion.ToString()">
+                    @Model.SelectedVersion.GameVersion.ToString(3)
+                </a>
             </small>
             @if (Model.Blueprint.Tags?.Any() == true)
             {
@@ -124,14 +124,22 @@
             <img src="@Uris.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" loading="lazy" />
         </div>
     </div>
+
+    @(
+        await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
+            Model.SelectedVersion.VersionId,
+            Model.Envelope,
+            Model.PayloadCache,
+        })
+    )
 </div>
 
 <partial name="_ImportModal" model="Model.ImportInput" />
 
-@(
-    await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
-        VersionId = Model.SelectedVersion.VersionId,
-        Envelope = Model.Envelope,
-        PayloadCache = Model.PayloadCache,
-    })
-)
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"
+            asp-fallback-src="~/dist/js/lightbox.min.js" asp-fallback-test="window.lightbox"
+            integrity="sha512-k2GFCTbp9rQU412BStrcD/rlwv1PYec9SNrkbQlo6RZCf75l6KcC3UwDY8H5n5hl4v77IDtIPwOk9Dqjs/mMBQ=="
+            crossorigin="anonymous">
+    </script>
+}

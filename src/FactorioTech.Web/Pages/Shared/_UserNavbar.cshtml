@@ -38,26 +38,9 @@ else
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" asp-page="/Account/ExternalLogin" asp-route-returnUrl="@Model.Request.Path">
-                        @foreach (var provider in await SignInManager.GetExternalAuthenticationSchemesAsync())
-                        {
-                            <button type="submit" class="btn btn-lg btn-primary btn-block"
-                                    name="provider" value="@provider.Name"
-                                    title="Log in using your @provider.DisplayName account">
-                                <i class="fab fa-@provider.Name.ToLowerInvariant()"></i>
-                                @provider.DisplayName
-                            </button>
-                        }
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <partial name="_LoginButtons" model="@Model.Request.Path.ToString()" />
                 </div>
             </div>
         </div>
     </div>
-
-    @section Scripts {
-        <partial name="_ValidationScripts" />
-    }
 }

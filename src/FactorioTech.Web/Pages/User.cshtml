@@ -4,7 +4,7 @@
 
 @inject SignInManager<User> SignInManager
 
-<div class="container blueprint">
+<div class="container view-user">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -25,16 +25,8 @@
         </ol>
     </nav>
 
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1 class="display-4">@(Model.SelectedUser.DisplayName ?? Model.SelectedUser.UserName)</h1>
-            <small class="text-muted">member since @Model.SelectedUser.RegisteredAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
-        </div>
-
-        <div class="col-md-4">
-            <img src="https://placekitten.com/500/500" class="img-thumbnail" loading="lazy" />
-        </div>
-    </div>
+    <h1 class="display-4">@(Model.SelectedUser.DisplayName ?? Model.SelectedUser.UserName)</h1>
+    <small class="text-muted">member since @Model.SelectedUser.RegisteredAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
 
     <ul class="list-group">
         @foreach (var blueprint in Model.SelectedUser.Blueprints!)

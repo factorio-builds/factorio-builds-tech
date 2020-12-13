@@ -9,10 +9,8 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`beta.factorio.tech`)
+    - match: Host(`{{ .Values.hostName }}`)
       kind: Rule
       services:
       - name: {{ include "factorio-tech.fullname" . }}-web
         port: 80
-  # tls: # I think this is not required...
-  #   certResolver: letsencrypt

@@ -83,3 +83,36 @@ jobs:
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
+
+      - name: Login to AKS
+        uses: azure/aks-set-context@v1
+        with:
+            creds: "${{ secrets.AZURE_CREDENTIALS }}"
+            resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+            cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+
+      - name: Package Helm chart
+        run: |
+          helm package ./deploy \
+            --version ${{ env.version }} \
+            --app-version ${{ env.version }}
+
+      - name: Deploy Helm chart to AKS
+        run: |
+          helm upgrade factorio-tech factorio-tech-${{ env.version }}.tgz \
+            --install --atomic \
+            --values deploy/values.yaml \
+            --set-string postgres.database=${{ secrets.POSTGRES_DATABASE }} \
+            --set-string postgres.username=${{ secrets.POSTGRES_USERNAME }} \
+            --set-string postgres.password=${{ secrets.POSTGRES_PASSWORD }} \
+            --set-string postgres.diskName=${{ secrets.POSTGRES_DISK_NAME }} \
+            --set-string postgres.diskURI=${{ secrets.POSTGRES_DISK_URI }} \
+            --set-string oAuthProviders[0].name=GitHub \
+            --set-string oAuthProviders[0].clientId=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
+            --set-string oAuthProviders[0].clientSecret=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
+            --set-string oAuthProviders[1].name=Discord \
+            --set-string oAuthProviders[1].clientId=${{ secrets.OAUTH_DISCORD_CLIENT_ID }} \
+            --set-string oAuthProviders[1].clientSecret=${{ secrets.OAUTH_DISCORD_CLIENT_SECRET }}

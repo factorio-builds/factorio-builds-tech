@@ -1,6 +1,6 @@
 @if (Envelope.Blueprint != null)
 {
-    <BlueprintCard Blueprint="@Envelope.Blueprint" VersionId="@VersionId" />
+    <BlueprintCard Blueprint="@Envelope.Blueprint" VersionId="@VersionId" BookHash="@BookHash" />
 }
 else if (Envelope.BlueprintBook != null)
 {
@@ -49,7 +49,7 @@ else if (Envelope.BlueprintBook != null)
                 <div class="collapse" id="collapse-book-@tempId">
                     @foreach (var envelope in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index))
                     {
-                        <BlueprintEnvelope Envelope="@envelope" VersionId="@VersionId" />
+                        <BlueprintEnvelope Envelope="@envelope" VersionId="@VersionId" BookHash="@PayloadCache[Envelope].Hash" />
                     }
                 </div>
             }
@@ -64,13 +64,16 @@ else
 
 @code {
     [Parameter]
+    public Hash? BookHash { get; set; }
+
+    [Parameter]
     public Guid VersionId { get; set; } = Guid.Empty;
 
     [Parameter]
     public FactorioApi.BlueprintEnvelope Envelope { get; set; } = null!;
 
     [Parameter]
-    public PayloadCache PayloadCache { get; set; } = new PayloadCache();
+    public PayloadCache PayloadCache { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {

@@ -17,30 +17,49 @@ spec:
         {{- include "factorio-tech.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: web
     spec:
-      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "factorio-tech.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        - name: default-container-registry
       containers:
         - name: {{ include "factorio-tech.fullname" . }}-web
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.imageNamespace }}/web:{{ .Chart.AppVersion }}"
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
+            - name: app-data
+              mountPath: /data
+              readOnly: false
+            - name: factorio-data
+              mountPath: /factorio
+              readOnly: true
+          env:
+            - name: APPLICATIONINSIGHTS__INSTRUMENTATIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: application-insights
+                  key: instrumentation_key
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "factorio-tech.fullname" . }}-web
+        - name: secrets
+          secret:
+            secretName: {{ include "factorio-tech.fullname" . }}-web
+        - name: app-data
+          azureFile:
+            secretName: app-data-share
+            shareName: app-data
+            readOnly: false
+        - name: factorio-data
+          azureFile:
+            secretName: factorio-data-share
+            shareName: factorio-data
+            readOnly: true

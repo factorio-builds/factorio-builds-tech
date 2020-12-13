@@ -12,30 +12,32 @@ secrets:
     file: ./secrets/OAuthProviders__GitHub__ClientSecret.secret
 
 services:
-  web:
-    image: factorio-tech/web
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - factorio:/factorio:ro
-      - /etc/localtime:/etc/localtime:ro
-    secrets:
-      - OAuthProviders__GitHub__ClientId
-      - OAuthProviders__GitHub__ClientSecret
-    environment:
-      ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-      AppConfig__FactorioDir: "/factorio"
-      AppConfig__WorkingDir: "/tmp"
-      AppConfig__FbsrWrapperUri: "http://fbsr:8080"
-    depends_on:
-      - fbsr
-      - postgres
+  # web:
+  #   # image: ghcr.io/dstockhammer/factorio-tech/web:ci
+  #   image: factorio-tech/web
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - factorio:/factorio:ro
+  #     - /etc/localtime:/etc/localtime:ro
+  #   secrets:
+  #     - OAuthProviders__GitHub__ClientId
+  #     - OAuthProviders__GitHub__ClientSecret
+  #   environment:
+  #     ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+  #     AppConfig__FactorioDir: "/factorio"
+  #     AppConfig__WorkingDir: "/tmp"
+  #     AppConfig__FbsrWrapperUri: "http://fbsr:8080"
+  #   depends_on:
+  #     - fbsr
+  #     - postgres
 
   fbsr:
+    # image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
     image: factorio-tech/fbsr-wrapper
     build:
       context: ./fbsr-wrapper
