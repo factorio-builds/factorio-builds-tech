@@ -40,6 +40,7 @@ export interface IMetadata {
   withMarkedInputs: boolean
   withBeacons: boolean
   isBook: boolean
+  icons: IBlueprintIcon[]
 }
 
 export interface IImage {
@@ -85,7 +86,7 @@ export interface IBlueprintEntity {
   direction?: number
   type?: string
   recipe?: string
-  control_behavior: {
+  control_behavior?: {
     filters: IControlBehaviorFilter[]
   }
 }
@@ -99,7 +100,7 @@ export interface IDecodedBlueprintBookData {
 }
 
 export interface IBlueprint {
-  icons: Array<IBlueprintIcon>
+  icons?: Array<IBlueprintIcon>
   entities: Array<IBlueprintEntity>
   item: string
   label: string
@@ -112,7 +113,7 @@ export interface IBlueprintBook {
     blueprint: IBlueprint
     index: number
   }>
-  icons: Array<IBlueprintIcon>
+  icons?: Array<IBlueprintIcon>
   label: string
   description?: string
   version: number

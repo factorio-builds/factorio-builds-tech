@@ -2,7 +2,6 @@ import React from "react"
 import { Build } from "../../../db/entities/build.entity"
 import { useCategories } from "../../../hooks/useCategories"
 import { useGameStates } from "../../../hooks/useGameStates"
-import { getIcons } from "../../../utils/build"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import Subheader from "../Subheader"
@@ -19,7 +18,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const { getGameState } = useGameStates()
 
   const gameState = getGameState(props.build.metadata.state)
-  const icons = getIcons(props.build)
+  const icons = props.build.metadata.icons
 
   return (
     <Subheader
@@ -28,7 +27,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
           {props.isBook && (
             <SC.Book src="/img/blueprint-book.png" alt="Blueprint book" />
           )}
-          {icons && <BuildIcon icons={icons} />}
+          {icons.length > 0 && <BuildIcon icons={icons} />}
           <WithIcons input={props.build.name} />
         </>
       }

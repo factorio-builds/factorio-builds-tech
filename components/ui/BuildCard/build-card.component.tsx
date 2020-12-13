@@ -10,7 +10,7 @@ import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
   name: Build["name"]
-  icons: IBlueprintIcon[] | void
+  icons: IBlueprintIcon[]
   isBook: boolean
   categories: IMetadata["categories"]
   image: Build["image"]
@@ -40,7 +40,7 @@ function BuildCard({
         <SC.Content>
           <SC.Title>
             {isBook && <SC.Book src="/img/blueprint-book.png" />}
-            {icons && <BuildIcon icons={icons} />}
+            {icons.length > 0 && <BuildIcon icons={icons} />}
             <WithIcons input={name} />
           </SC.Title>
           <Stacker orientation="horizontal" gutter={8}>
