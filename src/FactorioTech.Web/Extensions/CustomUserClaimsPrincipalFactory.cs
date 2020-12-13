@@ -25,7 +25,7 @@ namespace FactorioTech.Web.Extensions
                 identity.AddClaims(new Claim[]
                 {
                     new("urn:factorio-tech:displayname", user.DisplayName ?? user.UserName),
-                    new("urn:factorio-tech:timezone", user.TimeZone?.Id ?? AppConfig.DefaulTimeZone.Id),
+                    new("urn:factorio-tech:timezone", user.TimeZone?.Id ?? AppConfig.DefaultTimeZone.Id),
                 });
             }
 

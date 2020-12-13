@@ -1,4 +1,5 @@
 imageNamespace: ghcr.io/dstockhammer/factorio-tech
+hostName: beta.factorio.tech
 
 replicas:
  web: 1
@@ -8,8 +9,6 @@ postgres:
   repository: postgres
   pullPolicy: IfNotPresent
   tag: latest
-  diskName: factorio-tech-postgres
-  diskURI: /subscriptions/86a2bd69-00a4-460d-9fda-b2850d41137f/resourceGroups/factorio-tech/providers/Microsoft.Compute/disks/factorio-tech-postgres
 
 podSecurityContext: {}
   # fsGroup: 2000

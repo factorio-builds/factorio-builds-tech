@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`beta.factorio.tech`)
+    - match: Host(`{{ .Values.hostName }}`)
       kind: Rule
       services:
       - name: {{ include "factorio-tech.fullname" . }}-web

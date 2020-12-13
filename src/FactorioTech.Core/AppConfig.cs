@@ -6,7 +6,7 @@ namespace FactorioTech.Core
 {
     public class AppConfig
     {
-        public static readonly DateTimeZone DefaulTimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
+        public static readonly DateTimeZone DefaultTimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
 
         public static class Cover
         {
