@@ -10,6 +10,7 @@ import { BuildRepository } from "../../db/repository/build.repository"
 import { UserRepository } from "../../db/repository/user.repository"
 import { EState } from "../../types"
 import { decodeBlueprint, isBook } from "../../utils/blueprint"
+import { getIcons } from "../../utils/build"
 import {
   EntityNotFoundException,
   EntityPermissonException,
@@ -105,8 +106,7 @@ async function buildMapper({
   image: IUploadedFile | void
   owner?: User
 }): Promise<Build> {
-  // @ts-ignore
-  const book = decodeBlueprint(fields.blueprint as string)
+  const decoded = decodeBlueprint(fields.blueprint as string)
 
   const toBoolean = (field: string): boolean => {
     return field === "true"
@@ -118,7 +118,7 @@ async function buildMapper({
     name: fields.name as string,
     blueprint: fields.blueprint as string,
     description: fields.description as string,
-    json: book,
+    json: decoded,
     metadata: {
       state: fields.state as EState,
       // @ts-ignore
@@ -129,7 +129,8 @@ async function buildMapper({
       tileable: toBoolean(fields.tileable as string),
       withBeacons: toBoolean(fields.withBeacons as string),
       area: 0,
-      isBook: isBook(book),
+      isBook: isBook(decoded),
+      icons: getIcons({ json: decoded } as Build),
     },
   }
 

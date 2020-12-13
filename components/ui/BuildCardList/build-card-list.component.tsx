@@ -67,7 +67,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
                 <BuildCard
                   name={item.name}
                   categories={item.metadata.categories}
-                  icons={getIcons(item)}
+                  icons={item.metadata.icons}
                   isBook={item.metadata.isBook}
                   image={item.image}
                   id={item.id}

@@ -40,6 +40,7 @@ export interface IMetadata {
   withMarkedInputs: boolean
   withBeacons: boolean
   isBook: boolean
+  icons: IBlueprintIcon[]
 }
 
 export interface IImage {

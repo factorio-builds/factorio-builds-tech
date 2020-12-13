@@ -19,7 +19,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const { getGameState } = useGameStates()
 
   const gameState = getGameState(props.build.metadata.state)
-  const icons = getIcons(props.build)
+  const icons = props.build.metadata.icons
 
   return (
     <Subheader
@@ -28,7 +28,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
           {props.isBook && (
             <SC.Book src="/img/blueprint-book.png" alt="Blueprint book" />
           )}
-          {icons && <BuildIcon icons={icons} />}
+          {icons.length && <BuildIcon icons={icons} />}
           <WithIcons input={props.build.name} />
         </>
       }
