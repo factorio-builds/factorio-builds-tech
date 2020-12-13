@@ -1,4 +1,5 @@
-using Ionic.Zlib;
+using ICSharpCode.SharpZipLib.Zip.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -32,14 +33,14 @@ namespace FactorioTech.Core
         {
             var compressed = Convert.FromBase64String(blueprint[1..]);
             await using var decompressed = new MemoryStream(compressed);
-            await using var decompresser = new ZlibStream(decompressed, CompressionMode.Decompress);
+            await using var decompresser = new InflaterInputStream(decompressed);
 
 #if DEBUG
             // set a breakpoint here and manually step into the if block to debug the json
             if (!decompressed.CanRead)
             {
                 decompressed.Seek(0, SeekOrigin.Begin);
-                await using var debugInflater = new ZlibStream(decompressed, CompressionMode.Decompress);
+                await using var debugInflater = new InflaterInputStream(decompressed);
                 using var debugReader = new StreamReader(debugInflater);
                 var debugJson = await debugReader.ReadToEndAsync();
                 throw new Exception(debugJson);
@@ -59,7 +60,7 @@ namespace FactorioTech.Core
             catch (Exception ex)
             {
                 decompressed.Seek(0, SeekOrigin.Begin);
-                await using var debugInflater = new ZlibStream(decompressed, CompressionMode.Decompress);
+                await using var debugInflater = new InflaterInputStream(decompressed);
                 using var debugReader = new StreamReader(debugInflater);
                 var debugJson = await debugReader.ReadToEndAsync();
 
@@ -88,13 +89,10 @@ namespace FactorioTech.Core
             }
 #endif
             await using var compressed = new MemoryStream();
-            await using var compresser = new ZlibStream(compressed, CompressionMode.Compress, CompressionLevel.Level9)
+            await using (var compresser = new DeflaterOutputStream(compressed, new Deflater(9)))
             {
-                FlushMode = FlushType.Finish,
-            };
-
-            await json.CopyToAsync(compresser);
-            await json.FlushAsync();
+                await json.CopyToAsync(compresser);
+            }
 
             return "0" + Convert.ToBase64String(compressed.ToArray());
         }
