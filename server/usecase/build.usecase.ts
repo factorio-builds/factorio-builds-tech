@@ -108,6 +108,10 @@ async function buildMapper({
   // @ts-ignore
   const book = decodeBlueprint(fields.blueprint as string)
 
+  const toBoolean = (field: string): boolean => {
+    return field === "true"
+  }
+
   // @ts-ignore
   const build: Build = {
     id: buildId,
@@ -121,9 +125,9 @@ async function buildMapper({
       categories: JSON.parse(fields.categories).length
         ? JSON.parse(fields.categories as string)
         : [],
-      withMarkedInputs: Boolean(fields.withMarkedInputs as string),
-      tileable: Boolean(fields.tileable as string),
-      withBeacons: Boolean(fields.withBeacons as string),
+      withMarkedInputs: toBoolean(fields.withMarkedInputs as string),
+      tileable: toBoolean(fields.tileable as string),
+      withBeacons: toBoolean(fields.withBeacons as string),
       area: 0,
       isBook: isBook(book),
     },
