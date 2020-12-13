@@ -1,7 +1,7 @@
 import MeiliSearch, { EnqueuedUpdate } from "meilisearch"
 import { Build } from "../../db/entities/build.entity"
 
-const client = new MeiliSearch({ host: "http://127.0.0.1:7700" })
+export const client = new MeiliSearch({ host: "http://127.0.0.1:7700" })
 
 interface IBuildIndexDocument {
   id: Build["id"]

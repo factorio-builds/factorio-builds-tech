@@ -1,10 +1,11 @@
+import { IsNull, Not } from "typeorm"
 import { BuildRepository } from "../db/repository/build.repository"
 import { syncIndexes } from "../server/services/search.service"
 
 async function execute() {
   try {
     const buildRepo = await BuildRepository()
-    const builds = await buildRepo.find({})
+    const builds = await buildRepo.find({ image: Not(IsNull()) })
 
     const done = await syncIndexes(builds)
 

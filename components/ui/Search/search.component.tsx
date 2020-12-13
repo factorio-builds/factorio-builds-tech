@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useDebouncedEffect } from "../../../hooks/useDebouncedEffect"
 import { IStoreState } from "../../../redux/store"
+import { client as searchClient } from "../../../server/services/search.service"
 import Input from "../../form/Input"
 import * as SC from "./search.styles"
 
@@ -13,6 +14,12 @@ const Search = (): JSX.Element => {
   useDebouncedEffect(
     () => {
       dispatch({ type: "SET_QUERY", payload: input })
+      searchClient
+        .getIndex("builds")
+        .search(input)
+        .then((results) => {
+          dispatch({ type: "SET_BUILDS", payload: results.hits })
+        })
     },
     250,
     [input]
