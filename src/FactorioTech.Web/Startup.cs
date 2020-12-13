@@ -113,6 +113,11 @@ namespace FactorioTech.Web
             services.AddHttpClient();
             services.AddSession();
 
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ApplicationVersion = BuildInformation.Version;
+            });
+
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();

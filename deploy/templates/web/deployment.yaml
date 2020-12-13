@@ -40,6 +40,12 @@ spec:
             - name: factorio-data
               mountPath: /factorio
               readOnly: true
+          env:
+            - name: APPLICATIONINSIGHTS__INSTRUMENTATIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: application-insights
+                  key: instrumentation_key
       volumes:
         - name: config
           configMap:
