@@ -74,7 +74,7 @@ const createInitialValues = (build?: Build): IFormValues => {
 const validation = {
   name: Yup.string()
     .min(2, "Too Short!")
-    .max(50, "Too Long!")
+    .max(128, "Too Long!")
     .required("Required"),
   blueprint: Yup.string()
     .required("Required")
