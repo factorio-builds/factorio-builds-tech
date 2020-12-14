@@ -4,12 +4,17 @@ using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
@@ -28,18 +33,6 @@ namespace FactorioTech.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            if (services == null)
-            {
-                Log.Fatal("services is null");
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            if (_configuration == null)
-            {
-                Log.Fatal("_configuration is null");
-                throw new ArgumentNullException(nameof(_configuration));
-            }
-
             services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
@@ -74,6 +67,15 @@ namespace FactorioTech.Web
                 });
             }
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("factorio-blueprint-editor", builder =>
+                    builder.WithOrigins($"{AppConfig.BlueprintEditorUri.Scheme}://{AppConfig.BlueprintEditorUri.Host}")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod());
+            });
+
+
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDbContext<AppDbContext>(options =>
             {
@@ -106,6 +108,12 @@ namespace FactorioTech.Web
                 options.LoginPath = "/account/login";
                 options.LogoutPath = "/account/logout";
             });
+
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.TryAddScoped<IUrlHelper>(serviceProvider =>
+                serviceProvider.GetRequiredService<IUrlHelperFactory>()
+                    .GetUrlHelper(serviceProvider.GetRequiredService<IActionContextAccessor>().ActionContext));
 
             services.AddRazorPages()
                 .AddSessionStateTempDataProvider();
@@ -149,6 +157,7 @@ namespace FactorioTech.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCors();
 
             app.UseAuthentication();
             app.UseAuthorization();

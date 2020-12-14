@@ -1,7 +1,9 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Web.Extensions;
 using FactorioTech.Web.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,23 +11,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 
 namespace FactorioTech.Web.Pages
 {
+    [Authorize]
     public class EditModel : PageModel
     {
-        private readonly ILogger<EditModel> _logger;
         private readonly AppDbContext _dbContext;
         private readonly ImageService _imageService;
 
         public EditModel(
-            ILogger<EditModel> logger,
             AppDbContext dbContext,
             ImageService imageService)
         {
-            _logger = logger;
             _dbContext = dbContext;
             _imageService = imageService;
         }
@@ -47,6 +46,9 @@ namespace FactorioTech.Web.Pages
 
             if (Blueprint == null)
                 return NotFound();
+
+            if (Blueprint.OwnerId != User.GetUserId())
+                return Forbid();
 
             var existingTags = Blueprint.Tags!.Select(t => t.Value).ToHashSet();
             TagsSelectItems = Tags.All.Select(tag => new SelectListItem(tag, tag, existingTags.Contains(tag)));
@@ -77,6 +79,12 @@ namespace FactorioTech.Web.Pages
                 .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant())
                 .Include(bp => bp.Tags)
                 .FirstOrDefaultAsync();
+
+            if (blueprint == null)
+                return NotFound();
+
+            if (blueprint.OwnerId != User.GetUserId())
+                return Forbid();
 
             blueprint.UpdateDetails(
                 SystemClock.Instance.GetCurrentInstant(),

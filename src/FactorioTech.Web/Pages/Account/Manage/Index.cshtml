@@ -13,15 +13,23 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Input.Email"></label>
-                <input asp-for="Input.Email" class="form-control" readonly />
+                <input asp-for="Input.Email" class="form-control" aria-describedby="email-help" readonly 
+                       data-toggle="tooltip" data-placement="top" title="Changing your email address will be enabled in a future update. Your email address is not used at this point." />
+                <small id="email-help" class="form-text text-muted">Your email is visible to you only and we'll never share it with anyone else.</small>
             </div>
             <div class="form-group">
                 <label asp-for="Input.UserName"></label>
-                <input asp-for="Input.UserName" class="form-control" readonly />
+                <input asp-for="Input.UserName" class="form-control" aria-describedby="username-help" readonly
+                       data-toggle="tooltip" data-placement="top" title="Changing your username will be enabled in a future update." />
+                <small id="username-help" class="form-text text-muted">
+                    Your username is placed in the URL of your blueprints. Only latin alphanumeric characters are supported.
+                    <strong>Danger:</strong> Changing your username will change the URL of all your blueprints!
+                </small>
             </div>
             <div class="form-group">
                 <label asp-for="Input.DisplayName"></label>
-                <input asp-for="Input.DisplayName" class="form-control" />
+                <input asp-for="Input.DisplayName" class="form-control" aria-describedby="displayname-help" />
+                <small id="displayname-help" class="form-text text-muted">Your display name is visible across the site in place of your username.</small>
                 <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
             </div>
             <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>

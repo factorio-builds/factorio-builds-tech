@@ -19,10 +19,20 @@
                 <div class="btn-toolbar" role="toolbar">
                     <form method="post" asp-page-handler="Favorite" data-ajax="true" data-ajax-update="#favorites-count">
                         <div class="btn-group ml-2" role="group">
-                            <button type="submit" class="btn btn-sm btn-default">
-                                <i class="fas fa-heart"></i>
-                                Favorite
-                            </button>
+                            @if (SignInManager.IsSignedIn(User)) { 
+                                <button type="submit" class="btn btn-sm btn-default">
+                                    <i class="fas fa-heart"></i>
+                                    Favorite
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-sm btn-default" disabled
+                                        data-toggle="tooltip" data-placement="top" title="Sign in or register to save this blueprint to your favorites!">
+                                    <i class="fas fa-heart"></i>
+                                    Favorites
+                                </button>
+                            }
                             <button id="favorites-count" type="button" class="btn btn-sm btn-default" disabled>@Model.Blueprint.FollowerCount</button>
                         </div>
                         <input type="hidden" name="BlueprintId" value="@Model.Blueprint.BlueprintId"/>
@@ -42,11 +52,19 @@
                         </div>
                     }
                     <div class="btn-group ml-2" role="group">
-                        <a href="@Uris.RawBlueprint(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
+                        <a href="@Url.RawBlueprint(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
                            data-toggle="tooltip" data-placement="top" title="View the raw blueprint string">
                             <i class="fas fa-file-alt"></i>
                             Raw
                         </a>
+                        @if (Model.Envelope.Blueprint != null)
+                        {
+                            <a href="@Url.BlueprintEditor(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
+                               data-toggle="tooltip" data-placement="top" title="Open this blueprint in the Factorio Blueprint Editor" target="_blank">
+                                <i class="fas fa-border-none"></i>
+                                View in Editor
+                            </a>
+                        }
                         <button type="button" class="btn btn-sm btn-success"
                                 data-toggle="copy-blueprint" data-payload="@Model.SelectedVersion!.Payload!.Encoded">
                             <i class="fas fa-copy"></i>
@@ -121,7 +139,7 @@
             </details>
         </div>
         <div class="col-md-4">
-            <img src="@Uris.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" loading="lazy" />
+            <img src="@Url.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" loading="lazy" />
         </div>
     </div>
 

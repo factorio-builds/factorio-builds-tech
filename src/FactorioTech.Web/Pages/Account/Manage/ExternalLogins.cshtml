@@ -6,55 +6,45 @@
 }
 
 <partial name="_StatusMessage" for="StatusMessage" />
-@if (Model.CurrentLogins?.Count > 0)
-{
-    <h4>Registered Logins</h4>
-    <table class="table">
-        <tbody>
-            @foreach (var login in Model.CurrentLogins)
-            {
-                <tr>
-                    <td id="@($"login-provider-{login.LoginProvider}")">
-                        <i class="fab fa-@login.LoginProvider.ToLowerInvariant()"></i>
-                        @login.ProviderDisplayName
-                    </td>
-                    <td>
-                        @if (Model.ShowRemoveButton)
-                        {
-                            <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
-                                <div>
-                                    <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
-                                    <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                            title="Remove this @login.ProviderDisplayName login from your account">
-                                        <i class="fas fa-trash-alt"></i>
-                                        Remove
-                                    </button>
-                                </div>
-                            </form>
-                        }
-                        else
-                        {
-                            @: &nbsp;
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-@if (Model.OtherLogins?.Count > 0)
-{
-    <h4>Add another service to log in.</h4>
-    <hr />
-    <form id="link-login-form" asp-page-handler="LinkLogin" method="post" class="form-horizontal">
-        <div id="socialLoginList">
-            <p>
-                @foreach (var provider in Model.OtherLogins)
-                {
-                    <button id="@($"link-login-button-{provider.Name}")" type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                }
-            </p>
-        </div>
-    </form>
-}
+
+<h4>Registered Logins</h4>
+
+<p>
+    You can see all your linked accounts and all other available login providers below.
+    We recommend linking <strong>at least two login providers</strong> in order not to
+    lose access to this site in case you lose access to one of your external accounts.
+</p>
+
+<table class="table">
+    <tbody>
+        @foreach (var login in Model.CurrentLogins)
+        {
+            <tr>
+                <td id="@($"login-provider-{login.LoginProvider}")">
+                    <i class="fab fa-@login.LoginProvider.ToLowerInvariant()"></i>
+                    @login.ProviderDisplayName
+                </td>
+                <td>
+                    @if (Model.ShowRemoveButton)
+                    {
+                        <form id="@($"remove-login-{login.LoginProvider}")" asp-page-handler="RemoveLogin" method="post">
+                            <div>
+                                <input asp-for="@login.LoginProvider" name="LoginProvider" type="hidden" />
+                                <input asp-for="@login.ProviderKey" name="ProviderKey" type="hidden" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        title="Remove this @login.ProviderDisplayName login from your account">
+                                    <i class="fas fa-trash-alt"></i>
+                                    Remove
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        @: &nbsp;
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

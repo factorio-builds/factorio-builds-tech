@@ -1,12 +1,24 @@
 additionalArguments:
   - --certificatesresolvers.letsencrypt.acme.email=hello@factorio.tech
   - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
-  - --certificatesResolvers.letsencrypt.acme.tlsChallenge=true
-  - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+  - --certificatesResolvers.letsencrypt.acme.tlschallenge=false
+  - --certificatesResolvers.letsencrypt.acme.httpchallenge=false
+  - --certificatesResolvers.letsencrypt.acme.dnschallenge.provider=cloudflare
+  - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+  # - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
 
 persistence:
   enabled: true
   storageClass: default
+
+volumes:
+  - name: cloudflare
+    mountPath: /secrets
+    type: secret
+
+env:
+  - name: CF_DNS_API_TOKEN_FILE
+    value: /secrets/dns_api_token
 
 ports:
   web:
@@ -16,11 +28,12 @@ ports:
       enabled: true
       certResolver: letsencrypt
 
-# see https://github.com/traefik/traefik/issues/6972
-initContainers:
-  - name: volume-permissions
-    image: busybox:1.31.1
-    command: ["sh", "-c", "chmod -Rv 600 /data/*"]
-    volumeMounts:
-      - name: data
-        mountPath: /data
+deployment:
+  # see https://github.com/traefik/traefik/issues/6972
+  initContainers:
+    - name: volume-permissions
+      image: busybox:1.31.1
+      command: ["sh", "-c", "chmod -Rv 600 /data/*"]
+      volumeMounts:
+        - name: data
+          mountPath: /data

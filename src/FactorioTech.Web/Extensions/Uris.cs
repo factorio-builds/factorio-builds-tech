@@ -1,24 +1,31 @@
+using FactorioTech.Core;
 using FactorioTech.Core.Domain;
+using FactorioTech.Web.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace FactorioTech.Web.Extensions
 {
     public static class Uris
     {
-        public static string RawBlueprint(string owner, string slug, Hash? hash) =>
-            hash == null
-                ? $"/{owner}/{slug}/raw"
-                : $"/{owner}/{slug}/{hash}/raw";
+        public static string RawBlueprint(this IUrlHelper urlHelper, string owner, string slug, Hash? hash) =>
+            hash.HasValue
+                ? urlHelper.Action(nameof(RawController.GetVersion), "Raw", new { owner, slug, hash })
+                : urlHelper.Action(nameof(RawController.GetLatest), "Raw", new { owner, slug });
 
-        public static string BlueprintCover(Guid blueprintId) =>
-            $"/files/cover/{blueprintId}";
+        public static string BlueprintCover(this IUrlHelper urlHelper, Guid blueprintId) =>
+            urlHelper.Action(nameof(FileController.GetBlueprintCover), "File", new { blueprintId });
 
-        public static string BlueprintRendering(Hash hash, Guid versionId) =>
+        public static string BlueprintRendering(this IUrlHelper urlHelper, Hash hash, Guid versionId) =>
             versionId == Guid.Empty
-                ? $"/files/rendering/{hash}.png"
-                : $"/files/rendering/{versionId}/{hash}.png";
+                ? urlHelper.Action(nameof(FileController.GetBlueprintRendering), "File", new { hash })
+                : urlHelper.Action(nameof(FileController.GetBlueprintRenderingWithVersionHint), "File", new { hash, versionId });
 
-        public static string Icon(int size, string key, string type = "item") =>
-            $"/files/icon/{size}/{type}/{key}.png";
+        public static string BlueprintEditor(this IUrlHelper urlHelper, string owner, string slug, Hash hash) =>
+            urlHelper.ActionLink(nameof(RawController.GetVersion), "Raw", new { owner, slug, hash = hash.ToString() })
+                .Let(url => $"{AppConfig.BlueprintEditorUri}/?source={url}");
+
+        public static string Icon(this IUrlHelper urlHelper, int size, string key, string type = "item") =>
+            urlHelper.Action(nameof(FileController.GetGameIcon), "File", new { size, key, type });
     }
 }

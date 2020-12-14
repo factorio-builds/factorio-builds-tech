@@ -3,6 +3,7 @@ using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
 using FactorioTech.Web.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +17,16 @@ namespace FactorioTech.Web.Pages
     public class BlueprintModel : PageModel
     {
         private readonly AppDbContext _dbContext;
+        private readonly SignInManager<User> _signInManager;
         private readonly BlueprintConverter _converter;
 
         public BlueprintModel(
             AppDbContext dbContext,
+            SignInManager<User> signInManager,
             BlueprintConverter converter)
         {
             _dbContext = dbContext;
+            _signInManager = signInManager;
             _converter = converter;
         }
 
@@ -94,6 +98,9 @@ namespace FactorioTech.Web.Pages
 
         public async Task<IActionResult> OnPostFavoriteAsync(Guid blueprintId)
         {
+            if (!_signInManager.IsSignedIn(User))
+                return Unauthorized();
+
             var favorite = await _dbContext.Favorites.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.BlueprintId == blueprintId && x.UserId == User.GetUserId());
 

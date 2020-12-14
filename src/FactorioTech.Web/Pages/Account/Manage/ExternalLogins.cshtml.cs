@@ -23,9 +23,9 @@ namespace FactorioTech.Web.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-        public IList<UserLoginInfo>? CurrentLogins { get; set; }
+        public IReadOnlyList<UserLoginInfo> CurrentLogins { get; private set; } = Array.Empty<UserLoginInfo>();
 
-        public IList<AuthenticationScheme>? OtherLogins { get; set; }
+        public IReadOnlyList<AuthenticationScheme> OtherLogins { get; private set; } = Array.Empty<AuthenticationScheme>();
 
         public bool ShowRemoveButton { get; set; }
 
@@ -38,7 +38,7 @@ namespace FactorioTech.Web.Pages.Account.Manage
             if (user == null)
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 
-            CurrentLogins = await _userManager.GetLoginsAsync(user);
+            CurrentLogins = (await _userManager.GetLoginsAsync(user)).ToList();
             OtherLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync())
                 .Where(auth => CurrentLogins.All(ul => auth.Name != ul.LoginProvider))
                 .ToList();

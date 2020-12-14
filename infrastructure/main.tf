@@ -236,6 +236,16 @@ resource "kubernetes_config_map" "postgres" {
   }
 }
 
+resource "kubernetes_secret" "cloudflare" {
+  metadata {
+    name = "cloudflare"
+  }
+
+  data = {
+    dns_api_token = var.cloudflare_api_token
+  }
+}
+
 resource "kubernetes_secret" "application_insights" {
   metadata {
     name = "application-insights"

@@ -6,6 +6,7 @@ namespace FactorioTech.Core
 {
     public class AppConfig
     {
+        public static Uri BlueprintEditorUri = new("https://teoxoy.github.io/factorio-blueprint-editor");
         public static readonly DateTimeZone DefaultTimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
 
         public static class Cover

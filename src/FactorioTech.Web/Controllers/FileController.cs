@@ -41,9 +41,19 @@ namespace FactorioTech.Web.Controllers
         }
 
         [HttpGet("rendering/{hash}.png")]
+        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> GetBlueprintRendering(string hash)
+        {
+            var file = await _imageService.TryLoadRendering(null, new Hash(hash));
+            if (file == null)
+                return NotFound();
+
+            return File(file, "image/png");
+        }
+
         [HttpGet("rendering/{versionId}/{hash}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering(string hash, Guid? versionId = null)
+        public async Task<IActionResult> GetBlueprintRenderingWithVersionHint(string hash, Guid versionId)
         {
             var file = await _imageService.TryLoadRendering(versionId, new Hash(hash));
             if (file == null)

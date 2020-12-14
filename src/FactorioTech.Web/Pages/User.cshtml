@@ -15,10 +15,14 @@
                     @if (SignInManager.IsSignedIn(User) && User.GetUserId() == Model.SelectedUser.Id)
                     {
                         <a class="btn btn-sm btn-default" asp-page="/Account/Manage/Index">Edit</a>
-                    } else
+                    }
+                    else
                     {
-                        <button type="button" class="btn btn-sm btn-default">Star</button>
-                        <button type="button" class="btn btn-sm btn-default" disabled>42</button>
+                        <button type="button" class="btn btn-sm btn-default" disabled
+                                data-toggle="tooltip" data-placement="top" title="Followers functionality coming in a future update. Stay tuned!">
+                            Follow
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default" disabled>0</button>
                     }
                 </div>
             </li>
@@ -28,14 +32,9 @@
     <h1 class="display-4">@(Model.SelectedUser.DisplayName ?? Model.SelectedUser.UserName)</h1>
     <small class="text-muted">member since @Model.SelectedUser.RegisteredAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
 
-    <ul class="list-group">
-        @foreach (var blueprint in Model.SelectedUser.Blueprints!)
-        {
-            <li class="list-group-item">
-                <a asp-page="/Blueprint" asp-route-user="@blueprint.OwnerSlug" asp-route-slug="@blueprint.Slug" asp-route-hash="@null">
-                    @blueprint.Title
-                </a>
-            </li>
-        }
-    </ul>
+    <h2 class="pt-4">Created Blueprints</h2>
+    <partial name="_BlueprintList" model="Model.SelectedUser.Blueprints" />
+
+    <h2 class="pt-4">Favorites</h2>
+    <p>(coming soon)</p>
 </div>

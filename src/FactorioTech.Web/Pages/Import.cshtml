@@ -56,7 +56,7 @@
                 <div class="col-md-4">
                     <div class="form-group mb-0">
                         <label for="blueprint-image-input">
-                            @{ var imageSrc = Model.ParentBlueprintId.HasValue ? Uris.BlueprintCover(Model.ParentBlueprintId.Value) : null; }
+                            @{ var imageSrc = Model.ParentBlueprintId.HasValue ? Url.BlueprintCover(Model.ParentBlueprintId.Value) : null; }
                             <img src="@imageSrc" class="img-thumbnail" id="blueprint-image-selected"
                                  data-toggle="tooltip" data-placement="bottom"
                                  title="Click here to upload a different image or select a blueprint rendering from the blueprint contents below!" />
