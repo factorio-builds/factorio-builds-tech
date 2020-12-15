@@ -8,7 +8,33 @@
     min-height: 8rem;
 }
 
+#navbar-user-dropdown i {
+    font-size: 2em;
+}
 
 .nav .nav-link.active {
     color: $white;
+}
+
+body {
+    background: $gray-900;
+}
+
+main {
+    background: $gray-800;
+    padding: 1rem 0 2rem;
+}
+
+footer {
+    padding-top: 2rem;
+    font-size: 0.8em;
+
+    .external-links a {
+        font-size: 2em;
+        color: $gray-600;
+
+        &:hover, &:active {
+            color: $white;
+        }
+    }
 }

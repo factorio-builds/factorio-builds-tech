@@ -33,7 +33,9 @@
     <small class="text-muted">member since @Model.SelectedUser.RegisteredAt.InZone(User.GetTimeZone()).ToDateTimeOffset().Humanize()</small>
 
     <h2 class="pt-4">Created Blueprints</h2>
-    <partial name="_BlueprintList" model="Model.SelectedUser.Blueprints" />
+    <div id="blueprint-list" class="row no-gutters">
+        <partial name="_BlueprintList" model="Model.SelectedUser.Blueprints" />
+    </div>
 
     <h2 class="pt-4">Favorites</h2>
     <p>(coming soon)</p>

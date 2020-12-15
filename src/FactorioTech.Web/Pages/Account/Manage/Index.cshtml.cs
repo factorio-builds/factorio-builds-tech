@@ -43,7 +43,7 @@ namespace FactorioTech.Web.Pages.Account.Manage
 
             [StringLength(100, MinimumLength = 3)]
             [DisplayName("Display name")]
-            public string? DisplayName{ get; set; }
+            public string? DisplayName { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync()

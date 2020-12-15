@@ -36,9 +36,11 @@ namespace FactorioTech.Core { \n\
 }" > src/FactorioTech.Core/BuildInformation.cs \
  && cat /app/src/FactorioTech.Core/BuildInformation.cs
 
-WORKDIR /app/src/FactorioTech.Web
-RUN dotnet publish -c Release -o /app/publish --no-restore /p:DebugType=None
-
+WORKDIR /app
+RUN dotnet build --no-restore \
+ && dotnet test --no-restore --no-build --verbosity normal --logger trx --filter Type=Fast \
+ && dotnet publish src/FactorioTech.Web/FactorioTech.Web.csproj \
+        --no-restore --configuration Release --output /app/publish /p:DebugType=None
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 EXPOSE 80 443

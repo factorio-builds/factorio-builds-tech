@@ -14,7 +14,7 @@
 
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark mb-3">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" asp-page="/Index">⚙️ factorio.tech</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
@@ -42,14 +42,42 @@
     </nav>
 </header>
 
-<main role="main" class="pb-3">
+<main role="main">
     @RenderBody()
 </main>
 
-<footer class="footer text-muted">
-    <div class="container d-flex justify-content-between">
-        <p>&copy; @DateTime.UtcNow.Year <a asp-page="/Index">factorio.tech</a></p>
-        <p>Made with ⚙️ in Europe</p>
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-6 text-muted">
+                <p>
+                    Copyright &copy; @DateTime.UtcNow.Year <a asp-page="/Index">factorio.tech</a>. All rights reserved.
+                </p>
+                <p>
+                    This site is not affiliated with Wube Software Ltd in any way.
+                    All Factorio art assets are copyrighted and licensed by <a href="https://factorio.com">Wube Software Ltd</a>.
+                </p>
+            </div>
+            <div class="col-6 text-muted text-right">
+                <p>
+                    Made with ⚙️ in Europe
+                    <br />
+                    Build version <a href="@BuildInformation.Uri">@BuildInformation.Version</a>
+                </p>
+                <p class="external-links">
+                    <a href="https://github.com/dstockhammer/factorio-tech" title="factorio.tech on GitHub">
+                        <i class="fab fa-github-square"></i>
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <p>
+            <br />
+           </p>
+        <p>
+            <br />
+        </p>
     </div>
 </footer>
 

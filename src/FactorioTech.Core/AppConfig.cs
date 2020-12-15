@@ -20,7 +20,7 @@ namespace FactorioTech.Core
             public const int MaxWidth = 1440;
             public const int MaxHeight = 1440;
         }
-        
+
         public static class Policies
         {
             public static class Slug

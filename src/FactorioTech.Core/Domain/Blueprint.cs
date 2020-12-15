@@ -70,7 +70,7 @@ namespace FactorioTech.Core.Domain
             Title = title;
             Description = description;
             LatestGameVersion = "0.0.0.0";
-            
+
             Tags = new HashSet<Tag>();
             foreach (var tag in tags)
             {

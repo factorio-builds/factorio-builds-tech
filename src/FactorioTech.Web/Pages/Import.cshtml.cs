@@ -64,7 +64,7 @@ namespace FactorioTech.Web.Pages
             ViewData["Title"] = "Import blueprint string";
         }
 
-        public async Task<IActionResult> OnPostAsync([FromForm]ImportInputModel importInput)
+        public async Task<IActionResult> OnPostAsync([FromForm] ImportInputModel importInput)
         {
             if (!ModelState.IsValid)
             {
@@ -133,7 +133,7 @@ namespace FactorioTech.Web.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostCreateAsync([FromForm]CreateInputModel createInput)
+        public async Task<IActionResult> OnPostCreateAsync([FromForm] CreateInputModel createInput)
         {
             CreateInput = createInput;
 
@@ -233,10 +233,10 @@ namespace FactorioTech.Web.Pages
             throw new Exception($"Failed to parse {nameof(CreatedResult)} of type {result.GetType().Name}");
         }
 
-        public IActionResult OnPostPreview([FromForm]string content) =>
+        public IActionResult OnPostPreview([FromForm] string content) =>
             Partial("_MarkdownPreview", content);
 
-        public async Task<JsonResult> OnPostCheckSlugAsync([FromForm]string slug)
+        public async Task<JsonResult> OnPostCheckSlugAsync([FromForm] string slug)
         {
             var slugExists = await _blueprintService.SlugExistsForUser(User.GetUserId(), slug);
             return new JsonResult(!slugExists);

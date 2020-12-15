@@ -3,7 +3,7 @@
 
 <div class="container index">
     <form method="get" asp-page-handler="List" id="blueprint-filters" data-ajax="true" data-ajax-update="#blueprint-list">
-        <div class="row">
+        <div class="row pb-2 pb-md-1">
             <div class="col">
                 <select id="blueprint-filters-tags-input" multiple="multiple" style="display:none" placeholder="Filter by tags…"
                         data-role="blueprint-tags" asp-items="@Model.TagsSelectItems">
@@ -24,5 +24,7 @@
         <input id="blueprint-filters-sort" type="hidden" name="sort" />
     </form>
 
-    <partial name="_BlueprintList" model="Model.Blueprints" />
+    <div id="blueprint-list" class="row no-gutters">
+        <partial name="_BlueprintList" model="Model.Blueprints" />
+    </div>
 </div>

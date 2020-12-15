@@ -5,7 +5,7 @@ namespace FactorioTech.Core.Data
 {
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
-        public AppDbContext CreateDbContext(string[] args) => 
+        public AppDbContext CreateDbContext(string[] args) =>
             CreateDbContext("Host=localhost;Database=postgres;Username=postgres;Password=postgres");
 
         public static AppDbContext CreateDbContext(string connectionString)

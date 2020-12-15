@@ -24,7 +24,7 @@ namespace FactorioTech.Tests.Helpers
                 },
                 new()
                 {
-                    Index = 2, 
+                    Index = 2,
                     Signal = new FactorioApi.SignalId { Type = "item", Name = "spidertron" },
                 },
             },

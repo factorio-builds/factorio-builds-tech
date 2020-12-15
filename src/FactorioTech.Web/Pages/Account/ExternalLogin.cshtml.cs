@@ -1,10 +1,5 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
-using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +10,11 @@ using NodaTime;
 using SluggyUnidecode;
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace FactorioTech.Web.Pages.Account
 {
@@ -63,7 +63,7 @@ namespace FactorioTech.Web.Pages.Account
 
             [StringLength(100, MinimumLength = 3)]
             [DisplayName("Display name")]
-            public string? DisplayName{ get; set; }
+            public string? DisplayName { get; set; }
         }
 
         public IActionResult OnPost(string? provider, string? returnUrl = null)

@@ -42,11 +42,11 @@ namespace FactorioTech.Web.Pages
         };
 
         public async Task<IActionResult> OnGetAsync(
-            [FromQuery(Name = "page")]int currentPage = 1,
-            [FromQuery(Name = "q")]string? queryStr = null,
-            [FromQuery(Name = "tags")]string? tagsCsv = null,
-            [FromQuery(Name = "sort")]string? sortCsv = null,
-            [FromQuery(Name = "version")]string? version = null)
+            [FromQuery(Name = "page")] int currentPage = 1,
+            [FromQuery(Name = "q")] string? queryStr = null,
+            [FromQuery(Name = "tags")] string? tagsCsv = null,
+            [FromQuery(Name = "sort")] string? sortCsv = null,
+            [FromQuery(Name = "version")] string? version = null)
         {
             var sort = ParseSort(sortCsv);
             var tags = tagsCsv?.Split(',') ?? Array.Empty<string>();
@@ -62,11 +62,11 @@ namespace FactorioTech.Web.Pages
         }
 
         public async Task<IActionResult> OnGetListAsync(
-            [FromQuery(Name = "page")]int currentPage = 1,
-            [FromQuery(Name = "q")]string? queryStr = null,
-            [FromQuery(Name = "tags")]string? tagsCsv = null,
-            [FromQuery(Name = "sort")]string? sortCsv = null,
-            [FromQuery(Name = "version")]string? version = null)
+            [FromQuery(Name = "page")] int currentPage = 1,
+            [FromQuery(Name = "q")] string? queryStr = null,
+            [FromQuery(Name = "tags")] string? tagsCsv = null,
+            [FromQuery(Name = "sort")] string? sortCsv = null,
+            [FromQuery(Name = "version")] string? version = null)
         {
             Blueprints = await _blueprintService.GetBlueprints(
                 (currentPage, PageSize),

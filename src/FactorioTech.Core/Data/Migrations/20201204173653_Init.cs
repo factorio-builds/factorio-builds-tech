@@ -1,8 +1,8 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
+using System;
 
 namespace FactorioTech.Core.Data.Migrations
 {
