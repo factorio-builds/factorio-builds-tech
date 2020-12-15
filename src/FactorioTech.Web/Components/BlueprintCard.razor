@@ -2,8 +2,6 @@
 @using System.Text;
 
 @inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
-@inject ImageService _imageService
-@inject BlueprintConverter _blueprintConverter
 
 <div class="card mb-1">
     <div class="card-header">
@@ -60,8 +58,8 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
-                <a href="@Url.BlueprintRendering(payload.Hash, VersionId)" data-lightbox="@(BookHash ?? payload.Hash)" data-title="@(Blueprint.Label ?? "(no title)")">
-                    <img src="@Url.BlueprintRendering(payload.Hash, VersionId)" data-hash="@payload.Hash" class="img-thumbnail" loading="lazy" />
+                <a href="@Url.BlueprintRenderingFull(payload.Hash, VersionId)" data-lightbox="@(BookHash ?? payload.Hash)" data-title="@(Blueprint.Label ?? "(no title)")">
+                    <img src="@Url.BlueprintRenderingThumb(payload.Hash, VersionId)" data-hash="@payload.Hash" class="img-thumbnail" loading="lazy" />
                 </a>
             </div>
             <div class="col-md-8">

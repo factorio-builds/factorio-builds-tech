@@ -16,10 +16,15 @@ namespace FactorioTech.Web.Extensions
         public static string BlueprintCover(this IUrlHelper urlHelper, Guid blueprintId) =>
             urlHelper.Action(nameof(FileController.GetBlueprintCover), "File", new { blueprintId });
 
-        public static string BlueprintRendering(this IUrlHelper urlHelper, Hash hash, Guid versionId) =>
+        public static string BlueprintRenderingThumb(this IUrlHelper urlHelper, Hash hash, Guid versionId) =>
             versionId == Guid.Empty
-                ? urlHelper.Action(nameof(FileController.GetBlueprintRendering), "File", new { hash })
-                : urlHelper.Action(nameof(FileController.GetBlueprintRenderingWithVersionHint), "File", new { hash, versionId });
+                ? urlHelper.Action(nameof(FileController.GetBlueprintRenderingThumb), "File", new { hash })
+                : urlHelper.Action(nameof(FileController.GetBlueprintRenderingThumbWithVersionHint), "File", new { hash, versionId });
+
+        public static string BlueprintRenderingFull(this IUrlHelper urlHelper, Hash hash, Guid versionId) =>
+            versionId == Guid.Empty
+                ? urlHelper.Action(nameof(FileController.GetBlueprintRenderingFull), "File", new { hash })
+                : urlHelper.Action(nameof(FileController.GetBlueprintRenderingFullWithVersionHint), "File", new { hash, versionId });
 
         public static string BlueprintEditor(this IUrlHelper urlHelper, string owner, string slug, Hash hash) =>
             urlHelper.ActionLink(nameof(RawController.GetVersion), "Raw", new { owner, slug, hash = hash.ToString() })

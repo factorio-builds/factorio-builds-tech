@@ -40,9 +40,9 @@ namespace FactorioTech.Web.Controllers
             return File(file, format);
         }
 
-        [HttpGet("rendering/{hash}.png")]
+        [HttpGet("rendering/full/{hash}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering(string hash)
+        public async Task<IActionResult> GetBlueprintRenderingFull(string hash)
         {
             var file = await _imageService.TryLoadRendering(null, new Hash(hash));
             if (file == null)
@@ -51,9 +51,21 @@ namespace FactorioTech.Web.Controllers
             return File(file, "image/png");
         }
 
-        [HttpGet("rendering/{versionId}/{hash}.png")]
+
+        [HttpGet("rendering/thumb/{hash}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRenderingWithVersionHint(string hash, Guid versionId)
+        public async Task<IActionResult> GetBlueprintRenderingThumb(string hash)
+        {
+            var file = await _imageService.TryLoadRenderingThumbnail(null, new Hash(hash));
+            if (file == null)
+                return NotFound();
+
+            return File(file, "image/png");
+        }
+
+        [HttpGet("rendering/full/{versionId}/{hash}.png")]
+        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> GetBlueprintRenderingFullWithVersionHint(string hash, Guid versionId)
         {
             var file = await _imageService.TryLoadRendering(versionId, new Hash(hash));
             if (file == null)
@@ -62,6 +74,17 @@ namespace FactorioTech.Web.Controllers
             return File(file, "image/png");
         }
 
+        [HttpGet("rendering/thumb/{versionId}/{hash}.png")]
+        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> GetBlueprintRenderingThumbWithVersionHint(string hash, Guid versionId)
+        {
+            var file = await _imageService.TryLoadRenderingThumbnail(versionId, new Hash(hash));
+            if (file == null)
+                return NotFound();
+
+            return File(file, "image/png");
+        }
+        
         [HttpGet("icon/{size:int}/{type}/{key}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetGameIcon(int size, string type, string key)

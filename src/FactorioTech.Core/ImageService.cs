@@ -142,6 +142,31 @@ namespace FactorioTech.Core
             return TryLoadRendering(hash);
         }
 
+
+        public async Task<Stream?> TryLoadRenderingThumbnail(Guid? versionId, Hash hash)
+        {
+            var existingThumbnail = TryLoadRendering(hash, true);
+            if (existingThumbnail != null)
+                return existingThumbnail;
+
+            var rendering = await TryLoadRendering(versionId, hash);
+            if (rendering == null)
+                return null;
+
+            var (image, format) = await Image.LoadWithFormatAsync(rendering);
+            image.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Size = new Size(AppConfig.Cover.Width, AppConfig.Cover.Width),
+                Mode = ResizeMode.Max,
+            }));
+
+            var imageFqfn = GetRenderingFqfn(hash, true);
+            await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
+            await image.SaveAsync(outFile, format);
+
+            return TryLoadRendering(hash, true);
+        }
+
         private async Task<BlueprintPayload?> TryFindEnvelopeWithHash(FactorioApi.BlueprintEnvelope envelope, Hash targetHash)
         {
             if (envelope.Blueprint != null)
@@ -199,11 +224,11 @@ namespace FactorioTech.Core
             await image.SaveAsync(outFile, format);
         }
 
-        private Stream? TryLoadRendering(Hash hash) =>
-            GetRenderingFqfn(hash).Let(fqfn => File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null);
+        private Stream? TryLoadRendering(Hash hash, bool thumbnail = false) =>
+            GetRenderingFqfn(hash, thumbnail).Let(fqfn => File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null);
 
-        private string GetRenderingFqfn(Hash hash) =>
-            Path.Combine(_appConfig.WorkingDir, "renderings", $"{hash}.png");
+        private string GetRenderingFqfn(Hash hash, bool thumbnail = false) =>
+            Path.Combine(_appConfig.WorkingDir, "renderings", thumbnail ? $"{hash}-thumb.png" : $"{hash}.png");
 
         private string GetCoverFqfn(Guid blueprintId) =>
             Path.Combine(_appConfig.WorkingDir, "covers", blueprintId.ToString());
