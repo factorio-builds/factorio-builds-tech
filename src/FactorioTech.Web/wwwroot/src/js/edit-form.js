@@ -122,15 +122,12 @@ $(() => {
         }
     });
 
-    $('.card-body .img-thumbnail')
-        .css('cursor', 'pointer')
-        .tooltip({
-            title: 'Use this rendering as blueprint image…'
-        })
+    $('.blueprint-rendering button[data-rendering-url]')
         .on('click', e => {
             $input.val(null);
-            $('#blueprint-image-hash').val($(e.target).attr('data-hash'));
-            showCropper(e.target.src);
+            $target = $(e.target);
+            $('#blueprint-image-hash').val($target.attr('data-hash'));
+            showCropper($target.attr('data-rendering-url'));
         });
 
     // initialise new blueprint without image

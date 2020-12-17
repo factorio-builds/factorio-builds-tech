@@ -2,7 +2,7 @@
 
 "use strict";
 
-const { src, dest, watch, parallel } = require("gulp");
+const { src, dest, watch, parallel, series } = require("gulp");
 const { init, write } = require("gulp-sourcemaps");
 const autoprefixer = require("gulp-autoprefixer");
 const csso = require("gulp-csso");
@@ -45,6 +45,11 @@ function copyFonts() {
         .pipe(dest("wwwroot/dist/webfonts"));
 }
 
+function buildImages() {
+    return src("wwwroot/src/images/**/*")
+        .pipe(dest("wwwroot/dist/images"));
+}
+
 function buildJs() {
     return src("wwwroot/src/js/**/*.js")
         .pipe(minify())
@@ -66,8 +71,10 @@ function buildScss() {
 exports.clean = () =>
     del(["wwwroot/dist"]);
 
-exports.build =
-    parallel(copyJs, copyAce, copyImages, copyFonts, buildJs, buildScss);
-
 exports.watch = () =>
     watch("wwwroot/src/**/*", parallel(buildJs, buildScss));
+
+exports.build = series(
+    parallel(copyJs, copyAce, copyImages, copyFonts),
+    parallel(buildImages, buildJs, buildScss)
+);

@@ -2,7 +2,7 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Config
 {
     public class AppConfig
     {

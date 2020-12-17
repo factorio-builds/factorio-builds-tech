@@ -1,7 +1,7 @@
 @using Humanizer;
 @using System.Text;
 
-@inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
+@inject IUrlHelper Url
 
 <div class="card mb-1">
     <div class="card-header">
@@ -57,10 +57,18 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 blueprint-rendering">
                 <a href="@Url.BlueprintRenderingFull(payload.Hash, VersionId)" data-lightbox="@(BookHash ?? payload.Hash)" data-title="@(Blueprint.Label ?? "(no title)")">
-                    <img src="@Url.BlueprintRenderingThumb(payload.Hash, VersionId)" data-hash="@payload.Hash" class="img-thumbnail" loading="lazy" />
+                    <img src="@Url.BlueprintRenderingThumb(payload.Hash, VersionId)" class="img-thumbnail" loading="lazy" />
                 </a>
+                @if (ShowSelectCoverButton)
+                {
+                    <button type="button" class="btn btn-sm btn-warning btn-block mt-2" data-hash="@payload.Hash" data-rendering-url="@Url.BlueprintRenderingThumb(payload.Hash, VersionId)"
+                            data-toggle="tooltip" data-placement="top" title="Use this rendering as blueprint image…">
+                        <i class="fas fa-copy"></i>
+                        Use as cover
+                    </button>
+                }
             </div>
             <div class="col-md-8">
                 <div class="tab-content">
@@ -96,6 +104,9 @@
 @code {
     [Parameter]
     public Hash? BookHash { get; set; }
+
+    [Parameter]
+    public bool ShowSelectCoverButton { get; set; }
 
     [Parameter]
     public Guid VersionId { get; set; } = Guid.Empty;

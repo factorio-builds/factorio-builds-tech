@@ -1,4 +1,5 @@
 @page "/{user}/{slug}/edit"
+@using FactorioTech.Core.Config
 @model EditModel
 
 
@@ -39,10 +40,10 @@
                 <div class="form-group mb-0">
                     <label for="blueprint-image-input">
                         <img src="@Url.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" id="blueprint-image-selected"
-                             data-toggle="tooltip" data-placement="bottom"
+                             width="@AppConfig.Cover.Width" height="@AppConfig.Cover.Height" data-toggle="tooltip" data-placement="bottom"
                              title="Click here to upload a different image or select a blueprint rendering from the blueprint contents below!"/>
                     </label>
-                    <input asp-for="CreateInput.Image.Uploaded" type="file" id="blueprint-image-input" class="sr-only" accept="image/*"/>
+                    <input asp-for="CreateInput.Image.Uploaded" type="file" id="blueprint-image-input" class="sr-only" accept="image/png,image/jpeg,imape/gif"/>
                     <input asp-for="CreateInput.Image.Hash" type="hidden" id="blueprint-image-hash"/>
                     <input asp-for="CreateInput.Image.X" type="hidden" id="blueprint-image-x"/>
                     <input asp-for="CreateInput.Image.Y" type="hidden" id="blueprint-image-y"/>

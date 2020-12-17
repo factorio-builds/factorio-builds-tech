@@ -1,7 +1,9 @@
 using FactorioTech.Core;
+using FactorioTech.Core.Config;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Serilog;
+using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 
@@ -34,6 +36,7 @@ namespace FactorioTech.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
+            services.Configure<RabbitMqConfig>(_configuration.GetSection(nameof(RabbitMqConfig).Replace("Config", string.Empty)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
             services.Configure<RouteOptions>(options =>
@@ -74,7 +77,6 @@ namespace FactorioTech.Web
                            .AllowAnyHeader()
                            .AllowAnyMethod());
             });
-
 
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDbContext<AppDbContext>(options =>
@@ -125,6 +127,21 @@ namespace FactorioTech.Web
             {
                 options.ApplicationVersion = BuildInformation.Version;
             });
+
+            services.AddMassTransit(options =>
+            {
+                options.UsingRabbitMq((ctx, cfg) =>
+                {
+                    var config = ctx.GetRequiredService<IOptions<RabbitMqConfig>>().Value;
+                    cfg.Host(config.Host, config.VirtualHost, h =>
+                    {
+                        h.Username(config.Username);
+                        h.Password(config.Password);
+                    });
+                });
+            });
+
+            services.AddMassTransitHostedService();
 
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
