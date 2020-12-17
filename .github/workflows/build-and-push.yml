@@ -91,7 +91,6 @@ jobs:
           context: .
           target: worker
           push: true
-          load: true
           build-args: |
             version=${{ env.version }}
             build_branch=${{ github.ref }}
@@ -112,7 +111,6 @@ jobs:
           context: .
           target: web
           push: true
-          load: true
           build-args: |
             version=${{ env.version }}
             build_branch=${{ github.ref }}
