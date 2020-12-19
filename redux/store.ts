@@ -7,6 +7,7 @@ import {
   Reducer,
 } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
+import thunk from "redux-thunk"
 import reducers from "./reducer"
 import { IStoreAuthState, TAuthAction } from "./reducers/auth"
 import { IStoreBuildsState, TBuildsAction } from "./reducers/builds"
@@ -43,7 +44,10 @@ export const makeStore: MakeStore<IStoreState, TAction> = () => {
     }
   }
 
-  const store = createStore(reducer, composeWithDevTools(applyMiddleware()))
+  const store = createStore(
+    reducer,
+    composeWithDevTools(applyMiddleware(thunk))
+  )
 
   // @ts-ignore
   if (module.hot) {
