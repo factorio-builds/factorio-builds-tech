@@ -7,7 +7,7 @@
     "db:seed:config": "yarn local ./node_modules/typeorm-seeding/dist/cli.js config",
     "db:seed:run": "yarn local ./node_modules/typeorm-seeding/dist/cli.js seed",
     "dev": "ts-node --project tsconfig.server.json server/index.ts",
-    "format": "prettier --write {components,design,hooks,icons,pages,redux,styles,types,utils}/{**,**/**}/*.{js,ts,tsx}",
+    "format": "prettier --write {components,design,hooks,icons,pages,redux,types,utils}/{**,**/**}/*.{js,ts,tsx}",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "yarn lint --fix",
     "local": "DOTENV_CONFIG_PATH=./.env ts-node --project ./tsconfig.yarn.json -r dotenv/config",
