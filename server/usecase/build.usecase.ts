@@ -120,7 +120,7 @@ async function buildMapper({
     description: fields.description as string,
     json: decoded,
     metadata: {
-      state: fields.state as EState,
+      state: [fields.state as EState],
       // @ts-ignore
       categories: JSON.parse(fields.categories).length
         ? JSON.parse(fields.categories as string)

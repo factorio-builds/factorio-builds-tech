@@ -29,7 +29,7 @@ const filteredBuildsByState = (
 
   return builds.filter((build) => {
     if (build.metadata.state) {
-      return stateFilters[build.metadata.state]
+      return stateFilters[build.metadata.state[0]]
     }
   })
 }

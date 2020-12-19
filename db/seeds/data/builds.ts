@@ -32,7 +32,7 @@ export const builds: Omit<Build, "owner">[] = [
     json: bp2decoded,
     metadata: {
       categories: [ECategory.BALANCER],
-      state: EState.LATE_GAME,
+      state: [EState.LATE_GAME],
       tileable: false,
       withMarkedInputs: false,
       withBeacons: false,
@@ -59,7 +59,7 @@ export const builds: Omit<Build, "owner">[] = [
     json: bp1decoded,
     metadata: {
       categories: [ECategory.BALANCER],
-      state: EState.LATE_GAME,
+      state: [EState.LATE_GAME],
       tileable: true,
       withMarkedInputs: false,
       withBeacons: false,
@@ -87,7 +87,7 @@ export const builds: Omit<Build, "owner">[] = [
     json: bp3decoded,
     metadata: {
       categories: [ECategory.ENERGY],
-      state: EState.MID_GAME,
+      state: [EState.MID_GAME],
       tileable: true,
       withMarkedInputs: false,
       withBeacons: false,

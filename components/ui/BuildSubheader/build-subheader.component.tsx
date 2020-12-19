@@ -17,7 +17,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const { getCategory } = useCategories()
   const { getGameState } = useGameStates()
 
-  const gameState = getGameState(props.build.metadata.state)
+  const gameState = getGameState(props.build.metadata.state[0])
   const icons = props.build.metadata.icons
 
   return (

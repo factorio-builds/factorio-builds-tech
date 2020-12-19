@@ -106,7 +106,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.id === user?.id
-  const state = getGameState(build.metadata.state)
+  const state = getGameState(build.metadata.state[0])
 
   return (
     <Layout
