@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SluggyUnidecode;
 using System;
 using System.Collections.Generic;
@@ -21,24 +22,27 @@ namespace FactorioTech.Web.Pages
     [Authorize]
     public class ImportModel : PageModel
     {
+        private readonly ILogger<ImportModel> _logger;
+        private readonly IPublishEndpoint _bus;
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
         private readonly ImageService _imageService;
-        private readonly IPublishEndpoint _bus;
 
         public ImportModel(
+            ILogger<ImportModel> logger,
+            IPublishEndpoint bus,
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
-            ImageService imageService,
-            IPublishEndpoint bus)
+            ImageService imageService)
         {
+            _logger = logger;
+            _bus = bus;
             _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
             _imageService = imageService;
-            _bus = bus;
         }
 
         [TempData]
@@ -140,7 +144,9 @@ namespace FactorioTech.Web.Pages
                 CreateInput.Image.Hash = PayloadCache[firstBlueprint].Hash.ToString();
             }
 
+            _logger.LogInformation("Publishing {EventName}", nameof(BlueprintImportStarted));
             await _bus.Publish(new BlueprintImportStarted(User.GetUserId(), payload));
+            _logger.LogInformation("Done publishing.");
 
             TempData.Keep(nameof(BlueprintString));
 

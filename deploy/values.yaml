@@ -9,7 +9,3 @@ replicas:
 postgres:
   image: postgres:13-alpine
   pullPolicy: IfNotPresent
-
-rabbitmq:
-  image: rabbitmq:3-management-alpine
-  pullPolicy: IfNotPresent
