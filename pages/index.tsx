@@ -11,12 +11,9 @@ const IndexPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
     const buildRepository = await BuildRepository()
-    const builds = await buildRepository.createQueryBuilder("build").select([
-      "build.id",
-      "build.name",
-      "build.metadata",
-      "build.image"
-    ])
+    const builds = await buildRepository
+      .createQueryBuilder("build")
+      .select(["build.id", "build.name", "build.metadata", "build.image"])
       .where("build.image IS NOT NULL")
       .getMany()
       .catch((error) => {
