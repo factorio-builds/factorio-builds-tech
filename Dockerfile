@@ -56,7 +56,8 @@ ENTRYPOINT [ "dotnet", "FactorioTech.Worker.dll" ]
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as web
-EXPOSE 80 443
+ENV ASPNETCORE_URLS=http://*:8080
+EXPOSE 8080
 WORKDIR /app
 COPY --from=build /app/publish/web .
 ENTRYPOINT [ "dotnet", "FactorioTech.Web.dll" ]

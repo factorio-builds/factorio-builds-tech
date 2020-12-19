@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-rabbitmq
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: rabbitmq
+spec:
+  ports:
+    - port: 5672
+      targetPort: rabbitmq
+      protocol: TCP
+      name: rabbitmq
+    - port: 15672
+      targetPort: rabbitmq-mgmt
+      protocol: TCP
+      name: rabbitmq-mgmt
+  selector:
+    {{- include "factorio-tech.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: rabbitmq

@@ -19,10 +19,17 @@ spec:
     spec:
       imagePullSecrets:
         - name: default-container-registry
+      securityContext:
+        fsGroup: 2000
       containers:
         - name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
           image: "{{ .Values.imageNamespace }}/fbsr-wrapper:{{ .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: 512Mi
+            limits:
+              memory: 2Gi
           ports:
             - name: http
               containerPort: 8080
@@ -34,6 +41,12 @@ spec:
             - name: factorio-data
               mountPath: /factorio
               readOnly: true
+          securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              add: ["NET_ADMIN", "SYS_TIME"]
       volumes:
         - name: config
           configMap:

@@ -2,21 +2,14 @@ imageNamespace: ghcr.io/dstockhammer/factorio-tech
 hostName: beta.factorio.tech
 
 replicas:
- web: 1
  fbsrWrapper: 1
+ web: 1
+ worker: 1
 
 postgres:
-  repository: postgres
+  image: postgres:13-alpine
   pullPolicy: IfNotPresent
-  tag: latest
 
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+rabbitmq:
+  image: rabbitmq:3-management-alpine
+  pullPolicy: IfNotPresent

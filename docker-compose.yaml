@@ -20,8 +20,7 @@ services:
       dockerfile: Dockerfile
       target: web
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:8080"
     volumes:
       - factorio:/factorio:ro
       - /etc/localtime:/etc/localtime:ro
@@ -89,6 +88,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    hostname: factorio-tech-rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"

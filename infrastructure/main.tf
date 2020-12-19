@@ -8,8 +8,7 @@ provider "azurerm" {
 }
 
 provider "kubernetes" {
-  load_config_file = "false"
-  host             = azurerm_kubernetes_cluster.main.kube_config.0.host
+  host = azurerm_kubernetes_cluster.main.kube_config.0.host
 
   client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_key)
   client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_certificate)
@@ -18,8 +17,7 @@ provider "kubernetes" {
 
 provider "helm" {
   kubernetes {
-    load_config_file = "false"
-    host             = azurerm_kubernetes_cluster.main.kube_config.0.host
+    host = azurerm_kubernetes_cluster.main.kube_config.0.host
 
     client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_key)
     client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_certificate)
@@ -114,10 +112,10 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   default_node_pool {
     name                 = "default"
-    node_count           = 1
-    vm_size              = "Standard_B2s"
-    os_disk_size_gb      = 30
+    node_count           = var.kubernetes_node_count
+    vm_size              = var.kubernetes_node_size
     orchestrator_version = var.kubernetes_version
+    os_disk_size_gb      = 30
   }
 
   identity {

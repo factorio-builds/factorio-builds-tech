@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-web
+  name: {{ include "factorio-tech.fullname" . }}-worker
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
-    app.kubernetes.io/component: web
+    app.kubernetes.io/component: worker
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "factorio-tech.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: web
+      app.kubernetes.io/component: worker
   template:
     metadata:
       labels:
         {{- include "factorio-tech.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: web
+        app.kubernetes.io/component: worker
     spec:
       imagePullSecrets:
         - name: default-container-registry
       securityContext:
         fsGroup: 2000
       containers:
-        - name: {{ include "factorio-tech.fullname" . }}-web
-          image: "{{ .Values.imageNamespace }}/web:{{ .Chart.AppVersion }}"
+        - name: {{ include "factorio-tech.fullname" . }}-worker
+          image: "{{ .Values.imageNamespace }}/worker:{{ .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -32,7 +32,7 @@ spec:
               memory: 2Gi
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 80
               protocol: TCP
           volumeMounts:
             - name: config
@@ -62,10 +62,10 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "factorio-tech.fullname" . }}-web
+            name: {{ include "factorio-tech.fullname" . }}-worker
         - name: secrets
           secret:
-            secretName: {{ include "factorio-tech.fullname" . }}-web
+            secretName: {{ include "factorio-tech.fullname" . }}-worker
         - name: app-data
           azureFile:
             secretName: app-data-share

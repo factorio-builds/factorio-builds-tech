@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-pg
+  name: {{ include "factorio-tech.fullname" . }}-postgres
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
     app.kubernetes.io/component: postgres
@@ -11,6 +11,8 @@ spec:
     matchLabels:
       {{- include "factorio-tech.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: postgres
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -18,9 +20,12 @@ spec:
         app.kubernetes.io/component: postgres
     spec:
       containers:
-        - name: {{ include "factorio-tech.fullname" . }}-pg
-          image: "{{ .Values.postgres.repository }}:{{ .Values.postgres.tag }}"
+        - name: {{ include "factorio-tech.fullname" . }}-postgres
+          image: {{ .Values.postgres.image }}
           imagePullPolicy: {{ .Values.postgres.pullPolicy }}
+          resources:
+            requests:
+              memory: 256Mi
           ports:
             - name: postgres
               containerPort: 5432
@@ -32,18 +37,20 @@ spec:
               value: /var/secrets/username
             - name: POSTGRES_PASSWORD_FILE
               value: /var/secrets/password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
-            - name: {{ include "factorio-tech.fullname" . }}-pg-data
+            - name: {{ include "factorio-tech.fullname" . }}-postgres-data
               mountPath: /var/lib/pgsql/data
-            - name: {{ include "factorio-tech.fullname" . }}-pg-secrets
+            - name: {{ include "factorio-tech.fullname" . }}-postgres-secrets
               mountPath: /var/secrets
               readOnly: true
       volumes:
-          - name: {{ include "factorio-tech.fullname" . }}-pg-data
+          - name: {{ include "factorio-tech.fullname" . }}-postgres-data
             azureDisk:
               kind: Managed
               diskName: {{ .Values.postgres.diskName }}
               diskURI: {{ .Values.postgres.diskURI }}
-          - name: {{ include "factorio-tech.fullname" . }}-pg-secrets
+          - name: {{ include "factorio-tech.fullname" . }}-postgres-secrets
             secret:
-              secretName: {{ include "factorio-tech.fullname" . }}-pg
+              secretName: {{ include "factorio-tech.fullname" . }}-postgres
