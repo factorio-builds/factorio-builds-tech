@@ -2,9 +2,9 @@ import type { AppContext, AppProps } from "next/app"
 import Head from "next/head"
 import { ThemeProvider } from "styled-components"
 import { User } from "../db/entities/user.entity"
+import { GlobalStyle } from "../design/styles/global-style"
+import { theme } from "../design/styles/theme"
 import { wrapper } from "../redux/store"
-import { GlobalStyle } from "../styles/global-style"
-import { theme } from "../styles/theme"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
