@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from "next"
+import BuildListPage from "../components/pages/BuildListPage"
 import { Build } from "../db/entities/build.entity"
 import { BuildRepository } from "../db/repository/build.repository"
-import BuildListPage from "../pages-components/BuildListPage"
 import { wrapper } from "../redux/store"
 
 const IndexPage: NextPage = () => {

@@ -1,15 +1,18 @@
 import React, { useMemo } from "react"
 import { Field, FormikProps } from "formik"
-import Input from "../../components/form/FormikInputWrapper"
-import Button from "../../components/ui/Button"
-import Stacker from "../../components/ui/Stacker"
-import { IDecodedBlueprintBookData, IDecodedBlueprintData } from "../../types"
+import {
+  IDecodedBlueprintBookData,
+  IDecodedBlueprintData,
+} from "../../../types"
 import {
   decodeBlueprint,
   isBook,
   isValidBlueprint,
-} from "../../utils/blueprint"
-import { blueprintHeuristics } from "../../utils/blueprint-heuristics"
+} from "../../../utils/blueprint"
+import { blueprintHeuristics } from "../../../utils/blueprint-heuristics"
+import Input from "../../form/FormikInputWrapper"
+import Button from "../../ui/Button"
+import Stacker from "../../ui/Stacker"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
