@@ -17,6 +17,16 @@ variable "kubernetes_version" {
   default = "1.19.3"
 }
 
+variable "kubernetes_node_count" {
+  type  = number
+  default = 3
+}
+
+variable "kubernetes_node_size" {
+  type = string
+  default = "Standard_B2MS"
+}
+
 variable "postgres_disk_size_gb" {
   type    = number
   default = 16

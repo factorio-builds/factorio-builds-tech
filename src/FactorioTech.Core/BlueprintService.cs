@@ -1,3 +1,4 @@
+using FactorioTech.Core.Config;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;

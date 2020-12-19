@@ -32,8 +32,8 @@ deployment:
   # see https://github.com/traefik/traefik/issues/6972
   initContainers:
     - name: volume-permissions
-      image: busybox:1.31.1
-      command: ["sh", "-c", "chmod -Rv 600 /data/*"]
+      image: busybox
+      command: [ "sh", "-c", "chmod -Rv 600 /data/* "]
       volumeMounts:
         - name: data
           mountPath: /data

@@ -16,6 +16,14 @@
     color: $white;
 }
 
+img.img-thumbnail {
+    background-image: url('../images/loading.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    min-width: 100px;
+    min-height: 100px;
+}
+
 body {
     background: $gray-900;
 }

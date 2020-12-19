@@ -1,0 +1,1 @@
+kubectl port-forward $(kubectl get pod --selector "app.kubernetes.io/component=rabbitmq" --output name) 15672:15672

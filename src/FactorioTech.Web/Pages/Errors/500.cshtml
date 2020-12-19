@@ -4,10 +4,12 @@
 
 <div class="container error-500">
     <h1 class="text-danger display-1">@ViewData["Title"]</h1>
-    <h2 class="text-danger mb-4">An error occurred while processing your request :(</h2>
+    <h2 class="text-danger mb-4">An error occurred while processing your request 😢</h2>
 
-    @if (!string.IsNullOrEmpty(Model.RequestId))
-    {
-        <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
-    }
+    <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+    <p>
+        Please help us to fix this error by
+        <a href="https://github.com/dstockhammer/factorio-tech/issues" title="issue tracker on GitHub">creating a ticket in the GitHub issue tracker</a>.
+        Please quote the request ID above and describe what you did when the issue occurred. Thank you very much ❤️ 🚀
+    </p>
 </div>

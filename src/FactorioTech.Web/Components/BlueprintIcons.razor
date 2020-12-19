@@ -1,4 +1,4 @@
-@inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
+@inject IUrlHelper Url
 
 @{ var icons = Icons?.OrderBy(i => i.Index)?.Select(i => i.Signal)?.ToArray() ?? Array.Empty<FactorioApi.SignalId>(); }
 

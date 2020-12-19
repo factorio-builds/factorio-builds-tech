@@ -1,3 +1,4 @@
+using FactorioTech.Core.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -56,7 +57,11 @@ namespace FactorioTech.Core
                 throw new Exception($"Error response from fbsr-wrapper: {response.StatusCode}");
             }
 
-            return await response.Content.ReadAsStreamAsync();
+            var rendering = await response.Content.ReadAsStreamAsync();
+            if (rendering.Length == 0)
+                throw new Exception("Fetched 0 bytes from fbsr-wrapper");
+
+            return rendering;
         }
     }
 }

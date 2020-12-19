@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using System;
+using System.Linq;
 
 namespace FactorioTech.Web
 {
@@ -17,7 +18,7 @@ namespace FactorioTech.Web
 
             try
             {
-                Log.Information("FactorioTech starting up");
+                Log.Information($"{typeof(Program).Assembly.GetName().Name} starting up");
 
                 CreateHostBuilder(args).Build().Run();
             }
@@ -31,19 +32,30 @@ namespace FactorioTech.Web
             }
         }
 
-        public static LoggerConfiguration CreateLoggerBuilder(string[] args) =>
-            new LoggerConfiguration()
-                .Enrich.FromLogContext()
+        public static LoggerConfiguration CreateLoggerBuilder(string[] args)
+        {
+            var config = new LoggerConfiguration();
+            ConfigureLogger(null, null, config);
+            return config;
+        }
+
+        public static void ConfigureLogger(HostBuilderContext? context, IServiceProvider? services, LoggerConfiguration config)
+        {
+            config.Enrich.FromLogContext()
                 .MinimumLevel.Information()
-                .MinimumLevel.Override("FactorioTech", LogEventLevel.Debug)
+                .MinimumLevel.Override(typeof(Program).Namespace?.Split('.').First(), LogEventLevel.Debug)
                 .WriteTo.Console();
+
+            var telemetryConfiguration = services?.GetService<TelemetryConfiguration>();
+            if (telemetryConfiguration != null)
+            {
+                config.WriteTo.ApplicationInsights(telemetryConfiguration, TelemetryConverter.Traces);
+            }
+        }
 
         public static IHostBuilder CreateHostBuilder(string[] args) => Host
             .CreateDefaultBuilder(args)
-            .UseSerilog((_, services, logger) =>
-            {
-                logger.WriteTo.ApplicationInsights(services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces);
-            })
+            .UseSerilog(ConfigureLogger)
             .ConfigureAppConfiguration(config =>
             {
                 config.AddJsonFile("appsettings.secret.json", optional: true, reloadOnChange: false);

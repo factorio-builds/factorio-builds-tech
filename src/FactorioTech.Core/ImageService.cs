@@ -1,3 +1,4 @@
+using FactorioTech.Core.Config;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -72,13 +73,15 @@ namespace FactorioTech.Core
             if (baseDir != null && !Directory.Exists(baseDir))
             {
                 Directory.CreateDirectory(baseDir);
+                _logger.LogInformation("Created directory {Dir}", baseDir);
             }
 
             try
             {
-                await using var outFile = new FileStream(imageFqfn, FileMode.CreateNew, FileAccess.Write);
                 await using var imageData = await _fbsrClient.FetchBlueprintRendering(payload.Encoded);
                 using var image = await Image.LoadAsync(imageData);
+
+                await using var outFile = new FileStream(imageFqfn, FileMode.CreateNew, FileAccess.Write);
 
                 // quantize to 8bit to reduce size by about 50% (this is lossy but worth it)
                 await image.SaveAsPngAsync(outFile, new PngEncoder
@@ -87,10 +90,23 @@ namespace FactorioTech.Core
                     CompressionLevel = PngCompressionLevel.BestCompression,
                     IgnoreMetadata = true,
                 });
+
+                var fileSize = outFile.Length;
+                if (fileSize == 0)
+                    throw new Exception($"Wrote 0 bytes to {imageFqfn}");
+
+                _logger.LogInformation("Saved rendering {Type} for {Hash}: {Width}x{Height} - {FileSize} bytes",
+                    "Full", payload.Hash, image.Width, image.Height, fileSize);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to fetch or save blueprint rendering");
+                _logger.LogError(ex, "Failed to fetch or save blueprint rendering{Type} for {Hash}", "Full", payload.Hash);
+
+                if (File.Exists(imageFqfn))
+                {
+                    File.Delete(imageFqfn);
+                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", "Full", payload.Hash);
+                }
             }
         }
 
@@ -142,7 +158,6 @@ namespace FactorioTech.Core
             return TryLoadRendering(hash);
         }
 
-
         public async Task<Stream?> TryLoadRenderingThumbnail(Guid? versionId, Hash hash)
         {
             var existingThumbnail = TryLoadRendering(hash, true);
@@ -153,6 +168,13 @@ namespace FactorioTech.Core
             if (rendering == null)
                 return null;
 
+            await SaveRenderingThumbnail(hash, rendering);
+
+            return TryLoadRendering(hash, true);
+        }
+
+        public async Task SaveRenderingThumbnail(Hash hash, Stream rendering)
+        {
             var (image, format) = await Image.LoadWithFormatAsync(rendering);
             image.Mutate(x => x.Resize(new ResizeOptions
             {
@@ -161,10 +183,28 @@ namespace FactorioTech.Core
             }));
 
             var imageFqfn = GetRenderingFqfn(hash, true);
-            await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
-            await image.SaveAsync(outFile, format);
 
-            return TryLoadRendering(hash, true);
+            try {
+                await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
+                await image.SaveAsync(outFile, format);
+
+                var fileSize = outFile.Length;
+                if (fileSize == 0)
+                    throw new Exception($"Wrote 0 bytes to {imageFqfn}");
+
+                _logger.LogInformation("Saved rendering {Type} for {Hash}: {Width}x{Height} - {FileSize} bytes",
+                    "Thumb", hash, image.Width, image.Height, fileSize);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to fetch or save blueprint rendering {Type} for {Hash}", "Thumb", hash);
+
+                if (File.Exists(imageFqfn))
+                {
+                    File.Delete(imageFqfn);
+                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", "Thumb", hash);
+                }
+            }
         }
 
         private async Task<BlueprintPayload?> TryFindEnvelopeWithHash(FactorioApi.BlueprintEnvelope envelope, Hash targetHash)
@@ -224,8 +264,20 @@ namespace FactorioTech.Core
             await image.SaveAsync(outFile, format);
         }
 
-        private Stream? TryLoadRendering(Hash hash, bool thumbnail = false) =>
-            GetRenderingFqfn(hash, thumbnail).Let(fqfn => File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null);
+        private Stream? TryLoadRendering(Hash hash, bool thumbnail = false)
+        {
+            var fqfn = GetRenderingFqfn(hash, thumbnail);
+
+            try
+            {
+                return File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to read blueprint rendering");
+                return null;
+            }
+        }
 
         private string GetRenderingFqfn(Hash hash, bool thumbnail = false) =>
             Path.Combine(_appConfig.WorkingDir, "renderings", thumbnail ? $"{hash}-thumb.png" : $"{hash}.png");

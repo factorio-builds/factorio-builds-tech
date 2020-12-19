@@ -8,7 +8,7 @@ namespace FactorioTech.Web.Pages.Errors
     [IgnoreAntiforgeryToken]
     public class ErrorModel : PageModel
     {
-        public string RequestId { get; set; } = string.Empty;
+        public string RequestId { get; set; } = "unknown";
 
         public void OnGet()
         {

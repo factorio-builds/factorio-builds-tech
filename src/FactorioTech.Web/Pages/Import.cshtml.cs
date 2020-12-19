@@ -1,13 +1,16 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Messages;
 using FactorioTech.Web.Extensions;
 using FactorioTech.Web.ViewModels;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SluggyUnidecode;
 using System;
 using System.Collections.Generic;
@@ -19,21 +22,27 @@ namespace FactorioTech.Web.Pages
     [Authorize]
     public class ImportModel : PageModel
     {
+        private readonly ILogger<ImportModel> _logger;
+        private readonly IPublishEndpoint _bus;
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
         private readonly ImageService _imageService;
 
         public ImportModel(
+            ILogger<ImportModel> logger,
+            IPublishEndpoint bus,
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
             ImageService imageService)
         {
+            _logger = logger;
+            _bus = bus;
+            _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
             _imageService = imageService;
-            _dbContext = dbContext;
         }
 
         [TempData]
@@ -75,6 +84,13 @@ namespace FactorioTech.Web.Pages
             Envelope = await _blueprintConverter.Decode(importInput.BlueprintString);
             BlueprintString = importInput.BlueprintString;
 
+            var firstBlueprint = FirstBlueprintOrDefault(Envelope);
+            if (firstBlueprint == null)
+            {
+                StatusMessage = "Error: A blueprint book must contain at least one blueprint.";
+                return Page();
+            }
+
             var hash = Hash.Compute(BlueprintString);
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == hash)
@@ -112,7 +128,7 @@ namespace FactorioTech.Web.Pages
             var payload = new BlueprintPayload(hash, BlueprintString, Utils.DecodeGameVersion(Envelope.Version));
             PayloadCache.TryAdd(Envelope, payload);
 
-            await _imageService.SaveAllBlueprintRenderings(Guid.Empty, PayloadCache, Envelope);
+            await PayloadCache.EnsureInitialized(firstBlueprint);
 
             CreateInput = new CreateInputModel
             {
@@ -125,8 +141,12 @@ namespace FactorioTech.Web.Pages
             {
                 CreateInput.VersionName = "v1.0";
                 CreateInput.VersionDescription = "The first release of this blueprint.";
-                CreateInput.Image.Hash = PayloadCache.First(kvp => kvp.Key is FactorioApi.Blueprint).Value.Hash.ToString();
+                CreateInput.Image.Hash = PayloadCache[firstBlueprint].Hash.ToString();
             }
+
+            _logger.LogInformation("Handling {Type}: Hash={Hash} GameVersion={GameVersion} UserId={UserId}",
+                nameof(BlueprintImportStarted), payload.Hash, payload.GameVersion, User.GetUserId());
+            await _bus.Publish(new BlueprintImportStarted(User.GetUserId(), payload));
 
             TempData.Keep(nameof(BlueprintString));
 
@@ -240,6 +260,15 @@ namespace FactorioTech.Web.Pages
         {
             var slugExists = await _blueprintService.SlugExistsForUser(User.GetUserId(), slug);
             return new JsonResult(!slugExists);
+        }
+
+        private FactorioApi.Blueprint? FirstBlueprintOrDefault(FactorioApi.BlueprintEnvelope? envelope)
+        {
+            if (envelope == null)
+                return null;
+
+            return envelope.Blueprint
+                ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
         }
     }
 }

@@ -1,0 +1,22 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-rabbitmq
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: rabbitmq
+spec:
+  replicas: 1
+  rabbitmq:
+    additionalConfig: |
+      disk_free_limit.absolute = 256MB
+  persistence:
+      storageClassName: default
+      storage: 1Gi
+  resources:
+      requests:
+          cpu: 50m
+          memory: 256Mi
+      limits:
+          cpu: 250m
+          memory: 512Mi

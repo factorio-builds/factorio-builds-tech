@@ -1,4 +1,5 @@
 @page
+@using FactorioTech.Core.Config
 @model ImportModel
 
 <div class="container import-blueprint">
@@ -32,7 +33,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text text-monospace" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
                             </div>
-                            <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon" 
+                            <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon"
                                    readonly="@Model.ParentBlueprintId.HasValue"
                                    data-toggle="@(Model.ParentBlueprintId.HasValue ? "tooltip" : null)" data-title="You can't change the slug at this time." />
                         </div>
@@ -58,10 +59,10 @@
                         <label for="blueprint-image-input">
                             @{ var imageSrc = Model.ParentBlueprintId.HasValue ? Url.BlueprintCover(Model.ParentBlueprintId.Value) : null; }
                             <img src="@imageSrc" class="img-thumbnail" id="blueprint-image-selected"
-                                 data-toggle="tooltip" data-placement="bottom"
+                                 width="@AppConfig.Cover.Width" height="@AppConfig.Cover.Height" data-toggle="tooltip" data-placement="bottom"
                                  title="Click here to upload a different image or select a blueprint rendering from the blueprint contents below!" />
                         </label>
-                        <input asp-for="CreateInput.Image.Uploaded" type="file" id="blueprint-image-input" class="sr-only" accept="image/*" />
+                        <input asp-for="CreateInput.Image.Uploaded" type="file" id="blueprint-image-input" class="sr-only" accept="image/png,image/jpeg,imape/gif" />
                         <input asp-for="CreateInput.Image.Hash" type="hidden" id="blueprint-image-hash" />
                         <input asp-for="CreateInput.Image.X" type="hidden" id="blueprint-image-x" />
                         <input asp-for="CreateInput.Image.Y" type="hidden" id="blueprint-image-y" />
@@ -149,6 +150,7 @@
                 VersionId = Guid.Empty,
                 Envelope = Model.Envelope,
                 PayloadCache = Model.PayloadCache,
+                ShowSelectCoverButton = true,
             })
         )
     }

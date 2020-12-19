@@ -1,6 +1,7 @@
 @page "/{user}/{slug}/{hash?}"
 @model BlueprintModel
 @using Humanizer
+@using FactorioTech.Core.Config
 
 @inject SignInManager<User> SignInManager
 
@@ -139,7 +140,8 @@
             </details>
         </div>
         <div class="col-md-4">
-            <img src="@Url.BlueprintCover(Model.Blueprint.BlueprintId)" class="img-thumbnail" loading="lazy" />
+            <img src="@Url.BlueprintCover(Model.Blueprint.BlueprintId)" loading="lazy"
+                 width="@AppConfig.Cover.Width" height="@AppConfig.Cover.Height" class="img-thumbnail" />
         </div>
     </div>
 

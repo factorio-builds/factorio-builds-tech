@@ -8,4 +8,5 @@ metadata:
 data:
   AppConfig__FactorioDir: /factorio/Factorio_1.0.0
   AppConfig__WorkingDir: /data
-  AppConfig__FbsrWrapperUri: http://factorio-tech-fbsr-wrapper
+  AppConfig__FbsrWrapperUri: http://{{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+  RabbitMq__Host: {{ include "factorio-tech.fullname" . }}-rabbitmq

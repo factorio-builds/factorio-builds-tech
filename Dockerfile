@@ -14,6 +14,7 @@ COPY FactorioTech.sln .
 COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
 COPY src/FactorioTech.Web/gulpfile.js src/FactorioTech.Web/
+COPY src/FactorioTech.Worker/*.csproj src/FactorioTech.Worker/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
 
 RUN dotnet restore
@@ -38,15 +39,25 @@ namespace FactorioTech.Core { \n\
 
 WORKDIR /app
 RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
- && dotnet test --no-restore --no-build --configuration Release \
-        --verbosity normal --logger trx --filter Type=Fast \
+ && dotnet publish src/FactorioTech.Worker/FactorioTech.Worker.csproj \
+        --no-restore --no-build  --configuration Release \
+        --output /app/publish/worker /p:DebugType=None \
  && dotnet publish src/FactorioTech.Web/FactorioTech.Web.csproj \
         --no-restore --no-build  --configuration Release \
-        --output /app/publish /p:DebugType=None
+        --output /app/publish/web /p:DebugType=None
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
-EXPOSE 80 443
+ENTRYPOINT [ "dotnet" ]
 
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 as worker
 WORKDIR /app
-COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "FactorioTech.Web.dll"]
+COPY --from=build /app/publish/worker .
+ENTRYPOINT [ "dotnet", "FactorioTech.Worker.dll" ]
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 as web
+ENV ASPNETCORE_URLS=http://*:8080
+EXPOSE 8080
+WORKDIR /app
+COPY --from=build /app/publish/web .
+ENTRYPOINT [ "dotnet", "FactorioTech.Web.dll" ]

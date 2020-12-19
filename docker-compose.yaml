@@ -12,29 +12,56 @@ secrets:
     file: ./secrets/OAuthProviders__GitHub__ClientSecret.secret
 
 services:
-  # web:
-  #   # image: ghcr.io/dstockhammer/factorio-tech/web:ci
-  #   image: factorio-tech/web
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - factorio:/factorio:ro
-  #     - /etc/localtime:/etc/localtime:ro
-  #   secrets:
-  #     - OAuthProviders__GitHub__ClientId
-  #     - OAuthProviders__GitHub__ClientSecret
-  #   environment:
-  #     ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-  #     AppConfig__FactorioDir: "/factorio"
-  #     AppConfig__WorkingDir: "/tmp"
-  #     AppConfig__FbsrWrapperUri: "http://fbsr:8080"
-  #   depends_on:
-  #     - fbsr
-  #     - postgres
+  web:
+    # image: ghcr.io/dstockhammer/factorio-tech/web:ci
+    image: factorio-tech/web
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: web
+    ports:
+      - "80:8080"
+    volumes:
+      - factorio:/factorio:ro
+      - /etc/localtime:/etc/localtime:ro
+    secrets:
+      - OAuthProviders__GitHub__ClientId
+      - OAuthProviders__GitHub__ClientSecret
+    environment:
+      ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "rabbit"
+      RabbitMq__Password: "rabbit"
+      AppConfig__FactorioDir: "/factorio"
+      AppConfig__WorkingDir: "/tmp"
+      AppConfig__FbsrWrapperUri: "http://fbsr:8080"
+    depends_on:
+      - fbsr
+      - postgres
+      - rabbitmq
+
+  worker:
+    # image: ghcr.io/dstockhammer/factorio-tech/worker:ci
+    image: factorio-tech/worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    volumes:
+      - factorio:/factorio:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+      RabbitMq__Host: "rabbitmq"
+      RabbitMq__Username: "rabbit"
+      RabbitMq__Password: "rabbit"
+      AppConfig__FactorioDir: "/factorio"
+      AppConfig__WorkingDir: "/tmp"
+      AppConfig__FbsrWrapperUri: "http://fbsr:8080"
+    depends_on:
+      - fbsr
+      - postgres
+      - rabbitmq
 
   fbsr:
     # image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
@@ -49,7 +76,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   postgres:
-    image: postgres
+    image: postgres:13-alpine
     ports:
       - "5432:5432"
     volumes:
@@ -58,3 +85,15 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: factorio-tech-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbit
