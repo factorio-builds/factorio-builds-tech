@@ -25,7 +25,7 @@ namespace FactorioTech.Core.Consumers
         public async Task Consume(ConsumeContext<BlueprintImportStarted> context)
         {
             _logger.LogInformation("Handling {Type} {MessageId}: Hash={Hash} GameVersion={GameVersion} UserId={UserId}",
-                nameof(Messages.BlueprintImportStarted), context.MessageId, context.Message.Payload.Hash, context.Message.Payload.GameVersion, context.Message.UserId);
+                nameof(BlueprintImportStarted), context.MessageId, context.Message.Payload.Hash, context.Message.Payload.GameVersion, context.Message.UserId);
 
             var envelope = await _blueprintConverter.Decode(context.Message.Payload.Encoded);
 

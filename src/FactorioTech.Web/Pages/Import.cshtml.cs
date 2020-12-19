@@ -144,9 +144,9 @@ namespace FactorioTech.Web.Pages
                 CreateInput.Image.Hash = PayloadCache[firstBlueprint].Hash.ToString();
             }
 
-            _logger.LogInformation("Publishing {EventName}", nameof(BlueprintImportStarted));
+            _logger.LogInformation("Handling {Type}: Hash={Hash} GameVersion={GameVersion} UserId={UserId}",
+                nameof(BlueprintImportStarted), payload.Hash, payload.GameVersion, User.GetUserId());
             await _bus.Publish(new BlueprintImportStarted(User.GetUserId(), payload));
-            _logger.LogInformation("Done publishing.");
 
             TempData.Keep(nameof(BlueprintString));
 

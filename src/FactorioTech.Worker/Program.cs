@@ -2,7 +2,6 @@ using FactorioTech.Core;
 using FactorioTech.Core.Config;
 using FactorioTech.Core.Consumers;
 using FactorioTech.Core.Data;
-using FactorioTech.Core.Messages;
 using MassTransit;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.EntityFrameworkCore;

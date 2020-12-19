@@ -7,6 +7,9 @@ metadata:
     app.kubernetes.io/component: rabbitmq
 spec:
   replicas: 1
+  rabbitmq:
+    additionalConfig: |
+      disk_free_limit.absolute = 256MB
   persistence:
       storageClassName: default
       storage: 1Gi
