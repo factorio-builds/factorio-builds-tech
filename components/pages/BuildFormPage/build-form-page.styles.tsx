@@ -1,8 +1,8 @@
 import styled from "styled-components"
-import Stacker from "../../components/ui/Stacker"
-import { getTypo } from "../../design/helpers/typo"
-import { COLOR } from "../../design/tokens/color"
-import { ETypo } from "../../design/tokens/typo"
+import { getTypo } from "../../../design/helpers/typo"
+import { COLOR } from "../../../design/tokens/color"
+import { ETypo } from "../../../design/tokens/typo"
+import Stacker from "../../ui/Stacker"
 
 export const Row = styled.div`
   display: flex;

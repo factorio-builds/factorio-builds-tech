@@ -1,12 +1,12 @@
 import React from "react"
 import { useSelector } from "react-redux"
-import BuildCardList from "../../components/ui/BuildCardList"
-import FilterList from "../../components/ui/FilterList"
-import Layout from "../../components/ui/Layout"
-import Search from "../../components/ui/Search"
-import Stacker from "../../components/ui/Stacker"
-import { filteredBuildsSelector } from "../../redux/selectors/builds"
-import { IStoreState } from "../../redux/store"
+import { filteredBuildsSelector } from "../../../redux/selectors/builds"
+import { IStoreState } from "../../../redux/store"
+import BuildCardList from "../../ui/BuildCardList"
+import FilterList from "../../ui/FilterList"
+import Layout from "../../ui/Layout"
+import Search from "../../ui/Search"
+import Stacker from "../../ui/Stacker"
 
 function BuildListPage(): JSX.Element {
   const { filteredBuilds, sort } = useSelector((store: IStoreState) => ({
