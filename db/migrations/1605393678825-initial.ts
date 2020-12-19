@@ -5,6 +5,7 @@ export class initial1605393678825 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`)
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "pg_trgm"`)
     await queryRunner.query(
       `CREATE TABLE "User" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "discordId" character varying, "name" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_9862f679340fb2388436a5ab3e4" PRIMARY KEY ("id"))`
     )
