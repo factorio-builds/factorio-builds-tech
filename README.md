@@ -45,8 +45,6 @@ From the terminal, in the checked out directory:
   `yarn`
 - Start Docker<br />
   `docker-compose -f docker-compose.yml up`
-- Index the search engine<br />
-  `yarn search:index`
 - Migrate/seed the database<br />
   `yarn typeorm schema:sync`<br />
   `yarn db:seed:run`
