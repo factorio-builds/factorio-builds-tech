@@ -35,7 +35,7 @@ export enum ERole {
 export interface IMetadata {
   tileable: boolean
   area: number
-  state: EState
+  state: EState[]
   categories: ECategory[]
   withMarkedInputs: boolean
   withBeacons: boolean

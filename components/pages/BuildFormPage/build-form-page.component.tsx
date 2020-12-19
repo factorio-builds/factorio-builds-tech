@@ -62,7 +62,7 @@ const createInitialValues = (build?: Build): IFormValues => {
     name: build.name,
     blueprint: build.blueprint,
     description: build.description,
-    state: build.metadata.state,
+    state: build.metadata.state[0],
     tileable: build.metadata.tileable,
     withMarkedInputs: build.metadata.withMarkedInputs,
     withBeacons: build.metadata.withBeacons,
