@@ -20,20 +20,17 @@ namespace FactorioTech.Web.Pages
     [Authorize]
     public class ImportModel : PageModel
     {
-        private readonly ILogger<ImportModel> _logger;
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
         private readonly ImageService _imageService;
 
         public ImportModel(
-            ILogger<ImportModel> logger,
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
             ImageService imageService)
         {
-            _logger = logger;
             _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
@@ -143,8 +140,7 @@ namespace FactorioTech.Web.Pages
                 CreateInput.Image.Hash = PayloadCache.First(kvp => kvp.Key is FactorioApi.Blueprint).Value.Hash.ToString();
             }
 
-            _logger.LogInformation("Persisting the full graph of {Count} payloads for blueprint {Hash}", PayloadCache.Count, hash);
-            await _blueprintService.SavePayloadGraph(PayloadCache.Values);
+            await _blueprintService.SavePayloadGraph(hash, PayloadCache.Values);
 
             TempData.Keep(nameof(BlueprintString));
 

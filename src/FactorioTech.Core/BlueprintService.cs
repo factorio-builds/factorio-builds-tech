@@ -225,7 +225,7 @@ namespace FactorioTech.Core
         public async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
             await _dbContext.Blueprints.AnyAsync(bp => bp.Slug == slug && bp.OwnerId == userId);
 
-        public async Task SavePayloadGraph(IReadOnlyCollection<BlueprintPayload> payloads)
+        public async Task SavePayloadGraph(Hash parentHash, IReadOnlyCollection<BlueprintPayload> payloads)
         {
             var newHashes = payloads.Select(p => p.Hash);
             var existingHashes = await _dbContext.BlueprintPayloads.AsNoTracking()
@@ -233,7 +233,10 @@ namespace FactorioTech.Core
                 .Select(x => x.Hash)
                 .ToListAsync();
 
-            var newPayloads = payloads.Where(p => !existingHashes.Contains(p.Hash));
+            var newPayloads = payloads.Where(p => !existingHashes.Contains(p.Hash)).Distinct(BlueprintPayload.EqualityComparer).ToList();
+
+            _logger.LogInformation("Persisting the full payload graph for blueprint {Hash}: {Total} total, {Existing} existing, {Added} to be added",
+                parentHash, payloads.Count, existingHashes.Count, newPayloads.Count);
 
             // todo: ideally this would be implemented using INSERT .. ON CONFLICT DO NOTHING, but ef core
             // doesn't seem to support that. the current implementation with SELECT + INSERT is obviously slower;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Core.Domain
@@ -28,5 +29,21 @@ namespace FactorioTech.Core.Domain
         {
         }
 #pragma warning restore 8618
+
+        private sealed class HashEqualityComparer : IEqualityComparer<BlueprintPayload>
+        {
+            public bool Equals(BlueprintPayload? x, BlueprintPayload? y)
+            {
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(x, null)) return false;
+                if (ReferenceEquals(y, null)) return false;
+                if (x.GetType() != y.GetType()) return false;
+                return x.Hash.Equals(y.Hash);
+            }
+
+            public int GetHashCode(BlueprintPayload obj) => obj.Hash.GetHashCode();
+        }
+
+        public static IEqualityComparer<BlueprintPayload> EqualityComparer => new HashEqualityComparer();
     }
 }

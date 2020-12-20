@@ -6,7 +6,7 @@ namespace FactorioTech.Core
 {
     public static class FactorioApi
     {
-        public record BlueprintEnvelope : IEncodableBlueprint
+        public sealed class BlueprintEnvelope : IEncodableBlueprint
         {
             [JsonPropertyName("blueprint"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public Blueprint? Blueprint { get; init; }
@@ -36,7 +36,7 @@ namespace FactorioTech.Core
             public Dictionary<string, object>? ExtensionData { get; init; }
         }
 
-        public record BlueprintBook : IEncodableBlueprint
+        public sealed class BlueprintBook : IEncodableBlueprint
         {
             [JsonPropertyName("version")]
             public ulong Version { get; init; }
@@ -63,7 +63,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Blueprint_object
         /// </summary>
-        public record Blueprint : IEncodableBlueprint
+        public sealed class Blueprint : IEncodableBlueprint
         {
             [JsonPropertyName("version")]
             public ulong Version { get; init; }
@@ -90,7 +90,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Entity_object
         /// </summary>
-        public record Entity
+        public sealed class Entity
         {
             /// <summary>
             /// Prototype name of the entity (e.g. "offshore-pump").
@@ -105,7 +105,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Icon_object
         /// </summary>
-        public record Icon
+        public sealed class Icon
         {
             [JsonPropertyName("index")]
             public int Index { get; init; }
@@ -120,7 +120,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#SignalID_object
         /// </summary>
-        public record SignalId
+        public sealed class SignalId
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
