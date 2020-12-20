@@ -1,8 +1,7 @@
 import { ManagedUpload } from "aws-sdk/clients/s3"
 import { Fields, Files, File } from "formidable"
-import imageSize from "image-size"
-import { ISizeCalculationResult } from "image-size/dist/types/interface"
-import { promisify } from "util"
+import fs from "fs"
+import imageSize from "probe-image-size"
 import { v4 as uuidv4 } from "uuid"
 import { Build } from "../../db/entities/build.entity"
 import { User } from "../../db/entities/user.entity"
@@ -18,7 +17,6 @@ import {
 import { FileHandleException } from "../exceptions/file.exceptions"
 import { uploadFile } from "../services/upload.service"
 import { ViewCountService } from "../services/view-count.service"
-const imageSizeAsync = promisify(imageSize)
 
 interface ICreateParameters {
   ownerId: string
@@ -40,12 +38,12 @@ interface IIncrementViewParameters {
 
 interface IUploadedFile {
   uploadedFile: ManagedUpload.SendData
-  dimensions: ISizeCalculationResult
+  dimensions: imageSize.ProbeResult
 }
 
 async function handleFile(id: string, file: File): Promise<IUploadedFile> {
   const uploadedFile = await uploadFile(id, file.path).catch(console.error)
-  const dimensions = await imageSizeAsync(file.path)
+  const dimensions = await imageSize(fs.createReadStream(file.path))
 
   if (!uploadedFile || !dimensions) {
     throw new FileHandleException("Failed to handle uploaded file")
