@@ -6,6 +6,7 @@ import next from "next"
 import passport from "passport"
 import uid from "uid-safe"
 import { buildRoutes } from "./api/build"
+import { searchRoutes } from "./api/search"
 import { authRoutes, discordStrategy } from "./auth"
 
 const dev = process.env.NODE_ENV !== "production"
@@ -35,7 +36,7 @@ const port = process.env.PORT || 3000
     server.use(passport.initialize())
     server.use(passport.session())
     server.use(authRoutes)
-    server.use("/api", buildRoutes)
+    server.use("/api", [buildRoutes, searchRoutes])
 
     server.all("*", (req: Request, res: Response) => {
       return handle(req, res)
