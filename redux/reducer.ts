@@ -1,9 +1,9 @@
 import { authReducer } from "./reducers/auth"
-import { buildsReducer } from "./reducers/builds"
 import { filtersReducer } from "./reducers/filters"
+import { searchReducer } from "./reducers/search"
 
 export default {
   auth: authReducer,
-  builds: buildsReducer,
   filters: filtersReducer,
+  search: searchReducer,
 }

@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react"
-import { useDispatch } from "react-redux"
 import axios from "axios"
 import { Form, Formik } from "formik"
 import { useRouter } from "next/router"
@@ -146,7 +145,6 @@ type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing
 
 const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const router = useRouter()
-  const dispatch = useDispatch()
   const [step, setStep] = useState<1 | 2>(1)
   const [submit, setSubmit] = useState({
     loading: false,
@@ -176,17 +174,6 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           data: toFormData(values as IValidFormValues),
         })
           .then((res) => {
-            if (props.type === "EDIT") {
-              dispatch({
-                type: "UPDATE_BUILD",
-                payload: res.data.result,
-              })
-            } else {
-              dispatch({
-                type: "CREATE_BUILD",
-                payload: res.data.result,
-              })
-            }
             setSubmit({
               loading: false,
               error: false,

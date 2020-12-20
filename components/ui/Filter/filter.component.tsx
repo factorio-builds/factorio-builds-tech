@@ -1,5 +1,6 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { IStoreState } from "../../../redux/store"
 import { ECategory, EFilterType, EState } from "../../../types"
 import Checkbox from "../../form/Checkbox"
@@ -27,6 +28,7 @@ function Filter(props: IFilterProps): JSX.Element {
         name: props.name,
       },
     })
+    dispatch(searchBuildsAsync())
   }
 
   return (

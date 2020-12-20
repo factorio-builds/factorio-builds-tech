@@ -1,6 +1,7 @@
 import express from "express"
 import { Brackets } from "typeorm"
 import { BuildRepository } from "../../db/repository/build.repository"
+import { ApiSeachBuild } from "../../types"
 
 export const searchRoutes = express.Router()
 
@@ -13,7 +14,7 @@ interface ISearchQuery {
 /*
  * SEARCH BUILDS
  */
-searchRoutes.get<any, any, any, ISearchQuery>(
+searchRoutes.get<any, ApiSeachBuild, any, ISearchQuery>(
   "/search/build",
   async (req, res) => {
     try {
@@ -64,6 +65,7 @@ searchRoutes.get<any, any, any, ISearchQuery>(
       res.status(200).json({
         success: true,
         result: {
+          nbTotal: 0, // TODO: fill me up
           nbHits: builds.length,
           hits: builds,
           processingTimeMs: msEnd - msStart,

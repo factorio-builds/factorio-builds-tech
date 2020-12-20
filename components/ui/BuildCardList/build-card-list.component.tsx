@@ -1,8 +1,7 @@
 import * as React from "react"
 import sortBy from "lodash/sortBy"
-import { Build } from "../../../db/entities/build.entity"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
-import { ESortType } from "../../../types"
+import { ESortType, IIndexedBuild } from "../../../types"
 import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
 import BuildListSort from "../BuildListSort"
@@ -10,7 +9,7 @@ import * as SC from "./build-card-list.styles"
 import { COLS, GUTTER } from "./design-tokens"
 
 interface IBuildCardListProps {
-  items: Build[]
+  items: IIndexedBuild[]
   count: number
   totalCount: number
   lookupTime: number
