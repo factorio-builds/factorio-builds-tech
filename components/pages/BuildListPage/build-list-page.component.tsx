@@ -1,6 +1,5 @@
 import React from "react"
 import { useSelector } from "react-redux"
-import { filteredBuildsSelector } from "../../../redux/selectors/builds"
 import { IStoreState } from "../../../redux/store"
 import BuildCardList from "../../ui/BuildCardList"
 import FilterList from "../../ui/FilterList"
@@ -9,8 +8,8 @@ import Search from "../../ui/Search"
 import Stacker from "../../ui/Stacker"
 
 function BuildListPage(): JSX.Element {
-  const { filteredBuilds, sort } = useSelector((store: IStoreState) => ({
-    filteredBuilds: filteredBuildsSelector(store),
+  const { search, sort } = useSelector((store: IStoreState) => ({
+    search: store.search,
     sort: store.filters.sort,
   }))
 
@@ -24,10 +23,10 @@ function BuildListPage(): JSX.Element {
       }
     >
       <BuildCardList
-        items={filteredBuilds.builds}
-        count={filteredBuilds.count}
-        totalCount={filteredBuilds.totalCount}
-        lookupTime={filteredBuilds.lookupTime}
+        items={search.hits}
+        count={search.nbHits}
+        totalCount={search.nbTotal}
+        lookupTime={search.processingTimeMs}
         sort={sort}
       />
     </Layout>

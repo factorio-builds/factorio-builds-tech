@@ -7,10 +7,11 @@ import {
   Reducer,
 } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
+import thunk from "redux-thunk"
 import reducers from "./reducer"
 import { IStoreAuthState, TAuthAction } from "./reducers/auth"
-import { IStoreBuildsState, TBuildsAction } from "./reducers/builds"
 import { IStoreFiltersState, TFiltersAction } from "./reducers/filters"
+import { IStoreSearchState, TSearchAction } from "./reducers/search"
 
 export interface IPayloadAction<T, P> extends Action<T> {
   payload: P
@@ -18,13 +19,13 @@ export interface IPayloadAction<T, P> extends Action<T> {
 
 export interface IStoreState {
   auth: IStoreAuthState
-  builds: IStoreBuildsState
   filters: IStoreFiltersState
+  search: IStoreSearchState
 }
 
 type THydrateAction = IPayloadAction<typeof HYDRATE, any>
 
-type TAction = THydrateAction | TAuthAction | TBuildsAction | TFiltersAction
+type TAction = THydrateAction | TAuthAction | TFiltersAction | TSearchAction
 
 export const makeStore: MakeStore<IStoreState, TAction> = () => {
   const combinedReducer = combineReducers({
@@ -43,7 +44,10 @@ export const makeStore: MakeStore<IStoreState, TAction> = () => {
     }
   }
 
-  const store = createStore(reducer, composeWithDevTools(applyMiddleware()))
+  const store = createStore(
+    reducer,
+    composeWithDevTools(applyMiddleware(thunk))
+  )
 
   // @ts-ignore
   if (module.hot) {

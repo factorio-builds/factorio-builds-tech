@@ -1,8 +1,8 @@
+import axios from "axios"
 import { GetServerSideProps, NextPage } from "next"
 import BuildListPage from "../components/pages/BuildListPage"
-import { Build } from "../db/entities/build.entity"
-import { BuildRepository } from "../db/repository/build.repository"
 import { wrapper } from "../redux/store"
+import { ApiSeachBuild, IIndexedBuild, SearchResponse } from "../types"
 
 const IndexPage: NextPage = () => {
   return <BuildListPage />
@@ -10,22 +10,21 @@ const IndexPage: NextPage = () => {
 
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
-    const buildRepository = await BuildRepository()
-    const builds = await buildRepository
-      .createQueryBuilder("build")
-      .select(["build.id", "build.name", "build.metadata", "build.image"])
-      .where("build.image IS NOT NULL")
-      .getMany()
-      .catch((error) => {
-        console.error(error)
-        throw new Error("Cannot find build data")
+    const searchResults = await axios
+      .get<ApiSeachBuild>("http://localhost:3000/api/search/build")
+      .then((response) => {
+        if (response.data.success) {
+          return response.data.result
+        }
       })
 
-    const deserializedBuilds: Build[] = JSON.parse(JSON.stringify(builds))
+    const deserializedSearchResults: SearchResponse<IIndexedBuild> = JSON.parse(
+      JSON.stringify(searchResults)
+    )
 
     ctx.store.dispatch({
-      type: "SET_BUILDS",
-      payload: deserializedBuilds,
+      type: "SEARCH_BUILDS_SUCCESS",
+      payload: deserializedSearchResults,
     })
 
     return { props: {} }
