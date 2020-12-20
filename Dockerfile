@@ -38,9 +38,6 @@ namespace FactorioTech.Core { \n\
 
 WORKDIR /app
 RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
- && dotnet publish src/FactorioTech.Worker/FactorioTech.Worker.csproj \
-        --no-restore --no-build  --configuration Release \
-        --output /app/publish/worker /p:DebugType=None \
  && dotnet publish src/FactorioTech.Web/FactorioTech.Web.csproj \
         --no-restore --no-build  --configuration Release \
         --output /app/publish/web /p:DebugType=None

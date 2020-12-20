@@ -99,6 +99,10 @@ namespace FactorioTech.Core.Data
 
                 entity.Property(e => e.GameVersion)
                     .HasConversion(p => p.ToString(4), p => Version.Parse(p));
+
+                entity.HasOne(e => e.Payload!).WithMany()
+                    .HasForeignKey(e => e.Hash)
+                    .HasPrincipalKey(e => e.Hash);
             });
 
             builder.Entity<BlueprintPayload>(entity =>
@@ -108,10 +112,6 @@ namespace FactorioTech.Core.Data
 
                 entity.Property(e => e.GameVersion)
                     .HasConversion(p => p.ToString(4), p => Version.Parse(p));
-
-                entity.HasOne<BlueprintVersion>().WithOne(e => e.Payload!)
-                    .HasForeignKey<BlueprintPayload>(e => e.Hash)
-                    .HasPrincipalKey<BlueprintVersion>(e => e.Hash);
             });
 
             builder.Entity<Tag>(entity =>

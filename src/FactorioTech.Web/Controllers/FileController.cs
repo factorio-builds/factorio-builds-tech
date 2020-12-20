@@ -19,7 +19,7 @@ namespace FactorioTech.Web.Controllers
     {
         private const int OneDayInSeconds = 86400;
         private const int OneMonthInSeconds = 2629800;
-        private static readonly TimeSpan NewBlueprintRenderingLoadInterval = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan NewBlueprintRenderingLoadInterval = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan NewBlueprintRenderingLoadTimeout = TimeSpan.FromSeconds(30);
 
         private readonly ILogger<FileController> _logger;
@@ -47,70 +47,27 @@ namespace FactorioTech.Web.Controllers
             return File(file, format);
         }
 
-        [HttpGet("rendering/full/{hash}.png")]
+        [HttpGet("rendering/{type}/{hash}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRenderingFull(string hash)
+        public async Task<IActionResult> GetBlueprintRendering(ImageService.RenderingType type, string hash)
         {
             var sw = Stopwatch.StartNew();
 
             do
             {
-                var file = await _imageService.TryLoadRendering(null, new Hash(hash));
+                var file = await _imageService.TryLoadRendering(new Hash(hash), type);
                 if (file != null)
                     return File(file, "image/png");
 
-                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry.", "Full", hash);
+                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry.", type, hash);
                 await Task.Delay(NewBlueprintRenderingLoadInterval);
             }
             while (sw.Elapsed < NewBlueprintRenderingLoadTimeout);
 
-            _logger.LogWarning("Rendering {Type} for {Hash} not found; giving up.", "Thumb", hash);
+            _logger.LogWarning("Rendering {Type} for {Hash} not found; giving up.", type, hash);
             return NotFound();
         }
 
-        [HttpGet("rendering/thumb/{hash}.png")]
-        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRenderingThumb(string hash)
-        {
-            var sw = Stopwatch.StartNew();
-
-            do
-            {
-                var file = await _imageService.TryLoadRenderingThumbnail(null, new Hash(hash));
-                if (file != null)
-                    return File(file, "image/png");
-
-                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry.", "Thumb", hash);
-                await Task.Delay(NewBlueprintRenderingLoadInterval);
-            }
-            while (sw.Elapsed < NewBlueprintRenderingLoadTimeout);
-
-            _logger.LogWarning("Rendering {Type} for {Hash} not found; giving up.", "Thumb", hash);
-            return NotFound();
-        }
-
-        [HttpGet("rendering/full/{versionId}/{hash}.png")]
-        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRenderingFullWithVersionHint(string hash, Guid versionId)
-        {
-            var file = await _imageService.TryLoadRendering(versionId, new Hash(hash));
-            if (file == null)
-                return NotFound();
-
-            return File(file, "image/png");
-        }
-
-        [HttpGet("rendering/thumb/{versionId}/{hash}.png")]
-        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRenderingThumbWithVersionHint(string hash, Guid versionId)
-        {
-            var file = await _imageService.TryLoadRenderingThumbnail(versionId, new Hash(hash));
-            if (file == null)
-                return NotFound();
-
-            return File(file, "image/png");
-        }
-        
         [HttpGet("icon/{size:int}/{type}/{key}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetGameIcon(int size, string type, string key)

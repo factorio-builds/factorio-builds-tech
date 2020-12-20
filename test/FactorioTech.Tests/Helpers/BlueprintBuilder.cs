@@ -11,6 +11,7 @@ namespace FactorioTech.Tests.Helpers
     public class BlueprintBuilder
     {
         private User? _owner;
+        private BlueprintPayload? _payload;
 
         public BlueprintBuilder WithOwner(User user)
         {
@@ -18,25 +19,28 @@ namespace FactorioTech.Tests.Helpers
             return this;
         }
 
+        public BlueprintBuilder WithPayload(BlueprintPayload payload)
+        {
+            _payload = payload;
+            return this;
+        }
+
         public async Task<Blueprint> Save(AppDbContext dbContext)
         {
             if (_owner == null)
                 throw new Exception("Must set owner.");
+            if (_payload == null)
+                throw new Exception("Must set payload.");
 
             var request = new BlueprintService.CreateRequest(
                 "simple-book",
                 "Simple Blueprint Book",
                 null,
                 new[] { "/belt/balancer", "/general/early game" },
-                (null, null));
+                (_payload.Hash, null, null));
 
-            var payload = new BlueprintPayload(
-                Hash.Compute(TestData.SimpleBookEncoded),
-                TestData.SimpleBookEncoded,
-                Utils.DecodeGameVersion(TestData.SimpleBook.Version));
-
-            var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext, null!, null!);
-            var result = await service.CreateOrAddVersion(request, payload, (_owner.Id, _owner.UserName), null);
+            var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
+            var result = await service.CreateOrAddVersion(request, (_owner.Id, _owner.UserName), null);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>("Test data setup failed.");
 
             dbContext.ClearCache();

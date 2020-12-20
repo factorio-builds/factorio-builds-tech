@@ -1,6 +1,5 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
-using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;

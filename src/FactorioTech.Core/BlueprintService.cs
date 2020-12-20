@@ -17,7 +17,7 @@ namespace FactorioTech.Core
             string Title,
             string? Description,
             IEnumerable<string> Tags,
-            (string? Name, string? Description) Version);
+            (Hash Hash, string? Name, string? Description) Version);
 
         public record CreateResult
         {
@@ -45,6 +45,10 @@ namespace FactorioTech.Core
                     Guid BlueprintId)
                 : CreateResult { }
 
+            public sealed record PayloadNotFound(
+                    Hash Hash)
+                : CreateResult { }
+
             public sealed record OwnerMismatch(
                     Guid BlueprintId,
                     string Slug,
@@ -56,31 +60,13 @@ namespace FactorioTech.Core
 
         private readonly ILogger<BlueprintService> _logger;
         private readonly AppDbContext _dbContext;
-        private readonly BlueprintConverter _blueprintConverter;
-        private readonly ImageService _imageService;
 
         public BlueprintService(
             ILogger<BlueprintService> logger,
-            AppDbContext dbContext,
-            BlueprintConverter blueprintConverter,
-            ImageService imageService)
+            AppDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;
-            _blueprintConverter = blueprintConverter;
-            _imageService = imageService;
-        }
-
-        public async Task SaveAllBlueprintRenderings(string hash, string encoded)
-        {
-            _logger.LogInformation("Saving all renderings for {Hash}", hash);
-
-            var envelope = await _blueprintConverter.Decode(encoded);
-            var payload = new BlueprintPayload(Hash.Parse(hash), encoded, Utils.DecodeGameVersion(envelope.Version));
-            var payloadCache = new PayloadCache();
-            payloadCache.TryAdd(envelope, payload);
-
-            await _imageService.SaveAllBlueprintRenderings(payloadCache, envelope);
         }
 
         public async Task<IReadOnlyCollection<Blueprint>> GetBlueprints(
@@ -130,7 +116,6 @@ namespace FactorioTech.Core
 
         public async Task<CreateResult> CreateOrAddVersion(
             CreateRequest request,
-            BlueprintPayload payload,
             (Guid Id, string UserName) owner,
             Guid? parentId)
         {
@@ -138,7 +123,7 @@ namespace FactorioTech.Core
                 return new CreateResult.InvalidSlug(request.Slug);
 
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
-                .Where(x => x.Hash == payload.Hash)
+                .Where(x => x.Hash == request.Version.Hash)
                 .Select(x => new
                 {
                     x.VersionId,
@@ -152,9 +137,15 @@ namespace FactorioTech.Core
             if (dupe != null)
             {
                 _logger.LogWarning("Attempted to save duplicate payload with hash {Hash}. The hash already exists in {VersionId} of blueprint {BlueprintId}",
-                    payload.Hash, dupe.VersionId, dupe.BlueprintId);
-
+                    request.Version.Hash, dupe.VersionId, dupe.BlueprintId);
                 return new CreateResult.DuplicateHash(dupe.VersionId, dupe.BlueprintId, dupe.Slug, (dupe.OwnerId, dupe.OwnerSlug));
+            }
+
+            var payload = await _dbContext.BlueprintPayloads.FirstOrDefaultAsync(x => x.Hash == request.Version.Hash);
+            if (payload == null)
+            {
+                _logger.LogWarning("Attempted to save blueprint version with unknown payload: {Hash}", request.Version.Hash);
+                return new CreateResult.PayloadNotFound(request.Version.Hash);
             }
 
             var currentInstant = SystemClock.Instance.GetCurrentInstant();
@@ -171,9 +162,7 @@ namespace FactorioTech.Core
 
                 if (blueprint == null)
                 {
-                    _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}",
-                        parentId);
-
+                    _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}", parentId);
                     return new CreateResult.ParentNotFound(parentId.Value);
                 }
 
@@ -181,7 +170,6 @@ namespace FactorioTech.Core
                 {
                     _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
                         blueprint.BlueprintId, blueprint.OwnerId);
-
                     return new CreateResult.OwnerMismatch(blueprint.BlueprintId, blueprint.Slug, (blueprint.OwnerId, blueprint.OwnerSlug));
                 }
 
@@ -197,7 +185,6 @@ namespace FactorioTech.Core
                 {
                     _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
                         owner.UserName, request.Slug);
-
                     return new CreateResult.DuplicateSlug(request.Slug, owner);
                 }
 
@@ -213,8 +200,6 @@ namespace FactorioTech.Core
 
                 _dbContext.Add(blueprint);
             }
-
-            _dbContext.Add(payload);
 
             var version = new BlueprintVersion(
                 Guid.NewGuid(),
@@ -239,5 +224,24 @@ namespace FactorioTech.Core
 
         public async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
             await _dbContext.Blueprints.AnyAsync(bp => bp.Slug == slug && bp.OwnerId == userId);
+
+        public async Task SavePayloadGraph(IReadOnlyCollection<BlueprintPayload> payloads)
+        {
+            var newHashes = payloads.Select(p => p.Hash);
+            var existingHashes = await _dbContext.BlueprintPayloads.AsNoTracking()
+                .Where(x => newHashes.Contains(x.Hash))
+                .Select(x => x.Hash)
+                .ToListAsync();
+
+            var newPayloads = payloads.Where(p => !existingHashes.Contains(p.Hash));
+
+            // todo: ideally this would be implemented using INSERT .. ON CONFLICT DO NOTHING, but ef core
+            // doesn't seem to support that. the current implementation with SELECT + INSERT is obviously slower;
+            // but more importantly there's a race condition that can lead to conflicts.
+            // ReSharper disable once MethodHasAsyncOverload
+            _dbContext.AddRange(newPayloads);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

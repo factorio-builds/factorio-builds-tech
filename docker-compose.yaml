@@ -35,7 +35,6 @@ services:
     depends_on:
       - fbsr
       - postgres
-      - redis
 
   fbsr:
     # image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
@@ -59,10 +58,3 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-
-  redis:
-    image: redis:6-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro

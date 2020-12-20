@@ -146,9 +146,8 @@
     {
         @(
             await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
-                VersionId = Guid.Empty,
-                Envelope = Model.Envelope,
-                PayloadCache = Model.PayloadCache,
+                Model.Envelope,
+                Model.PayloadCache,
                 ShowSelectCoverButton = true,
             })
         )

@@ -1,8 +1,8 @@
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
-using System;
 
 namespace FactorioTech.Core.Data.Migrations
 {
@@ -50,6 +50,19 @@ namespace FactorioTech.Core.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BlueprintPayloads",
+                columns: table => new
+                {
+                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Encoded = table.Column<string>(type: "text", nullable: false),
+                    GameVersion = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlueprintPayloads", x => x.Hash);
                 });
 
             migrationBuilder.CreateTable(
@@ -206,6 +219,12 @@ namespace FactorioTech.Core.Data.Migrations
                     table.PrimaryKey("PK_BlueprintVersions", x => x.VersionId);
                     table.UniqueConstraint("AK_BlueprintVersions_Hash", x => x.Hash);
                     table.ForeignKey(
+                        name: "FK_BlueprintVersions_BlueprintPayloads_Hash",
+                        column: x => x.Hash,
+                        principalTable: "BlueprintPayloads",
+                        principalColumn: "Hash",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_BlueprintVersions_Blueprints_BlueprintId",
                         column: x => x.BlueprintId,
                         principalTable: "Blueprints",
@@ -256,24 +275,10 @@ namespace FactorioTech.Core.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "BlueprintPayloads",
-                columns: table => new
-                {
-                    Hash = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    Encoded = table.Column<string>(type: "text", nullable: false),
-                    GameVersion = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BlueprintPayloads", x => x.Hash);
-                    table.ForeignKey(
-                        name: "FK_BlueprintPayloads_BlueprintVersions_Hash",
-                        column: x => x.Hash,
-                        principalTable: "BlueprintVersions",
-                        principalColumn: "Hash",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "RoleId", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { new Guid("3d15ca3a-584e-4d30-94df-b43d2303a4f4"), "5f6c3b71-8c57-410d-99f2-755d1ccac3d7", "Administrator", "ADMINISTRATOR" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -407,9 +412,6 @@ namespace FactorioTech.Core.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BlueprintPayloads");
-
-            migrationBuilder.DropTable(
                 name: "Favorites");
 
             migrationBuilder.DropTable(
@@ -423,6 +425,9 @@ namespace FactorioTech.Core.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "BlueprintVersions");
+
+            migrationBuilder.DropTable(
+                name: "BlueprintPayloads");
 
             migrationBuilder.DropTable(
                 name: "Blueprints");

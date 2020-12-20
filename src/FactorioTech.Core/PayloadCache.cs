@@ -30,5 +30,20 @@ namespace FactorioTech.Core
             TryAdd(item, payload);
             return payload;
         }
+
+        public async Task EnsureInitializedGraph(FactorioApi.BlueprintEnvelope envelope)
+        {
+            if (envelope.BlueprintBook?.Blueprints != null)
+            {
+                foreach (var inner in envelope.BlueprintBook.Blueprints)
+                {
+                    await EnsureInitializedGraph(inner);
+                }
+            }
+            else if (envelope.Blueprint != null)
+            {
+                await EnsureInitialized(envelope.Blueprint);
+            }
+        }
     }
 }

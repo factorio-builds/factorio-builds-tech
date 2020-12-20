@@ -68,13 +68,6 @@ spec:
                     - key: connection_string
                       path: ConnectionStrings__Postgres
               - secret:
-                  name: {{ include "factorio-tech.fullname" . }}-redis
-                  items:
-                    - key: username
-                      path: RabbitMq__Username
-                    - key: password
-                      path: RabbitMq__Password
-              - secret:
                   name: application-insights
                   items:
                     - key: instrumentation_key

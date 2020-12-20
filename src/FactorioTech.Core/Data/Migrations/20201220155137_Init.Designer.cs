@@ -12,7 +12,7 @@ using NpgsqlTypes;
 namespace FactorioTech.Core.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201204173653_Init")]
+    [Migration("20201220155137_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace FactorioTech.Core.Data.Migrations
             modelBuilder
                 .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .HasAnnotation("ProductVersion", "5.0.1");
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Blueprint", b =>
                 {
@@ -134,6 +134,8 @@ namespace FactorioTech.Core.Data.Migrations
 
                     b.HasKey("VersionId");
 
+                    b.HasAlternateKey("Hash");
+
                     b.HasIndex("BlueprintId");
 
                     b.ToTable("BlueprintVersions");
@@ -187,6 +189,15 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("3d15ca3a-584e-4d30-94df-b43d2303a4f4"),
+                            ConcurrencyStamp = "5f6c3b71-8c57-410d-99f2-755d1ccac3d7",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Tag", b =>
@@ -402,16 +413,6 @@ namespace FactorioTech.Core.Data.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("FactorioTech.Core.Domain.BlueprintPayload", b =>
-                {
-                    b.HasOne("FactorioTech.Core.Domain.BlueprintVersion", null)
-                        .WithOne("Payload")
-                        .HasForeignKey("FactorioTech.Core.Domain.BlueprintPayload", "Hash")
-                        .HasPrincipalKey("FactorioTech.Core.Domain.BlueprintVersion", "Hash")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("FactorioTech.Core.Domain.BlueprintVersion", b =>
                 {
                     b.HasOne("FactorioTech.Core.Domain.Blueprint", "Blueprint")
@@ -420,7 +421,15 @@ namespace FactorioTech.Core.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FactorioTech.Core.Domain.BlueprintPayload", "Payload")
+                        .WithMany()
+                        .HasForeignKey("Hash")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Blueprint");
+
+                    b.Navigation("Payload");
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Favorite", b =>
@@ -505,11 +514,6 @@ namespace FactorioTech.Core.Data.Migrations
             modelBuilder.Entity("FactorioTech.Core.Domain.Blueprint", b =>
                 {
                     b.Navigation("Tags");
-                });
-
-            modelBuilder.Entity("FactorioTech.Core.Domain.BlueprintVersion", b =>
-                {
-                    b.Navigation("Payload");
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.User", b =>

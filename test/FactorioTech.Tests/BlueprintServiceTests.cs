@@ -36,7 +36,7 @@ namespace FactorioTech.Tests
             _dbContext = AppDbContextFactory.CreateDbContext(_postgresContainer.ConnectionString);
             await _dbContext.Database.MigrateAsync();
 
-            _service = new BlueprintService(new NullLogger<BlueprintService>(), _dbContext, null!, null!);
+            _service = new BlueprintService(new NullLogger<BlueprintService>(), _dbContext);
         }
 
         public async Task DisposeAsync()
@@ -52,7 +52,8 @@ namespace FactorioTech.Tests
         public async Task GetBlueprints_ShouldReturnSingleBlueprint()
         {
             var owner = await new UserBuilder().Save(_dbContext);
-            await new BlueprintBuilder().WithOwner(owner).Save(_dbContext);
+            var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
+            await new BlueprintBuilder().WithPayload(payload).WithOwner(owner).Save(_dbContext);
 
             var blueprints = await _service.GetBlueprints((1, 100), ("created", "asc"), Array.Empty<string>(), null, null);
             blueprints.Should().HaveCount(1);
@@ -66,19 +67,15 @@ namespace FactorioTech.Tests
         public async Task CreateOrAddVersion_ShouldSaveBlueprintGraph_WhenAddingANewBlueprint()
         {
             var owner = await new UserBuilder().Save(_dbContext);
+            var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBookEncoded).Save(_dbContext);
             var request = new BlueprintService.CreateRequest(
                 "test-1",
                 "test blueprint 1",
                 "the description",
                 new[] { "/belt/balancer", "/general/early game" },
-                (null, null));
+                (payload.Hash, null, null));
 
-            var payload = new BlueprintPayload(
-                Hash.Compute(TestData.SimpleBookEncoded),
-                TestData.SimpleBookEncoded,
-                Utils.DecodeGameVersion(TestData.SimpleBook.Version));
-
-            var result = await _service.CreateOrAddVersion(request, payload, (owner.Id, owner.UserName), null);
+            var result = await _service.CreateOrAddVersion(request, (owner.Id, owner.UserName), null);
 
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
@@ -102,21 +99,18 @@ namespace FactorioTech.Tests
         public async Task CreateOrAddVersion_ShouldUpdateBlueprintMetadata_WhenAddingAVersion()
         {
             var owner = await new UserBuilder().Save(_dbContext);
-            var existing = await new BlueprintBuilder().WithOwner(owner).Save(_dbContext);
+            var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBookEncoded).Save(_dbContext);
+            var existingPayload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
+            var existing = await new BlueprintBuilder().WithPayload(existingPayload).WithOwner(owner).Save(_dbContext);
 
             var request = new BlueprintService.CreateRequest(
                 existing.Slug,
                 "different title",
                 "different description",
                 new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
-                (null, null));
+                (payload.Hash, null, null));
 
-            var payload = new BlueprintPayload(
-                Hash.Compute(TestData.SimpleBlueprintEncoded),
-                TestData.SimpleBlueprintEncoded,
-                Utils.DecodeGameVersion(TestData.SimpleBlueprint.Version));
-
-            var result = await _service.CreateOrAddVersion(request, payload, (owner.Id, owner.UserName), existing.BlueprintId);
+            var result = await _service.CreateOrAddVersion(request, (owner.Id, owner.UserName), existing.BlueprintId);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);

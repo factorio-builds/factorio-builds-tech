@@ -4,7 +4,6 @@ hostName: beta.factorio.tech
 replicas:
  fbsrWrapper: 1
  web: 1
- worker: 1
 
 postgres:
   image: postgres:13-alpine

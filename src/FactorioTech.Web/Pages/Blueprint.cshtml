@@ -52,7 +52,7 @@
                         </div>
                     }
                     <div class="btn-group ml-2" role="group">
-                        <a href="@Url.RawBlueprint(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
+                        <a href="@Url.BlueprintRaw(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
                            data-toggle="tooltip" data-placement="top" title="View the raw blueprint string">
                             <i class="fas fa-file-alt"></i>
                             Raw
@@ -146,7 +146,6 @@
 
     @(
         await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
-            Model.SelectedVersion.VersionId,
             Model.Envelope,
             Model.PayloadCache,
         })

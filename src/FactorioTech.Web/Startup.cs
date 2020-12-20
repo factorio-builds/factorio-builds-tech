@@ -2,8 +2,6 @@ using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
-using Hangfire;
-using Hangfire.Redis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -130,16 +128,6 @@ namespace FactorioTech.Web
                 options.ApplicationVersion = BuildInformation.Version;
             });
 
-            services.AddHangfire(options =>
-            {
-                options.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
-                options.UseSimpleAssemblyNameTypeSerializer();
-                options.UseRecommendedSerializerSettings();
-                options.UseRedisStorage();
-            });
-
-            services.AddHangfireServer();
-
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();
@@ -182,8 +170,6 @@ namespace FactorioTech.Web
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
-                endpoints.MapHangfireDashboard("/admin/hangfire")
-                    .RequireAuthorization("RequireAdministratorRole");
             });
         }
     }

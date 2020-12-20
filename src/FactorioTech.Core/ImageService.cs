@@ -8,58 +8,94 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core
 {
     public class ImageService
     {
+        public enum RenderingType
+        {
+            Full,
+            Thumb
+        }
+
         private readonly ILogger<ImageService> _logger;
         private readonly AppDbContext _dbContext;
         private readonly AppConfig _appConfig;
-        private readonly BlueprintConverter _converter;
         private readonly FbsrClient _fbsrClient;
 
         public ImageService(
             ILogger<ImageService> logger,
             IOptions<AppConfig> appConfigMonitor,
             AppDbContext dbContext,
-            BlueprintConverter converter,
             FbsrClient fbsrClient)
         {
             _logger = logger;
             _dbContext = dbContext;
             _appConfig = appConfigMonitor.Value;
-            _converter = converter;
             _fbsrClient = fbsrClient;
         }
 
-        public async Task SaveAllBlueprintRenderings(PayloadCache cache, FactorioApi.BlueprintEnvelope envelope)
+        public async Task<(Stream? File, string? MimeType)> TryLoadCover(Guid blueprintId)
         {
-            if (envelope.BlueprintBook?.Blueprints != null)
-            {
-                foreach (var inner in envelope.BlueprintBook.Blueprints)
-                {
-                    await SaveAllBlueprintRenderings(cache, inner);
-                }
-            }
-            else if (envelope.Blueprint != null)
-            {
-                if (!cache.TryGetValue(envelope.Blueprint, out var payload))
-                {
-                    var encoded = await _converter.Encode(envelope.Blueprint);
-                    payload = new BlueprintPayload(Hash.Compute(encoded), encoded, Utils.DecodeGameVersion(envelope.Version));
-                    cache.TryAdd(envelope.Blueprint, payload);
-                }
+            var imageFqfn = GetCoverFqfn(blueprintId);
+            if (!File.Exists(imageFqfn))
+                return (null, null);
 
-                await SaveBlueprintRendering(payload);
-            }
+            var file = new FileStream(imageFqfn, FileMode.Open, FileAccess.Read);
+            var format = await Image.DetectFormatAsync(file);
+
+            return (file, format.DefaultMimeType);
         }
 
-        public async Task SaveBlueprintRendering(BlueprintPayload payload)
+        public async Task<Stream?> TryLoadRendering(Hash hash, RenderingType type)
         {
-            var imageFqfn = GetRenderingFqfn(payload.Hash);
+            Stream? TryLoadIfExists()
+            {
+                var fqfn = GetRenderingFqfn(hash, type);
+
+                try
+                {
+                    return File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to read blueprint rendering {Type} for {Hash}", type, hash);
+                    return null;
+                }
+            }
+
+            var image = TryLoadIfExists();
+            if (image != null)
+                return image;
+
+            switch (type)
+            {
+                case RenderingType.Full:
+                    var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
+                        .FirstOrDefaultAsync(x => x.Hash == hash);
+                    if (payload == null)
+                        return null;
+
+                    await SaveRenderingFull(payload);
+                    break;
+
+                case RenderingType.Thumb:
+                    var rendering = await TryLoadRendering(hash, RenderingType.Full);
+                    if (rendering == null)
+                        return null;
+
+                    await SaveRenderingThumb(hash, rendering);
+                    break;
+            }
+
+            return TryLoadIfExists();
+        }
+
+        public async Task SaveRenderingFull(BlueprintPayload payload)
+        {
+            var imageFqfn = GetRenderingFqfn(payload.Hash, RenderingType.Full);
             if (File.Exists(imageFqfn))
             {
                 _logger.LogWarning(
@@ -109,70 +145,7 @@ namespace FactorioTech.Core
             }
         }
 
-        public async Task<(Stream? File, string? MimeType)> TryLoadCover(Guid blueprintId)
-        {
-            var imageFqfn = GetCoverFqfn(blueprintId);
-            if (!File.Exists(imageFqfn))
-                return (null, null);
-
-            var file = new FileStream(imageFqfn, FileMode.Open, FileAccess.Read);
-            var format = await Image.DetectFormatAsync(file);
-
-            return (file, format.DefaultMimeType);
-        }
-
-        public async Task<Stream?> TryLoadRendering(Guid? versionId, Hash hash)
-        {
-            var image = TryLoadRendering(hash);
-            if (image != null)
-                return image;
-
-            var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Hash == hash);
-
-            if (payload != null)
-            {
-                await SaveBlueprintRendering(payload);
-                return TryLoadRendering(hash);
-            }
-
-            if (!versionId.HasValue)
-                return null;
-
-            var parentPayload = await _dbContext.BlueprintVersions.AsNoTracking()
-                .Where(x => x.VersionId == versionId.Value)
-                .Include(x => x.Payload)
-                .FirstOrDefaultAsync();
-
-            if (parentPayload == null)
-                return null;
-
-            var envelope = await _converter.Decode(parentPayload.Payload!.Encoded);
-            payload = await TryFindEnvelopeWithHash(envelope, hash);
-            if (payload == null)
-                return null;
-
-            await SaveBlueprintRendering(payload);
-
-            return TryLoadRendering(hash);
-        }
-
-        public async Task<Stream?> TryLoadRenderingThumbnail(Guid? versionId, Hash hash)
-        {
-            var existingThumbnail = TryLoadRendering(hash, true);
-            if (existingThumbnail != null)
-                return existingThumbnail;
-
-            var rendering = await TryLoadRendering(versionId, hash);
-            if (rendering == null)
-                return null;
-
-            await SaveRenderingThumbnail(hash, rendering);
-
-            return TryLoadRendering(hash, true);
-        }
-
-        public async Task SaveRenderingThumbnail(Hash hash, Stream rendering)
+        public async Task SaveRenderingThumb(Hash hash, Stream rendering)
         {
             var (image, format) = await Image.LoadWithFormatAsync(rendering);
             image.Mutate(x => x.Resize(new ResizeOptions
@@ -181,7 +154,7 @@ namespace FactorioTech.Core
                 Mode = ResizeMode.Max,
             }));
 
-            var imageFqfn = GetRenderingFqfn(hash, true);
+            var imageFqfn = GetRenderingFqfn(hash, RenderingType.Thumb);
 
             try {
                 await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
@@ -196,45 +169,22 @@ namespace FactorioTech.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to fetch or save blueprint rendering {Type} for {Hash}", "Thumb", hash);
+                _logger.LogError(ex, "Failed to fetch or save blueprint rendering {Type} for {Hash}", RenderingType.Thumb, hash);
 
                 if (File.Exists(imageFqfn))
                 {
                     File.Delete(imageFqfn);
-                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", "Thumb", hash);
+                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", RenderingType.Thumb, hash);
                 }
             }
-        }
-
-        private async Task<BlueprintPayload?> TryFindEnvelopeWithHash(FactorioApi.BlueprintEnvelope envelope, Hash targetHash)
-        {
-            if (envelope.Blueprint != null)
-            {
-                var encoded = await _converter.Encode(envelope.Blueprint);
-                return Hash.Compute(encoded) == targetHash
-                    ? new BlueprintPayload(targetHash, encoded, Utils.DecodeGameVersion(envelope.Version))
-                    : null;
-            }
-
-            if (envelope.BlueprintBook?.Blueprints != null)
-            {
-                foreach (var innerEnvelope in envelope.BlueprintBook.Blueprints)
-                {
-                    var result = await TryFindEnvelopeWithHash(innerEnvelope, targetHash);
-                    if (result != null)
-                        return result;
-                }
-            }
-         
-            return null;
         }
 
         public async Task SaveCroppedCover(Guid blueprintId, Guid versionId, Hash hash, (int X, int Y, int Width, int Height) rectangle)
         {
-            var rendering = await TryLoadRendering(versionId, hash);
+            var rendering = await TryLoadRendering(hash, RenderingType.Full);
             if (rendering == null)
             {
-                _logger.LogCritical("Failed to load rendering for version {VersionId} with hash {Hash} to create blueprint image.",
+                _logger.LogCritical("Failed to load rendering for version {VersionId} with hash {Hash} to create blueprint image",
                     versionId, hash);
             }
             else
@@ -263,23 +213,8 @@ namespace FactorioTech.Core
             await image.SaveAsync(outFile, format);
         }
 
-        private Stream? TryLoadRendering(Hash hash, bool thumbnail = false)
-        {
-            var fqfn = GetRenderingFqfn(hash, thumbnail);
-
-            try
-            {
-                return File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to read blueprint rendering");
-                return null;
-            }
-        }
-
-        private string GetRenderingFqfn(Hash hash, bool thumbnail = false) =>
-            Path.Combine(_appConfig.WorkingDir, "renderings", thumbnail ? $"{hash}-thumb.png" : $"{hash}.png");
+        private string GetRenderingFqfn(Hash hash, RenderingType type) =>
+            Path.Combine(_appConfig.WorkingDir, "renderings", $"{hash}-{type}.png");
 
         private string GetCoverFqfn(Guid blueprintId) =>
             Path.Combine(_appConfig.WorkingDir, "covers", blueprintId.ToString());
