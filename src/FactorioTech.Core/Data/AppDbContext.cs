@@ -136,6 +136,13 @@ namespace FactorioTech.Core.Data
                 entity.Property(e => e.Id).HasColumnName("RoleId");
                 entity.Property(e => e.Name).IsRequired();
                 entity.Property(e => e.NormalizedName).IsRequired();
+
+                entity.HasData(new Role
+                {
+                    Id = Guid.Parse("3d15ca3a-584e-4d30-94df-b43d2303a4f4"),
+                    Name = "Administrator",
+                    NormalizedName = "ADMINISTRATOR",
+                });
             });
 
             builder.Entity<IdentityUserLogin<Guid>>(entity =>

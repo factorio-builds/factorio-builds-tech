@@ -14,7 +14,6 @@ COPY FactorioTech.sln .
 COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
 COPY src/FactorioTech.Web/gulpfile.js src/FactorioTech.Web/
-COPY src/FactorioTech.Worker/*.csproj src/FactorioTech.Worker/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
 
 RUN dotnet restore
@@ -47,12 +46,6 @@ RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
         --output /app/publish/web /p:DebugType=None
 
 ENTRYPOINT [ "dotnet" ]
-
-
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 as worker
-WORKDIR /app
-COPY --from=build /app/publish/worker .
-ENTRYPOINT [ "dotnet", "FactorioTech.Worker.dll" ]
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as web

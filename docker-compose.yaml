@@ -29,39 +29,13 @@ services:
       - OAuthProviders__GitHub__ClientSecret
     environment:
       ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-      RabbitMq__Host: "rabbitmq"
-      RabbitMq__Username: "rabbit"
-      RabbitMq__Password: "rabbit"
       AppConfig__FactorioDir: "/factorio"
       AppConfig__WorkingDir: "/tmp"
       AppConfig__FbsrWrapperUri: "http://fbsr:8080"
     depends_on:
       - fbsr
       - postgres
-      - rabbitmq
-
-  worker:
-    # image: ghcr.io/dstockhammer/factorio-tech/worker:ci
-    image: factorio-tech/worker
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: worker
-    volumes:
-      - factorio:/factorio:ro
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-      RabbitMq__Host: "rabbitmq"
-      RabbitMq__Username: "rabbit"
-      RabbitMq__Password: "rabbit"
-      AppConfig__FactorioDir: "/factorio"
-      AppConfig__WorkingDir: "/tmp"
-      AppConfig__FbsrWrapperUri: "http://fbsr:8080"
-    depends_on:
-      - fbsr
-      - postgres
-      - rabbitmq
+      - redis
 
   fbsr:
     # image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
@@ -86,14 +60,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    hostname: factorio-tech-rabbitmq
+  redis:
+    image: redis:6-alpine
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "6379:6379"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    environment:
-      RABBITMQ_DEFAULT_USER: rabbit
-      RABBITMQ_DEFAULT_PASS: rabbit

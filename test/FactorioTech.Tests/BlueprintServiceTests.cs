@@ -36,7 +36,7 @@ namespace FactorioTech.Tests
             _dbContext = AppDbContextFactory.CreateDbContext(_postgresContainer.ConnectionString);
             await _dbContext.Database.MigrateAsync();
 
-            _service = new BlueprintService(new NullLogger<BlueprintService>(), _dbContext);
+            _service = new BlueprintService(new NullLogger<BlueprintService>(), _dbContext, null!, null!);
         }
 
         public async Task DisposeAsync()

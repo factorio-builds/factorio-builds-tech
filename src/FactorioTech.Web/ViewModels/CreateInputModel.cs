@@ -1,5 +1,4 @@
 using FactorioTech.Core;
-using FactorioTech.Core.Config;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.ComponentModel;

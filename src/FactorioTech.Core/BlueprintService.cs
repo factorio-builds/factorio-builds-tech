@@ -1,4 +1,3 @@
-using FactorioTech.Core.Config;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -57,13 +56,31 @@ namespace FactorioTech.Core
 
         private readonly ILogger<BlueprintService> _logger;
         private readonly AppDbContext _dbContext;
+        private readonly BlueprintConverter _blueprintConverter;
+        private readonly ImageService _imageService;
 
         public BlueprintService(
             ILogger<BlueprintService> logger,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            BlueprintConverter blueprintConverter,
+            ImageService imageService)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _blueprintConverter = blueprintConverter;
+            _imageService = imageService;
+        }
+
+        public async Task SaveAllBlueprintRenderings(string hash, string encoded)
+        {
+            _logger.LogInformation("Saving all renderings for {Hash}", hash);
+
+            var envelope = await _blueprintConverter.Decode(encoded);
+            var payload = new BlueprintPayload(Hash.Parse(hash), encoded, Utils.DecodeGameVersion(envelope.Version));
+            var payloadCache = new PayloadCache();
+            payloadCache.TryAdd(envelope, payload);
+
+            await _imageService.SaveAllBlueprintRenderings(payloadCache, envelope);
         }
 
         public async Task<IReadOnlyCollection<Blueprint>> GetBlueprints(

@@ -1,9 +1,9 @@
 using FactorioTech.Core;
-using FactorioTech.Core.Config;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Web.Extensions;
-using MassTransit;
+using Hangfire;
+using Hangfire.Redis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +18,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 
@@ -28,15 +27,11 @@ namespace FactorioTech.Web
     {
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => _configuration = configuration;
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
-            services.Configure<RabbitMqConfig>(_configuration.GetSection(nameof(RabbitMqConfig).Replace("Config", string.Empty)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
             services.Configure<RouteOptions>(options =>
@@ -105,10 +100,17 @@ namespace FactorioTech.Web
                 options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
             }).AddIdentityCookies();
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole",
+                    policy => policy.RequireRole("Administrator"));
+            });
+
             services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/account/login";
                 options.LogoutPath = "/account/logout";
+                options.AccessDeniedPath = "/errors/403";
             });
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -128,20 +130,15 @@ namespace FactorioTech.Web
                 options.ApplicationVersion = BuildInformation.Version;
             });
 
-            services.AddMassTransit(options =>
+            services.AddHangfire(options =>
             {
-                options.UsingRabbitMq((ctx, cfg) =>
-                {
-                    var config = ctx.GetRequiredService<IOptions<RabbitMqConfig>>().Value;
-                    cfg.Host(config.Host, config.VirtualHost, h =>
-                    {
-                        h.Username(config.Username);
-                        h.Password(config.Password);
-                    });
-                });
+                options.SetDataCompatibilityLevel(CompatibilityLevel.Version_170);
+                options.UseSimpleAssemblyNameTypeSerializer();
+                options.UseRecommendedSerializerSettings();
+                options.UseRedisStorage();
             });
 
-            services.AddMassTransitHostedService();
+            services.AddHangfireServer();
 
             services.AddTransient<IEmailSender, DummyEmailSender>();
             services.AddTransient<FbsrClient>();
@@ -185,6 +182,8 @@ namespace FactorioTech.Web
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+                endpoints.MapHangfireDashboard("/admin/hangfire")
+                    .RequireAuthorization("RequireAdministratorRole");
             });
         }
     }

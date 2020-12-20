@@ -1,10 +1,9 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
-using FactorioTech.Core.Messages;
 using FactorioTech.Web.Extensions;
 using FactorioTech.Web.ViewModels;
-using MassTransit;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -23,7 +22,7 @@ namespace FactorioTech.Web.Pages
     public class ImportModel : PageModel
     {
         private readonly ILogger<ImportModel> _logger;
-        private readonly IPublishEndpoint _bus;
+        private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
@@ -31,14 +30,14 @@ namespace FactorioTech.Web.Pages
 
         public ImportModel(
             ILogger<ImportModel> logger,
-            IPublishEndpoint bus,
+            IBackgroundJobClient backgroundJobClient,
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
             ImageService imageService)
         {
             _logger = logger;
-            _bus = bus;
+            _backgroundJobClient = backgroundJobClient;
             _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
@@ -144,9 +143,7 @@ namespace FactorioTech.Web.Pages
                 CreateInput.Image.Hash = PayloadCache[firstBlueprint].Hash.ToString();
             }
 
-            _logger.LogInformation("Handling {Type}: Hash={Hash} GameVersion={GameVersion} UserId={UserId}",
-                nameof(BlueprintImportStarted), payload.Hash, payload.GameVersion, User.GetUserId());
-            await _bus.Publish(new BlueprintImportStarted(User.GetUserId(), payload));
+            _backgroundJobClient.Enqueue<BlueprintService>(svc => svc.SaveAllBlueprintRenderings(payload.Hash.ToString(), BlueprintString));
 
             TempData.Keep(nameof(BlueprintString));
 

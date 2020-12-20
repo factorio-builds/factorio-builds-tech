@@ -1,4 +1,3 @@
-using FactorioTech.Core.Config;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -36,13 +35,13 @@ namespace FactorioTech.Core
             _fbsrClient = fbsrClient;
         }
 
-        public async Task SaveAllBlueprintRenderings(Guid versionId, PayloadCache cache, FactorioApi.BlueprintEnvelope envelope)
+        public async Task SaveAllBlueprintRenderings(PayloadCache cache, FactorioApi.BlueprintEnvelope envelope)
         {
             if (envelope.BlueprintBook?.Blueprints != null)
             {
                 foreach (var inner in envelope.BlueprintBook.Blueprints)
                 {
-                    await SaveAllBlueprintRenderings(versionId, cache, inner);
+                    await SaveAllBlueprintRenderings(cache, inner);
                 }
             }
             else if (envelope.Blueprint != null)

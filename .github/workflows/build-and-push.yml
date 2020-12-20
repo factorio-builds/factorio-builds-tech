@@ -85,26 +85,6 @@ jobs:
             --no-restore --no-build --configuration Release \
             --verbosity normal --logger trx --filter Type=Fast
 
-      - name: Build and push - worker
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          target: worker
-          push: true
-          build-args: |
-            version=${{ env.version }}
-            build_branch=${{ github.ref }}
-            build_sha=${{ github.sha }}
-            build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          tags: |
-            ghcr.io/${{ github.repository }}/worker:${{ env.version }}
-            ghcr.io/${{ github.repository }}/worker:ci
-          labels: |
-            org.opencontainers.image.version=${{ env.version }}
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.ref.name=${{ github.ref }}
-
       - name: Build and push - web
         uses: docker/build-push-action@v2
         with:

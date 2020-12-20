@@ -1,4 +1,3 @@
-using FactorioTech.Core.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;

@@ -35,7 +35,7 @@ namespace FactorioTech.Tests.Helpers
                 TestData.SimpleBookEncoded,
                 Utils.DecodeGameVersion(TestData.SimpleBook.Version));
 
-            var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
+            var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext, null!, null!);
             var result = await service.CreateOrAddVersion(request, payload, (_owner.Id, _owner.UserName), null);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>("Test data setup failed.");
 

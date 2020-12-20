@@ -1,5 +1,4 @@
 using FactorioTech.Core;
-using FactorioTech.Core.Config;
 using FactorioTech.Core.Domain;
 using FactorioTech.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;

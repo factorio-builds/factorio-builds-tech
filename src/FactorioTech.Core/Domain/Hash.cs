@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -7,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace FactorioTech.Core.Domain
 {
-    [JsonConverter(typeof(HashConverter))]
     public readonly struct Hash
     {
         private readonly string _value;
@@ -34,15 +32,5 @@ namespace FactorioTech.Core.Domain
         public static explicit operator Hash(string other) => new(other);
         public static explicit operator string(Hash other) => other._value;
         public override string ToString() => _value;
-    }
-
-    // MassTransit still uses Newtonsoft.Json so we need this...
-    public class HashConverter : JsonConverter<Hash>
-    {
-        public override Hash ReadJson(JsonReader reader, Type objectType, Hash existingValue, bool hasExistingValue, JsonSerializer serializer) =>
-            new((string)reader.Value);
-
-        public override void WriteJson(JsonWriter writer, Hash value, JsonSerializer serializer) =>
-            writer.WriteValue(value.ToString());
     }
 }

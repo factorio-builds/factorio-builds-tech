@@ -1,5 +1,4 @@
 using FactorioTech.Core;
-using FactorioTech.Core.Config;
 using FactorioTech.Core.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -172,7 +171,7 @@ namespace FactorioTech.Web.Pages.Account
                             return RedirectToPage("./RegisterConfirmation", new { Input.Email });
                         }
 
-                        await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
+                        await _signInManager.SignInAsync(user, true, info.LoginProvider);
 
                         return LocalRedirect(ReturnUrl);
                     }

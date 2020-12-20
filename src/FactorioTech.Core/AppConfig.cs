@@ -2,7 +2,7 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 
-namespace FactorioTech.Core.Config
+namespace FactorioTech.Core
 {
     public class AppConfig
     {
@@ -30,7 +30,7 @@ namespace FactorioTech.Core.Config
                 public const string AllowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
                 public const string AllowedCharactersRegex = "[a-zA-Z0-9_-]+";
                 public const string AllowedCharactersErrorMessage = "Only latin characters (a-z and A-Z), digits (0-9), underscore (_) and hyphen (-) are allowed.";
-                public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "delete", "edit", "import" };
+                public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "administrator", "delete", "edit", "import" };
             }
         }
 
