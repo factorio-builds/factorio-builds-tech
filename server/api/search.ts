@@ -30,6 +30,8 @@ searchRoutes.get<any, ApiSeachBuild, any, ISearchQuery>(
         .select(["build.id", "build.name", "build.metadata", "build.image"])
         .where("build.image IS NOT NULL")
 
+      const total = await searchQuery.getCount()
+
       if (req.query.q) {
         searchQuery = searchQuery.andWhere(
           new Brackets((qb) => {
@@ -65,7 +67,7 @@ searchRoutes.get<any, ApiSeachBuild, any, ISearchQuery>(
       res.status(200).json({
         success: true,
         result: {
-          nbTotal: 0, // TODO: fill me up
+          nbTotal: total,
           nbHits: builds.length,
           hits: builds,
           processingTimeMs: msEnd - msStart,
