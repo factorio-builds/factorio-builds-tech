@@ -7,6 +7,7 @@
 **/wwwroot/dist/
 *.secret.json
 secrets/
+volumes/
 
 # User-specific files
 *.rsuser

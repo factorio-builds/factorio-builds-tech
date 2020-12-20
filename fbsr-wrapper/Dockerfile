@@ -29,10 +29,10 @@ RUN apt-get update \
 
 COPY --from=build /app/target/*.jar /app.jar
 
-VOLUME /config
+VOLUME /mnt/config
 
-COPY config.docker.json /config/config.json
-RUN ln -s /config/config.json /config.json
+COPY config.docker.json /mnt/config/config.json
+RUN ln -s /mnt/config/config.json /config.json
 
 EXPOSE 8080
 ENTRYPOINT [ "java", "-classpath", "config.json", "-jar", "/app.jar" ]

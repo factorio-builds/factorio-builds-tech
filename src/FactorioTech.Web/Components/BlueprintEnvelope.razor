@@ -1,6 +1,9 @@
 @if (Envelope.Blueprint != null)
 {
-    <BlueprintCard Blueprint="@Envelope.Blueprint" BookHash="@BookHash" ShowSelectCoverButton="@ShowSelectCoverButton" />
+    <BlueprintCard BookHash="@BookHash"
+                   PayloadCache="@PayloadCache"
+                   Blueprint="@Envelope.Blueprint"
+                   ShowSelectCoverButton="@ShowSelectCoverButton" />
 }
 else if (Envelope.BlueprintBook != null)
 {
@@ -49,7 +52,10 @@ else if (Envelope.BlueprintBook != null)
                 <div class="collapse" id="collapse-book-@tempId">
                     @foreach (var envelope in Envelope.BlueprintBook.Blueprints.OrderBy(i => i.Index))
                     {
-                        <BlueprintEnvelope Envelope="@envelope" BookHash="@PayloadCache[Envelope].Hash" ShowSelectCoverButton="@ShowSelectCoverButton" />
+                        <BlueprintEnvelope BookHash="@PayloadCache[Envelope].Hash"
+                                           PayloadCache="@PayloadCache"
+                                           Envelope="@envelope"
+                                           ShowSelectCoverButton="@ShowSelectCoverButton" />
                     }
                 </div>
             }

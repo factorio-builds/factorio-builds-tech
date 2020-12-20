@@ -87,6 +87,7 @@ namespace FactorioTech.Web.Pages
             {
                 Envelope = await _converter.Decode(SelectedVersion.Payload.Encoded);
                 PayloadCache.TryAdd(Envelope, SelectedVersion.Payload);
+                await PayloadCache.EnsureInitializedGraph(Envelope);
             }
 
             ImportInput.ParentSlug = Blueprint.Slug;

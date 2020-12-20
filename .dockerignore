@@ -15,6 +15,10 @@
 **/.toolstarget
 **/README.md
 **/node_modules
-
-fbsr-wrapper
 **/appsettings.*.json
+**.DotSettings*
+fbsr-wrapper
+deploy
+secrets
+volumes
+infrastructure

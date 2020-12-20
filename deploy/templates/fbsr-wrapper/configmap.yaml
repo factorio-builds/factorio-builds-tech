@@ -8,5 +8,5 @@ metadata:
 data:
   config.json: |
     {
-      "factorio": "/factorio/Factorio_1.0.0"
+      "factorio": "/mnt/factorio/Factorio_1.0.0"
     }

@@ -22,15 +22,17 @@ services:
     ports:
       - "80:8080"
     volumes:
-      - factorio:/factorio:ro
+      - ./volumes/web/data:/mnt/data
+      - ./volumes/web/session:/mnt/session
+      - factorio:/mnt/factorio:ro
       - /etc/localtime:/etc/localtime:ro
     secrets:
       - OAuthProviders__GitHub__ClientId
       - OAuthProviders__GitHub__ClientSecret
     environment:
       ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-      AppConfig__FactorioDir: "/factorio"
-      AppConfig__WorkingDir: "/tmp"
+      AppConfig__FactorioDir: "/mnt/factorio"
+      AppConfig__WorkingDir: "/mnt/data"
       AppConfig__FbsrWrapperUri: "http://fbsr:8080"
     depends_on:
       - fbsr
@@ -45,7 +47,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - factorio:/factorio:ro
+      - factorio:/mnt/factorio:ro
       - /etc/localtime:/etc/localtime:ro
 
   postgres:

@@ -63,7 +63,8 @@
                 </a>
                 @if (ShowSelectCoverButton)
                 {
-                    <button type="button" class="btn btn-sm btn-warning btn-block mt-2" data-hash="@payload.Hash" data-rendering-url="@Url.BlueprintRendering(payload.Hash, ImageService.RenderingType.Thumb)"
+                    <button type="button" class="btn btn-sm btn-warning btn-block mt-2"
+                            data-hash="@payload.Hash" data-rendering-url="@Url.BlueprintRendering(payload.Hash, ImageService.RenderingType.Full)"
                             data-toggle="tooltip" data-placement="top" title="Use this rendering as blueprint image…">
                         <i class="fas fa-copy"></i>
                         Use as cover

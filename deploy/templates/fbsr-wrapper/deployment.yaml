@@ -36,10 +36,10 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: config
-              mountPath: /config
+              mountPath: /mnt/config
               readOnly: true
             - name: factorio-data
-              mountPath: /factorio
+              mountPath: /mnt/factorio
               readOnly: true
           securityContext:
             runAsUser: 1000

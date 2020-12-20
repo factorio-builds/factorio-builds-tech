@@ -36,16 +36,19 @@ spec:
               protocol: TCP
           volumeMounts:
             - name: config
-              mountPath: /config
+              mountPath: /mnt/config
               readOnly: true
             - name: secrets
-              mountPath: /secrets
+              mountPath: /mnt/secrets
               readOnly: true
+            - name: session
+              mountPath: /mnt/session
+              readOnly: false
             - name: app-data
-              mountPath: /data
+              mountPath: /mnt/data
               readOnly: false
             - name: factorio-data
-              mountPath: /factorio
+              mountPath: /mnt/factorio
               readOnly: true
           securityContext:
             runAsUser: 1000
@@ -72,6 +75,9 @@ spec:
                   items:
                     - key: instrumentation_key
                       path: ApplicationInsights__InstrumentationKey
+        - name: session
+          persistentVolumeClaim:
+            claimName: {{ include "factorio-tech.fullname" . }}-web-session
         - name: app-data
           azureFile:
             secretName: app-data-share

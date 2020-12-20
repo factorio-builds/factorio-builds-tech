@@ -19,6 +19,11 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
 
+#if !DEBUG
+using Microsoft.AspNetCore.DataProtection;
+using System.IO;
+#endif
+
 namespace FactorioTech.Web
 {
     public class Startup
@@ -119,6 +124,10 @@ namespace FactorioTech.Web
 
             services.AddRazorPages()
                 .AddSessionStateTempDataProvider();
+#if !DEBUG
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo("/mnt/session"));
+#endif
 
             services.AddHttpClient();
             services.AddSession();
