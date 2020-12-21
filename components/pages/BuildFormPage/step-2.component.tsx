@@ -78,23 +78,27 @@ const Step2: React.FC<IStep2Props> = (props) => {
             />
           </Stacker>
 
-          <Field
-            name="state"
-            label="Game state"
-            type="select"
-            required
-            component={Input}
-            options={gameStates.map((gameState) => ({
-              label: (
-                <>
-                  {gameState.icon} {gameState.name}
-                </>
-              ),
-              value: gameState.value,
-            }))}
-            validate={validate("state")}
-            size="small"
-          />
+          <InputGroup
+            legend="Game states"
+            error={props.formikProps.errors.state}
+          >
+            <Stacker gutter={8}>
+              {gameStates.map((gameState) => {
+                return (
+                  <Field
+                    key={gameState.value}
+                    name="state"
+                    label={gameState.name}
+                    prefix={gameState.icon}
+                    type="checkbox"
+                    value={gameState.value}
+                    component={Input}
+                    validate={validate("state")}
+                  />
+                )
+              })}
+            </Stacker>
+          </InputGroup>
 
           <InputGroup
             legend="Categories"

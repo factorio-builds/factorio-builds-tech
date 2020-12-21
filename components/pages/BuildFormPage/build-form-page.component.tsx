@@ -15,7 +15,7 @@ export interface IFormValues {
   name: string
   blueprint: string
   description: string
-  state: EState | -1
+  state: EState[]
   tileable: boolean
   withMarkedInputs: boolean
   withBeacons: boolean
@@ -27,7 +27,7 @@ interface IValidFormValues {
   name: string
   blueprint: string
   description: string
-  state: EState
+  state: EState[]
   tileable: boolean
   withMarkedInputs: boolean
   withBeacons: boolean
@@ -42,7 +42,7 @@ const baseInitialValues: IFormValues = {
   name: "",
   blueprint: "",
   description: "",
-  state: -1,
+  state: [],
   tileable: false,
   withMarkedInputs: false,
   withBeacons: false,
@@ -61,7 +61,7 @@ const createInitialValues = (build?: Build): IFormValues => {
     name: build.name,
     blueprint: build.blueprint,
     description: build.description,
-    state: build.metadata.state[0],
+    state: build.metadata.state,
     tileable: build.metadata.tileable,
     withMarkedInputs: build.metadata.withMarkedInputs,
     withBeacons: build.metadata.withBeacons,
@@ -84,7 +84,7 @@ const validation = {
       return isValidBlueprint(blueprint)
     }),
   description: Yup.string(),
-  state: Yup.string().oneOf(Object.keys(EState), "Required"),
+  state: Yup.array().required(),
   tileable: Yup.boolean(),
   withMarkedInputs: Yup.boolean(),
   withBeacons: Yup.boolean(),
@@ -121,7 +121,7 @@ const toFormData = (formValues: IValidFormValues) => {
   formData.append("name", formValues.name)
   formData.append("blueprint", formValues.blueprint)
   formData.append("description", formValues.description)
-  formData.append("state", formValues.state)
+  formData.append("state", JSON.stringify(formValues.state))
   formData.append("tileable", String(formValues.tileable))
   formData.append("withMarkedInputs", String(formValues.withMarkedInputs))
   formData.append("withBeacons", String(formValues.withBeacons))
