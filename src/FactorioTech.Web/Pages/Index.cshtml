@@ -2,6 +2,23 @@
 @model IndexModel
 
 <div class="container index">
+    <div class="alert alert-dark" role="alert">
+        <h4 class="alert-heading">Public Beta</h4>
+        <p class="text-muted">
+            Thanks for checking out this public beta! <a href="https://github.com/dstockhammer/factorio-tech" title="dstockhammer/factorio-tech">factorio.tech</a>
+            is similar to <a href="https://factorioprints.com">factorioprints.com</a> in functionality, and should at this point be pretty much at feature parity.
+            The two key added features for now are <strong>automatically generated blueprint renderings</strong> 
+            (powered by <a href="https://github.com/demodude4u/Factorio-FBSR">Factorio-FBSR</a>) and <strong>blueprint versions</strong>. More features to come;
+            please open a <a href="https://github.com/dstockhammer/factorio-tech/issues">GitHub issue</a> if you have any suggestions!
+        </p>
+        <hr>
+        <p class="mb-0 text-muted">
+            Feel free to create an account by linking one of the available external login providers and take the site for a spin! Please do note that this is
+            an early preview version and <strong>bugs are to be expected</strong>! Also, data can (and most likely will) be <strong>wiped without notice</strong>
+            during the beta. Any <a href="https://github.com/dstockhammer/factorio-tech/issues">bug reports</a> are much appreciated!
+        </p>
+    </div>
+
     <form method="get" asp-page-handler="List" id="blueprint-filters" data-ajax="true" data-ajax-update="#blueprint-list">
         <div class="row pb-2 pb-md-1">
             <div class="col">
