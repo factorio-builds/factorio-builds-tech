@@ -40,7 +40,7 @@ namespace FactorioTech.Web.Pages
         public async Task<IActionResult> OnGetAsync(string user, string slug)
         {
             Blueprint = await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant())
+                .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.NormalizedOwnerSlug == user.ToUpperInvariant())
                 .Include(bp => bp.Tags)
                 .FirstOrDefaultAsync();
 
@@ -76,7 +76,7 @@ namespace FactorioTech.Web.Pages
             }
 
             var blueprint = await _dbContext.Blueprints
-                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant())
+                .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.NormalizedOwnerSlug == user.ToUpperInvariant())
                 .Include(bp => bp.Tags)
                 .FirstOrDefaultAsync();
 

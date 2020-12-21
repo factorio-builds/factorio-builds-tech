@@ -40,7 +40,7 @@ namespace FactorioTech.Tests.Helpers
                 (_payload.Hash, null, null));
 
             var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
-            var result = await service.CreateOrAddVersion(request, (_owner.Id, _owner.UserName), null);
+            var result = await service.CreateOrAddVersion(request, _owner, null);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>("Test data setup failed.");
 
             dbContext.ClearCache();

@@ -27,7 +27,7 @@ namespace FactorioTech.Web.Controllers
         public async Task<IActionResult> GetLatest(string owner, string slug)
         {
             var encoded = await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == owner.ToLowerInvariant())
+                .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.NormalizedOwnerSlug == owner.ToUpperInvariant())
                 .Select(bp => bp.LatestVersion!.Payload!.Encoded)
                 .FirstOrDefaultAsync();
 
@@ -42,7 +42,7 @@ namespace FactorioTech.Web.Controllers
         public async Task<IActionResult> GetVersion(string owner, string slug, string hash)
         {
             var encoded = await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == owner.ToLowerInvariant())
+                .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.NormalizedOwnerSlug == owner.ToUpperInvariant())
                 .Join(_dbContext.BlueprintVersions, bp => bp.BlueprintId, v => v.BlueprintId, (bp, v) => v)
                 .Where(v => v.Hash == new Hash(hash))
                 .Select(v => v.Payload!.Encoded)

@@ -27,7 +27,15 @@ namespace FactorioTech.Core.Domain
 
         [Required]
         [MaxLength(100)]
+        public string NormalizedSlug { get; init; }
+
+        [Required]
+        [MaxLength(100)]
         public string OwnerSlug { get; init; }
+
+        [Required]
+        [MaxLength(100)]
+        public string NormalizedOwnerSlug { get; init; }
 
         [Required]
         [MaxLength(100)]
@@ -54,7 +62,7 @@ namespace FactorioTech.Core.Domain
 
         public Blueprint(
             Guid blueprintId,
-            (Guid Id, string UserName) owner,
+            User owner,
             Instant createdAt, Instant updatedAt,
             string slug,
             IEnumerable<Tag> tags,
@@ -64,9 +72,11 @@ namespace FactorioTech.Core.Domain
             BlueprintId = blueprintId;
             OwnerId = owner.Id;
             OwnerSlug = owner.UserName;
+            NormalizedOwnerSlug = owner.NormalizedUserName;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
             Slug = slug;
+            NormalizedSlug = slug.ToUpperInvariant();
             Title = title;
             Description = description;
             LatestGameVersion = "0.0.0.0";

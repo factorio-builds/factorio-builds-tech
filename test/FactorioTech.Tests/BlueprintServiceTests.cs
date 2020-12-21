@@ -75,7 +75,7 @@ namespace FactorioTech.Tests
                 new[] { "/belt/balancer", "/general/early game" },
                 (payload.Hash, null, null));
 
-            var result = await _service.CreateOrAddVersion(request, (owner.Id, owner.UserName), null);
+            var result = await _service.CreateOrAddVersion(request, owner, null);
 
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
@@ -110,7 +110,7 @@ namespace FactorioTech.Tests
                 new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
                 (payload.Hash, null, null));
 
-            var result = await _service.CreateOrAddVersion(request, (owner.Id, owner.UserName), existing.BlueprintId);
+            var result = await _service.CreateOrAddVersion(request, owner, existing.BlueprintId);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);

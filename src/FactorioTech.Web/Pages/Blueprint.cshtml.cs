@@ -43,7 +43,8 @@ namespace FactorioTech.Web.Pages
         public async Task<IActionResult> OnGetAsync(string user, string slug, string? hash)
         {
             var query = _dbContext.Blueprints
-                .Where(bp => bp.Slug == slug.ToLowerInvariant() && bp.OwnerSlug == user.ToLowerInvariant());
+                .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant()
+                             && bp.NormalizedOwnerSlug == user.ToUpperInvariant());
 
             if (hash == null)
             {

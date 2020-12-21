@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SluggyUnidecode;
 using System;
 using System.Collections.Generic;
@@ -109,7 +108,7 @@ namespace FactorioTech.Web.Pages
             if (!string.IsNullOrWhiteSpace(importInput.ParentSlug))
             {
                 ParentBlueprint = await _dbContext.Blueprints.AsNoTracking()
-                    .Where(bp => bp.OwnerId == User.GetUserId() && bp.Slug == importInput.ParentSlug.ToLowerInvariant())
+                    .Where(bp => bp.OwnerId == User.GetUserId() && bp.NormalizedSlug == importInput.ParentSlug.ToUpperInvariant())
                     .Include(bp => bp.Tags)
                     .FirstOrDefaultAsync();
 
@@ -171,14 +170,15 @@ namespace FactorioTech.Web.Pages
             }
 
             var request = new BlueprintService.CreateRequest(
-                createInput.Slug.Trim().ToLowerInvariant(),
+                createInput.Slug.Trim(),
                 createInput.Title.Trim(),
                 createInput.Description?.Trim(),
                 createInput.Tags ?? Enumerable.Empty<string>(),
                 (Hash.Parse(PayloadHash), createInput.VersionName?.Trim(), createInput.VersionDescription?.Trim()));
 
+            var owner = await _dbContext.Users.FindAsync(User.GetUserId());
             var result = await _blueprintService.CreateOrAddVersion(
-                request, (User.GetUserId(), User.GetUserName()), ParentBlueprintId);
+                request, owner, ParentBlueprintId);
 
             switch (result)
             {

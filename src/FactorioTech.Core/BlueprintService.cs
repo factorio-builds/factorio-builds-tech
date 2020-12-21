@@ -114,10 +114,7 @@ namespace FactorioTech.Core
                 .ToListAsync();
         }
 
-        public async Task<CreateResult> CreateOrAddVersion(
-            CreateRequest request,
-            (Guid Id, string UserName) owner,
-            Guid? parentId)
+        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, User owner, Guid? parentId)
         {
             if (AppConfig.Policies.Slug.Blocklist.Contains(request.Slug.ToLowerInvariant()))
                 return new CreateResult.InvalidSlug(request.Slug);
@@ -185,7 +182,7 @@ namespace FactorioTech.Core
                 {
                     _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
                         owner.UserName, request.Slug);
-                    return new CreateResult.DuplicateSlug(request.Slug, owner);
+                    return new CreateResult.DuplicateSlug(request.Slug, (owner.Id, owner.UserName));
                 }
 
                 blueprint = new Blueprint(
@@ -223,7 +220,7 @@ namespace FactorioTech.Core
         }
 
         public async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
-            await _dbContext.Blueprints.AnyAsync(bp => bp.Slug == slug && bp.OwnerId == userId);
+            await _dbContext.Blueprints.AnyAsync(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.OwnerId == userId);
 
         public async Task SavePayloadGraph(Hash parentHash, IReadOnlyCollection<BlueprintPayload> payloads)
         {

@@ -61,7 +61,7 @@ namespace FactorioTech.Core.Data
 
             builder.Entity<Blueprint>(entity =>
             {
-                entity.HasAlternateKey(e => new { e.OwnerId, e.Slug });
+                entity.HasAlternateKey(e => new { e.OwnerId, e.NormalizedSlug });
 
                 entity.HasOne(e => e.LatestVersion!).WithMany()
                     .HasForeignKey(e => e.LatestVersionId)

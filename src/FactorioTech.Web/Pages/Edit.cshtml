@@ -16,8 +16,12 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text text-monospace" id="slug-username-addon">https://factorio.tech/@User.GetUserName()/</span>
                         </div>
-                        <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon"/>
+                        <input asp-for="CreateInput.Slug" class="form-control text-monospace" aria-describedby="slug-username-addon" readonly
+                               data-toggle="tooltip" data-title="Changing your username will be enabled in a future update." />
                     </div>
+                    <small class="form-text text-muted">
+                        <strong>Danger:</strong> Changing the slug will change the URL of this blueprint!
+                    </small>
                     <span asp-validation-for="CreateInput.Slug" class="text-danger"></span>
                 </div>
 
