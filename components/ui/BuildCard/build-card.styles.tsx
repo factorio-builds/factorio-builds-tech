@@ -1,6 +1,7 @@
-import { transparentize } from "polished"
+import { lighten } from "polished"
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
+import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildCardWrapper = styled.div`
@@ -8,8 +9,9 @@ export const BuildCardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  background: #555;
   cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
 `
 
 export const ImageWrapper = styled.div`
@@ -22,17 +24,14 @@ export const ImageWrapper = styled.div`
 `
 
 export const Content = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 64px 16px 16px;
-  background: linear-gradient(
-    180deg,
-    ${transparentize(1, "#150F1F")} 0%,
-    #20182e 75%
-  );
-  color: #fff;
+  padding: 16px;
+  background: #241a34;
+  color: ${COLOR.PURPLE900};
+
+  ${BuildCardWrapper}:hover & {
+    background: ${lighten(0.05, "#241a34")};
+    color: #fff;
+  }
 `
 
 export const Title = styled.h3`
@@ -48,13 +47,12 @@ export const Title = styled.h3`
   }
 `
 
-export const Book = styled.img`
-  height: 28px;
-  margin-right: 4px;
-`
-
 export const Category = styled.div`
   ${getTypo(ETypo.METADATA)};
   color: #a392b5;
   text-transform: lowercase;
+
+  ${BuildCardWrapper}:hover & {
+    color: ${lighten(0.05, "#a392b5")};
+  }
 `

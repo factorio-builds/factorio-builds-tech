@@ -39,9 +39,15 @@ function BuildCard({
         </SC.ImageWrapper>
         <SC.Content>
           <SC.Title>
-            {isBook && <SC.Book src="/img/blueprint-book.png" />}
             {icons.length > 0 && <BuildIcon icons={icons} />}
-            <WithIcons input={name} />
+            <WithIcons
+              input={name}
+              prefix={
+                isBook ? (
+                  <img src="/img/blueprint-book.png" alt="" />
+                ) : undefined
+              }
+            />
           </SC.Title>
           <Stacker orientation="horizontal" gutter={8}>
             {categories.map((category) => {

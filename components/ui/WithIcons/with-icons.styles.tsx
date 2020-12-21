@@ -1,8 +1,11 @@
 import styled from "styled-components"
 
 export const WithIconsWrapper = styled.div`
-  display: flex;
-  align-items: center;
+  &::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
 
   > :first-child {
     margin-left: 0;
@@ -13,7 +16,9 @@ export const WithIconsWrapper = styled.div`
   }
 
   img {
-    width: 1.25em;
-    margin: 0 0.5em;
+    float: left;
+    width: auto;
+    height: 1em;
+    margin: 0 0.25em;
   }
 `
