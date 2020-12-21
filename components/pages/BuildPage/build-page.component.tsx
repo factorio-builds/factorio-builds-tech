@@ -106,7 +106,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.id === user?.id
-  const state = getGameState(build.metadata.state[0])
+  const states = build.metadata.state.map(getGameState)
 
   return (
     <Layout
@@ -171,9 +171,11 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
               })}
             </AsideGroup>
             <AsideGroup title="Game state">
-              <MetadataWithIcon itemName={state.iconName}>
-                {state.name}
-              </MetadataWithIcon>
+              {states.map((state) => (
+                <MetadataWithIcon key={state.value} itemName={state.iconName}>
+                  {state.name}
+                </MetadataWithIcon>
+              ))}
             </AsideGroup>
             <AsideGroup title="Extra">
               <SC.AsideSubGroup>

@@ -17,7 +17,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
   const { getCategory } = useCategories()
   const { getGameState } = useGameStates()
 
-  const gameState = getGameState(props.build.metadata.state[0])
+  const gameStates = props.build.metadata.state.map(getGameState)
   const icons = props.build.metadata.icons
 
   return (
@@ -33,9 +33,11 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
       }
       subtitle={
         <Stacker orientation="horizontal" gutter={16}>
-          <SC.Meta>
-            {gameState.icon} {gameState.name}
-          </SC.Meta>
+          {gameStates.map((gameState) => (
+            <SC.Meta key={gameState.value}>
+              {gameState.icon} {gameState.name}
+            </SC.Meta>
+          ))}
           {props.build.metadata.categories.map((categoryName) => {
             const category = getCategory(categoryName)
 

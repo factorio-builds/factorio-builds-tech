@@ -7,7 +7,6 @@ import { Build } from "../../db/entities/build.entity"
 import { User } from "../../db/entities/user.entity"
 import { BuildRepository } from "../../db/repository/build.repository"
 import { UserRepository } from "../../db/repository/user.repository"
-import { EState } from "../../types"
 import { decodeBlueprint, isBook } from "../../utils/blueprint"
 import { getIcons } from "../../utils/build"
 import {
@@ -118,7 +117,10 @@ async function buildMapper({
     description: fields.description as string,
     json: decoded,
     metadata: {
-      state: [fields.state as EState],
+      // @ts-ignore
+      state: JSON.parse(fields.state).length
+        ? JSON.parse(fields.state as string)
+        : [],
       // @ts-ignore
       categories: JSON.parse(fields.categories).length
         ? JSON.parse(fields.categories as string)
