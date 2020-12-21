@@ -18,7 +18,7 @@
     "typeorm": "yarn local ./node_modules/typeorm/cli.js"
   },
   "dependencies": {
-    "aws-sdk": "^2.809.0",
+    "aws-sdk": "^2.814.0",
     "axios": "^0.21.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
