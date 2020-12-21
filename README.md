@@ -1,6 +1,6 @@
 # factorio.tech
 
-The one and only [Factorio](https://www.factorio.com) blueprints hub: https://factorio.tech
+A [Factorio](https://www.factorio.com) blueprints hub. Currently in **public beta**: https://beta.factorio.tech
 
 ## Getting Started
 
