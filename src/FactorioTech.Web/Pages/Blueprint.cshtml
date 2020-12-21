@@ -52,14 +52,14 @@
                         </div>
                     }
                     <div class="btn-group ml-2" role="group">
-                        <a href="@Url.BlueprintRaw(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
+                        <a href="@Url.BlueprintRaw(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug)" class="btn btn-sm btn-default"
                            data-toggle="tooltip" data-placement="top" title="View the raw blueprint string">
                             <i class="fas fa-file-alt"></i>
                             Raw
                         </a>
                         @if (Model.Envelope.Blueprint != null)
                         {
-                            <a href="@Url.BlueprintEditor(Model.Blueprint.Owner!.UserName, Model.Blueprint.Slug, Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
+                            <a href="@Url.BlueprintEditor(Model.SelectedVersion.Hash)" class="btn btn-sm btn-default"
                                data-toggle="tooltip" data-placement="top" title="Open this blueprint in the Factorio Blueprint Editor" target="_blank">
                                 <i class="fas fa-border-none"></i>
                                 View in Editor
@@ -148,6 +148,8 @@
         await Html.RenderComponentAsync<BlueprintEnvelope>(RenderMode.Static, new {
             Model.Envelope,
             Model.PayloadCache,
+            ShowSelectCoverButton = false,
+            ShowViewRawButton = true,
         })
     )
 </div>

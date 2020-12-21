@@ -18,6 +18,19 @@
             <div class="col-md-4">
                 <div class="btn-toolbar float-right" role="toolbar">
                     <div class="btn-group mr-2" role="group">
+                        @if (ShowViewRawButton)
+                        {
+                            <a href="@Url.BlueprintRaw(payload.Hash)" class="btn btn-sm btn-default"
+                               data-toggle="tooltip" data-placement="top" title="View the raw blueprint string">
+                                <i class="fas fa-file-alt"></i>
+                                Raw
+                            </a>
+                        }
+                        <a href="@Url.BlueprintEditor(payload.Hash)" class="btn btn-sm btn-default"
+                           data-toggle="tooltip" data-placement="top" title="Open this blueprint in the Factorio Blueprint Editor" target="_blank">
+                            <i class="fas fa-border-none"></i>
+                            View in Editor
+                        </a>
                         <button type="button" class="btn btn-sm btn-default"
                                 data-toggle="copy-blueprint" data-payload="@payload.Encoded">
                             <i class="fas fa-copy"></i>
@@ -108,6 +121,9 @@
 
     [Parameter]
     public bool ShowSelectCoverButton { get; set; }
+
+    [Parameter]
+    public bool ShowViewRawButton { get; set; }
 
     [Parameter]
     public FactorioApi.Blueprint Blueprint { get; set; } = null!;

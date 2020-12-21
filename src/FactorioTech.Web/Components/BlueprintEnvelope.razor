@@ -3,7 +3,8 @@
     <BlueprintCard BookHash="@BookHash"
                    PayloadCache="@PayloadCache"
                    Blueprint="@Envelope.Blueprint"
-                   ShowSelectCoverButton="@ShowSelectCoverButton" />
+                   ShowSelectCoverButton="@ShowSelectCoverButton"
+                   ShowViewRawButton="@ShowViewRawButton"  />
 }
 else if (Envelope.BlueprintBook != null)
 {
@@ -55,7 +56,8 @@ else if (Envelope.BlueprintBook != null)
                         <BlueprintEnvelope BookHash="@PayloadCache[Envelope].Hash"
                                            PayloadCache="@PayloadCache"
                                            Envelope="@envelope"
-                                           ShowSelectCoverButton="@ShowSelectCoverButton" />
+                                           ShowSelectCoverButton="@ShowSelectCoverButton"
+                                           ShowViewRawButton="@ShowViewRawButton" />
                     }
                 </div>
             }
@@ -74,6 +76,9 @@ else
 
     [Parameter]
     public bool ShowSelectCoverButton { get; set; }
+
+    [Parameter]
+    public bool ShowViewRawButton { get; set; }
 
     [Parameter]
     public FactorioApi.BlueprintEnvelope Envelope { get; set; } = null!;

@@ -18,10 +18,7 @@ namespace FactorioTech.Web.Controllers
 
         private readonly AppDbContext _dbContext;
 
-        public RawController(AppDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        public RawController(AppDbContext dbContext) => _dbContext = dbContext;
 
         [HttpGet("{owner}/{slug}/raw")]
         public async Task<IActionResult> GetLatest(string owner, string slug)
@@ -37,15 +34,13 @@ namespace FactorioTech.Web.Controllers
             return Ok(encoded);
         }
 
-        [HttpGet("{owner}/{slug}/{hash}/raw")]
+        [HttpGet("/raw/{hash}")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetVersion(string owner, string slug, string hash)
+        public async Task<IActionResult> GetPayload(string hash)
         {
-            var encoded = await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.NormalizedOwnerSlug == owner.ToUpperInvariant())
-                .Join(_dbContext.BlueprintVersions, bp => bp.BlueprintId, v => v.BlueprintId, (bp, v) => v)
+            var encoded = await _dbContext.BlueprintPayloads.AsNoTracking()
                 .Where(v => v.Hash == new Hash(hash))
-                .Select(v => v.Payload!.Encoded)
+                .Select(v => v.Encoded)
                 .FirstOrDefaultAsync();
 
             if (encoded == null)

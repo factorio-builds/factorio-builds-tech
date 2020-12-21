@@ -30,7 +30,7 @@ namespace FactorioTech.Core
                 public const string AllowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
                 public const string AllowedCharactersRegex = "[a-zA-Z0-9_-]+";
                 public const string AllowedCharactersErrorMessage = "Only latin characters (a-z and A-Z), digits (0-9), underscore (_) and hyphen (-) are allowed.";
-                public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "administrator", "delete", "edit", "import" };
+                public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "administrator", "delete", "edit", "import", "raw" };
             }
         }
 
