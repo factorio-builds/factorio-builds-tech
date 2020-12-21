@@ -4,6 +4,7 @@ import * as SC from "./with-icons.styles"
 
 interface IWithIcons {
   input: string
+  prefix?: JSX.Element
 }
 
 function WithIcons(props: IWithIcons): JSX.Element {
@@ -26,7 +27,11 @@ function WithIcons(props: IWithIcons): JSX.Element {
     })
   }, [props.input])
 
-  return <SC.WithIconsWrapper>{formatted}</SC.WithIconsWrapper>
+  return (
+    <SC.WithIconsWrapper>
+      {props.prefix} {formatted}
+    </SC.WithIconsWrapper>
+  )
 }
 
 export default WithIcons
