@@ -78,7 +78,8 @@ namespace FactorioTech.Web.Pages
             Envelope = await _blueprintConverter.Decode(importInput.BlueprintString);
             BlueprintString = importInput.BlueprintString;
 
-            if (FirstBlueprintOrDefault(Envelope) == null)
+            var firstBlueprint = FirstBlueprintOrDefault(Envelope);
+            if (firstBlueprint == null)
             {
                 StatusMessage = "Error: A blueprint book must contain at least one blueprint.";
                 return Page();
@@ -134,9 +135,13 @@ namespace FactorioTech.Web.Pages
 
             if (ParentBlueprintId == null)
             {
+                // pre-load first rendering so the cover can be generated
+                var firstPayload = PayloadCache[firstBlueprint];
+                await _imageService.SaveRenderingFull(firstPayload);
+
                 CreateInput.VersionName = "v1.0";
                 CreateInput.VersionDescription = "The first release of this blueprint.";
-                CreateInput.Image.Hash = PayloadCache.First(kvp => kvp.Key is FactorioApi.Blueprint).Value.Hash.ToString();
+                CreateInput.Image.Hash = firstPayload.Hash.ToString();
             }
 
             await _blueprintService.SavePayloadGraph(hash, PayloadCache.Values);
