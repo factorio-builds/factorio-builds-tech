@@ -1,0 +1,592 @@
+openapi: "3.0.3"
+info:
+  version: 1.0.0
+  title: factorio.tech API
+servers:
+  - url: https://api.factorio.tech
+paths:
+  /builds:
+    get:
+      summary: List all builds
+      tags:
+        - builds
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: sort_field
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - favorites
+              - updated
+              - created
+              - title
+            default: updated
+        - name: sort_direction
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - ascending
+              - descending
+            default: descending
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: version
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: q
+          in: query
+          description: Seach term
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A paged list of builds
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Builds"
+        default:
+           $ref: "#/components/responses/Problem"
+
+    post:
+      summary: Create a build
+      tags:
+        - builds
+      security:
+        - OAuth: []
+      responses:
+        '201':
+          $ref: "#/components/responses/Created"
+        default:
+          $ref: "#/components/responses/Problem"
+
+  /builds/{ownerSlug}/{buildSlug}:
+    get:
+      summary: Get build details
+      tags:
+        - builds
+      parameters:
+        - name: ownerSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: buildSlug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Build"
+        default:
+           $ref: "#/components/responses/Problem"
+
+  /builds/{buildId}/cover:
+    get:
+      summary: Get the cover image for a build
+      tags:
+        - builds
+      parameters:
+        - name: buildId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/gif:
+              schema:
+                type: string
+                format: binary
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /payloads:
+    post:
+      summary: Create a payload
+      tags:
+        - builds
+      security:
+        - OAuth: []
+      responses:
+        '201':
+          $ref: "#/components/responses/Created"
+        default:
+          $ref: "#/components/responses/Problem"
+
+
+  /payloads/{hash}:
+    get:
+      summary: Get payload details
+      tags:
+        - builds
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildPayload"
+        default:
+           $ref: "#/components/responses/Problem"
+
+  /payloads/{hash}/raw:
+    get:
+      summary: Get the raw encoded blueprint string
+      tags:
+        - builds
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+        default:
+           $ref: "#/components/responses/Problem"
+
+  /payloads/{hash}/rendering/{type}:
+    get:
+      summary: Get the blueprint rendering
+      tags:
+        - builds
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - full
+              - thumb
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /icons/{size}/{type}/{name}.png:
+    get:
+      summary: Get a game icon in the specified size.
+      tags:
+        - assets
+      parameters:
+        - name: size
+          in: path
+          required: true
+          schema:
+            type: integer
+            enum:
+              - 64
+              - 32
+              - 16
+              - 8
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - item
+              - virtual
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /rpc/search-autocomplete:
+    post:
+      summary: Get a list of matches and suggestions for the search box autocomplete.
+      tags:
+        - procedures
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - term
+              properties:
+                term:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - builds
+                properties:
+                  builds:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        title:
+                          type: string
+                        slug:
+                          type: string
+                        owner:
+                          $ref: "#/components/schemas/User"
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/User"
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /rpc/render-markdown:
+    post:
+      summary: Convert markdown to HTML. This operation has no side-effects.
+      security:
+        - OAuth: []
+      tags:
+        - procedures
+      requestBody:
+        required: true
+        content:
+          text/markdown:
+            schema:
+              type: string
+            example: Hello **world**!
+      responses:
+        '200':
+          description: Success
+          content:
+            text/html:
+              schema:
+                type: string
+              example: Hello <strong>world</strong>!
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /rpc/verify-username:
+    post:
+      summary: Verify that a username is valid and available. This operation has no side-effects.
+      security:
+        - OAuth: []
+      tags:
+        - procedures
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - is_valid
+                properties:
+                  is_valid:
+                    type: boolean
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /rpc/verify-slug:
+    post:
+      summary: Verify that a build slug is valid and available. This operation has no side-effects.
+      security:
+        - OAuth: []
+      tags:
+        - procedures
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - slug
+              properties:
+                slug:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - is_valid
+                properties:
+                  is_valid:
+                    type: boolean
+        default:
+            $ref: "#/components/responses/Problem"
+
+  /rpc/toggle-favorite:
+    post:
+      summary: Add or remove a build from the authenticated user's favorites.
+      security:
+        - OAuth: []
+      tags:
+        - procedures
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - build_id
+              properties:
+                build_id:
+                  type: string
+      responses:
+        '204':
+          description: Success
+        default:
+            $ref: "#/components/responses/Problem"
+
+components:
+  securitySchemes:
+    OAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    Created:
+      description: The resource was created successfully
+      headers:
+        location:
+          description: A link to the created resource
+          schema:
+            type: string
+
+    Problem:
+      description: An error occurred
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    Builds:
+      type: object
+      required:
+        - builds
+      properties:
+        builds:
+          type: array
+          items:
+            $ref: "#/components/schemas/Build"
+
+    Build:
+      type: object
+      required:
+        - slug
+        - created_at
+        - updated_at
+        - title
+        - owner
+        - latest_version
+        - tags
+      properties:
+        slug:
+          type: string
+          example: my-blueprint
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+          example: My Blueprint
+        description:
+          type: string
+          example: This is my amazing blueprint.
+        owner:
+          $ref: "#/components/schemas/User"
+        latest_version:
+          $ref: "#/components/schemas/BuildVersion"
+        tags:
+          type: array
+          items:
+            type: string
+          example:
+            - /belt/balancer
+            - /general/compact
+
+    BuildVersion:
+      type: object
+      required:
+        - title
+        - payload
+      properties:
+        created_at:
+          type: string
+          format: date-time
+        title:
+          type: string
+        description:
+          type: string
+        payload:
+          $ref: "#/components/schemas/BuildPayload"
+
+    BuildPayload:
+      type: object
+      required:
+        - hash
+        - game_version
+        - encoded
+        - blueprint
+      properties:
+        hash:
+          type: string
+        game_version:
+          type: string
+        encoded:
+          type: string
+        blueprint:
+          $ref: "#/components/schemas/BlueprintEnvelope"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/BuildPayload"
+
+    BlueprintEnvelope:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - blueprint
+            - blueprint-book
+        label:
+          type: string
+        description:
+          type: string
+        icons:
+          type: array
+          items:
+            $ref: "#/components/schemas/BlueprintEntity"
+        entities:
+          type: array
+          items:
+            $ref: "#/components/schemas/BlueprintEntity"
+        # children:
+        #   type: array
+        #   items:
+        #     $ref: "#/components/schemas/BlueprintEnvelope"
+
+    BlueprintEntity:
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          type: string
+          enum:
+            - item
+            - virtual
+        name:
+          type: string
+
+    User:
+      type: object
+      properties:
+        display_name:
+          type: string
+          example: Factorio Meister 2000
+        username:
+          type: string
+          example: FactorioMeister
+
+    Problem:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
