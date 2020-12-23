@@ -22,3 +22,4 @@ deploy
 secrets
 volumes
 infrastructure
+!.config

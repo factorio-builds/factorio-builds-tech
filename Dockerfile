@@ -10,12 +10,15 @@ RUN sed -i '/@import "..\/..\/node_modules\/bootstrap4/d' \
     node_modules/selectize/src/scss/selectize.bootstrap4.scss
 
 WORKDIR /app
+
+COPY .config .
+RUN dotnet tool restore
+
 COPY FactorioTech.sln .
 COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
 COPY src/FactorioTech.Web/gulpfile.js src/FactorioTech.Web/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
-
 RUN dotnet restore
 
 COPY . .
