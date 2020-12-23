@@ -23,9 +23,11 @@ The entire factorio.tech stack can be run in a self-contained local environment 
                 --project /app/src/FactorioTech.Core/FactorioTech.Core.csproj \
                 --connection "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
 
-4. Launch the website 🚀
+4. Open the website in your browser of choice and take it for a spin 🚀
 
-    http://localhost
+    **Frontend**: http://localhost:4000
+
+    **API**: http://localhost:4001/swagger/index.html
 
 ## Prerequisites
 
@@ -44,7 +46,7 @@ You can download this data either using Steam or from the official website: http
 
 ### External OAuth providers
 
-The factorio.tech application does not support logging in with username/password, but instead relies on external OAuth providers. To run the application locally, you need to configure at least one of the available providers from the table below. The callback URL must be set to `http://localhost` (or match the host and port as specified in [docker-compose.yaml](docker-compose.yaml)) for running in Docker and `https://localhost:5001` for running in the IDE or `dotnet`.
+The factorio.tech application does not support logging in with username/password, but instead relies on external OAuth providers. To run the application locally, you need to configure at least one of the available providers from the table below. The callback URL must be set to `http://localhost:4000` (or match the host and port as specified in [docker-compose.yaml](docker-compose.yaml)) for running in Docker and `https://localhost:5001` for running in the IDE or `dotnet`.
 
 | Key       | URL                                         |
 | --------- | ------------------------------------------- |

@@ -141,6 +141,7 @@ namespace FactorioTech.Web
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();
             services.AddTransient<ImageService>();
+            services.AddTransient<AssetService>();
             services.AddTransient<BlueprintService>();
         }
 

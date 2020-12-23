@@ -55,7 +55,7 @@ namespace FactorioTech.Tests
             var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
             await new BlueprintBuilder().WithPayload(payload).WithOwner(owner).Save(_dbContext);
 
-            var blueprints = await _service.GetBlueprints((1, 100), ("created", "asc"), Array.Empty<string>(), null, null);
+            var blueprints = await _service.GetBlueprints((1, 100), (BlueprintService.SortField.Created, BlueprintService.SortDirection.Asc), Array.Empty<string>(), null, null);
             blueprints.Should().HaveCount(1);
 
             blueprints.ElementAt(0).Slug.Should().Be("simple-book");
