@@ -13,12 +13,12 @@ secrets:
 
 services:
   web:
-    # image: ghcr.io/dstockhammer/factorio-tech/web:ci
-    image: factorio-tech/web
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: web
+    image: ghcr.io/dstockhammer/factorio-tech/web:ci
+    # image: factorio-tech/web
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   target: web
     ports:
       - "4000:8080"
     volumes:
@@ -39,12 +39,12 @@ services:
       - postgres
 
   api:
-    # image: ghcr.io/dstockhammer/factorio-tech/api:ci
-    image: factorio-tech/api
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: api
+    image: ghcr.io/dstockhammer/factorio-tech/api:ci
+    # image: factorio-tech/api
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    #   target: api
     ports:
       - "4001:8080"
     volumes:
@@ -65,11 +65,11 @@ services:
       - postgres
 
   fbsr:
-    # image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
-    image: factorio-tech/fbsr-wrapper
-    build:
-      context: ./fbsr-wrapper
-      dockerfile: Dockerfile
+    image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
+    # image: factorio-tech/fbsr-wrapper
+    # build:
+    #   context: ./fbsr-wrapper
+    #   dockerfile: Dockerfile
     ports:
       - "8080:8080"
     volumes:

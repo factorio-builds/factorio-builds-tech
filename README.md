@@ -11,9 +11,11 @@ The entire factorio.tech stack can be run in a self-contained local environment 
     1. Download [Factorio game data](#factorio-game-data)
     2. Configure at least one [external OAuth provider](#external-oauth-providers)
 
-2. Build and run the application
+2. Run the application
 
         docker-compose up --detach --build --remove-orphans
+
+    **Note**: This command will pull the [latest **ci** images](https://github.com/dstockhammer?tab=packages&repo_name=factorio-tech) from the GitHub Docker registry. If you prefer to instead **build** the images locally, open [docker-compose.yaml](docker-compose.yaml), comment out the lines with `image: ghcr.io/*` and uncomment the blocks with `image: factorio-tech/*` and `build: ..`. The same command will then build the Docker images locally.
 
 3. Apply database migrations. You only need to run migrations the first time, but the command is safe to run repeatedly.
 
