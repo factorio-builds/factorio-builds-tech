@@ -101,9 +101,8 @@ namespace FactorioTech.Web.Pages
             if (dupe != null)
             {
                 var fullSlug = $"{dupe.OwnerSlug}/{dupe.Slug}";
-                StatusMessage = $"Error: This blueprint string has already been imported in <a href=\"/{fullSlug}\">{fullSlug}</a>.";
-                TempData.Keep(nameof(BlueprintString));
-                return RedirectToPage();
+                StatusMessage = $"Warning: This blueprint string has already been imported in <a href=\"/{fullSlug}\">{fullSlug}</a>." +
+                                $"You can still continue the import and create a new blueprint if you're sure that this is what you want.";
             }
 
             if (!string.IsNullOrWhiteSpace(importInput.ParentSlug))
