@@ -15,10 +15,13 @@ The entire factorio.tech stack can be run in a self-contained local environment 
 
         docker-compose up --detach --build --remove-orphans
 
-3. Run database migrations
+3. Apply database migrations. You only need to run migrations the first time, but the command is safe to run repeatedly.
 
         docker build -t factorio-tech/build --target build .
-        docker run --rm --network factorio-tech_default factorio-tech/build ef database update --configuration Release --no-build --project /app/src/FactorioTech.Core/FactorioTech.Core.csproj --connection "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+        docker run --rm --network factorio-tech_default factorio-tech/build \
+            ef database update --configuration Release --no-build \
+                --project /app/src/FactorioTech.Core/FactorioTech.Core.csproj \
+                --connection "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
 
 4. Launch the website 🚀
 
