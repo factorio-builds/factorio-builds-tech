@@ -50,7 +50,8 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested payload does not exist</response>
         [HttpGet("{hash}")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(PayloadModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ThinPayloadModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FullPayloadModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDetails(Hash hash, [FromQuery(Name = "include_children")]bool includeChildren = false)
@@ -73,7 +74,7 @@ namespace FactorioTech.Api.Controllers
                 await payloadGraph.EnsureInitializedGraph(envelope);
             }
 
-            return Ok(payload.ToViewModel(envelope, payloadGraph));
+            return Ok(payload.ToViewModel(Url, envelope, payloadGraph));
         }
 
         /// <summary>

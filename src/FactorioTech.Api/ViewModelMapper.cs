@@ -1,6 +1,9 @@
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,24 +11,41 @@ namespace FactorioTech.Api
 {
     public static class ViewModelMapper
     {
-        public static BuildsModel ToViewModel(this IEnumerable<Blueprint> blueprints, FactorioApi.BlueprintEnvelope? envelope = null) =>
+        public static BuildsModel ToViewModel(this IEnumerable<Blueprint> blueprints, IUrlHelper urlHelper) =>
             new()
             {
-                Builds = blueprints.Select(bp => bp.ToViewModel(envelope)),
+                Builds = blueprints.Select(b => b.ToThinViewModel(urlHelper)),
             };
 
-        public static BuildModel ToViewModel(this Blueprint blueprint, FactorioApi.BlueprintEnvelope? envelope = null) =>
+        public static ThinBuildModel ToThinViewModel(this Blueprint blueprint, IUrlHelper urlHelper) =>
             new()
             {
+                Links = urlHelper.GetLinks(blueprint),
                 Slug = blueprint.Slug,
                 CreatedAt = blueprint.CreatedAt,
                 UpdatedAt = blueprint.UpdatedAt,
                 Title = blueprint.Title,
-                Description = blueprint.Description,
-                Owner = blueprint.Owner?.ToViewModel() ?? new UserModel { Username = blueprint.OwnerSlug },
-                LatestVersion = blueprint.LatestVersion?.ToViewModel(envelope),
-                LatestGameVersion = blueprint.LatestGameVersion,
-                Tags = blueprint.Tags?.Select(t => t.Value)
+                Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
+                LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
+            };
+
+        public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+            new()
+            {
+                Links = urlHelper.GetLinks(blueprint),
+                Slug = blueprint.Slug,
+                CreatedAt = blueprint.CreatedAt,
+                UpdatedAt = blueprint.UpdatedAt,
+                Title = blueprint.Title,
+                Description = blueprint.Description?.Let(description => new FullBuildModel.DescriptionModel
+                {
+                    Markdown = description,
+                    Html = MarkdownConverter.ToHtml(description),
+                }),
+                LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
+                LatestVersion = blueprint.LatestVersion?.ToViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(Blueprint.LatestVersion)),
+                Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(Blueprint.Owner)),
+                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
             };
 
         public static UserModel ToViewModel(this User user) =>
@@ -33,28 +53,44 @@ namespace FactorioTech.Api
             {
                 Username = user.UserName,
                 DisplayName = user.DisplayName,
+                RegisteredAt = user.RegisteredAt,
             };
 
-        public static VersionModel ToViewModel(this BlueprintVersion version, FactorioApi.BlueprintEnvelope? envelope = null) =>
+        public static VersionModel ToViewModel(this BlueprintVersion version, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
                 CreatedAt = version.CreatedAt,
                 Name = version.Name,
                 Description = version.Description,
-                Payload = version.Payload != null && envelope != null ? version.Payload.ToViewModel(envelope) : null,
+                Payload = version.Payload?.ToThinViewModel(urlHelper, envelope)
+                          ?? throw new ArgumentNullException(nameof(BlueprintVersion.Payload))
             };
-        
 
-        public static PayloadModel ToViewModel(this BlueprintPayload payload, FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph = null) =>
+        public static PayloadModelBase ToViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph = null) =>
+            payloadGraph == null
+                ? payload.ToThinViewModel(urlHelper, envelope)
+                : payload.ToFullViewModel(urlHelper, envelope, payloadGraph);
+
+        public static ThinPayloadModel ToThinViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
-                Hash = payload.Hash.ToString(),
-                GameVersion = payload.GameVersion.ToString(4),
+                Links = urlHelper.GetLinks(payload),
+                Hash = payload.Hash,
+                GameVersion = payload.GameVersion,
                 Encoded = payload.Encoded,
                 Blueprint = envelope.ToViewModel(),
-                Children = payloadGraph == null ? null
-                    : envelope.BlueprintBook?.Blueprints?.Select(x => payloadGraph[x].ToViewModel(x, payloadGraph)) 
-                    ?? Enumerable.Empty<PayloadModel>()
+            };
+
+        public static FullPayloadModel ToFullViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache payloadGraph) =>
+            new()
+            {
+                Links = urlHelper.GetLinks(payload),
+                Hash = payload.Hash,
+                GameVersion = payload.GameVersion,
+                Encoded = payload.Encoded,
+                Blueprint = envelope.ToViewModel(),
+                Children = envelope.BlueprintBook?.Blueprints?.Select(e => payloadGraph[e].ToFullViewModel(urlHelper, e, payloadGraph))
+                           ?? Enumerable.Empty<FullPayloadModel>(),
             };
 
         public static BlueprintEnvelopeModel ToViewModel(this FactorioApi.BlueprintEnvelope envelope) =>

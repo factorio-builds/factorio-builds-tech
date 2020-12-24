@@ -17,10 +17,24 @@ namespace FactorioTech.Core.Domain
 
         public static Hash Empty => new(string.Empty);
 
-        public static Hash Parse(string value) =>
-            Regex.IsMatch(value, "^[a-f0-9]{32}$", RegexOptions.Compiled)
-                ? new Hash(value)
+        public static Hash Parse(string? value) =>
+            TryParse(value, out var hash) 
+                ? hash
                 : throw new ArgumentOutOfRangeException(nameof(value), "The provided input is not a valid hash.");
+
+        public static bool TryParse(string? value, out Hash hash)
+        {
+            if (value != null && Regex.IsMatch(value, "^[a-f0-9]{32}$", RegexOptions.Compiled))
+            {
+                hash = new Hash(value);
+                return true;
+            }
+            else
+            {
+                hash = Empty;
+                return false;
+            }
+        }
 
         public static Hash Compute(string input) =>
             new(string.Join(string.Empty, MD5.Create()
@@ -42,7 +56,7 @@ namespace FactorioTech.Core.Domain
             public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType) => destinationType == typeof(Hash);
 
             public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) =>
-                Hash.Parse(value as string ?? value.ToString() ?? throw new ArgumentException(nameof(value)));
+                Parse(value as string ?? value.ToString() ?? throw new ArgumentException(nameof(value)));
 
             public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) =>
                 value.ToString() ?? throw new ArgumentException(nameof(value));

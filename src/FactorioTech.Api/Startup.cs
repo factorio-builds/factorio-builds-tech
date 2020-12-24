@@ -1,3 +1,4 @@
+using FactorioTech.Api.Extensions;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
@@ -34,6 +35,8 @@ namespace FactorioTech.Api
             services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new VersionJsonConverter());
+                options.JsonSerializerOptions.Converters.Add(new HashJsonConverter());
                 options.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
                 options.JsonSerializerOptions.IgnoreNullValues = true;
                 options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
@@ -47,9 +50,9 @@ namespace FactorioTech.Api
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
                 options.UseInlineDefinitionsForEnums();
-                
                 options.MapType(typeof(Instant), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(Hash), () => new OpenApiSchema { Type = "string" });
+                options.MapType(typeof(Version), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(AssetService.IconSize), () => new OpenApiSchema { Type = "integer" });
             });
 

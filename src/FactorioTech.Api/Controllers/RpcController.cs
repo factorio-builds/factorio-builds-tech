@@ -1,9 +1,6 @@
-using FactorioTech.Core;
 using FactorioTech.Core.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Mime;
 
 namespace FactorioTech.Api.Controllers
 {
@@ -27,9 +24,6 @@ namespace FactorioTech.Api.Controllers
         /// <response code="200" type="text/html" example="asdasdasd blub">The converted HTML</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         [HttpPost("render-markdown")]
-        [Produces(MediaTypeNames.Text.Html)]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public string RenderMarkdown([FromBody]RenderMarkdownRequest request) => MarkdownConverter.ToHtml(request.Content);
     }
 }

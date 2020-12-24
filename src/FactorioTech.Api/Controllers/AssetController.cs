@@ -1,4 +1,3 @@
-using FactorioTech.Core;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

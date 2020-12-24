@@ -8,12 +8,14 @@ namespace FactorioTech.Api.ViewModels
     public class VersionModel
     {
         [Required]
+        [DataType(DataType.DateTime)]
         public Instant CreatedAt { get; set; }
 
         public string? Name { get; set; }
 
         public string? Description { get; set; }
 
-        public PayloadModel? Payload { get; set; }
+        [Required]
+        public ThinPayloadModel Payload { get; set; }
     }
 }
