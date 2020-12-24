@@ -2,7 +2,7 @@ imageNamespace: ghcr.io/dstockhammer/factorio-tech
 
 hostNames:
   api: api.factorio.tech
-  web: beta.factorio-tech
+  web: beta.factorio.tech
 
 replicas:
   fbsrWrapper: 1
