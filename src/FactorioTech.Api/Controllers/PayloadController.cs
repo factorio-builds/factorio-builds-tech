@@ -2,6 +2,7 @@ using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,15 +25,18 @@ namespace FactorioTech.Api.Controllers
 
         private readonly ILogger<PayloadController> _logger;
         private readonly AppDbContext _dbContext;
+        private readonly BlueprintConverter _blueprintConverter;
         private readonly ImageService _imageService;
 
         public PayloadController(
             ILogger<PayloadController> logger,
             AppDbContext dbContext,
+            BlueprintConverter blueprintConverter,
             ImageService imageService)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _blueprintConverter = blueprintConverter;
             _imageService = imageService;
         }
 
@@ -40,6 +44,7 @@ namespace FactorioTech.Api.Controllers
         /// Get payload details
         /// </summary>
         /// <param name="hash" example="deab61eafb24af64f133cce738dfbabd">The hash of the desired payload</param>
+        /// <param name="includeChildren">Specify whether to load the entire graph with all children or only the requested payload</param>
         /// <response code="200" type="application/json">The details of the requested payload</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested payload does not exist</response>
@@ -48,7 +53,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(PayloadModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDetails(Hash hash)
+        public async Task<IActionResult> GetDetails(Hash hash, [FromQuery(Name = "include_children")]bool includeChildren = false)
         {
             var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
                 .Where(v => v.Hash == hash)
@@ -57,7 +62,18 @@ namespace FactorioTech.Api.Controllers
             if (payload == null)
                 return NotFound();
 
-            return Ok(payload.ToViewModel());
+            var envelope = await _blueprintConverter.Decode(payload.Encoded);
+
+            PayloadCache? payloadGraph = null;
+
+            if (includeChildren)
+            {
+                payloadGraph = new PayloadCache();
+                payloadGraph.TryAdd(envelope, payload);
+                await payloadGraph.EnsureInitializedGraph(envelope);
+            }
+
+            return Ok(payload.ToViewModel(envelope, payloadGraph));
         }
 
         /// <summary>

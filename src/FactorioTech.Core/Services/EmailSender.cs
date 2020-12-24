@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Services
 {
     public interface IEmailSender
     {

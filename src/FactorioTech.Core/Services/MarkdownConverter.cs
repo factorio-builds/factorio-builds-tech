@@ -1,6 +1,6 @@
 using Markdig;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Services
 {
     public class MarkdownConverter
     {

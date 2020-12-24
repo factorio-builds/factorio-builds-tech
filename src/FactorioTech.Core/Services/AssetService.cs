@@ -6,7 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Services
 {
     public class AssetService
     {

@@ -1,4 +1,5 @@
 using FactorioTech.Core;
+using FactorioTech.Core.Services;
 using FactorioTech.Tests.Helpers;
 using FluentAssertions;
 using System;

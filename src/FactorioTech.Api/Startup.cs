@@ -1,6 +1,7 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;

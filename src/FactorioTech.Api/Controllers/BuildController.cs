@@ -1,5 +1,6 @@
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
+using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;

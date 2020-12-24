@@ -1,4 +1,5 @@
 using FactorioTech.Core;
+using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Threading.Tasks;
 

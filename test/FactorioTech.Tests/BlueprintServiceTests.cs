@@ -4,6 +4,7 @@ using DotNet.Testcontainers.Containers.Modules.Databases;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Services;
 using FactorioTech.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

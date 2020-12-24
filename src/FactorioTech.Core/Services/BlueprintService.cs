@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Services
 {
     public class BlueprintService
     {
@@ -128,11 +128,11 @@ namespace FactorioTech.Core
                 .ToListAsync();
         }
 
-        public async Task<Blueprint?> GetBlueprint(string ownerSlug, string buildSlug)
+        public async Task<Blueprint?> GetBlueprint(string owner, string slug)
         {
             var blueprint = await _dbContext.Blueprints
-                .Where(bp => bp.NormalizedOwnerSlug == ownerSlug.ToUpperInvariant()
-                          && bp.NormalizedSlug == buildSlug.ToUpperInvariant())
+                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant()
+                          && bp.NormalizedSlug == slug.ToUpperInvariant())
                 .Include(bp => bp.Owner)
                 .Include(bp => bp.LatestVersion!).ThenInclude(v => v.Payload)
                 .FirstOrDefaultAsync();

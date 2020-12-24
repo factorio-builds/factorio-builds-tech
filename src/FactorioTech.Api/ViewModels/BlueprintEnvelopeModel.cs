@@ -12,11 +12,9 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         public string Type { get; set; }
 
-        [Required]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
-        [Required]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public IEnumerable<Entity> Icons { get; set; }
