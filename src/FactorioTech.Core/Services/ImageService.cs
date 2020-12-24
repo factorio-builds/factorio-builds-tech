@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Services
 {
     public class ImageService
     {

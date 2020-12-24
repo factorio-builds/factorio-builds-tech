@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-web
+  name: {{ include "factorio-tech.fullname" . }}-api
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
-    app.kubernetes.io/component: web
+    app.kubernetes.io/component: api
 spec:
-  replicas: {{ .Values.replicas.web }}
+  replicas: {{ .Values.replicas.api }}
   selector:
     matchLabels:
       {{- include "factorio-tech.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: web
+      app.kubernetes.io/component: api
   template:
     metadata:
       labels:
         {{- include "factorio-tech.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: web
+        app.kubernetes.io/component: api
     spec:
       imagePullSecrets:
         - name: default-container-registry
       securityContext:
         fsGroup: 2000
       containers:
-        - name: {{ include "factorio-tech.fullname" . }}-web
-          image: "{{ .Values.imageNamespace }}/web:{{ .Chart.AppVersion }}"
+        - name: {{ include "factorio-tech.fullname" . }}-api
+          image: "{{ .Values.imageNamespace }}/api:{{ .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           resources:
             requests:
-              memory: 512Mi
+              memory: 256Mi
             limits:
-              memory: 2Gi
+              memory: 1Gi
           ports:
             - name: http
               containerPort: 8080
@@ -41,9 +41,9 @@ spec:
             - name: secrets
               mountPath: /mnt/secrets
               readOnly: true
-            - name: session
-              mountPath: /mnt/session
-              readOnly: false
+            # - name: session
+            #   mountPath: /mnt/session
+            #   readOnly: false
             - name: app-data
               mountPath: /mnt/data
               readOnly: false
@@ -59,12 +59,12 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "factorio-tech.fullname" . }}-web
+            name: {{ include "factorio-tech.fullname" . }}-api
         - name: secrets
           projected:
             sources:
-              - secret:
-                  name: {{ include "factorio-tech.fullname" . }}-web
+              # - secret:
+              #     name: {{ include "factorio-tech.fullname" . }}-api
               - secret:
                   name: {{ include "factorio-tech.fullname" . }}-postgres
                   items:
@@ -75,9 +75,9 @@ spec:
                   items:
                     - key: instrumentation_key
                       path: ApplicationInsights__InstrumentationKey
-        - name: session
-          persistentVolumeClaim:
-            claimName: {{ include "factorio-tech.fullname" . }}-web-session
+        # - name: session
+        #   persistentVolumeClaim:
+        #     claimName: {{ include "factorio-tech.fullname" . }}-api-session
         - name: app-data
           azureFile:
             secretName: app-data-share

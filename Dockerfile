@@ -16,6 +16,7 @@ RUN dotnet tool restore
 
 COPY FactorioTech.sln .
 COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
+COPY src/FactorioTech.Api/*.csproj src/FactorioTech.Api/
 COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
 COPY src/FactorioTech.Web/gulpfile.js src/FactorioTech.Web/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
@@ -41,8 +42,11 @@ namespace FactorioTech.Core { \n\
 
 WORKDIR /app
 RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
+ && dotnet publish src/FactorioTech.Api/FactorioTech.Api.csproj \
+        --no-restore --no-build --configuration Release \
+        --output /app/publish/api /p:DebugType=None \
  && dotnet publish src/FactorioTech.Web/FactorioTech.Web.csproj \
-        --no-restore --no-build  --configuration Release \
+        --no-restore --no-build --configuration Release \
         --output /app/publish/web /p:DebugType=None
 
 ENTRYPOINT [ "dotnet" ]
@@ -54,3 +58,11 @@ EXPOSE 8080
 WORKDIR /app
 COPY --from=build /app/publish/web .
 ENTRYPOINT [ "dotnet", "FactorioTech.Web.dll" ]
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 as api
+ENV ASPNETCORE_URLS=http://*:8080
+EXPOSE 8080
+WORKDIR /app
+COPY --from=build /app/publish/api .
+ENTRYPOINT [ "dotnet", "FactorioTech.Api.dll" ]

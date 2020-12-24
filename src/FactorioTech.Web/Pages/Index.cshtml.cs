@@ -1,5 +1,6 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,10 +13,7 @@ namespace FactorioTech.Web.Pages
 {
     public class IndexModel : PageModel
     {
-        public const int PageSize = 100;
-
-        public static string[] ValidOrderFields = { "title", "created", "updated" };
-        public static string[] ValidOrderDirections = { "asc", "desc" };
+        private const int PageSize = 100;
 
         private readonly BlueprintService _blueprintService;
 
@@ -27,19 +25,13 @@ namespace FactorioTech.Web.Pages
         public IEnumerable<Blueprint> Blueprints { get; private set; } = Enumerable.Empty<Blueprint>();
         public IEnumerable<SelectListItem> TagsSelectItems { get; private set; } = Enumerable.Empty<SelectListItem>();
 
-        public IEnumerable<SelectListItem> SortFieldOptions { get; } = new List<SelectListItem>
-        {
-            new() { Value = "favorites", Text = "Favorites" },
-            new() { Value = "updated", Text = "Updated" },
-            new() { Value = "created", Text = "Created" },
-            new() { Value = "title", Text = "Title"},
-        };
+        public IEnumerable<SelectListItem> SortFieldOptions { get; } =
+            Enum.GetNames<BlueprintService.SortField>()
+                .Select(x => new SelectListItem(x.ToString(), x.ToLowerInvariant()));
 
-        public IEnumerable<SelectListItem> SortDirectionOptions { get; } = new List<SelectListItem>
-        {
-            new() { Value = "asc", Text = "Ascending"},
-            new() { Value = "desc", Text = "Descending" },
-        };
+        public IEnumerable<SelectListItem> SortDirectionOptions { get; } =
+            Enum.GetNames<BlueprintService.SortDirection>()
+                .Select(x => new SelectListItem(x.ToString(), x.ToLowerInvariant()));
 
         public async Task<IActionResult> OnGetAsync(
             [FromQuery(Name = "page")] int currentPage = 1,
@@ -54,8 +46,8 @@ namespace FactorioTech.Web.Pages
             Blueprints = await _blueprintService.GetBlueprints((currentPage, PageSize), sort, tags, queryStr, version);
 
             var (sortField, sortDirection) = ParseSort(sortCsv);
-            SortFieldOptions.FirstOrDefault(x => x.Value == sortField)?.Let(item => item.Selected = true);
-            SortDirectionOptions.FirstOrDefault(x => x.Value == sortDirection)?.Let(item => item.Selected = true);
+            SortFieldOptions.FirstOrDefault(x => x.Value == sortField.ToString().ToLowerInvariant())?.Let(item => item.Selected = true);
+            SortDirectionOptions.FirstOrDefault(x => x.Value == sortDirection.ToString().ToLowerInvariant())?.Let(item => item.Selected = true);
             TagsSelectItems = Tags.All.Select(tag => new SelectListItem(tag, tag, tags.Contains(tag)));
 
             return Page();
@@ -77,20 +69,18 @@ namespace FactorioTech.Web.Pages
             return Partial("_BlueprintList", Blueprints);
         }
 
-        private static (string Field, string Direction) ParseSort(string? csv)
+        private static (BlueprintService.SortField Field, BlueprintService.SortDirection Direction) ParseSort(string? csv)
         {
             var sort = csv?.ToLowerInvariant().Split(",");
-            var field = sort?.ElementAtOrDefault(0);
-            var direction = sort?.ElementAtOrDefault(1);
 
-            if (field == null || !ValidOrderFields.Contains(field))
+            if (!Enum.TryParse(sort?.ElementAtOrDefault(0), true, out BlueprintService.SortField field))
             {
-                field = "updated";
+                field = BlueprintService.SortField.Updated;
             }
 
-            if (direction == null || !ValidOrderDirections.Contains(direction))
+            if (!Enum.TryParse(sort?.ElementAtOrDefault(1), true, out BlueprintService.SortDirection direction))
             {
-                direction = "desc";
+                direction = BlueprintService.SortDirection.Desc;
             }
 
             return (field, direction);

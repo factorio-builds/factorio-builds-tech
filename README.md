@@ -11,9 +11,11 @@ The entire factorio.tech stack can be run in a self-contained local environment 
     1. Download [Factorio game data](#factorio-game-data)
     2. Configure at least one [external OAuth provider](#external-oauth-providers)
 
-2. Build and run the application
+2. Run the application
 
         docker-compose up --detach --build --remove-orphans
+
+    **Note**: This command will pull the [latest **ci** images](https://github.com/dstockhammer?tab=packages&repo_name=factorio-tech) from the GitHub Docker registry. If you prefer to instead **build** the images locally, open [docker-compose.yaml](docker-compose.yaml), comment out the lines with `image: ghcr.io/*` and uncomment the blocks with `image: factorio-tech/*` and `build: ..`. The same command will then build the Docker images locally.
 
 3. Apply database migrations. You only need to run migrations the first time, but the command is safe to run repeatedly.
 
@@ -23,9 +25,11 @@ The entire factorio.tech stack can be run in a self-contained local environment 
                 --project /app/src/FactorioTech.Core/FactorioTech.Core.csproj \
                 --connection "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
 
-4. Launch the website 🚀
+4. Open the website in your browser of choice and take it for a spin 🚀
 
-    http://localhost
+    **Frontend**: http://localhost:4000
+
+    **API**: http://localhost:4001/swagger/index.html
 
 ## Prerequisites
 
@@ -44,7 +48,7 @@ You can download this data either using Steam or from the official website: http
 
 ### External OAuth providers
 
-The factorio.tech application does not support logging in with username/password, but instead relies on external OAuth providers. To run the application locally, you need to configure at least one of the available providers from the table below. The callback URL must be set to `http://localhost` (or match the host and port as specified in [docker-compose.yaml](docker-compose.yaml)) for running in Docker and `https://localhost:5001` for running in the IDE or `dotnet`.
+The factorio.tech application does not support logging in with username/password, but instead relies on external OAuth providers. To run the application locally, you need to configure at least one of the available providers from the table below. The callback URL must be set to `http://localhost:4000` (or match the host and port as specified in [docker-compose.yaml](docker-compose.yaml)) for running in Docker and `https://localhost:5001` for running in the IDE or `dotnet`.
 
 | Key       | URL                                         |
 | --------- | ------------------------------------------- |

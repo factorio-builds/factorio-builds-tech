@@ -2,19 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>aspnet-FactorioTech-E4F6D77A-8FC6-40D1-8C23-1E531AAA3DAE</UserSecretsId>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNet.Security.OAuth.Discord" Version="5.0.0" />
-    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="5.0.0" />
-    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.16.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.1" />
+    <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="3.1.0" />
-    <PackageReference Include="SluggyUnidecode" Version="2.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 
     <!-- required to prevent Serilog from pulling in Newtonsoft.Json -->
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
@@ -25,16 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot/src/**/*" CopyToPublishDirectory="Never" />
     <Content Update="appsettings.*.json" CopyToPublishDirectory="Never" />
-    <Content Update="package*.json" CopyToPublishDirectory="Never" />
   </ItemGroup>
 
-  <Target Name="NpmBuild" BeforeTargets="Clean">
-    <Exec Command="npm run clean" />
-  </Target>
-  <Target Name="NpmClean" BeforeTargets="Build">
-    <Exec Command="npm run build" />
-  </Target>
+  <!-- XML documentation is required for generating the OpenAPI spec -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
 
 </Project>

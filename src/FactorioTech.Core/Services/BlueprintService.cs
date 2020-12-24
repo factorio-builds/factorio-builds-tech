@@ -8,10 +8,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core.Services
 {
     public class BlueprintService
     {
+        public enum SortField
+        {
+            Title,
+            Created,
+            Updated,
+            Favorites
+        }
+
+        public enum SortDirection
+        {
+            Asc,
+            Desc
+        }
+
         public record CreateRequest(
             string Slug,
             string Title,
@@ -71,7 +85,7 @@ namespace FactorioTech.Core
 
         public async Task<IReadOnlyCollection<Blueprint>> GetBlueprints(
             (int Current, int Size) page,
-            (string Field, string Direction) sort,
+            (SortField Field, SortDirection Direction) sort,
             IReadOnlyCollection<string> tags,
             string? search,
             string? version)
@@ -98,20 +112,38 @@ namespace FactorioTech.Core
 
             query = sort switch
             {
-                ("favorites", "asc") => query.OrderBy(x => x.FollowerCount).ThenBy(x => x.UpdatedAt),
-                ("favorites", "desc") => query.OrderByDescending(x => x.FollowerCount).ThenBy(x => x.UpdatedAt),
-                ("updated", "asc") => query.OrderBy(x => x.UpdatedAt),
-                ("updated", "desc") => query.OrderByDescending(x => x.UpdatedAt),
-                ("created", "asc") => query.OrderBy(x => x.CreatedAt),
-                ("created", "desc") => query.OrderByDescending(x => x.CreatedAt),
-                ("title", "asc") => query.OrderBy(x => x.Title),
-                ("title", "desc") => query.OrderByDescending(x => x.Title),
+                (SortField.Favorites, SortDirection.Asc) => query.OrderBy(x => x.FollowerCount).ThenBy(x => x.UpdatedAt),
+                (SortField.Favorites, SortDirection.Desc) => query.OrderByDescending(x => x.FollowerCount).ThenBy(x => x.UpdatedAt),
+                (SortField.Updated, SortDirection.Asc) => query.OrderBy(x => x.UpdatedAt),
+                (SortField.Updated, SortDirection.Desc) => query.OrderByDescending(x => x.UpdatedAt),
+                (SortField.Created, SortDirection.Asc) => query.OrderBy(x => x.CreatedAt),
+                (SortField.Created, SortDirection.Desc) => query.OrderByDescending(x => x.CreatedAt),
+                (SortField.Title, SortDirection.Asc) => query.OrderBy(x => x.Title),
+                (SortField.Title, SortDirection.Desc) => query.OrderByDescending(x => x.Title),
                 _ => throw new ArgumentOutOfRangeException(nameof(sort)),
             };
 
             return await query
                 .Skip(Math.Max(page.Current - 1, 0) * page.Size).Take(page.Size)
                 .ToListAsync();
+        }
+
+        public async Task<Blueprint?> GetBlueprint(string owner, string slug)
+        {
+            var blueprint = await _dbContext.Blueprints
+                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant()
+                          && bp.NormalizedSlug == slug.ToUpperInvariant())
+                .Include(bp => bp.Owner)
+                .Include(bp => bp.LatestVersion!).ThenInclude(v => v.Payload)
+                .FirstOrDefaultAsync();
+
+            if (blueprint == null)
+                return null;
+
+            // don't include in the initial query as this will cause a massive cross join
+            await _dbContext.Entry(blueprint).Collection(e => e.Tags).LoadAsync();
+
+            return blueprint;
         }
 
         public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, User owner, Guid? parentId)

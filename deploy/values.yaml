@@ -1,9 +1,13 @@
 imageNamespace: ghcr.io/dstockhammer/factorio-tech
-hostName: beta.factorio.tech
+
+hostNames:
+  api: api.factorio.tech
+  web: beta.factorio-tech
 
 replicas:
- fbsrWrapper: 1
- web: 1
+  fbsrWrapper: 1
+  web: 1
+  api: 1
 
 postgres:
   image: postgres:13-alpine
