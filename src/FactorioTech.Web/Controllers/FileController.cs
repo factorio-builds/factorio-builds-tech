@@ -44,13 +44,13 @@ namespace FactorioTech.Web.Controllers
 
         [HttpGet("rendering/{type}/{hash}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering(ImageService.RenderingType type, string hash)
+        public async Task<IActionResult> GetBlueprintRendering(ImageService.RenderingType type, Hash hash)
         {
             var sw = Stopwatch.StartNew();
 
             do
             {
-                var file = await _imageService.TryLoadRendering(new Hash(hash), type);
+                var file = await _imageService.TryLoadRendering(hash, type);
                 if (file != null)
                     return File(file, "image/png");
 
@@ -63,16 +63,11 @@ namespace FactorioTech.Web.Controllers
             return NotFound();
         }
 
-        [HttpGet("icon/{size:int}/{type}/{key}.png")]
+        [HttpGet("icon/{size}/{type}/{key}.png")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetGameIcon(int size, string type, string key)
+        public async Task<IActionResult> GetGameIcon(AssetService.IconSize size, AssetService.IconType type, string key)
         {
-            if (!Enum.TryParse($"Square{size}", out AssetService.IconSize eSize))
-                return BadRequest("Invalid size");
-            if (!Enum.TryParse(type, true, out AssetService.IconType eType))
-                return BadRequest("Invalid type");
-
-            var icon = await _assetService.GetGameIcon(eSize, eType, key);
+            var icon = await _assetService.GetGameIcon(size, type, key);
             if (icon == null)
                 return NotFound();
 

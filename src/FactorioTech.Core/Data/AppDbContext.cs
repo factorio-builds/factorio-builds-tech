@@ -95,7 +95,7 @@ namespace FactorioTech.Core.Data
                     .HasPrincipalKey(e => e.BlueprintId);
 
                 entity.Property(e => e.Hash)
-                    .HasConversion(p => p.ToString(), p => new Hash(p));
+                    .HasConversion(p => p.ToString(), p => Hash.Parse(p));
 
                 entity.Property(e => e.GameVersion)
                     .HasConversion(p => p.ToString(4), p => Version.Parse(p));
@@ -108,7 +108,7 @@ namespace FactorioTech.Core.Data
             builder.Entity<BlueprintPayload>(entity =>
             {
                 entity.Property(e => e.Hash)
-                    .HasConversion(p => p.ToString(), p => new Hash(p));
+                    .HasConversion(p => p.ToString(), p => Hash.Parse(p));
 
                 entity.Property(e => e.GameVersion)
                     .HasConversion(p => p.ToString(4), p => Version.Parse(p));

@@ -40,7 +40,7 @@ namespace FactorioTech.Web.Pages
         public PayloadCache PayloadCache { get; } = new();
         public ImportInputModel ImportInput { get; private set; } = new();
 
-        public async Task<IActionResult> OnGetAsync(string user, string slug, string? hash)
+        public async Task<IActionResult> OnGetAsync(string user, string slug, Hash? hash)
         {
             var query = _dbContext.Blueprints
                 .Where(bp => bp.NormalizedSlug == slug.ToUpperInvariant()
@@ -73,7 +73,7 @@ namespace FactorioTech.Web.Pages
             else
             {
                 SelectedVersion = await _dbContext.BlueprintVersions.AsNoTracking()
-                    .Where(v => v.BlueprintId == Blueprint.BlueprintId && v.Hash == new Hash(hash))
+                    .Where(v => v.BlueprintId == Blueprint.BlueprintId && v.Hash == hash)
                     .Include(v => v.Payload)
                     .FirstOrDefaultAsync();
 

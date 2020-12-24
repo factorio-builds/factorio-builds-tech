@@ -36,10 +36,10 @@ namespace FactorioTech.Web.Controllers
 
         [HttpGet("/raw/{hash}")]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetPayload(string hash)
+        public async Task<IActionResult> GetPayload(Hash hash)
         {
             var encoded = await _dbContext.BlueprintPayloads.AsNoTracking()
-                .Where(v => v.Hash == new Hash(hash))
+                .Where(v => v.Hash == hash)
                 .Select(v => v.Encoded)
                 .FirstOrDefaultAsync();
 

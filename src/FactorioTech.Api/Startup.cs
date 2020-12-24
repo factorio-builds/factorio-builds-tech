@@ -46,6 +46,10 @@ namespace FactorioTech.Api
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
                 options.UseInlineDefinitionsForEnums();
+                
+                options.MapType(typeof(Instant), () => new OpenApiSchema { Type = "string" });
+                options.MapType(typeof(Hash), () => new OpenApiSchema { Type = "string" });
+                options.MapType(typeof(AssetService.IconSize), () => new OpenApiSchema { Type = "integer" });
             });
 
             services.AddCors(options =>
