@@ -10,7 +10,6 @@ export const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   background: ${COLOR.HEADER};
-  border-bottom: 3px solid ${COLOR.SUBHEADER};
   height: 74px;
   padding: 0 20px;
 

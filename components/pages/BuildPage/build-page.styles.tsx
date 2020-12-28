@@ -1,73 +1,55 @@
+import { lighten } from "polished"
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
 import Stacker from "../../ui/Stacker"
 
-export const Wrapper = styled.div`
-  margin-left: -34px;
-  margin-top: -20px;
+export const BuildHeader = styled.header`
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid ${COLOR.PURPLE500};
+  color: ${COLOR.PURPLE700};
+`
+
+export const BuildTitle = styled.h2`
+  ${getTypo(ETypo.PAGE_HEADER)};
+  color: ${COLOR.PURPLE900};
+  margin: 0;
+`
+
+export const BuildHeaderMeta = styled.div`
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 20px;
+    margin-right: 8px;
+  }
 `
 
 export const BuildImage = styled.div`
+  border: 4px solid ${COLOR.PURPLE300};
+  border-radius: 4px;
+
   img {
     display: block;
     width: 100%;
   }
 `
 
-export const Content = styled.div`
-  display: flex;
-  gap: 34px;
-  padding: 20px 34px;
-`
-
-export const Aside = styled.aside`
-  ${getTypo(ETypo.METADATA)};
-  flex: 0 0 250px;
-`
-
 export const CopyClipboardWrapper = styled.div`
   margin-bottom: 16px;
 `
 
-export const AsideGroup = styled.section`
-  & + & {
-    margin-top: 8px;
-    border-top: 1px solid ${COLOR.PURPLE500};
-    padding-top: 8px;
-  }
-`
-
-export const AsideGroupTitle = styled.h3`
-  ${getTypo(ETypo.METADATA_TITLE)};
-  margin: 0;
-  margin-bottom: 4px;
-`
-
-export const AsideSubGroup = styled.div`
-  & + & {
-    margin-top: 4px;
-  }
-`
-
-const StyledStacker = (props: any) => (
-  <Stacker {...props} orientation="horizontal" gutter={5} />
-)
-
-export const WithRequiredItem = styled(StyledStacker)`
+export const WithRequiredItem = styled(Stacker)`
   ${getTypo(ETypo.METADATA)};
   align-items: center;
 `
 
-export const BlueprintItem = styled(StyledStacker)`
+export const BlueprintItem = styled(Stacker)`
   align-items: center;
-`
-
-export const WithItem = styled(StyledStacker)`
-  ${getTypo(ETypo.METADATA_TITLE)};
-  align-items: center;
-  color: #a392b5;
 `
 
 export const IconImg = styled.img`
@@ -75,49 +57,20 @@ export const IconImg = styled.img`
 `
 
 export const EditBuild = styled.span`
+  align-self: flex-start;
   cursor: pointer;
   color: ${COLOR.LINK};
   border-bottom: 1px solid ${COLOR.LINK};
-`
 
-export const Main = styled.main`
-  flex: 1 1 auto;
-`
-
-export const MainTitle = styled.h3`
-  ${getTypo(ETypo.PAGE_SUBTITLE)};
-  margin: 0;
-`
-
-export const MainContent = styled.div`
-  ${getTypo(ETypo.BODY)};
-
-  > ::first-child {
-    margin-top: 0;
+  &:hover {
+    color: ${lighten(0.3, COLOR.LINK)};
+    border-color: ${lighten(0.3, COLOR.LINK)};
   }
-
-  > ::last-child {
-    margin-bottom: 0;
-  }
-`
-
-export const ExpandBlueprint = styled.button`
-  ${getTypo(ETypo.BUTTON)};
-  cursor: pointer;
-  background: none;
-  border: none;
-  color: ${COLOR.LINK};
-  padding: 0;
-  align-self: flex-start;
-`
-
-export const Blueprint = styled.div`
-  margin-top: 10px;
-  background: ${COLOR.CODE};
-  padding: 16px;
 `
 
 export const BlueprintData = styled.textarea`
+  flex: 1 0 auto;
+  box-sizing: border-box;
   word-wrap: break-word;
   max-height: 400px;
   overflow-y: scroll;
@@ -128,36 +81,63 @@ export const BlueprintData = styled.textarea`
   width: 100%;
 `
 
-export const TogglerWrapper = styled.div`
+export const TabsWrapper = styled.div`
+  flex: 1 0 auto;
   display: flex;
-  gap: 16px;
+  flex-direction: column;
 `
 
-export const Toggler = styled.div`
-  user-select: none;
-  position: relative;
+export const TabsContent = styled(Stacker)`
+  display: flex;
+  flex: 1 0 auto;
+  margin-top: 16px;
+`
+
+export const TabsContentInner = styled.div`
+  flex: 1 1 auto;
+  display: flex;
+`
+
+export const TabsAside = styled.aside`
+  flex: 0 0 400px;
+  width: 400px;
+`
+
+export const Tab = styled.button`
+  ${getTypo(ETypo.BUTTON)};
+  background: none;
+  border: none;
+  padding: 0;
+  color: ${COLOR.PURPLE900};
+  border-bottom: 2px solid transparent;
   cursor: pointer;
 
-  &::after {
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    right: 0;
-    content: "";
-    background: transparent;
+  &:hover {
+    border-color: ${COLOR.PURPLE900};
   }
 
-  &:hover::after {
-    height: 1px;
-    background: ${COLOR.PURPLE900};
-  }
-
-  &.is-selected {
+  &.is-active {
     font-weight: 700;
+    border-color: ${COLOR.PURPLE900};
+  }
+`
+
+export const TabWrapper = styled.div`
+  display: none;
+
+  &.is-active {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+  }
+`
+
+export const Description = styled.div`
+  > :first-child {
+    margin-top: 0;
   }
 
-  &.is-selected::after {
-    height: 3px;
-    background: ${COLOR.PURPLE900};
+  > :last-child {
+    margin-bottom: 0;
   }
 `
