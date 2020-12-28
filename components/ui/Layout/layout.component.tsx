@@ -27,8 +27,10 @@ const Layout: React.FC<ILayoutProps> = ({
     <Header />
     {subheader}
     <Container>
-      {sidebar && <Sidebar>{sidebar}</Sidebar>}
-      <SC.Content>{children}</SC.Content>
+      <SC.BodyWrapper orientation="horizontal" gutter={20}>
+        {sidebar && <Sidebar>{sidebar}</Sidebar>}
+        <SC.Content>{children}</SC.Content>
+      </SC.BodyWrapper>
     </Container>
   </>
 )

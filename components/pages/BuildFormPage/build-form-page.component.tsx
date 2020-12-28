@@ -7,7 +7,6 @@ import { Build } from "../../../db/entities/build.entity"
 import { ECategory, EState } from "../../../types"
 import { isValidBlueprint } from "../../../utils/blueprint"
 import Layout from "../../ui/Layout"
-import Subheader from "../../ui/Subheader"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
 
@@ -157,6 +156,8 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     setStep(2)
   }, [])
 
+  const title = props.type === "CREATE" ? "Create a build" : "Edit build"
+
   return (
     <Formik<IFormValues>
       initialValues={initialValues}
@@ -190,16 +191,8 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     >
       {(formikProps) => {
         return (
-          <Layout
-            title="Create a build"
-            subheader={
-              <Subheader
-                title={
-                  props.type === "CREATE" ? "Create a build" : "Edit build"
-                }
-              />
-            }
-          >
+          <Layout title={title}>
+            <h2>{title}</h2>
             <Form>
               {step === 1 && props.type === "CREATE" && (
                 <Step1 formikProps={formikProps} goToNextStep={goToNextStep} />

@@ -6,24 +6,32 @@ export const BuildIconWrapper = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
   background: linear-gradient(135deg, #235581, #133756);
   border: 2px dashed #7fbace;
-  margin-right: 8px;
 
   img {
     margin: 5% !important;
   }
 
-  &.is-large img {
+  &.large-icons img {
     width: 80%;
     height: 80%;
   }
 
-  &.is-medium img {
+  &.medium-icons img {
     width: 40%;
     height: 40%;
+  }
+
+  &.size-medium {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+
+  &.size-large {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 60px;
   }
 `

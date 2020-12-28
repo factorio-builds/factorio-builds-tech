@@ -6,14 +6,17 @@ import * as SC from "./build-icon.styles"
 
 interface IBuildIconProps {
   icons: IBlueprintIcon[]
+  size?: "medium" | "large"
 }
 
-function BuildIcon({ icons }: IBuildIconProps): JSX.Element {
+function BuildIcon({ icons, size = "medium" }: IBuildIconProps): JSX.Element {
   return (
     <SC.BuildIconWrapper
       className={cx({
-        "is-large": icons.length === 1,
-        "is-medium": icons.length > 1,
+        "large-icons": icons.length === 1,
+        "medium-icons": icons.length > 1,
+        "size-medium": size === "medium",
+        "size-large": size === "large",
       })}
     >
       {icons.map((icon) => (
