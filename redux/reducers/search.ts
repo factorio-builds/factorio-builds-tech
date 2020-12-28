@@ -44,22 +44,34 @@ export const searchBuildsAsync = (): ThunkAction<
       .join(",")
 
   return async function (dispatch, getState) {
-    return axios
-      .get<ApiSeachBuild>("http://localhost:3000/api/search/build", {
-        params: {
-          q: getState().filters.query || undefined,
-          state: mapFilters(getState(), EFilterType.STATE) || undefined,
-          categories: mapFilters(getState(), EFilterType.CATEGORY) || undefined,
-        },
-      })
-      .then((response) => {
-        if (response.data.success) {
+    return (
+      axios
+        // .get<ApiSeachBuild>("/builds", {
+        .get("/builds", {
+          baseURL: "http://localhost:4001/",
+          params: {
+            q: getState().filters.query || undefined,
+            state: mapFilters(getState(), EFilterType.STATE) || undefined,
+            categories:
+              mapFilters(getState(), EFilterType.CATEGORY) || undefined,
+          },
+        })
+        .then((response) => response.data)
+        .then((data) => {
+          // if (response.data.success) {
           dispatch({
             type: "SEARCH_BUILDS_SUCCESS",
-            payload: response.data.result,
+            payload: {
+              hits: data.builds,
+              nbHits: data.builds.length,
+              nbTotal: data.builds.length,
+              processingTimeMs: 5,
+            },
+            // payload: response.data.result,
           })
-        }
-      })
+          // }
+        })
+    )
   }
 }
 
