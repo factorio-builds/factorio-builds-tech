@@ -1,12 +1,12 @@
 import React, { useState } from "react"
 import cx from "classnames"
 import Link from "next/link"
-import { User } from "../../../db/entities/user.entity"
 import Caret from "../../../icons/caret"
+import { IUser } from "../../../types"
 import * as SC from "./user-dropdown.styles"
 
 interface IUserDropdownProps {
-  user: User
+  user: IUser
 }
 
 function UserDropdown(props: IUserDropdownProps): JSX.Element {
@@ -22,7 +22,7 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
         </SC.User>
         <SC.DropdownContent>
           <SC.Spacer />
-          <Link href="/logout">
+          <Link href="/api/logout">
             <SC.InnerLink>log off</SC.InnerLink>
           </Link>
         </SC.DropdownContent>

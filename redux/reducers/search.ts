@@ -48,7 +48,7 @@ export const searchBuildsAsync = (): ThunkAction<
       axios
         // .get<ApiSeachBuild>("/builds", {
         .get("/builds", {
-          baseURL: "http://localhost:4001/",
+          baseURL: "https://api.local.factorio.tech/",
           params: {
             q: getState().filters.query || undefined,
             state: mapFilters(getState(), EFilterType.STATE) || undefined,

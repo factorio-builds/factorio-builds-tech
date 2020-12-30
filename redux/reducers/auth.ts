@@ -1,16 +1,16 @@
 import { Action } from "redux"
-import { User } from "../../db/entities/user.entity"
+import { IUser } from "../../types"
 import { IPayloadAction } from "../store"
 
 export interface IStoreAuthState {
-  user: User | null
+  user: IUser | null
 }
 
 export const initialAuthState: IStoreAuthState = {
   user: null,
 }
 
-type TSetUserAction = IPayloadAction<"SET_USER", User>
+type TSetUserAction = IPayloadAction<"SET_USER", IUser>
 type TUnsetUserAction = Action<"UNSET_USER">
 
 export type TAuthAction = TSetUserAction | TUnsetUserAction

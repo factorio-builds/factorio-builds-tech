@@ -3,7 +3,7 @@ import Layout from "../../components/ui/Layout"
 import BuildPage from "../../components/pages/BuildPage"
 import { BuildRepository } from "../../db/repository/build.repository"
 import { Build } from "../../db/entities/build.entity"
-import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"
+// import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"
 
 interface IBuildsPageProps {
   build?: Build
@@ -41,13 +41,13 @@ export const getServerSideProps: GetServerSideProps = async ({
 
     if (!build) throw new Error("Build not found")
 
-    await viewBuildIncrementUseCase({
-      build,
-      ip:
-        (req.headers["x-forwarded-for"] as string) ||
-        req.connection.remoteAddress ||
-        "0.0.0.0",
-    })
+    // await viewBuildIncrementUseCase({
+    //   build,
+    //   ip:
+    //     (req.headers["x-forwarded-for"] as string) ||
+    //     req.connection.remoteAddress ||
+    //     "0.0.0.0",
+    // })
 
     return {
       props: { build: JSON.parse(JSON.stringify(build)) },

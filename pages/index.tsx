@@ -12,9 +12,12 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
   async (ctx) => {
     const searchResults = await axios
       .get<ApiSeachBuild>("/builds", {
-        baseURL: "http://localhost:4001",
+        baseURL: "https://api.local.factorio.tech",
       })
       .then((response) => response.data)
+      .catch((err) => {
+        console.error(err)
+      })
     // .then((response) => {
     //   console.log(response)
     //   if (response.data.success) {

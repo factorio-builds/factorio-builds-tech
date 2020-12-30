@@ -130,6 +130,11 @@ export interface IIndexedBuild {
   updatedAt: Build["updatedAt"]
 }
 
+export interface IUser {
+  id: string
+  name: string
+}
+
 interface ApiResponseSuccess<R = any> {
   success: true
   result: R

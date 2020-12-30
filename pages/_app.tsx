@@ -1,10 +1,10 @@
 import type { AppContext, AppProps } from "next/app"
 import Head from "next/head"
 import { ThemeProvider } from "styled-components"
-import { User } from "../db/entities/user.entity"
 import { GlobalStyle } from "../design/styles/global-style"
 import { theme } from "../design/styles/theme"
 import { wrapper } from "../redux/store"
+import auth from "../utils/auth"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -41,13 +41,15 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
-  // @ts-ignore
-  const user: User = ctx.req?.session?.passport?.user
+  const session = await auth.getSession(ctx.req!)
 
-  if (user) {
+  if (session?.user) {
     ctx.store.dispatch({
       type: "SET_USER",
-      payload: user,
+      payload: {
+        id: session.user.sub,
+        name: session.user.username,
+      },
     })
   }
 
