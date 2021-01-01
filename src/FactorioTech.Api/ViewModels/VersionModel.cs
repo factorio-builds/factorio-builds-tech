@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public class VersionModel
+    public class VersionModel : ViewModelBase
     {
         [Required]
         [DataType(DataType.DateTime)]

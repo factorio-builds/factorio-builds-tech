@@ -1,21 +1,26 @@
-using FactorioTech.Api.Extensions;
+using FactorioTech.Api.Services;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Text.Json.Serialization;
 
 namespace FactorioTech.Api
@@ -23,11 +28,18 @@ namespace FactorioTech.Api
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration) => _configuration = configuration;
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        {
+            _configuration = configuration;
+            _environment = environment;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>();
+
             services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
             services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
 
@@ -59,9 +71,18 @@ namespace FactorioTech.Api
             services.AddCors(options =>
             {
                 options.AddPolicy("factorio-blueprint-editor", builder =>
-                    builder.WithOrigins($"{AppConfig.BlueprintEditorUri.Scheme}://{AppConfig.BlueprintEditorUri.Host}")
+                    builder.WithOrigins($"{appConfig.BlueprintEditorUri.Scheme}://{appConfig.BlueprintEditorUri.Authority}")
                         .AllowAnyHeader()
                         .AllowAnyMethod());
+
+                options.AddDefaultPolicy(builder =>
+                    builder.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .Let(b => _environment.IsProduction()
+                            ? b.WithOrigins($"{appConfig.FrontendUri.Scheme}://{appConfig.FrontendUri.Authority}")
+                            : b.WithOrigins($"{appConfig.FrontendUri.Scheme}://{appConfig.FrontendUri.Authority}",
+                                            "https://local.factorio.tech", "http://localhost:3000")));
             });
 
             services.AddDatabaseDeveloperPageExceptionFilter();
@@ -70,44 +91,43 @@ namespace FactorioTech.Api
                 options.UseNpgsql(_configuration.GetConnectionString("Postgres"), o => o.UseNodaTime());
             });
 
-            services.AddIdentityCore<User>()
-                .AddDefaultTokenProviders()
-                .AddSignInManager()
-                .AddRoles<Role>()
-                .AddEntityFrameworkStores<AppDbContext>();
-
-            services.Configure<IdentityOptions>(options =>
+            services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
             {
-                options.User.RequireUniqueEmail = true;
-                options.User.AllowedUserNameCharacters = AppConfig.Policies.Slug.AllowedCharacters;
+                options.Authority = $"{appConfig.IdentityUri.Scheme}://{appConfig.IdentityUri.Authority}";
+
+                if (!_environment.IsProduction() && appConfig.IdentityUri.Host.EndsWith("local.factorio.tech"))
+                {
+                    options.BackchannelHttpHandler = new HttpClientHandler
+                    {
+                        ClientCertificateOptions = ClientCertificateOption.Manual,
+                        SslProtocols = SslProtocols.Tls13,
+                        ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+                    };
+                }
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                };
             });
 
-            //services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
-            //services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomUserClaimsPrincipalFactory>();
-
-            services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            }).AddIdentityCookies();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("RequireAdministratorRole",
-                    policy => policy.RequireRole("Administrator"));
-            });
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/account/login";
-                options.LogoutPath = "/account/logout";
-                options.AccessDeniedPath = "/errors/403";
-            });
+            services.AddAuthorization();
 
             services.AddApplicationInsightsTelemetry(options =>
             {
                 options.ApplicationVersion = BuildInformation.Version;
             });
+
+            if (!_environment.IsProduction())
+            {
+                services.AddTransient<DevDataSeeder>();
+            }
+
+            if (!_environment.IsDevelopment())
+            {
+                services.AddDataProtection()
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "session")));
+            }
 
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();
@@ -118,28 +138,40 @@ namespace FactorioTech.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+            });
+
+            if (!env.IsProduction())
+            {
+                IdentityModelEventSource.ShowPII = true;
                 app.UseDeveloperExceptionPage();
             }
-            else
+
+            if (!env.IsDevelopment())
             {
                 app.UseHsts();
             }
 
-            app.UseSwagger();
+            app.UseSwagger(c => c.PreSerializeFilters.Add((doc, _) => doc.Servers?.Clear()));
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "factorio.tech v1"));
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseCors();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            if (!_environment.IsProduction())
+            {
+                app.EnsureDevelopmentDataIsSeeded();
+            }
         }
     }
 }

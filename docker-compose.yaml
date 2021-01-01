@@ -1,79 +1,120 @@
 version: '3.8'
 
-volumes:
-  factorio:
-    external: true
-    name: factorio
-
-secrets:
-  OAuthProviders__GitHub__ClientId:
-    file: ./secrets/OAuthProviders__GitHub__ClientId.secret
-  OAuthProviders__GitHub__ClientSecret:
-    file: ./secrets/OAuthProviders__GitHub__ClientSecret.secret
-
 services:
-  web:
-    image: ghcr.io/dstockhammer/factorio-tech/web:ci
-    # image: factorio-tech/web
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   target: web
+  traefik:
+    image: traefik
     ports:
-      - "4000:8080"
+      - 80:80
+      - 443:443
     volumes:
-      - ./volumes/web/data:/mnt/data
-      - ./volumes/web/session:/mnt/session
-      - factorio:/mnt/factorio:ro
+      - ./.local/traefik/config.yaml:/etc/traefik/config.yaml:ro
+      - ./.local/traefik/certs:/etc/certs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /etc/localtime:/etc/localtime:ro
-    secrets:
-      - OAuthProviders__GitHub__ClientId
-      - OAuthProviders__GitHub__ClientSecret
+    networks:
+      default:
+        aliases:
+          - local.factorio.tech
+          - api.local.factorio.tech
+          - identity.local.factorio.tech
+    command:
+      # - "--log.level=DEBUG"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.file=true"
+      - "--providers.file.filename=/etc/traefik/config.yaml"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik=true"
+
+  frontend:
+    # image: ghcr.io/dstockhammer/factorio-tech/frontend:ci
+    image: factorio-tech/frontend
+    build:
+      context: frontend
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
     environment:
+      API_URL: "https://api.local.factorio.tech"
+      IDENTITY_URL: "https://identity.local.factorio.tech"
+      FRONTEND_URL: "https://local.factorio.tech"
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`local.factorio.tech`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+
+  identity:
+    # image: ghcr.io/dstockhammer/factorio-tech/identity:ci
+    image: factorio-tech/identity
+    build:
+      context: .
+      target: identity
+    volumes:
+      - ./.local/volumes/identity/protected:/mnt/protected
+      - ./.local/secrets:/mnt/secrets:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: staging
       ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-      AppConfig__FactorioDir: "/mnt/factorio"
-      AppConfig__WorkingDir: "/mnt/data"
-      AppConfig__FbsrWrapperUri: "http://fbsr:8080"
-    depends_on:
-      - fbsr
-      - postgres
+      AppConfig__ProtectedDataDir: "/mnt/protected"
+      AppConfig__ApiUri: "https://api.local.factorio.tech"
+      AppConfig__IdentityUri: "https://identity.local.factorio.tech"
+      AppConfig__FrontendUri: "https://local.factorio.tech"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.identity.rule=Host(`identity.local.factorio.tech`)"
+      - "traefik.http.routers.identity.entrypoints=websecure"
+      - "traefik.http.routers.identity.tls=true"
 
   api:
-    image: ghcr.io/dstockhammer/factorio-tech/api:ci
-    # image: factorio-tech/api
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   target: api
-    ports:
-      - "4001:8080"
+    # image: ghcr.io/dstockhammer/factorio-tech/api:ci
+    image: factorio-tech/api
+    build:
+      context: .
+      target: api
     volumes:
-      - ./volumes/web/data:/mnt/data
-      - ./volumes/web/session:/mnt/session
-      - factorio:/mnt/factorio:ro
+      - ./.local/volumes/api/data:/mnt/data
+      - ./.local/volumes/api/protected:/mnt/protected
+      - ./.local/volumes/factorio:/mnt/factorio:ro
       - /etc/localtime:/etc/localtime:ro
-    secrets:
-      - OAuthProviders__GitHub__ClientId
-      - OAuthProviders__GitHub__ClientSecret
     environment:
+      ASPNETCORE_ENVIRONMENT: staging
       ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+      AppConfig__DataDir: "/mnt/data"
+      AppConfig__ProtectedDataDir: "/mnt/protected"
       AppConfig__FactorioDir: "/mnt/factorio"
-      AppConfig__WorkingDir: "/mnt/data"
       AppConfig__FbsrWrapperUri: "http://fbsr:8080"
+      AppConfig__ApiUri: "https://api.local.factorio.tech"
+      AppConfig__IdentityUri: "https://identity.local.factorio.tech"
+      AppConfig__FrontendUri: "https://local.factorio.tech"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`api.local.factorio.tech`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls=true"
     depends_on:
       - fbsr
       - postgres
+      - identity
 
   fbsr:
     image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci
     # image: factorio-tech/fbsr-wrapper
     # build:
-    #   context: ./fbsr-wrapper
-    #   dockerfile: Dockerfile
+    #   context: fbsr-wrapper
     ports:
       - "8080:8080"
     volumes:
-      - factorio:/mnt/factorio:ro
+      - ./.local/volumes/factorio:/mnt/factorio:ro
       - /etc/localtime:/etc/localtime:ro
 
   postgres:

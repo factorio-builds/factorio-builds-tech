@@ -105,11 +105,11 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
 
-      - name: Build and push - web
+      - name: Build and push - identity
         uses: docker/build-push-action@v2
         with:
           context: .
-          target: web
+          target: identity
           push: true
           build-args: |
             version=${{ env.version }}
@@ -117,8 +117,8 @@ jobs:
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           tags: |
-            ghcr.io/${{ github.repository }}/web:${{ env.version }}
-            ghcr.io/${{ github.repository }}/web:ci
+            ghcr.io/${{ github.repository }}/identity:${{ env.version }}
+            ghcr.io/${{ github.repository }}/identity:ci
           labels: |
             org.opencontainers.image.version=${{ env.version }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}

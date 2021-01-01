@@ -1,13 +1,4 @@
-FROM dstockhammer/dotnet-sdk-node-npm:5.0 AS build
-
-WORKDIR /app/src/FactorioTech.Web
-COPY src/FactorioTech.Web/package*.json ./
-
-RUN npm install --include=dev
-
-# patch broken imports in selectize module
-RUN sed -i '/@import "..\/..\/node_modules\/bootstrap4/d' \
-    node_modules/selectize/src/scss/selectize.bootstrap4.scss
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 
 WORKDIR /app
 
@@ -17,14 +8,13 @@ RUN dotnet tool restore
 COPY FactorioTech.sln .
 COPY src/FactorioTech.Core/*.csproj src/FactorioTech.Core/
 COPY src/FactorioTech.Api/*.csproj src/FactorioTech.Api/
-COPY src/FactorioTech.Web/*.csproj src/FactorioTech.Web/
-COPY src/FactorioTech.Web/gulpfile.js src/FactorioTech.Web/
+COPY src/FactorioTech.Identity/*.csproj src/FactorioTech.Identity/
 COPY test/FactorioTech.Tests/*.csproj test/FactorioTech.Tests/
 RUN dotnet restore
 
 COPY . .
 
-ARG version=""
+ARG version="0.0.0-docker"
 ARG build_branch=""
 ARG build_sha=""
 ARG build_uri=""
@@ -45,19 +35,19 @@ RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
  && dotnet publish src/FactorioTech.Api/FactorioTech.Api.csproj \
         --no-restore --no-build --configuration Release \
         --output /app/publish/api /p:DebugType=None \
- && dotnet publish src/FactorioTech.Web/FactorioTech.Web.csproj \
+ && dotnet publish src/FactorioTech.Identity/FactorioTech.Identity.csproj \
         --no-restore --no-build --configuration Release \
-        --output /app/publish/web /p:DebugType=None
+        --output /app/publish/identity /p:DebugType=None
 
 ENTRYPOINT [ "dotnet" ]
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 as web
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 as identity
 ENV ASPNETCORE_URLS=http://*:8080
 EXPOSE 8080
 WORKDIR /app
-COPY --from=build /app/publish/web .
-ENTRYPOINT [ "dotnet", "FactorioTech.Web.dll" ]
+COPY --from=build /app/publish/identity .
+ENTRYPOINT [ "dotnet", "FactorioTech.Identity.dll" ]
 
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 as api

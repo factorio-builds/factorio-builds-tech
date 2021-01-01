@@ -1,6 +1,8 @@
 using FactorioTech.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FactorioTech.Api.Controllers
 {
@@ -25,5 +27,16 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         [HttpPost("render-markdown")]
         public string RenderMarkdown([FromBody]RenderMarkdownRequest request) => MarkdownConverter.ToHtml(request.Content);
+
+        [HttpGet("test-ping")]
+        public IActionResult TestPing() => Ok("pong");
+
+        [Authorize]
+        [HttpGet("test-auth")]
+        public IActionResult TestAuth() => new JsonResult(from c in User.Claims select new { c.Type, c.Value });
+
+        [Authorize(Roles = "Administrator")]
+        [HttpGet("test-admin")]
+        public IActionResult TestAdmin() => new JsonResult(from c in User.Claims select new { c.Type, c.Value });
     }
 }

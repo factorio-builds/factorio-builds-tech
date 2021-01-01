@@ -2,19 +2,13 @@ using FactorioTech.Core.Domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text.Json.Serialization;
 
 #pragma warning disable 8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class PayloadModelBase
+    public abstract class PayloadModelBase : ViewModelBase
     {
-        [Required]
-        [JsonPropertyName("_links")]
-        public IEnumerable<LinkModel> Links { get; init; } = Enumerable.Empty<LinkModel>();
-
         /// <summary>
         /// The `md5` hash of the payload's blueprint `encoded` string.
         /// </summary>

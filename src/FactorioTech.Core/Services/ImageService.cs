@@ -179,7 +179,7 @@ namespace FactorioTech.Core.Services
             }
         }
 
-        public async Task SaveCroppedCover(Guid blueprintId, Guid versionId, Hash hash, (int X, int Y, int Width, int Height) rectangle)
+        public async Task SaveCroppedCover(Guid blueprintId, Guid versionId, Hash hash, (int X, int Y, int Width, int Height)? rectangle = null)
         {
             var rendering = await TryLoadRendering(hash, RenderingType.Full);
             if (rendering == null)
@@ -193,12 +193,14 @@ namespace FactorioTech.Core.Services
             }
         }
 
-        public async Task SaveCroppedCover(Guid blueprintId, Stream stream, (int X, int Y, int Width, int Height) rectangle)
+        public async Task SaveCroppedCover(Guid blueprintId, Stream stream, (int X, int Y, int Width, int Height)? rectangle = null)
         {
             var (image, format) = await Image.LoadWithFormatAsync(stream);
 
             image.Mutate(x => x
-                .Crop(new Rectangle(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height))
+                .Crop(rectangle.HasValue
+                    ? new Rectangle(rectangle.Value.X, rectangle.Value.Y, rectangle.Value.Width, rectangle.Value.Height)
+                    : new Rectangle(0, 0, Math.Min(image.Height, image.Width), Math.Min(image.Height, image.Width)))
                 .Resize(AppConfig.Cover.Width, AppConfig.Cover.Width));
 
             var imageFqfn = GetCoverFqfn(blueprintId);
@@ -214,9 +216,9 @@ namespace FactorioTech.Core.Services
         }
 
         private string GetRenderingFqfn(Hash hash, RenderingType type) =>
-            Path.Combine(_appConfig.WorkingDir, "renderings", $"{hash}-{type}.png");
+            Path.Combine(_appConfig.DataDir, "renderings", $"{hash}-{type}.png");
 
         private string GetCoverFqfn(Guid blueprintId) =>
-            Path.Combine(_appConfig.WorkingDir, "covers", blueprintId.ToString());
+            Path.Combine(_appConfig.DataDir, "covers", blueprintId.ToString());
     }
 }

@@ -4,19 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text.Json.Serialization;
 
 #pragma warning disable 8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class BuildModelBase<TUser>
+    public abstract class BuildModelBase<TUser> : ViewModelBase
         where TUser : ThinUserModel
     {
-        [Required]
-        [JsonPropertyName("_links")]
-        public IEnumerable<LinkModel> Links { get; init; } = Enumerable.Empty<LinkModel>();
-
         /// <summary>
         /// The slug is used in the build's URL and must be unique per user.
         /// It can consist only of latin alphanumeric characters, underscores and hyphens.

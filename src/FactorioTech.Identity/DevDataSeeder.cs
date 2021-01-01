@@ -1,0 +1,104 @@
+using FactorioTech.Core.Data;
+using FactorioTech.Core.Domain;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NodaTime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+namespace FactorioTech.Identity
+{
+    internal static class DevDataSeederExtensions
+    {
+        public static IApplicationBuilder EnsureDevelopmentDataIsSeeded(this IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.CreateScope();
+            scope.ServiceProvider.GetRequiredService<DevDataSeeder>().Run().GetAwaiter().GetResult();
+
+            return app;
+        }
+    }
+
+    public class DevDataSeeder
+    {
+        public static IEnumerable<User> Users => new []
+        {
+            new User
+            {
+                UserName = "alice",
+                DisplayName = "Alice Smith",
+                Email = "AliceSmith@email.com",
+                EmailConfirmed = true,
+                RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
+            },
+            new User
+            {
+                UserName = "bob",
+                DisplayName = "Bob Smith",
+                Email = "BobSmith@email.com",
+                EmailConfirmed = true,
+                RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
+            }
+        };
+
+        public static string Password => "Pass123$";
+
+        private readonly ILogger<DevDataSeeder> _logger;
+        private readonly AppDbContext _dbContext;
+        private readonly UserManager<User> _userManager;
+
+        public DevDataSeeder(
+            ILogger<DevDataSeeder> logger,
+            AppDbContext dbContext,
+            UserManager<User> userManager)
+        {
+            _logger = logger;
+            _dbContext = dbContext;
+            _userManager = userManager;
+        }
+
+        public async Task Run()
+        {
+            var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+                throw new Exception("Can't start identity because there are pending migrations. Run the API first!");
+
+            _logger.LogInformation("Seeding development data...");
+
+            foreach (var user in Users)
+            {
+                await EnsureUserExists(user);
+            }
+        }
+
+        private async Task EnsureUserExists(User user, IReadOnlyCollection<Claim>? claims = null)
+        {
+            var existingUser = await _userManager.FindByNameAsync(user.UserName);
+            if (existingUser != null)
+            {
+                _logger.LogInformation("User {Username} exists", user.UserName);
+                return;
+            }
+
+            var result = await _userManager.CreateAsync(user, Password);
+            if (!result.Succeeded)
+            {
+                _logger.LogError("Failed to create user {Username} : {ErrorMessage}", user.UserName, result.Errors.First().Description);
+                return;
+            }
+
+            if (claims?.Any() == true)
+            {
+                await _userManager.AddClaimsAsync(user, claims);
+            }
+
+            _logger.LogInformation("User {Username} with password {Password} created successfully", user.UserName, Password);
+        }
+    }
+}
