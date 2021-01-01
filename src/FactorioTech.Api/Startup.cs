@@ -101,7 +101,7 @@ namespace FactorioTech.Api
                     {
                         ClientCertificateOptions = ClientCertificateOption.Manual,
                         SslProtocols = SslProtocols.Tls13,
-                        ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+                        ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
                     };
                 }
 

@@ -4,11 +4,14 @@ using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
@@ -26,19 +29,22 @@ namespace FactorioTech.Api.Controllers
 
         private readonly ILogger<PayloadController> _logger;
         private readonly AppDbContext _dbContext;
-        private readonly BlueprintConverter _blueprintConverter;
         private readonly ImageService _imageService;
+        private readonly BlueprintService _blueprintService;
+        private readonly BlueprintConverter _blueprintConverter;
 
         public PayloadController(
             ILogger<PayloadController> logger,
             AppDbContext dbContext,
-            BlueprintConverter blueprintConverter,
-            ImageService imageService)
+            ImageService imageService,
+            BlueprintService blueprintService,
+            BlueprintConverter blueprintConverter)
         {
             _logger = logger;
             _dbContext = dbContext;
-            _blueprintConverter = blueprintConverter;
             _imageService = imageService;
+            _blueprintService = blueprintService;
+            _blueprintConverter = blueprintConverter;
         }
 
         /// <summary>
@@ -136,5 +142,74 @@ namespace FactorioTech.Api.Controllers
             _logger.LogWarning("Rendering {Type} for {Hash} not found; giving up.", type, hash);
             return NotFound();
         }
+
+        [HttpPost("")]
+        [Authorize]
+        [ProducesResponseType(typeof(CreatePayloadResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreatePayload([FromBody]CreatePayloadRequest request)
+        {
+            var envelope = await _blueprintConverter.Decode(request.Encoded);
+
+            var firstBlueprint = FirstBlueprintOrDefault(envelope);
+            if (firstBlueprint == null)
+                return BadRequest("A blueprint book must contain at least one blueprint");
+
+            var hash = Hash.Compute(request.Encoded);
+            var payload = new BlueprintPayload(hash, request.Encoded, Utils.DecodeGameVersion(envelope.Version));
+
+            var cache = new PayloadCache();
+            cache.TryAdd(envelope, payload);
+
+            await cache.EnsureInitializedGraph(envelope);
+            await _blueprintService.SavePayloadGraph(hash, cache.Values);
+
+            return Ok(new CreatePayloadResult
+            {
+                Hash = hash,
+                AllHashes = new HashSet<Hash>(cache.Values.Select(x => x.Hash)),
+                ExtractedTags = new HashSet<string>(GetSomeRandomTags()),
+            });
+        }
+
+        private FactorioApi.Blueprint? FirstBlueprintOrDefault(FactorioApi.BlueprintEnvelope? envelope)
+        {
+            if (envelope == null)
+                return null;
+
+            return envelope.Blueprint
+                   ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
+        }
+
+        private static IEnumerable<string> GetSomeRandomTags()
+        {
+            // todo: implement @veksen's heuristics
+            var count = Tags.All.Count();
+            var rnd = new Random();
+            return Enumerable.Range(0, rnd.Next(2, 5))
+                .Select(_ => Tags.All.ElementAt(rnd.Next(0, count - 1)));
+        }
+    }
+
+    public class CreatePayloadRequest
+    {
+        [Required]
+        [RegularExpression(
+            // base64 starting with "0"
+            "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
+            ErrorMessage = "This doesn't appear to be a valid blueprint string.")]
+        public string Encoded { get; set; } = string.Empty;
+    }
+
+    public class CreatePayloadResult
+    {
+        [Required]
+        public Hash Hash { get; set; }
+
+        [Required]
+        public IEnumerable<Hash> AllHashes { get; set; } = Enumerable.Empty<Hash>();
+
+        [Required]
+        public IEnumerable<string> ExtractedTags { get; set; } = Enumerable.Empty<string>();
     }
 }
