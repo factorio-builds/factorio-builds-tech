@@ -1,3 +1,4 @@
+using FactorioTech.Api.Controllers;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
@@ -11,10 +12,14 @@ namespace FactorioTech.Api.Services
 {
     public static class ViewModelMapper
     {
-        public static BuildsModel ToViewModel(this IEnumerable<Blueprint> blueprints, IUrlHelper urlHelper) =>
+        public static BuildsModel ToViewModel(this IReadOnlyCollection<Blueprint> blueprints,
+            IUrlHelper urlHelper, BuildController.BuildsQueryParams query, bool hasMore, int totalCount) =>
             new()
             {
-                Builds = blueprints.Select(b => b.ToThinViewModel(urlHelper)),
+                Links = urlHelper.BuildLinks(blueprints, query, hasMore),
+                Builds = blueprints.Take(BuildController.BuildsQueryParams.PageSize).Select(b => b.ToThinViewModel(urlHelper)),
+                CurrentCount = Math.Min(blueprints.Count, BuildController.BuildsQueryParams.PageSize),
+                TotalCount = totalCount,
             };
 
         public static ThinBuildModel ToThinViewModel(this Blueprint blueprint, IUrlHelper urlHelper) =>

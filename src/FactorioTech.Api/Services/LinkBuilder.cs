@@ -12,6 +12,24 @@ namespace FactorioTech.Api.Services
 {
     public static class LinkBuilder
     {
+        public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper,
+            IReadOnlyCollection<Blueprint> blueprints, BuildController.BuildsQueryParams query, bool hasMore)
+        {
+            var links = new Dictionary<string, LinkModel>();
+
+            if (query.Page > 1)
+            {
+                links["prev"] = new LinkModel(urlHelper.ActionLink(nameof(BuildController.ListBuilds), "Build", query.ToValues(query.Page - 1)));
+            }
+
+            if (hasMore)
+            {
+                links["next"] = new LinkModel(urlHelper.ActionLink(nameof(BuildController.ListBuilds), "Build", query.ToValues(query.Page + 1)));
+            }
+
+            return links;
+        }
+
         public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper, Blueprint blueprint) =>
             new Dictionary<string, LinkModel>
             {

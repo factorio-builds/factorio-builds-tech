@@ -3,7 +3,6 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 #pragma warning disable 8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
@@ -92,11 +91,5 @@ namespace FactorioTech.Api.ViewModels
         /// The build's tags.
         /// </summary>
         public IEnumerable<string> Tags { get; set; }
-    }
-
-    public class BuildsModel
-    {
-        [Required]
-        public IEnumerable<ThinBuildModel> Builds { get; set; } = Enumerable.Empty<ThinBuildModel>();
     }
 }

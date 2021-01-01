@@ -13,7 +13,57 @@ namespace FactorioTech.Api.Controllers
     [ApiController]
     public class BuildController : ControllerBase
     {
-        private const int PageSize = 100;
+        public class BuildsQueryParams
+        {
+            public const int PageSize = 2;
+
+            /// <summary>
+            /// The desired page
+            /// </summary>
+            [FromQuery(Name = "page")]
+            public int Page { get; set; } = 1;
+
+            /// <summary>
+            /// The desired field to sort the results
+            /// </summary>
+            [FromQuery(Name = "sort_field")]
+            public BlueprintService.SortField SortField { get; set; } = BlueprintService.SortField.Updated;
+
+            /// <summary>
+            /// The desired direction to sort the results
+            /// </summary>
+            [FromQuery(Name = "sort_direction")]
+            public BlueprintService.SortDirection SortDirection { get; set; } = BlueprintService.SortDirection.Desc;
+
+            /// <summary>
+            /// An optional search term to filter the results by
+            /// </summary>
+            [FromQuery(Name = "q")]
+            public string? Search { get; set; }
+
+            /// <summary>
+            /// An optional comma-separated list of tags to filter the results by
+            /// </summary>
+            [FromQuery(Name = "tags")]
+            public string? TagsCsv { get; set; }
+
+            /// <summary>
+            /// An optional game version to filter the results by
+            /// </summary>
+            [FromQuery(Name = "version")]
+            public string? Version { get; set; }
+
+            public object ToValues(int? page) => new
+            {
+                page = page ?? Page,
+                sort_field = SortField.ToString().ToLowerInvariant(),
+                sort_direction = SortDirection.ToString().ToLowerInvariant(),
+                q = Search,
+                tags = TagsCsv,
+                version = Version,
+            };
+        }
+
         private const int OneDayInSeconds = 86400;
 
         private readonly BlueprintConverter _blueprintConverter;
@@ -33,12 +83,6 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get a paged, filtered and ordered list of builds
         /// </summary>
-        /// <param name="currentPage">The desired page</param>
-        /// <param name="sortField">The desired field to sort the results</param>
-        /// <param name="sortDirection">The desired direction to sort the results</param>
-        /// <param name="queryStr">An optional search term to filter the results by</param>
-        /// <param name="tagsCsv">An optional comma-separated list of tags to filter the results by</param>
-        /// <param name="version">An optional game version to filter the results by</param>
         /// <response code="200" type="application/json">The paged, filtered and ordered list of matching builds</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
@@ -47,21 +91,16 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(BuildsModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<BuildsModel> ListBuilds(
-            [FromQuery(Name = "page")] int currentPage = 1,
-            [FromQuery(Name = "sort_field")] BlueprintService.SortField sortField = BlueprintService.SortField.Updated,
-            [FromQuery(Name = "sort_direction")] BlueprintService.SortDirection sortDirection = BlueprintService.SortDirection.Desc,
-            [FromQuery(Name = "q")] string? queryStr = null,
-            [FromQuery(Name = "tags")] string? tagsCsv = null,
-            [FromQuery(Name = "version")] string? version = null)
+        public async Task<BuildsModel> ListBuilds([FromQuery]BuildsQueryParams query)
         {
-            var builds = await _blueprintService.GetBlueprints(
-                (currentPage, PageSize),
-                (sortField, sortDirection),
-                tagsCsv?.Split(',') ?? Array.Empty<string>(),
-                queryStr, version);
+            var (builds, hasMore, totalCount) = await _blueprintService.GetBlueprints(
+                (query.Page, BuildsQueryParams.PageSize),
+                (query.SortField, query.SortDirection),
+                query.TagsCsv?.Split(',') ?? Array.Empty<string>(),
+                query.Search,
+                query.Version);
 
-            return builds.ToViewModel(Url);
+            return builds.ToViewModel(Url, query, hasMore, totalCount);
         }
 
         /// <summary>

@@ -83,7 +83,7 @@ namespace FactorioTech.Core.Services
             _dbContext = dbContext;
         }
 
-        public async Task<IReadOnlyCollection<Blueprint>> GetBlueprints(
+        public async Task<(IReadOnlyCollection<Blueprint> Blueprints, bool HasMore, int TotalCount)> GetBlueprints(
             (int Current, int Size) page,
             (SortField Field, SortDirection Direction) sort,
             IReadOnlyCollection<string> tags,
@@ -123,9 +123,13 @@ namespace FactorioTech.Core.Services
                 _ => throw new ArgumentOutOfRangeException(nameof(sort)),
             };
 
-            return await query
-                .Skip(Math.Max(page.Current - 1, 0) * page.Size).Take(page.Size)
+            var results = await query
+                .Skip(Math.Max(page.Current - 1, 0) * page.Size).Take(page.Size + 1)
                 .ToListAsync();
+
+            var totalCount = await _dbContext.Blueprints.CountAsync();
+
+            return (results, results.Count > page.Size, totalCount);
         }
 
         public async Task<Blueprint?> GetBlueprint(string owner, string slug)
