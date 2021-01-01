@@ -1,4 +1,5 @@
 using FactorioTech.Core;
+using FactorioTech.Core.Domain;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,19 @@ namespace FactorioTech.Api.ViewModels
         public Instant UpdatedAt { get; set; }
 
         /// <summary>
+        /// The build's icons.
+        /// </summary>
+        public IEnumerable<GameIcon> Icons { get; set; }
+
+        /// <summary>
+        /// The title or display name of the build.
+        /// </summary>
+        /// <example>My Awesome Build</example>
+        [Required]
+        [StringLength(100, MinimumLength = 3)]
+        public string Title { get; set; }
+
+        /// <summary>
         /// The user who created the build.
         /// </summary>
         [Required]
@@ -50,12 +64,9 @@ namespace FactorioTech.Api.ViewModels
         public Version LatestGameVersion { get; set; }
 
         /// <summary>
-        /// The title or display name of the build.
+        /// The build's tags.
         /// </summary>
-        /// <example>My Awesome Build</example>
-        [Required]
-        [StringLength(100, MinimumLength = 3)]
-        public string Title { get; set; }
+        public IEnumerable<string> Tags { get; set; }
     }
 
     public class ThinBuildModel : BuildModelBase<ThinUserModel>
@@ -86,10 +97,5 @@ namespace FactorioTech.Api.ViewModels
         /// The build's most recently added version.
         /// </summary>
         public VersionModel LatestVersion { get; set; }
-
-        /// <summary>
-        /// The build's tags.
-        /// </summary>
-        public IEnumerable<string> Tags { get; set; }
     }
 }

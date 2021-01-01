@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Data
@@ -85,6 +86,9 @@ namespace FactorioTech.Core.Data
                     .HasForeignKey(e => e.BlueprintId)
                     .HasPrincipalKey(e => e.BlueprintId);
 
+                entity.Property(e => e.Icons)
+                    .HasColumnType("jsonb");
+
                 if (Database.IsNpgsql())
                 {
                     entity.HasGeneratedTsVectorColumn(
@@ -117,6 +121,9 @@ namespace FactorioTech.Core.Data
                 entity.HasOne(e => e.Payload!).WithMany()
                     .HasForeignKey(e => e.Hash)
                     .HasPrincipalKey(e => e.Hash);
+
+                entity.Property(e => e.Icons)
+                    .HasColumnType("jsonb");
             });
 
             builder.Entity<BlueprintPayload>(entity =>

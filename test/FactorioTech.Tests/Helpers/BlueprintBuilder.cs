@@ -5,6 +5,7 @@ using FactorioTech.Core.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Tests.Helpers
@@ -38,7 +39,7 @@ namespace FactorioTech.Tests.Helpers
                 "Simple Blueprint Book",
                 null,
                 new[] { "/belt/balancer", "/general/early game" },
-                (_payload.Hash, null, null));
+                (_payload.Hash, null, null, Enumerable.Empty<GameIcon>()));
 
             var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
             var result = await service.CreateOrAddVersion(request, _owner, null);

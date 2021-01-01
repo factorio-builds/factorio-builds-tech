@@ -146,9 +146,11 @@ namespace FactorioTech.Api.Services
                     await _dbContext.SaveChangesAsync();
                 }
 
-                var cache = new PayloadCache();
                 var envelope = await _blueprintConverter.Decode(blueprint.Encoded);
                 var payload = new BlueprintPayload(Hash.Compute(blueprint.Encoded), blueprint.Encoded, Utils.DecodeGameVersion(envelope.Version));
+                var icons = envelope.Icons?.Select(x => new GameIcon((short)x.Index, x.Signal.Type, x.Signal.Name)) ?? Enumerable.Empty<GameIcon>();
+
+                var cache = new PayloadCache();
                 cache.TryAdd(envelope, payload);
 
                 await cache.EnsureInitializedGraph(envelope);
@@ -159,7 +161,7 @@ namespace FactorioTech.Api.Services
                     blueprint.Title,
                     blueprint.Description,
                     blueprint.Tags.Select(t => t.TrimEnd('/')),
-                    (payload.Hash, null, null));
+                    (payload.Hash, null, null, icons));
 
                 var result = await _blueprintService.CreateOrAddVersion(request, owner, null);
 

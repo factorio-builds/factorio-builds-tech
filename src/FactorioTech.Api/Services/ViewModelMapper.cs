@@ -29,9 +29,11 @@ namespace FactorioTech.Api.Services
                 Slug = blueprint.Slug,
                 CreatedAt = blueprint.CreatedAt,
                 UpdatedAt = blueprint.UpdatedAt,
+                Icons = blueprint.Icons,
                 Title = blueprint.Title,
                 Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
+                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
             };
 
         public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
@@ -41,6 +43,7 @@ namespace FactorioTech.Api.Services
                 Slug = blueprint.Slug,
                 CreatedAt = blueprint.CreatedAt,
                 UpdatedAt = blueprint.UpdatedAt,
+                Icons = blueprint.Icons,
                 Title = blueprint.Title,
                 Description = blueprint.Description?.Let(description => new FullBuildModel.DescriptionModel
                 {

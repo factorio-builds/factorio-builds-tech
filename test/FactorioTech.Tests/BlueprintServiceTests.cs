@@ -80,7 +80,7 @@ namespace FactorioTech.Tests
                 "test blueprint 1",
                 "the description",
                 new[] { "/belt/balancer", "/general/early game" },
-                (payload.Hash, null, null));
+                (payload.Hash, null, null, Enumerable.Empty<GameIcon>()));
 
             var result = await _service.CreateOrAddVersion(request, owner, null);
 
@@ -115,7 +115,7 @@ namespace FactorioTech.Tests
                 "different title",
                 "different description",
                 new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
-                (payload.Hash, null, null));
+                (payload.Hash, null, null, Enumerable.Empty<GameIcon>()));
 
             var result = await _service.CreateOrAddVersion(request, owner, existing.BlueprintId);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();

@@ -17,13 +17,13 @@ namespace FactorioTech.Core.Services
             Title,
             Created,
             Updated,
-            Favorites
+            Favorites,
         }
 
         public enum SortDirection
         {
             Asc,
-            Desc
+            Desc,
         }
 
         public record CreateRequest(
@@ -31,7 +31,7 @@ namespace FactorioTech.Core.Services
             string Title,
             string? Description,
             IEnumerable<string> Tags,
-            (Hash Hash, string? Name, string? Description) Version);
+            (Hash Hash, string? Name, string? Description, IEnumerable<GameIcon> Icons) Version);
 
         public record CreateResult
         {
@@ -124,6 +124,7 @@ namespace FactorioTech.Core.Services
             };
 
             var results = await query
+                .Include(bp => bp.Tags)
                 .Skip(Math.Max(page.Current - 1, 0) * page.Size).Take(page.Size + 1)
                 .ToListAsync();
 
@@ -134,18 +135,13 @@ namespace FactorioTech.Core.Services
 
         public async Task<Blueprint?> GetBlueprint(string owner, string slug)
         {
-            var blueprint = await _dbContext.Blueprints
+            var blueprint = await _dbContext.Blueprints.AsNoTracking()
                 .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant()
                           && bp.NormalizedSlug == slug.ToUpperInvariant())
                 .Include(bp => bp.Owner)
+                .Include(bp => bp.Tags)
                 .Include(bp => bp.LatestVersion!).ThenInclude(v => v.Payload)
                 .FirstOrDefaultAsync();
-
-            if (blueprint == null)
-                return null;
-
-            // don't include in the initial query as this will cause a massive cross join
-            await _dbContext.Entry(blueprint).Collection(e => e.Tags).LoadAsync();
 
             return blueprint;
         }
@@ -241,7 +237,8 @@ namespace FactorioTech.Core.Services
                 payload.Hash,
                 payload.GameVersion,
                 request.Version.Name?.Trim(),
-                request.Version.Description?.Trim());
+                request.Version.Description?.Trim(),
+                request.Version.Icons);
 
             _dbContext.Add(version);
 

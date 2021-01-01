@@ -15,7 +15,7 @@ namespace FactorioTech.Api.Controllers
     {
         public class BuildsQueryParams
         {
-            public const int PageSize = 2;
+            public const int PageSize = 100;
 
             /// <summary>
             /// The desired page

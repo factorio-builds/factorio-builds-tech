@@ -1,5 +1,6 @@
 using NodaTime;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Core.Domain
@@ -27,6 +28,9 @@ namespace FactorioTech.Core.Domain
         public string? Name { get; init; }
 
         public string? Description { get; init; }
+        
+        [Required]
+        public IEnumerable<GameIcon> Icons { get; init; }
 
         // navigation properties -> will be null if not included explicitly
 
@@ -34,7 +38,7 @@ namespace FactorioTech.Core.Domain
 
         public Blueprint? Blueprint { get; init; }
 
-        public BlueprintVersion(Guid versionId, Guid blueprintId, Instant createdAt, Hash hash, Version gameVersion, string? name, string? description)
+        public BlueprintVersion(Guid versionId, Guid blueprintId, Instant createdAt, Hash hash, Version gameVersion, string? name, string? description, IEnumerable<GameIcon> icons)
         {
             VersionId = versionId;
             BlueprintId = blueprintId;
@@ -43,11 +47,13 @@ namespace FactorioTech.Core.Domain
             Hash = hash;
             Name = name;
             Description = description;
+            Icons = icons;
         }
 
 #pragma warning disable 8618 // required for EF
-        private BlueprintVersion()
+        private BlueprintVersion(ICollection<GameIcon> icons)
         {
+            Icons = icons;
         }
 #pragma warning restore 8618
     }

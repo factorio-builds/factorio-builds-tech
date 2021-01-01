@@ -27,6 +27,14 @@ namespace FactorioTech.Core.Domain
 
         [Required]
         [MaxLength(100)]
+        public string Title { get; private set; }
+
+        public string? Description { get; private set; }
+
+        // denormalized data for better query performance
+
+        [Required]
+        [MaxLength(100)]
         public string NormalizedSlug { get; init; }
 
         [Required]
@@ -38,14 +46,11 @@ namespace FactorioTech.Core.Domain
         public string NormalizedOwnerSlug { get; init; }
 
         [Required]
-        [MaxLength(100)]
-        public string Title { get; private set; }
-
-        public string? Description { get; private set; }
-
-        [Required]
         [MaxLength(16)]
         public string LatestGameVersion { get; private set; }
+
+        [Required]
+        public IEnumerable<GameIcon> Icons { get; private set; }
 
         // navigation properties -> will be null if not included explicitly
 
@@ -80,6 +85,7 @@ namespace FactorioTech.Core.Domain
             Title = title;
             Description = description;
             LatestGameVersion = "0.0.0.0";
+            Icons = Array.Empty<GameIcon>();
 
             Tags = new HashSet<Tag>();
             foreach (var tag in tags)
@@ -101,6 +107,7 @@ namespace FactorioTech.Core.Domain
             LatestVersion = version;
             LatestVersionId = version.VersionId;
             LatestGameVersion = version.GameVersion.ToString(4);
+            Icons = version.Icons;
         }
 
         public void UpdateDetails(Instant now, string title, string? description, IReadOnlySet<Tag> tags)
