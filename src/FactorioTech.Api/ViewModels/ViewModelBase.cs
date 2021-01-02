@@ -16,6 +16,9 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         public string Href { get; set; }
 
+        [JsonExtensionData]
+        public IDictionary<string, object> AdditionalProperties { get; } = new Dictionary<string, object>();
+
         public LinkModel(string href)
         {
             Href = href;
@@ -25,19 +28,30 @@ namespace FactorioTech.Api.ViewModels
     public class ImageLinkModel : LinkModel
     {
         [Required]
-        public int Width { get; set; }
-        
+        public int Width { get; init; }
+
         [Required]
-        public int Height { get; set; }
+        public int Height { get; init; }
 
         [StringLength(256)]
-        public string? Alt { get; set; }
+        public string? Alt { get; init; }
 
         public ImageLinkModel(string href, int width, int height, string? alt = null) : base(href)
         {
             Width = width;
             Height = height;
             Alt = alt;
+
+            // todo: this is intended behavior, but maybe there's a better way to handle polymorphism?
+            // see https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-polymorphism
+
+            AdditionalProperties[nameof(width)] = width;
+            AdditionalProperties[nameof(height)] = height;
+
+            if (alt != null)
+            {
+                AdditionalProperties[nameof(alt)] = alt;
+            }
         }
     }
 }
