@@ -15,7 +15,11 @@ namespace FactorioTech.Api.Extensions
         public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper,
             IReadOnlyCollection<Blueprint> blueprints, BuildController.BuildsQueryParams query, bool hasMore)
         {
-            var links = new Dictionary<string, LinkModel>();
+            var links = new Dictionary<string, LinkModel>
+            {
+                { "create-build", new LinkModel(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), "post") },
+                { "create-payload", new LinkModel(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), "put") },
+            };
 
             if (query.Page > 1)
             {
@@ -43,10 +47,31 @@ namespace FactorioTech.Api.Extensions
                 slug = blueprint.Slug,
             });
 
+            var followersUrl = urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", new
+            {
+                owner = blueprint.OwnerSlug,
+                slug = blueprint.Slug,
+            });
+
+            var toggleFavoriteUrl = urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", new
+            {
+                buildId = blueprint.BlueprintId,
+            });
+
             return new Dictionary<string, LinkModel>
             {
                 { "cover", new ImageLinkModel(coverUrl, AppConfig.Cover.Width, AppConfig.Cover.Height) },
                 { "self", new LinkModel(selfUrl) },
+                { "toggle-favorite", new LinkModel(toggleFavoriteUrl, "post") },
+                {
+                    "followers", new LinkModel(followersUrl)
+                    { 
+                        AdditionalProperties =
+                        {
+                            { "count", blueprint.FollowerCount },
+                        },
+                    }
+                },
             };
         }
 

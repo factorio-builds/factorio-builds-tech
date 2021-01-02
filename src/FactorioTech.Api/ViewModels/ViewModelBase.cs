@@ -16,12 +16,17 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         public string Href { get; set; }
 
+        [Required]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? Method { get; set; }
+
         [JsonExtensionData]
         public IDictionary<string, object> AdditionalProperties { get; } = new Dictionary<string, object>();
 
-        public LinkModel(string href)
+        public LinkModel(string href, string? method = null)
         {
             Href = href;
+            Method = method;
         }
     };
 

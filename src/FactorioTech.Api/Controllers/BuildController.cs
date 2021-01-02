@@ -1,15 +1,18 @@
 using FactorioTech.Api.Extensions;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
+using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
@@ -72,15 +75,18 @@ namespace FactorioTech.Api.Controllers
 
         private const int OneDayInSeconds = 86400;
 
+        private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
         private readonly ImageService _imageService;
 
         public BuildController(
+            AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
             ImageService imageService)
         {
+            _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
             _imageService = imageService;
@@ -133,6 +139,39 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
+        /// Get all users who have added this build to their favorites, ordered by the date when they started following the build
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <response code="200" type="application/json">An ordered list of followers</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [HttpGet("{owner}/{slug}/followers")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(UsersModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFollowers(string owner, string slug)
+        {
+            var buildId = await _dbContext.Blueprints.AsNoTracking()
+                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
+                .Select(bp => bp.BlueprintId)
+                .FirstOrDefaultAsync();
+
+            if (buildId == Guid.Empty)
+                return NotFound();
+
+            var followers = await _dbContext.Favorites.AsNoTracking()
+                .Where(f => f.BlueprintId == buildId)
+                .OrderByDescending(f => f.CreatedAt)
+                .Select(f => f.User!)
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(followers.ToViewModel());
+        }
+
+        /// <summary>
         /// Get the cover image of a build
         /// </summary>
         /// <param name="buildId" example="1c3828e3-de0d-41b8-9b3a-a15688f4217b">The id of the desired build</param>
@@ -157,8 +196,9 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Create a new build with from a previously created payload
         /// </summary>
-        [HttpPost("")]
         [Authorize]
+        [HttpPost("")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateBuild([FromBody]CreateBuildRequest request)

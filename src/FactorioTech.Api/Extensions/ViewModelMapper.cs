@@ -13,6 +13,21 @@ namespace FactorioTech.Api.Extensions
 {
     public static class ViewModelMapper
     {
+        public static UsersModel ToViewModel(this IReadOnlyCollection<User> users) =>
+            new()
+            {
+                Users = users.Select(ToViewModel),
+                Count = users.Count,
+            };
+
+        public static UserModel ToViewModel(this User user) =>
+            new()
+            {
+                Username = user.UserName,
+                DisplayName = user.DisplayName,
+                RegisteredAt = user.RegisteredAt,
+            };
+
         public static BuildsModel ToViewModel(this IReadOnlyCollection<Blueprint> blueprints,
             IUrlHelper urlHelper, BuildController.BuildsQueryParams query, bool hasMore, int totalCount) =>
             new()
@@ -55,14 +70,6 @@ namespace FactorioTech.Api.Extensions
                 LatestVersion = blueprint.LatestVersion?.ToViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(Blueprint.LatestVersion)),
                 Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(Blueprint.Owner)),
                 Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
-            };
-
-        public static UserModel ToViewModel(this User user) =>
-            new()
-            {
-                Username = user.UserName,
-                DisplayName = user.DisplayName,
-                RegisteredAt = user.RegisteredAt,
             };
 
         public static VersionModel ToViewModel(this BlueprintVersion version, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>

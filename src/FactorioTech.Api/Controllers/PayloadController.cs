@@ -147,8 +147,8 @@ namespace FactorioTech.Api.Controllers
         /// Create a payload for the encoded blueprint string. If the blueprint is a `blueprint-book`,
         /// payloads for all children will be created too.
         /// </summary>
-        [HttpPost("")]
         [Authorize]
+        [HttpPut("")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(CreatePayloadResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
