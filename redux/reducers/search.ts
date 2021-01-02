@@ -10,16 +10,16 @@ import {
 import { IPayloadAction, IStoreState } from "../store"
 
 export interface IStoreSearchState {
-  nbTotal: number
-  nbHits: number
-  hits: IIndexedBuild[]
+  current_count: number
+  total_count: number
+  builds: IIndexedBuild[]
   processingTimeMs: number
 }
 
 const initialSearchState: IStoreSearchState = {
-  nbTotal: 0,
-  nbHits: 0,
-  hits: [],
+  current_count: 0,
+  total_count: 0,
+  builds: [],
   processingTimeMs: 0,
 }
 
@@ -62,12 +62,11 @@ export const searchBuildsAsync = (): ThunkAction<
           dispatch({
             type: "SEARCH_BUILDS_SUCCESS",
             payload: {
-              hits: data.builds,
-              nbHits: data.builds.length,
-              nbTotal: data.builds.length,
+              current_count: data.current_count,
+              total_count: data.total_count,
+              builds: data.builds,
               processingTimeMs: 5,
             },
-            // payload: response.data.result,
           })
           // }
         })
@@ -81,10 +80,10 @@ const searchBuildsSucess = (
 ) => {
   return {
     ...state,
-    nbTotal: payload.nbTotal,
-    nbHits: payload.nbHits,
-    hits: payload.hits,
-    processingTimeMs: payload.processingTimeMs,
+    current_count: payload.current_count,
+    total_count: payload.total_count,
+    builds: payload.builds,
+    processingTimeMs: 5,
   }
 }
 

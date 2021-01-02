@@ -3,33 +3,33 @@ import { useDistributeToColumn } from "../useDistributeToColumn"
 const COL_WIDTH = 250
 const GUTTER = 15
 const ITEMS = [
-  { id: 1, image: { width: 250, height: 250 } },
-  { id: 2, image: { width: 250, height: 140 } },
-  { id: 3, image: { width: 250, height: 458 } },
-  { id: 4, image: { width: 250, height: 254 } },
-  { id: 5, image: { width: 250, height: 637 } },
-  { id: 6, image: { width: 250, height: 89 } },
-  { id: 7, image: { width: 250, height: 132 } },
-  { id: 8, image: { width: 250, height: 89 } },
-  { id: 9, image: { width: 250, height: 89 } },
-  { id: 10, image: { width: 250, height: 89 } },
+  { id: 1, _links: { cover: { width: 250, height: 250 } } },
+  { id: 2, _links: { cover: { width: 250, height: 140 } } },
+  { id: 3, _links: { cover: { width: 250, height: 458 } } },
+  { id: 4, _links: { cover: { width: 250, height: 254 } } },
+  { id: 5, _links: { cover: { width: 250, height: 637 } } },
+  { id: 6, _links: { cover: { width: 250, height: 89 } } },
+  { id: 7, _links: { cover: { width: 250, height: 132 } } },
+  { id: 8, _links: { cover: { width: 250, height: 89 } } },
+  { id: 9, _links: { cover: { width: 250, height: 89 } } },
+  { id: 10, _links: { cover: { width: 250, height: 89 } } },
 ]
 const OUTPUT = [
   [
-    { id: 1, image: { width: 250, height: 250 } },
-    { id: 5, image: { width: 250, height: 637 } },
+    { id: 1, _links: { cover: { width: 250, height: 250 } } },
+    { id: 5, _links: { cover: { width: 250, height: 637 } } },
   ],
   [
-    { id: 2, image: { width: 250, height: 140 } },
-    { id: 4, image: { width: 250, height: 254 } },
-    { id: 6, image: { width: 250, height: 89 } },
-    { id: 8, image: { width: 250, height: 89 } },
-    { id: 10, image: { width: 250, height: 89 } },
+    { id: 2, _links: { cover: { width: 250, height: 140 } } },
+    { id: 4, _links: { cover: { width: 250, height: 254 } } },
+    { id: 6, _links: { cover: { width: 250, height: 89 } } },
+    { id: 8, _links: { cover: { width: 250, height: 89 } } },
+    { id: 10, _links: { cover: { width: 250, height: 89 } } },
   ],
   [
-    { id: 3, image: { width: 250, height: 458 } },
-    { id: 7, image: { width: 250, height: 132 } },
-    { id: 9, image: { width: 250, height: 89 } },
+    { id: 3, _links: { cover: { width: 250, height: 458 } } },
+    { id: 7, _links: { cover: { width: 250, height: 132 } } },
+    { id: 9, _links: { cover: { width: 250, height: 89 } } },
   ],
 ]
 
@@ -54,26 +54,26 @@ describe("useDistributeToColumn", () => {
 
   it("distributes less items than the column count", () => {
     const items = [
-      { id: 1, image: { width: 250, height: 250 } },
-      { id: 2, image: { width: 250, height: 140 } },
+      { id: 1, _links: { cover: { width: 250, height: 250 } } },
+      { id: 2, _links: { cover: { width: 250, height: 140 } } },
     ]
     expect(useDistributeToColumn(items as any, 3, COL_WIDTH, GUTTER)).toEqual([
-      [{ id: 1, image: { width: 250, height: 250 } }],
-      [{ id: 2, image: { width: 250, height: 140 } }],
+      [{ id: 1, _links: { cover: { width: 250, height: 250 } } }],
+      [{ id: 2, _links: { cover: { width: 250, height: 140 } } }],
       [],
     ])
   })
 
   it("distributes items equal to the column count", () => {
     const items = [
-      { id: 1, image: { width: 250, height: 250 } },
-      { id: 2, image: { width: 250, height: 140 } },
-      { id: 3, image: { width: 250, height: 458 } },
+      { id: 1, _links: { cover: { width: 250, height: 250 } } },
+      { id: 2, _links: { cover: { width: 250, height: 140 } } },
+      { id: 3, _links: { cover: { width: 250, height: 458 } } },
     ]
     expect(useDistributeToColumn(items as any, 3, COL_WIDTH, GUTTER)).toEqual([
-      [{ id: 1, image: { width: 250, height: 250 } }],
-      [{ id: 2, image: { width: 250, height: 140 } }],
-      [{ id: 3, image: { width: 250, height: 458 } }],
+      [{ id: 1, _links: { cover: { width: 250, height: 250 } } }],
+      [{ id: 2, _links: { cover: { width: 250, height: 140 } } }],
+      [{ id: 3, _links: { cover: { width: 250, height: 458 } } }],
     ])
   })
 
@@ -85,27 +85,48 @@ describe("useDistributeToColumn", () => {
 
   it("carries the original value in the value key", () => {
     const items = [
-      { id: 1, image: { width: 250, height: 250, value: { name: "PHOTO1" } } },
-      { id: 2, image: { width: 250, height: 140, value: { name: "PHOTO2" } } },
-      { id: 3, image: { width: 250, height: 458, value: { name: "PHOTO3" } } },
+      {
+        id: 1,
+        _links: {
+          cover: { width: 250, height: 250, value: { name: "PHOTO1" } },
+        },
+      },
+      {
+        id: 2,
+        _links: {
+          cover: { width: 250, height: 140, value: { name: "PHOTO2" } },
+        },
+      },
+      {
+        id: 3,
+        _links: {
+          cover: { width: 250, height: 458, value: { name: "PHOTO3" } },
+        },
+      },
     ]
     expect(useDistributeToColumn(items as any, 3, COL_WIDTH, GUTTER)).toEqual([
       [
         {
           id: 1,
-          image: { width: 250, height: 250, value: { name: "PHOTO1" } },
+          _links: {
+            cover: { width: 250, height: 250, value: { name: "PHOTO1" } },
+          },
         },
       ],
       [
         {
           id: 2,
-          image: { width: 250, height: 140, value: { name: "PHOTO2" } },
+          _links: {
+            cover: { width: 250, height: 140, value: { name: "PHOTO2" } },
+          },
         },
       ],
       [
         {
           id: 3,
-          image: { width: 250, height: 458, value: { name: "PHOTO3" } },
+          _links: {
+            cover: { width: 250, height: 458, value: { name: "PHOTO3" } },
+          },
         },
       ],
     ])
@@ -113,27 +134,27 @@ describe("useDistributeToColumn", () => {
 
   it("avoids crashing with 0 width/height", () => {
     const items = [
-      { id: 1, image: { width: 250, height: 250 } },
-      { id: 2, image: { width: 0, height: 0 } },
-      { id: 3, image: { width: 250, height: 458 } },
+      { id: 1, _links: { cover: { width: 250, height: 250 } } },
+      { id: 2, _links: { cover: { width: 0, height: 0 } } },
+      { id: 3, _links: { cover: { width: 250, height: 458 } } },
     ]
     expect(useDistributeToColumn(items as any, 3, COL_WIDTH, GUTTER)).toEqual([
       [
         {
           id: 1,
-          image: { width: 250, height: 250 },
+          _links: { cover: { width: 250, height: 250 } },
         },
       ],
       [
         {
           id: 2,
-          image: { width: 0, height: 0 },
+          _links: { cover: { width: 0, height: 0 } },
         },
       ],
       [
         {
           id: 3,
-          image: { width: 250, height: 458 },
+          _links: { cover: { width: 250, height: 458 } },
         },
       ],
     ])

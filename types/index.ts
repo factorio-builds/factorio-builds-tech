@@ -1,5 +1,4 @@
 import { IncomingMessage } from "http"
-import { Build } from "../db/entities/build.entity"
 import { User } from "../db/entities/user.entity"
 
 export enum EFilterType {
@@ -120,14 +119,46 @@ export interface IBlueprintBook {
   version: number
 }
 
+export interface IIndexedBuildIcon {
+  index: number
+  type: string
+  name: string
+}
+
 export interface IIndexedBuild {
-  id: Build["id"]
-  name: Build["name"]
-  metadata: Build["metadata"]
-  ownerId: Build["ownerId"]
-  image: Build["image"]
-  views: Build["views"]
-  updatedAt: Build["updatedAt"]
+  title: string
+  slug: string
+  owner: { username: string }
+  latest_game_version: string
+  icons: IIndexedBuildIcon[]
+  tags: string[]
+  created_at: string
+  updated_at: string
+  _links: {
+    cover: {
+      href: string
+      width: number
+      height: number
+    }
+    self: {
+      href: string
+    }
+    versions: {
+      href: string
+    }
+    "add-version": {
+      href: string
+      method: "post"
+    }
+    "toggle-favorite": {
+      href: string
+      method: "post"
+    }
+    followers: {
+      href: string
+      count: number
+    }
+  }
 }
 
 export interface IUser {
@@ -148,10 +179,9 @@ interface ApiResponseFailure {
 type ApiResponse<R> = ApiResponseSuccess<R> | ApiResponseFailure
 
 export interface SearchResponse<T> {
-  nbTotal: number
-  nbHits: number
-  hits: T[]
-  processingTimeMs: number
+  current_count: number
+  total_count: number
+  builds: T[]
 }
 
 export type ApiSeachBuild = ApiResponse<SearchResponse<IIndexedBuild>>

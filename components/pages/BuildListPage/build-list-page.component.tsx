@@ -23,9 +23,9 @@ function BuildListPage(): JSX.Element {
       }
     >
       <BuildCardList
-        items={search.hits}
-        count={search.nbHits}
-        totalCount={search.nbTotal}
+        items={search.builds}
+        count={search.current_count}
+        totalCount={search.total_count}
         lookupTime={search.processingTimeMs}
         sort={sort}
       />

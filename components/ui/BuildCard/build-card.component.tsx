@@ -1,36 +1,37 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Build } from "../../../db/entities/build.entity"
-import { IBlueprintIcon, IMetadata } from "../../../types"
+import { IIndexedBuild } from "../../../types"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
-  name: Build["name"]
-  icons: IBlueprintIcon[]
+  title: IIndexedBuild["title"]
+  icons: IIndexedBuild["icons"]
   isBook: boolean
-  categories: IMetadata["categories"]
-  image: Build["image"]
-  id: Build["id"]
+  // TODO: probably switch to IMetadata["categories"] later
+  categories: IIndexedBuild["tags"]
+  image: IIndexedBuild["_links"]["cover"]
+  // TODO: switch to IIndexedBuild["_links"]["self"]
+  link: string
 }
 
 function BuildCard({
-  name,
+  title,
   icons,
   isBook,
   categories = [],
   image,
-  id,
+  link,
 }: IBuildCardProps): JSX.Element {
   return (
-    <Link href={`/build/${id}`}>
+    <Link href={link}>
       <SC.BuildCardWrapper>
         <SC.ImageWrapper>
           <Image
-            src={image.src}
+            src={image.href}
             alt=""
             width={image.width}
             height={image.height}
@@ -41,7 +42,7 @@ function BuildCard({
           <SC.Title>
             {icons.length > 0 && <BuildIcon icons={icons} />}
             <WithIcons
-              input={name}
+              input={title}
               prefix={
                 isBook ? (
                   <img src="/img/blueprint-book.png" alt="" />

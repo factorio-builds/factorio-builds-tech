@@ -8,6 +8,7 @@ module.exports = {
   },
   images: {
     domains: [
+      "api.local.factorio.tech",
       "factorio-builds-static-assets-dev-781466525417.s3.amazonaws.com",
     ],
   },

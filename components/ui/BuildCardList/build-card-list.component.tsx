@@ -27,10 +27,10 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   const COL_GUTTER = GUTTER
   const CONTAINER_WIDTH = 1052 // needs to be dynamic on window resize
 
-  // TODO: send logic to selector
+  // TODO: send logic to search API
   const sortedItems = React.useMemo(() => {
     if (sort === ESortType.NEWEST) {
-      return sortBy(items, [(item) => Date.parse(item.updatedAt)]).reverse()
+      return sortBy(items, [(item) => Date.parse(item.updated_at)]).reverse()
     }
 
     if (sort === ESortType.VIEWS) {
@@ -61,14 +61,17 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
         {columns.map((items, i) => (
           <SC.Column key={i}>
             {items.map((item, i2) => (
-              <SC.Item key={`${item.id}_${i}_${i2}`}>
+              <SC.Item key={`${item.slug}_${i}_${i2}`}>
                 <BuildCard
-                  name={item.name}
-                  categories={item.metadata.categories}
-                  icons={item.metadata.icons}
-                  isBook={item.metadata.isBook}
-                  image={item.image}
-                  id={item.id}
+                  title={item.title}
+                  // TODO: probably switch to categories later
+                  categories={item.tags}
+                  icons={item.icons}
+                  // TODO: fill isBook once reimplemented
+                  isBook={false}
+                  image={item._links.cover}
+                  // TODO: switch to IIndexedBuild["_links"]["self"]
+                  link={`${item.owner.username}/${item.slug}`}
                 />
               </SC.Item>
             ))}

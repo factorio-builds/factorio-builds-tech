@@ -1,11 +1,11 @@
 import React from "react"
 import cx from "classnames"
-import { IBlueprintIcon } from "../../../types"
+import { IIndexedBuildIcon } from "../../../types"
 import ItemIcon from "../ItemIcon"
 import * as SC from "./build-icon.styles"
 
 interface IBuildIconProps {
-  icons: IBlueprintIcon[]
+  icons: IIndexedBuildIcon[]
   size?: "medium" | "large"
 }
 
@@ -20,7 +20,7 @@ function BuildIcon({ icons, size = "medium" }: IBuildIconProps): JSX.Element {
       })}
     >
       {icons.map((icon) => (
-        <ItemIcon key={icon.index} itemName={icon.signal.name} />
+        <ItemIcon key={icon.index} itemName={icon.name} />
       ))}
     </SC.BuildIconWrapper>
   )

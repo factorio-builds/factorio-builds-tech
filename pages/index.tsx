@@ -18,24 +18,22 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       .catch((err) => {
         console.error(err)
       })
-    // .then((response) => {
-    //   console.log(response)
-    //   if (response.data.success) {
-    //     return response.data.result
-    //   }
-    // })
 
-    const deserializedSearchResults = JSON.parse(JSON.stringify(searchResults))
-    // const deserializedSearchResults: SearchResponse<IIndexedBuild> = JSON.parse(
-    //   JSON.stringify(searchResults)
-    // )
+    // console.log(searchResults)
+
+    // const deserializedSearchResults = JSON.parse(JSON.stringify(searchResults))
+    const deserializedSearchResults: SearchResponse<IIndexedBuild> = JSON.parse(
+      JSON.stringify(searchResults)
+    )
+
+    console.log(deserializedSearchResults)
 
     ctx.store.dispatch({
       type: "SEARCH_BUILDS_SUCCESS",
       payload: {
-        hits: deserializedSearchResults.builds,
-        nbHits: deserializedSearchResults.builds.length,
-        nbTotal: deserializedSearchResults.builds.length,
+        builds: deserializedSearchResults.builds,
+        current_count: deserializedSearchResults.current_count,
+        total_count: deserializedSearchResults.total_count,
         processingTimeMs: 5,
       },
     })

@@ -17,7 +17,10 @@ function columnHeight(
 ): number {
   const gutterHeight = Math.max(items.length - 1, 0) * gutter
   const itemsTotalHeight = items.reduce((acc, item) => {
-    return acc + calcRatio(item.image.width, item.image.height) * colWidth
+    return (
+      acc +
+      calcRatio(item._links.cover.width, item._links.cover.height) * colWidth
+    )
   }, 0)
 
   return itemsTotalHeight + gutterHeight
