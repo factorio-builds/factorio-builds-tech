@@ -36,42 +36,31 @@ namespace FactorioTech.Api.Extensions
 
         public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper, Blueprint blueprint)
         {
-            var coverUrl = urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", new
+            var buildIdValues = new
             {
                 buildId = blueprint.BlueprintId,
-            });
+            };
 
-            var selfUrl = urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", new
+            var buildValues = new
             {
                 owner = blueprint.OwnerSlug,
                 slug = blueprint.Slug,
-            });
+            };
 
-            var followersUrl = urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", new
-            {
-                owner = blueprint.OwnerSlug,
-                slug = blueprint.Slug,
-            });
-
-            var toggleFavoriteUrl = urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", new
-            {
-                buildId = blueprint.BlueprintId,
-            });
+            var coverUrl = urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues);
+            var selfUrl = urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues);
+            var versionsUrl = urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues);
+            var followersUrl = urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues);
+            var toggleFavoriteUrl = urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", buildIdValues);
 
             return new Dictionary<string, LinkModel>
             {
                 { "cover", new ImageLinkModel(coverUrl, AppConfig.Cover.Width, AppConfig.Cover.Height) },
                 { "self", new LinkModel(selfUrl) },
+                { "versions", new LinkModel(versionsUrl) },
+                { "add-version", new LinkModel(versionsUrl, "post") },
                 { "toggle-favorite", new LinkModel(toggleFavoriteUrl, "post") },
-                {
-                    "followers", new LinkModel(followersUrl)
-                    { 
-                        AdditionalProperties =
-                        {
-                            { "count", blueprint.FollowerCount },
-                        },
-                    }
-                },
+                { "followers", new LinkModel(followersUrl, ("count", blueprint.FollowerCount)) },
             };
         }
 

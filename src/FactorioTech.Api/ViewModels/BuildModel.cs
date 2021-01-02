@@ -96,6 +96,6 @@ namespace FactorioTech.Api.ViewModels
         /// <summary>
         /// The build's most recently added version.
         /// </summary>
-        public VersionModel LatestVersion { get; set; }
+        public FullVersionModel LatestVersion { get; set; }
     }
 }

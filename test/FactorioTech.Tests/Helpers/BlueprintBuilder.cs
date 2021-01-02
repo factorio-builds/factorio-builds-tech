@@ -40,7 +40,7 @@ namespace FactorioTech.Tests.Helpers
                 null,
                 new[] { "/belt/balancer", "/general/early game" },
                 (_payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
-                (null, null));
+                null);
 
             var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
             var result = await service.CreateOrAddVersion(request, _owner.Id);

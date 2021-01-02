@@ -162,7 +162,7 @@ namespace FactorioTech.Api
                     blueprint.Description,
                     blueprint.Tags.Select(t => t.TrimEnd('/')),
                     (payload.Hash, null, null, icons),
-                    (null, null));
+                    null);
 
                 var result = await _blueprintService.CreateOrAddVersion(request, owner.Id);
 

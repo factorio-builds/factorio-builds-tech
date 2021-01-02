@@ -32,7 +32,7 @@ namespace FactorioTech.Core.Services
             string? Description,
             IEnumerable<string> Tags,
             (Hash Hash, string? Name, string? Description, IEnumerable<GameIcon> Icons) Version,
-            (Guid? BlueprintId, Guid? ExpectedVersionId) Parent);
+            Guid? ExpectedVersionId);
 
         public record CreateResult
         {
@@ -48,8 +48,7 @@ namespace FactorioTech.Core.Services
                 : CreateResult { }
 
             public sealed record DuplicateSlug(
-                    string Slug,
-                    (Guid Id, string UserName) Owner)
+                    string Slug)
                 : CreateResult { }
 
             public sealed record InvalidSlug(
@@ -57,7 +56,7 @@ namespace FactorioTech.Core.Services
                 : CreateResult { }
 
             public sealed record ParentNotFound(
-                    Guid BlueprintId)
+                    string Slug)
                 : CreateResult { }
 
             public sealed record UnexpectedParentVersion(
@@ -182,75 +181,26 @@ namespace FactorioTech.Core.Services
                 return new CreateResult.PayloadNotFound(request.Version.Hash);
             }
 
-            var currentInstant = SystemClock.Instance.GetCurrentInstant();
-
             await using var tx = await _dbContext.Database.BeginTransactionAsync();
 
-            Blueprint? blueprint;
+            var owner = await _dbContext.Users.FindAsync(ownerId);
 
-            if (request.Parent.BlueprintId.HasValue)
-            {
-                blueprint = await _dbContext.Blueprints
-                    .Include(bp => bp.Tags)
-                    .FirstOrDefaultAsync(bp => bp.BlueprintId == request.Parent.BlueprintId);
+            var existing = await _dbContext.Blueprints
+                .Include(bp => bp.Tags)
+                .FirstOrDefaultAsync(bp => bp.OwnerId == ownerId && bp.NormalizedSlug == request.Slug.ToUpperInvariant());
 
-                if (blueprint == null)
-                {
-                    _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}", request.Parent.BlueprintId);
-                    return new CreateResult.ParentNotFound(request.Parent.BlueprintId.Value);
-                }
+            var result = request.ExpectedVersionId.HasValue
+                ? TryUpdateBlueprint(request, owner, existing)
+                : TryCreateBlueprint(request, owner, existing);
 
-                if (blueprint.OwnerId != ownerId)
-                {
-                    _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
-                        blueprint.BlueprintId, blueprint.OwnerId);
-                    return new CreateResult.OwnerMismatch(blueprint.BlueprintId, blueprint.Slug, (blueprint.OwnerId, blueprint.OwnerSlug));
-                }
-
-                if (blueprint.LatestVersionId != request.Parent.ExpectedVersionId)
-                {
-                    _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} but expected latest version id {ExpectedVersionId} does not match actual {LatestVersionId}",
-                        blueprint.BlueprintId, request.Parent.ExpectedVersionId, blueprint.LatestVersionId);
-                    return new CreateResult.UnexpectedParentVersion(
-                        blueprint.BlueprintId,
-                        request.Parent.ExpectedVersionId.GetValueOrDefault(),
-                        blueprint.LatestVersionId.GetValueOrDefault());
-                }
-
-                blueprint.UpdateDetails(
-                    currentInstant,
-                    request.Title.Trim(),
-                    request.Description?.Trim(),
-                    request.Tags.Where(Tags.All.Contains).Select(Tag.FromString).ToHashSet());
-            }
-            else
-            {
-                var owner = await _dbContext.Users.FindAsync(ownerId);
-
-                if (await SlugExistsForUser(ownerId, request.Slug))
-                {
-                    _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
-                        owner.UserName, request.Slug);
-                    return new CreateResult.DuplicateSlug(request.Slug, (owner.Id, owner.UserName));
-                }
-
-                blueprint = new Blueprint(
-                    Guid.NewGuid(),
-                    owner,
-                    currentInstant,
-                    currentInstant,
-                    request.Slug,
-                    request.Tags.Where(Tags.All.Contains).Select(Tag.FromString),
-                    request.Title.Trim(),
-                    request.Description?.Trim());
-
-                _dbContext.Add(blueprint);
-            }
+            var success = result as CreateResult.Success;
+            if (success == null)
+                return result;
 
             var version = new BlueprintVersion(
                 Guid.NewGuid(),
-                blueprint.BlueprintId,
-                currentInstant,
+                success.Blueprint.BlueprintId,
+                success.Blueprint.UpdatedAt,
                 payload.Hash,
                 payload.GameVersion,
                 request.Version.Name?.Trim(),
@@ -261,13 +211,14 @@ namespace FactorioTech.Core.Services
 
             await _dbContext.SaveChangesAsync();
 
-            blueprint.UpdateLatestVersion(version);
+            success.Blueprint.UpdateLatestVersion(version);
 
             await _dbContext.SaveChangesAsync();
             await tx.CommitAsync();
 
-            return new CreateResult.Success(blueprint);
+            return result;
         }
+
 
         public async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
             await _dbContext.Blueprints.AnyAsync(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.OwnerId == userId);
@@ -292,6 +243,64 @@ namespace FactorioTech.Core.Services
             _dbContext.AddRange(newPayloads);
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        private CreateResult TryUpdateBlueprint(CreateRequest request, User owner, Blueprint? existing)
+        {
+            if (existing == null)
+            {
+                _logger.LogWarning("Attempted to add version to unknown blueprint {Slug}", request.Slug);
+                return new CreateResult.ParentNotFound(request.Slug);
+            }
+
+            if (existing.OwnerId != owner.Id)
+            {
+                _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
+                    existing.BlueprintId, existing.OwnerId);
+                return new CreateResult.OwnerMismatch(existing.BlueprintId, existing.Slug, (existing.OwnerId, existing.OwnerSlug));
+            }
+
+            if (existing.LatestVersionId != request.ExpectedVersionId)
+            {
+                _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} but expected latest version id {ExpectedVersionId} does not match actual {LatestVersionId}",
+                    existing.BlueprintId, request.ExpectedVersionId, existing.LatestVersionId);
+                return new CreateResult.UnexpectedParentVersion(
+                    existing.BlueprintId,
+                    request.ExpectedVersionId.GetValueOrDefault(),
+                    existing.LatestVersionId.GetValueOrDefault());
+            }
+
+            existing.UpdateDetails(
+                SystemClock.Instance.GetCurrentInstant(),
+                request.Title.Trim(),
+                request.Description?.Trim(),
+                request.Tags.Where(Tags.All.Contains).Select(Tag.FromString).ToHashSet());
+
+            return new CreateResult.Success(existing);
+        }
+
+        private CreateResult TryCreateBlueprint(CreateRequest request, User owner, Blueprint? existing)
+        {
+            if (existing != null)
+            {
+                _logger.LogWarning("Attempted to save blueprint with existing slug {Slug}", request.Slug);
+                return new CreateResult.DuplicateSlug(request.Slug);
+            }
+
+            var currentInstant = SystemClock.Instance.GetCurrentInstant();
+            var blueprint = new Blueprint(
+                Guid.NewGuid(),
+                owner,
+                currentInstant,
+                currentInstant,
+                request.Slug,
+                request.Tags.Where(Tags.All.Contains).Select(Tag.FromString),
+                request.Title.Trim(),
+                request.Description?.Trim());
+
+            _dbContext.Add(blueprint);
+
+            return new CreateResult.Success(blueprint);
         }
     }
 }

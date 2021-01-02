@@ -23,10 +23,25 @@ namespace FactorioTech.Api.ViewModels
         [JsonExtensionData]
         public IDictionary<string, object> AdditionalProperties { get; } = new Dictionary<string, object>();
 
-        public LinkModel(string href, string? method = null)
+        public LinkModel(string href, params (string Name, object? Value)[] additionalProperties)
+            : this(href, null, additionalProperties)
+        {
+        }
+
+        public LinkModel(string href, string? method = null, params (string Name, object? Value)[] additionalProperties)
         {
             Href = href;
             Method = method;
+
+            // todo: this is intended behavior, but maybe there's a better way to handle polymorphism?
+            // see https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-polymorphism
+            foreach (var prop in additionalProperties)
+            {
+                if (prop.Value != null)
+                {
+                    AdditionalProperties.TryAdd(prop.Name, prop.Value);
+                }
+            }
         }
     };
 
@@ -41,22 +56,12 @@ namespace FactorioTech.Api.ViewModels
         [StringLength(256)]
         public string? Alt { get; init; }
 
-        public ImageLinkModel(string href, int width, int height, string? alt = null) : base(href)
+        public ImageLinkModel(string href, int width, int height, string? alt = null)
+            : base(href, (nameof(width), width), (nameof(width), width), (nameof(alt), alt))
         {
             Width = width;
             Height = height;
             Alt = alt;
-
-            // todo: this is intended behavior, but maybe there's a better way to handle polymorphism?
-            // see https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-polymorphism
-
-            AdditionalProperties[nameof(width)] = width;
-            AdditionalProperties[nameof(height)] = height;
-
-            if (alt != null)
-            {
-                AdditionalProperties[nameof(alt)] = alt;
-            }
         }
     }
 }

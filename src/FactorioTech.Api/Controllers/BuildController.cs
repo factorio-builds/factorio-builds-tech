@@ -116,6 +116,40 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
+        /// Create a new build with a previously created payload
+        /// </summary>
+        [Authorize]
+        [HttpPost("")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateBuild([FromBody]CreateBuildRequest request)
+        {
+            var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
+                    request.Slug.Trim(),
+                    request.Title.Trim(),
+                    request.Description?.Trim(),
+                    request.Tags,
+                    (request.Hash, request.VersionName?.Trim(), request.VersionDescription?.Trim(), request.Icons),
+                    null),
+                User.GetUserId());
+
+            return result switch
+            {
+                BlueprintService.CreateResult.Success success => Created(
+                    Url.ActionLink(nameof(GetDetails), "Build", new
+                    {
+                        owner = success.Blueprint.OwnerSlug,
+                        slug = success.Blueprint.Slug,
+                    }),
+                    success.Blueprint.ToThinViewModel(Url)),
+                BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
+                BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
+                _ => BadRequest(result.ToProblem()),
+            };
+        }
+
+        /// <summary>
         /// Get all details of a build
         /// </summary>
         /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
@@ -172,6 +206,73 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
+        /// Get all versions of a build, ordered by the creation date
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <response code="200" type="application/json">An ordered list of versions</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [HttpGet("{owner}/{slug}/versions")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(VersionsModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetVersions(string owner, string slug)
+        {
+            var versions = await _dbContext.Blueprints.AsNoTracking()
+                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
+                .Join(_dbContext.BlueprintVersions.AsNoTracking(), bp => bp.BlueprintId, v => v.BlueprintId, (bp, v) => v)
+                .OrderBy(v => v.CreatedAt)
+                .ToListAsync();
+
+            if (versions?.Any() != true)
+                return NotFound();
+
+            return Ok(versions.ToViewModel(Url));
+        }
+
+        /// <summary>
+        /// Add a new version with a previously created payload to a build
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <response code="200" type="application/json">An ordered list of versions</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [Authorize]
+        [HttpPost("{owner}/{slug}/versions")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(FullVersionModel), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddVersion(string owner, string slug, [FromBody]CreateVersionRequest request)
+        {
+            var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
+                    slug,
+                    request.Title.Trim(),
+                    request.Description?.Trim(),
+                    request.Tags,
+                    (request.Hash, request.VersionName?.Trim(), request.VersionDescription?.Trim(), request.Icons),
+                    request.ExpectedPreviousVersionId),
+                User.GetUserId());
+
+            return result switch
+            {
+                BlueprintService.CreateResult.Success success => Created(
+                    Url.ActionLink(nameof(GetDetails), "Build", new
+                    {
+                        owner = success.Blueprint.OwnerSlug,
+                        slug = success.Blueprint.Slug,
+                    }),
+                    success.Blueprint.ToThinViewModel(Url)),
+                BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
+                BlueprintService.CreateResult.ParentNotFound error => NotFound(error.ToProblem()),
+                _ => BadRequest(result.ToProblem()),
+            };
+        }
+
+        /// <summary>
         /// Get the cover image of a build
         /// </summary>
         /// <param name="buildId" example="1c3828e3-de0d-41b8-9b3a-a15688f4217b">The id of the desired build</param>
@@ -193,41 +294,7 @@ namespace FactorioTech.Api.Controllers
             return File(file, format);
         }
 
-        /// <summary>
-        /// Create a new build with from a previously created payload
-        /// </summary>
-        [Authorize]
-        [HttpPost("")]
-        [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateBuild([FromBody]CreateBuildRequest request)
-        {
-            var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
-                request.Slug.Trim(),
-                request.Title.Trim(),
-                request.Description?.Trim(),
-                request.Tags,
-                (request.Hash, request.VersionName?.Trim(), request.VersionDescription?.Trim(), request.Icons),
-                (null, null)),
-                User.GetUserId());
-
-            return result switch
-            {
-                BlueprintService.CreateResult.Success success => Created(
-                    Url.ActionLink(nameof(GetDetails), "Build", new
-                    {
-                        owner = success.Blueprint.OwnerSlug,
-                        slug = success.Blueprint.Slug,
-                    }),
-                    success.Blueprint.ToThinViewModel(Url)),
-                BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
-                BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
-                _ => BadRequest(result.ToProblem()),
-            };
-        }
-
-        public class CreateBuildRequest
+        public class CreateRequestBase
         {
             /// <summary>
             /// The hash of payload that should be used to create this build version.
@@ -236,16 +303,6 @@ namespace FactorioTech.Api.Controllers
             /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
             [Required]
             public Hash Hash { get; set; }
-
-            /// <summary>
-            /// The slug for the new build. It is used in the build's URL and must be unique per user.
-            /// It can consist only of latin alphanumeric characters, underscores and hyphens.
-            /// </summary>
-            /// <example>my-awesome-build</example>
-            [Required]
-            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
-            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
-            public string Slug { get; set; } = null!;
 
             /// <summary>
             /// The title or display name of the build.
@@ -285,10 +342,28 @@ namespace FactorioTech.Api.Controllers
             /// </summary>
             [Required]
             public IEnumerable<GameIcon> Icons { get; set; } = null!;
+        }
 
-            //public Guid? ParentId { get; set; }
+        public class CreateVersionRequest : CreateRequestBase
+        {
+            /// <summary>
+            /// The current (latest) version of the build. It must be specified to avoid concurrency issues.
+            /// </summary>
+            [Required]
+            public Guid ExpectedPreviousVersionId { get; set; }
+        }
 
-            //public Guid? ExpectedPreviousVersionId { get; set; }
+        public class CreateBuildRequest : CreateRequestBase
+        {
+            /// <summary>
+            /// The slug for the new build. It is used in the build's URL and must be unique per user.
+            /// It can consist only of latin alphanumeric characters, underscores and hyphens.
+            /// </summary>
+            /// <example>my-awesome-build</example>
+            [Required]
+            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
+            public string Slug { get; set; } = null!;
         }
     }
 }

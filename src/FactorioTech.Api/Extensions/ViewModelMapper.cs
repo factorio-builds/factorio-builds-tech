@@ -67,15 +67,33 @@ namespace FactorioTech.Api.Extensions
                     Html = MarkdownConverter.ToHtml(description),
                 }),
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                LatestVersion = blueprint.LatestVersion?.ToViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(Blueprint.LatestVersion)),
+                LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(Blueprint.LatestVersion)),
                 Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(Blueprint.Owner)),
                 Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
             };
 
-        public static VersionModel ToViewModel(this BlueprintVersion version, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+        public static VersionsModel ToViewModel(this IReadOnlyCollection<BlueprintVersion> versions, IUrlHelper urlHelper) =>
+            new()
+            {
+                Count = versions.Count,
+                Versions = versions.Select(v => v.ToThinViewModel(urlHelper)),
+            };
+
+        public static ThinVersionModel ToThinViewModel(this BlueprintVersion version, IUrlHelper urlHelper) =>
             new()
             {
                 Links = urlHelper.BuildLinks(version),
+                Hash = version.Hash,
+                CreatedAt = version.CreatedAt,
+                Name = version.Name,
+                Description = version.Description,
+            };
+
+        public static FullVersionModel ToFullViewModel(this BlueprintVersion version, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+            new()
+            {
+                Links = urlHelper.BuildLinks(version),
+                Hash = version.Hash,
                 CreatedAt = version.CreatedAt,
                 Name = version.Name,
                 Description = version.Description,

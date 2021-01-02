@@ -1,3 +1,4 @@
+using FactorioTech.Core.Domain;
 using NodaTime;
 using System.ComponentModel.DataAnnotations;
 
@@ -5,8 +6,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public class VersionModel : ViewModelBase
+    public abstract class VersionModelBase : ViewModelBase
     {
+        [Required]
+        public Hash Hash { get; set; }
+
         [Required]
         [DataType(DataType.DateTime)]
         public Instant CreatedAt { get; set; }
@@ -14,7 +18,14 @@ namespace FactorioTech.Api.ViewModels
         public string? Name { get; set; }
 
         public string? Description { get; set; }
+    }
 
+    public class ThinVersionModel : VersionModelBase
+    {
+    }
+
+    public class FullVersionModel : VersionModelBase
+    {
         [Required]
         public ThinPayloadModel Payload { get; set; }
     }
