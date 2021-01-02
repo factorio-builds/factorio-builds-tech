@@ -19,8 +19,7 @@ namespace FactorioTech.Api.ViewModels
         /// <example>my-awesome-build</example>
         [Required]
         [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
-        [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex,
-            ErrorMessage = AppConfig.Policies.Slug.AllowedCharactersErrorMessage)]
+        [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
         public string Slug { get; set; }
 
         /// <summary>
@@ -40,6 +39,7 @@ namespace FactorioTech.Api.ViewModels
         /// <summary>
         /// The build's icons.
         /// </summary>
+        [Required]
         public IEnumerable<GameIcon> Icons { get; set; }
 
         /// <summary>

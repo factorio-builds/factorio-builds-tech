@@ -6,9 +6,10 @@ using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
-namespace FactorioTech.Api.Services
+namespace FactorioTech.Api.Extensions
 {
     public static class ViewModelMapper
     {
@@ -115,8 +116,19 @@ namespace FactorioTech.Api.Services
                     ?? new Dictionary<string, int>(),
                 Icons = envelope.Icons?
                     .OrderBy(i => i.Index)
-                    .Select(i => new BlueprintEnvelopeModel.Entity(i.Signal.Type, i.Signal.Name))
-                    ?? Enumerable.Empty<BlueprintEnvelopeModel.Entity>(),
+                    .Select(i => new GameIcon((short)i.Index, i.Signal.Type, i.Signal.Name))
+                    ?? Enumerable.Empty<GameIcon>(),
+            };
+
+        public static ProblemDetails ToProblem(this BlueprintService.CreateResult result) =>
+            new()
+            {
+                Type = result.GetType().Name,
+                Extensions =
+                {
+                    { "traceId", Activity.Current?.Id },
+                    { "details", result },
+                },
             };
     }
 }

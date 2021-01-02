@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
-namespace FactorioTech.Api.Services
+namespace FactorioTech.Api.Extensions
 {
     public static class LinkBuilder
     {
@@ -30,23 +30,25 @@ namespace FactorioTech.Api.Services
             return links;
         }
 
-        public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper, Blueprint blueprint) =>
-            new Dictionary<string, LinkModel>
+        public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper, Blueprint blueprint)
+        {
+            var coverUrl = urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", new
             {
-                {
-                    "cover", new LinkModel(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", new
-                    {
-                        buildId = blueprint.BlueprintId,
-                    }))
-                },
-                {
-                    "full", new LinkModel(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", new
-                    {
-                        owner = blueprint.OwnerSlug,
-                        slug = blueprint.Slug,
-                    }))
-                },
+                buildId = blueprint.BlueprintId,
+            });
+
+            var selfUrl = urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", new
+            {
+                owner = blueprint.OwnerSlug,
+                slug = blueprint.Slug,
+            });
+
+            return new Dictionary<string, LinkModel>
+            {
+                { "cover", new ImageLinkModel(coverUrl, AppConfig.Cover.Width, AppConfig.Cover.Height) },
+                { "self", new LinkModel(selfUrl) },
             };
+        }
 
         public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper, BlueprintVersion version) =>
             new Dictionary<string, LinkModel>
@@ -68,15 +70,15 @@ namespace FactorioTech.Api.Services
                 hash = payload.Hash,
             });
 
+            var selfUrl = urlHelper.ActionLink(nameof(PayloadController.GetDetails), "Payload", new
+            {
+                hash = payload.Hash,
+                includeChildren = true,
+            });
+
             var links = new Dictionary<string, LinkModel>
             {
-                {
-                    "full", new LinkModel(urlHelper.ActionLink(nameof(PayloadController.GetDetails), "Payload", new
-                    {
-                        hash = payload.Hash,
-                        includeChildren = true,
-                    }))
-                },
+                { "self", new LinkModel(selfUrl) },
                 { "raw", new LinkModel(rawUrl) },
                 { "blueprint-editor", new LinkModel($"{appConfig.BlueprintEditorUri}/?source={rawUrl}") },
             };

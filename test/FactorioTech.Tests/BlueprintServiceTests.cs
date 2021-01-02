@@ -80,9 +80,10 @@ namespace FactorioTech.Tests
                 "test blueprint 1",
                 "the description",
                 new[] { "/belt/balancer", "/general/early game" },
-                (payload.Hash, null, null, Enumerable.Empty<GameIcon>()));
+                (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
+                (null, null));
 
-            var result = await _service.CreateOrAddVersion(request, owner, null);
+            var result = await _service.CreateOrAddVersion(request, owner.Id);
 
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
@@ -115,9 +116,10 @@ namespace FactorioTech.Tests
                 "different title",
                 "different description",
                 new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
-                (payload.Hash, null, null, Enumerable.Empty<GameIcon>()));
+                (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
+                (existing.BlueprintId, existing.LatestVersionId));
 
-            var result = await _service.CreateOrAddVersion(request, owner, existing.BlueprintId);
+            var result = await _service.CreateOrAddVersion(request, owner.Id);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);

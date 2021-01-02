@@ -1,4 +1,4 @@
-using FactorioTech.Api.Services;
+using FactorioTech.Api.Extensions;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
@@ -50,7 +50,7 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get payload details
         /// </summary>
-        /// <param name="hash" example="deab61eafb24af64f133cce738dfbabd">The hash of the desired payload</param>
+        /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
         /// <param name="includeChildren">Specify whether to load the entire graph with all children or only the requested payload</param>
         /// <response code="200" type="application/json">The details of the requested payload</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
@@ -87,7 +87,7 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get the raw encoded blueprint string for import in the game or other tools
         /// </summary>
-        /// <param name="hash" example="deab61eafb24af64f133cce738dfbabd">The hash of the desired payload</param>
+        /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
         /// <response code="200" type="text/html">The raw encoded blueprint string</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested payload does not exist</response>
@@ -113,7 +113,7 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get the rendering for this payload in the specified type
         /// </summary>
-        /// <param name="hash" example="deab61eafb24af64f133cce738dfbabd">The hash of the desired payload</param>
+        /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
         /// <param name="type" example="Full">The desired type</param>
         /// <response code="200" type="image/png">The rendered blueprint image</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
@@ -134,17 +134,22 @@ namespace FactorioTech.Api.Controllers
                 if (file != null)
                     return File(file, "image/png");
 
-                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry.", type, hash);
+                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry in {Interval}", type, hash, NewBlueprintRenderingLoadInterval);
                 await Task.Delay(NewBlueprintRenderingLoadInterval);
             }
             while (sw.Elapsed < NewBlueprintRenderingLoadTimeout);
 
-            _logger.LogWarning("Rendering {Type} for {Hash} not found; giving up.", type, hash);
+            _logger.LogWarning("Rendering {Type} for {Hash} not found after {Timeout}; giving up", type, hash, NewBlueprintRenderingLoadTimeout);
             return NotFound();
         }
 
+        /// <summary>
+        /// Create a payload for the encoded blueprint string. If the blueprint is a `blueprint-book`,
+        /// payloads for all children will be created too.
+        /// </summary>
         [HttpPost("")]
         [Authorize]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(CreatePayloadResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePayload([FromBody]CreatePayloadRequest request)
@@ -177,8 +182,7 @@ namespace FactorioTech.Api.Controllers
             if (envelope == null)
                 return null;
 
-            return envelope.Blueprint
-                   ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
+            return envelope.Blueprint ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
         }
 
         private static IEnumerable<string> GetSomeRandomTags()
@@ -189,27 +193,38 @@ namespace FactorioTech.Api.Controllers
             return Enumerable.Range(0, rnd.Next(2, 5))
                 .Select(_ => Tags.All.ElementAt(rnd.Next(0, count - 1)));
         }
-    }
 
-    public class CreatePayloadRequest
-    {
-        [Required]
-        [RegularExpression(
-            // base64 starting with "0"
-            "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
-            ErrorMessage = "This doesn't appear to be a valid blueprint string.")]
-        public string Encoded { get; set; } = string.Empty;
-    }
+        public class CreatePayloadRequest
+        {
+            /// <summary>
+            /// The encoded blueprint string.
+            /// </summary>
+            /// <example>0eNqllMtugzAQRX8FzRqiQszLyyy77bKqKh6jaiTbWLapghD/XhOkNEpJ04adx56553r8GKEWPWpDygEfoUXbGNKOOgUcnnvrgiqwJLXA4Jy4gxCo6ZQF/jqCpQ9VibnYDRp9FTmUPkNVco7wqA1aGzlTKas746IahYPJS6gWj8DjKbwrYjW1aJzxrr4Lk+ktBFSOHOFi5RQM76qXNRqvfM9ECLqztGx2hNlLud+lIQzAi3nkWS0ZbJaMZDZ6hUgeQCT/Q+wfQLDbCLaCYGeExJZ6GaHw6YaaSHcCf2+TR00rkummxqTrotmmA02vW5GtIPJNvm80o9h0hH/yXW5CsJ+3xL+t0xvkFx9ECKLyYn7uZfkSDhdLn2jscomLmOWszLM8fsrSbJq+AEDWdWo=</example>
+            [Required]
+            [RegularExpression(AppConfig.Policies.BlueprintString.AllowedCharactersRegex)]
+            public string Encoded { get; set; } = null!;
+        }
 
-    public class CreatePayloadResult
-    {
-        [Required]
-        public Hash Hash { get; set; }
+        public class CreatePayloadResult
+        {
+            /// <summary>
+            /// The hash of the primary (or parent) payload that was created.
+            /// </summary>
+            /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
+            [Required]
+            public Hash Hash { get; set; }
 
-        [Required]
-        public IEnumerable<Hash> AllHashes { get; set; } = Enumerable.Empty<Hash>();
+            /// <summary>
+            /// The hashes of all payloads that were created in this operation.
+            /// </summary>
+            [Required]
+            public IEnumerable<Hash> AllHashes { get; set; } = Enumerable.Empty<Hash>();
 
-        [Required]
-        public IEnumerable<string> ExtractedTags { get; set; } = Enumerable.Empty<string>();
+            /// <summary>
+            /// The tags that have been extracted for this payload.
+            /// </summary>
+            [Required]
+            public IEnumerable<string> ExtractedTags { get; set; } = Enumerable.Empty<string>();
+        }
     }
 }

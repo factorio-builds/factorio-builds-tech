@@ -1,3 +1,4 @@
+using FactorioTech.Core.Domain;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -8,8 +9,6 @@ namespace FactorioTech.Api.ViewModels
 {
     public class BlueprintEnvelopeModel
     {
-        public record Entity(string Type, string Name);
-
         /// <summary>
         /// The blueprint type; either `blueprint` or `blueprint-book`.
         /// </summary>
@@ -21,7 +20,7 @@ namespace FactorioTech.Api.ViewModels
         public string? Description { get; set; }
 
         [Required]
-        public IEnumerable<Entity> Icons { get; set; } = Enumerable.Empty<Entity>();
+        public IEnumerable<GameIcon> Icons { get; set; } = Enumerable.Empty<GameIcon>();
 
         [Required]
         public IDictionary<string, int> Entities { get; set; } = new Dictionary<string, int>();

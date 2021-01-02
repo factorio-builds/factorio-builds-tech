@@ -31,8 +31,13 @@ namespace FactorioTech.Core
                 public const int MaximumLength = 100;
                 public const string AllowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
                 public const string AllowedCharactersRegex = "[a-zA-Z0-9_-]+";
-                public const string AllowedCharactersErrorMessage = "Only latin characters (a-z and A-Z), digits (0-9), underscore (_) and hyphen (-) are allowed.";
                 public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "administrator", "delete", "edit", "import", "raw" };
+            }
+
+            public class BlueprintString
+            {
+                // base64 with a leading 0
+                public const string AllowedCharactersRegex = "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$";
             }
         }
 

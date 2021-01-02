@@ -69,7 +69,7 @@ namespace FactorioTech.Identity
                     options.UserInteraction.ErrorUrl = "/errors/500";
                 })
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
-                .AddInMemoryClients(IdentityConfig.GetClients(oAuthClientConfig.OAuthClients))
+                .AddInMemoryClients(IdentityConfig.GetClients(_environment, appConfig, oAuthClientConfig.OAuthClients))
                 .AddAspNetIdentity<User>()
                 .AddProfileService<CustomProfileService>()
                 .AddDeveloperSigningCredential(true, Path.Join(appConfig.ProtectedDataDir, "signing_key.jwk")) // todo productionise
@@ -108,6 +108,18 @@ namespace FactorioTech.Identity
                     });
                 }
             }
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                    builder.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .Let(b => _environment.IsProduction()
+                            ? b.WithOrigins($"{appConfig.ApiUri.Scheme}://{appConfig.ApiUri.Authority}")
+                            : b.WithOrigins($"{appConfig.ApiUri.Scheme}://{appConfig.ApiUri.Authority}",
+                                "https://api.local.factorio.tech", "https://localhost:5101")));
+            });
 
             services.AddApplicationInsightsTelemetry(options =>
             {
@@ -150,6 +162,7 @@ namespace FactorioTech.Identity
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCors();
             app.UseIdentityServer();
             app.UseAuthorization();
 

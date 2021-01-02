@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using NodaTime;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -27,6 +28,9 @@ namespace FactorioTech.Identity
 
     public class DevDataSeeder
     {
+        private static readonly TimeSpan CheckMigrationsInterval = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan CheckMigrationsTimeout = TimeSpan.FromSeconds(30);
+
         public static IEnumerable<User> Users => new []
         {
             new User
@@ -65,16 +69,35 @@ namespace FactorioTech.Identity
 
         public async Task Run()
         {
-            var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync();
-            if (pendingMigrations.Any())
-                throw new Exception("Can't start identity because there are pending migrations. Run the API first!");
-
             _logger.LogInformation("Seeding development data...");
+         
+            var migrationsApplied = await WaitUntilThereAreNoPendingMigrations();
+            if (!migrationsApplied)
+                throw new Exception("Failed to seed development data");
 
             foreach (var user in Users)
             {
                 await EnsureUserExists(user);
             }
+        }
+
+        private async Task<bool> WaitUntilThereAreNoPendingMigrations()
+        {
+            var sw = Stopwatch.StartNew();
+
+            do
+            {
+                var pendingMigrations = await _dbContext.Database.GetPendingMigrationsAsync();
+                if (!pendingMigrations.Any())
+                    return true;
+
+                _logger.LogWarning("There are pending migrations; checking again in {Interval}", CheckMigrationsInterval);
+                await Task.Delay(CheckMigrationsInterval);
+            }
+            while (sw.Elapsed < CheckMigrationsTimeout);
+            
+            _logger.LogError("There are still pending migrations after trying for {Timeout}; giving up", CheckMigrationsTimeout);
+            return false;
         }
 
         private async Task EnsureUserExists(User user, IReadOnlyCollection<Claim>? claims = null)

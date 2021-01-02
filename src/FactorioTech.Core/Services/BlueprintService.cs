@@ -31,7 +31,8 @@ namespace FactorioTech.Core.Services
             string Title,
             string? Description,
             IEnumerable<string> Tags,
-            (Hash Hash, string? Name, string? Description, IEnumerable<GameIcon> Icons) Version);
+            (Hash Hash, string? Name, string? Description, IEnumerable<GameIcon> Icons) Version,
+            (Guid? BlueprintId, Guid? ExpectedVersionId) Parent);
 
         public record CreateResult
         {
@@ -57,6 +58,10 @@ namespace FactorioTech.Core.Services
 
             public sealed record ParentNotFound(
                     Guid BlueprintId)
+                : CreateResult { }
+
+            public sealed record UnexpectedParentVersion(
+                    Guid BlueprintId, Guid ExpectedLatestVersionId, Guid ActualLatestVersionId)
                 : CreateResult { }
 
             public sealed record PayloadNotFound(
@@ -146,7 +151,7 @@ namespace FactorioTech.Core.Services
             return blueprint;
         }
 
-        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, User owner, Guid? parentId)
+        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, Guid ownerId)
         {
             if (AppConfig.Policies.Slug.Blocklist.Contains(request.Slug.ToLowerInvariant()))
                 return new CreateResult.InvalidSlug(request.Slug);
@@ -183,23 +188,33 @@ namespace FactorioTech.Core.Services
 
             Blueprint? blueprint;
 
-            if (parentId != null)
+            if (request.Parent.BlueprintId.HasValue)
             {
                 blueprint = await _dbContext.Blueprints
                     .Include(bp => bp.Tags)
-                    .FirstOrDefaultAsync(bp => bp.BlueprintId == parentId);
+                    .FirstOrDefaultAsync(bp => bp.BlueprintId == request.Parent.BlueprintId);
 
                 if (blueprint == null)
                 {
-                    _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}", parentId);
-                    return new CreateResult.ParentNotFound(parentId.Value);
+                    _logger.LogWarning("Attempted to add version to unknown blueprint: {BlueprintId}", request.Parent.BlueprintId);
+                    return new CreateResult.ParentNotFound(request.Parent.BlueprintId.Value);
                 }
 
-                if (blueprint.OwnerId != owner.Id)
+                if (blueprint.OwnerId != ownerId)
                 {
                     _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
                         blueprint.BlueprintId, blueprint.OwnerId);
                     return new CreateResult.OwnerMismatch(blueprint.BlueprintId, blueprint.Slug, (blueprint.OwnerId, blueprint.OwnerSlug));
+                }
+
+                if (blueprint.LatestVersionId != request.Parent.ExpectedVersionId)
+                {
+                    _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} but expected latest version id {ExpectedVersionId} does not match actual {LatestVersionId}",
+                        blueprint.BlueprintId, request.Parent.ExpectedVersionId, blueprint.LatestVersionId);
+                    return new CreateResult.UnexpectedParentVersion(
+                        blueprint.BlueprintId,
+                        request.Parent.ExpectedVersionId.GetValueOrDefault(),
+                        blueprint.LatestVersionId.GetValueOrDefault());
                 }
 
                 blueprint.UpdateDetails(
@@ -210,7 +225,9 @@ namespace FactorioTech.Core.Services
             }
             else
             {
-                if (await SlugExistsForUser(owner.Id, request.Slug))
+                var owner = await _dbContext.Users.FindAsync(ownerId);
+
+                if (await SlugExistsForUser(ownerId, request.Slug))
                 {
                     _logger.LogWarning("Attempted to save blueprint with existing slug: {UserName}/{Slug}",
                         owner.UserName, request.Slug);

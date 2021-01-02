@@ -51,6 +51,9 @@ services:
       - "traefik.http.routers.frontend.rule=Host(`local.factorio.tech`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
+    depends_on:
+      - traefik
+      - api
 
   identity:
     # image: ghcr.io/dstockhammer/factorio-tech/identity:ci
@@ -74,6 +77,9 @@ services:
       - "traefik.http.routers.identity.rule=Host(`identity.local.factorio.tech`)"
       - "traefik.http.routers.identity.entrypoints=websecure"
       - "traefik.http.routers.identity.tls=true"
+    depends_on:
+      - traefik
+      - postgres
 
   api:
     # image: ghcr.io/dstockhammer/factorio-tech/api:ci
@@ -102,9 +108,10 @@ services:
       - "traefik.http.routers.api.entrypoints=websecure"
       - "traefik.http.routers.api.tls=true"
     depends_on:
-      - fbsr
+      - traefik
       - postgres
       - identity
+      - fbsr
 
   fbsr:
     image: ghcr.io/dstockhammer/factorio-tech/fbsr-wrapper:ci

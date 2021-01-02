@@ -15,8 +15,7 @@ namespace FactorioTech.Api.ViewModels
         /// <example>factorio_fritz</example>
         [Required]
         [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
-        [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex,
-            ErrorMessage = AppConfig.Policies.Slug.AllowedCharactersErrorMessage)]
+        [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
         public string Username { get; set; }
     }
 

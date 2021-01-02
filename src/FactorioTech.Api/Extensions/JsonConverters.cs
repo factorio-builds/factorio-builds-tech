@@ -3,7 +3,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FactorioTech.Api.Services
+namespace FactorioTech.Api.Extensions
 {
     public class VersionJsonConverter : JsonConverter<Version>
     {

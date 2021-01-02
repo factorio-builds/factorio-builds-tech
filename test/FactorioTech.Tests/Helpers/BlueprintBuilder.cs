@@ -39,10 +39,11 @@ namespace FactorioTech.Tests.Helpers
                 "Simple Blueprint Book",
                 null,
                 new[] { "/belt/balancer", "/general/early game" },
-                (_payload.Hash, null, null, Enumerable.Empty<GameIcon>()));
+                (_payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
+                (null, null));
 
             var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
-            var result = await service.CreateOrAddVersion(request, _owner, null);
+            var result = await service.CreateOrAddVersion(request, _owner.Id);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>("Test data setup failed.");
 
             dbContext.ClearCache();

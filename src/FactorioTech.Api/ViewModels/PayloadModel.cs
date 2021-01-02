@@ -10,9 +10,9 @@ namespace FactorioTech.Api.ViewModels
     public abstract class PayloadModelBase : ViewModelBase
     {
         /// <summary>
-        /// The `md5` hash of the payload's blueprint `encoded` string.
+        /// The `md5` hash of the payload's encoded blueprint string.
         /// </summary>
-        /// <example>deab61eafb24af64f133cce738dfbabd</example>
+        /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
         [Required]
         public Hash Hash { get; set; }
 

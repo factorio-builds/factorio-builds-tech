@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Core.Domain
 {
-    public record GameIcon
+    public class GameIcon
     {
         [Required]
         [Range(1, 4)]
@@ -20,5 +20,5 @@ namespace FactorioTech.Core.Domain
             Type = type;
             Name = name;
         }
-    };
+    }
 }

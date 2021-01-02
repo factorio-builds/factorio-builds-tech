@@ -17,7 +17,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Api.Services
+namespace FactorioTech.Api
 {
     internal static class DevDataSeederExtensions
     {
@@ -161,9 +161,10 @@ namespace FactorioTech.Api.Services
                     blueprint.Title,
                     blueprint.Description,
                     blueprint.Tags.Select(t => t.TrimEnd('/')),
-                    (payload.Hash, null, null, icons));
+                    (payload.Hash, null, null, icons),
+                    (null, null));
 
-                var result = await _blueprintService.CreateOrAddVersion(request, owner, null);
+                var result = await _blueprintService.CreateOrAddVersion(request, owner.Id);
 
                 switch (result)
                 {

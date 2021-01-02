@@ -1,4 +1,4 @@
-using FactorioTech.Api.Services;
+using FactorioTech.Api.Extensions;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
@@ -17,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
@@ -58,10 +59,29 @@ namespace FactorioTech.Api
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "factorio.tech", Version = "v1" });
 
+                options.AddSecurityDefinition(SecuritySchemeType.OAuth2.ToString(), new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri(appConfig.IdentityUri.AbsoluteUri + "connect/authorize"),
+                            TokenUrl = new Uri(appConfig.IdentityUri.AbsoluteUri + "connect/token"),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                { "openid", "Informs the authorization server that the client is making an OpenID Connect request." },
+                                { "profile", "Requests access to the user's profile information." },
+                            },
+                        },
+                    },
+                });
+
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
                 options.UseInlineDefinitionsForEnums();
+                options.OperationFilter<OAuthResponsesOperationFilter>();
                 options.MapType(typeof(Instant), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(Hash), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(Version), () => new OpenApiSchema { Type = "string" });
@@ -154,8 +174,14 @@ namespace FactorioTech.Api
                 app.UseHsts();
             }
 
-            app.UseSwagger(c => c.PreSerializeFilters.Add((doc, _) => doc.Servers?.Clear()));
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "factorio.tech v1"));
+            app.UseSwagger(options => options.PreSerializeFilters.Add((doc, _) => doc.Servers?.Clear()));
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "factorio.tech v1");
+                options.OAuthClientId("swagger");
+                options.OAuthClientSecret("swagger");
+                options.OAuthUsePkce();
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();
