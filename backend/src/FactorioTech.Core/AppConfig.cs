@@ -54,7 +54,7 @@ namespace FactorioTech.Core
         public bool AlwaysDownloadSeedData = true;
 
         private static string GetLocalVolumesDir() =>
-            Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../../.local/volumes"));
+            Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../../../.local/volumes"));
 
         private static string GetAppShortName() =>
             Assembly.GetEntryAssembly()?.GetName().Name?.Split('.').Last().ToLowerInvariant()

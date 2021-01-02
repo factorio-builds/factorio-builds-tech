@@ -59,7 +59,7 @@ services:
     # image: ghcr.io/dstockhammer/factorio-tech/identity:ci
     image: factorio-tech/identity
     build:
-      context: .
+      context: backend
       target: identity
     volumes:
       - ./.local/volumes/identity/protected:/mnt/protected
@@ -85,7 +85,7 @@ services:
     # image: ghcr.io/dstockhammer/factorio-tech/api:ci
     image: factorio-tech/api
     build:
-      context: .
+      context: backend
       target: api
     volumes:
       - ./.local/volumes/api/data:/mnt/data

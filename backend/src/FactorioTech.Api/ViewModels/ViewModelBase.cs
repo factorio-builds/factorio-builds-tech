@@ -57,7 +57,7 @@ namespace FactorioTech.Api.ViewModels
         public string? Alt { get; init; }
 
         public ImageLinkModel(string href, int width, int height, string? alt = null)
-            : base(href, (nameof(width), width), (nameof(width), width), (nameof(alt), alt))
+            : base(href, (nameof(width), width), (nameof(height), height), (nameof(alt), alt))
         {
             Width = width;
             Height = height;
