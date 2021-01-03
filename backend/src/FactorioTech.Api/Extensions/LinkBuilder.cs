@@ -13,12 +13,12 @@ namespace FactorioTech.Api.Extensions
     public static class LinkBuilder
     {
         public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper,
-            IReadOnlyCollection<Blueprint> blueprints, BuildController.BuildsQueryParams query, bool hasMore)
+            IReadOnlyCollection<Blueprint> blueprints, BuildsQueryParams query, bool hasMore)
         {
             var links = new Dictionary<string, LinkModel>
             {
-                { "create-build", new LinkModel(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), "post") },
-                { "create-payload", new LinkModel(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), "put") },
+                { "create_build", new LinkModel(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), "post") },
+                { "create_payload", new LinkModel(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), "put") },
             };
 
             if (query.Page > 1)
@@ -58,8 +58,8 @@ namespace FactorioTech.Api.Extensions
                 { "cover", new ImageLinkModel(coverUrl, AppConfig.Cover.Width, AppConfig.Cover.Height) },
                 { "self", new LinkModel(selfUrl) },
                 { "versions", new LinkModel(versionsUrl) },
-                { "add-version", new LinkModel(versionsUrl, "post") },
-                { "toggle-favorite", new LinkModel(toggleFavoriteUrl, "post") },
+                { "add_version", new LinkModel(versionsUrl, "post") },
+                { "toggle_favorite", new LinkModel(toggleFavoriteUrl, "post") },
                 { "followers", new LinkModel(followersUrl, ("count", blueprint.FollowerCount)) },
             };
         }
@@ -94,18 +94,18 @@ namespace FactorioTech.Api.Extensions
             {
                 { "self", new LinkModel(selfUrl) },
                 { "raw", new LinkModel(rawUrl) },
-                { "blueprint-editor", new LinkModel($"{appConfig.BlueprintEditorUri}/?source={rawUrl}") },
+                { "blueprint_editor", new LinkModel($"{appConfig.BlueprintEditorUri}/?source={rawUrl}") },
             };
 
             if (envelope.Blueprint != null)
             {
-                links["rendering-full"] = new LinkModel(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
+                links["rendering_full"] = new LinkModel(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
                 {
                     hash = payload.Hash,
                     type = ImageService.RenderingType.Full,
                 }));
 
-                links["rendering-thumb"] = new LinkModel(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
+                links["rendering_thumb"] = new LinkModel(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
                 {
                     hash = payload.Hash,
                     type = ImageService.RenderingType.Thumb,

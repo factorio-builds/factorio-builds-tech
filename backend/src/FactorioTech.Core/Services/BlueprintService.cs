@@ -92,7 +92,8 @@ namespace FactorioTech.Core.Services
             (SortField Field, SortDirection Direction) sort,
             IReadOnlyCollection<string> tags,
             string? search,
-            string? version)
+            string? version,
+            string? owner)
         {
             var query = !tags.Any()
                 ? _dbContext.Blueprints.AsNoTracking()
@@ -107,6 +108,11 @@ namespace FactorioTech.Core.Services
             if (!string.IsNullOrEmpty(version))
             {
                 query = query.Where(x => x.LatestGameVersion.StartsWith(version));
+            }
+
+            if (!string.IsNullOrEmpty(owner))
+            {
+                query = query.Where(x => x.NormalizedOwnerSlug == owner.ToUpperInvariant());
             }
 
             if (!string.IsNullOrEmpty(search))

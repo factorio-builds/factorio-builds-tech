@@ -59,7 +59,7 @@ namespace FactorioTech.Tests
                 (1, 100),
                 (BlueprintService.SortField.Created, BlueprintService.SortDirection.Asc),
                 Array.Empty<string>(),
-                null, null);
+                null, null, null);
 
             blueprints.Should().HaveCount(1);
             hasMore.Should().BeFalse();

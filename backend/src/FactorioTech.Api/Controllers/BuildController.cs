@@ -22,57 +22,6 @@ namespace FactorioTech.Api.Controllers
     [ApiController]
     public class BuildController : ControllerBase
     {
-        public class BuildsQueryParams
-        {
-            public const int PageSize = 100;
-
-            /// <summary>
-            /// The desired page
-            /// </summary>
-            [FromQuery(Name = "page")]
-            public int Page { get; set; } = 1;
-
-            /// <summary>
-            /// The desired field to sort the results
-            /// </summary>
-            [FromQuery(Name = "sort_field")]
-            public BlueprintService.SortField SortField { get; set; } = BlueprintService.SortField.Updated;
-
-            /// <summary>
-            /// The desired direction to sort the results
-            /// </summary>
-            [FromQuery(Name = "sort_direction")]
-            public BlueprintService.SortDirection SortDirection { get; set; } = BlueprintService.SortDirection.Desc;
-
-            /// <summary>
-            /// An optional search term to filter the results by
-            /// </summary>
-            [FromQuery(Name = "q")]
-            public string? Search { get; set; }
-
-            /// <summary>
-            /// An optional comma-separated list of tags to filter the results by
-            /// </summary>
-            [FromQuery(Name = "tags")]
-            public string? TagsCsv { get; set; }
-
-            /// <summary>
-            /// An optional game version to filter the results by
-            /// </summary>
-            [FromQuery(Name = "version")]
-            public string? Version { get; set; }
-
-            public object ToValues(int? page) => new
-            {
-                page = page ?? Page,
-                sort_field = SortField.ToString().ToLowerInvariant(),
-                sort_direction = SortDirection.ToString().ToLowerInvariant(),
-                q = Search,
-                tags = TagsCsv,
-                version = Version,
-            };
-        }
-
         private const int OneDayInSeconds = 86400;
 
         private readonly AppDbContext _dbContext;
@@ -97,7 +46,6 @@ namespace FactorioTech.Api.Controllers
         /// </summary>
         /// <response code="200" type="application/json">The paged, filtered and ordered list of matching builds</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
-        /// <response code="404" type="application/json">The requested build does not exist</response>
         [HttpGet("")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(BuildsModel), StatusCodes.Status200OK)]
@@ -110,7 +58,8 @@ namespace FactorioTech.Api.Controllers
                 (query.SortField, query.SortDirection),
                 query.TagsCsv?.Split(',') ?? Array.Empty<string>(),
                 query.Search,
-                query.Version);
+                query.Version,
+                null);
 
             return builds.ToViewModel(Url, query, hasMore, totalCount);
         }
@@ -237,6 +186,7 @@ namespace FactorioTech.Api.Controllers
         /// </summary>
         /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
         /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <param name="request">The request parameters</param>
         /// <response code="200" type="application/json">An ordered list of versions</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
