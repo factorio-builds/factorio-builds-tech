@@ -71,6 +71,6 @@ This is a monorepo that contains components in different tech stacks that make u
 
 - A [**frontend**](frontend) written in [React](https://reactjs.org)/[Nextjs](https://nextjs.org) + [TypeScript](https://www.typescriptlang.org)
 - Multiple [**backend services**](backend) written in [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-5.0)
-- A [Spring Boot](https://spring.io/projects/spring-boot) [**wrapper**](fbsr-wrapper) that makes it possible to run [Factorio-FBSR](Factorio-FBSR) in Docker
+- A [Spring Boot](https://spring.io/projects/spring-boot) [**wrapper**](fbsr-wrapper) around [Factorio-FBSR](https://github.com/demodude4u/Factorio-FBSR) that exposes a dockerised HTTP API to render blueprint images
 
 You can find instructions on how to build and contribute to those components in the respective folders.

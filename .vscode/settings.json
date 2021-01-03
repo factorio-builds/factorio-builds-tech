@@ -3,6 +3,8 @@
         "Factorio",
         "mkcert",
         "postgres",
+        "submodule",
+        "submodules",
         "traefik",
         "untrusted"
     ]
