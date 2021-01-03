@@ -4,29 +4,29 @@ import cx from "classnames"
 import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
-import { Build } from "../../../db/entities/build.entity"
-import { useCategories } from "../../../hooks/useCategories"
-import { useGameStates } from "../../../hooks/useGameStates"
+// import { useCategories } from "../../../hooks/useCategories"
+// import { useGameStates } from "../../../hooks/useGameStates"
 import { IStoreState } from "../../../redux/store"
-import { ERole } from "../../../types"
-import { isBook } from "../../../utils/blueprint"
+// import { ERole } from "../../../types"
+// import { isBook } from "../../../utils/blueprint"
+import { IFullBuild } from "../../../types"
 import BuildIcon from "../../ui/BuildIcon"
 import Layout from "../../ui/Layout"
 import Stacker from "../../ui/Stacker"
 import WithIcons from "../../ui/WithIcons"
 import * as SC from "./build-page.styles"
-import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
-import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
-import BlueprintsTab from "./tabs/blueprints-tab.component"
+// import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
+// import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
+// import BlueprintsTab from "./tabs/blueprints-tab.component"
 import DetailsTab from "./tabs/details-tab.component"
-import RequiredItemsTab from "./tabs/required-items-tab.component"
+// import RequiredItemsTab from "./tabs/required-items-tab.component"
 
 interface IBuildPageProps {
-  build: Build
+  build: IFullBuild
 }
 
 export type ITabComponentProps = {
-  build: Build
+  build: IFullBuild
   isActive: boolean
 }
 
@@ -38,7 +38,7 @@ interface ITab {
 }
 
 interface ITabs {
-  build: Build
+  build: IFullBuild
   tabs: ITab[]
   aside: React.ReactElement
 }
@@ -48,7 +48,7 @@ const Tabs = (props: ITabs): JSX.Element => {
 
   useEffect(() => {
     setCurrentTab(0)
-  }, [props.build.metadata.isBook])
+  }, [props.build.latest_version.hash])
 
   return (
     <SC.TabsWrapper>
@@ -85,8 +85,8 @@ const Tabs = (props: ITabs): JSX.Element => {
 
 function BuildPage({ build }: IBuildPageProps): JSX.Element {
   const user = useSelector((state: IStoreState) => state.auth.user)
-  const { getGameState } = useGameStates()
-  const { getCategory } = useCategories()
+  // const { getGameState } = useGameStates()
+  // const { getCategory } = useCategories()
 
   const formatDate = (isoString: string) => {
     return format(parseISO(isoString), "yyyy-MM-dd")
@@ -96,50 +96,50 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
     return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
   }
 
-  const isAdmin = user?.roleName === ERole.ADMIN
-  const ownedByMe = build.owner.id === user?.id
-  const gameStates = build.metadata.state.map(getGameState)
+  // const isAdmin = user?.roleName === ERole.ADMIN
+  const ownedByMe = build.owner.username === user?.name
+  // const gameStates = build.metadata.state.map(getGameState)
 
   const tabs = useMemo(() => {
-    if (isBook(build.json)) {
-      return [
-        { label: "details", tab: DetailsTab },
-        {
-          label: `blueprints (${build.json.blueprint_book.blueprints.length})`,
-          tab: BlueprintsTab,
-        },
-        { label: "blueprint string", tab: BlueprintStringTab },
-        { label: "blueprint json", tab: BlueprintJsonTab },
-      ]
-    } else {
-      return [
-        { label: "details", tab: DetailsTab },
-        { label: "required items", tab: RequiredItemsTab },
-        { label: "blueprint string", tab: BlueprintStringTab },
-        { label: "blueprint json", tab: BlueprintJsonTab },
-      ]
-    }
-  }, [build.blueprint])
+    // if (isBook(build.json)) {
+    return [
+      { label: "details", tab: DetailsTab },
+      // {
+      //   label: `blueprints (${build.json.blueprint_book.blueprints.length})`,
+      //   tab: BlueprintsTab,
+      // },
+      // { label: "blueprint string", tab: BlueprintStringTab },
+      // { label: "blueprint json", tab: BlueprintJsonTab },
+    ]
+    // } else {
+    //   return [
+    //     { label: "details", tab: DetailsTab },
+    //     { label: "required items", tab: RequiredItemsTab },
+    //     { label: "blueprint string", tab: BlueprintStringTab },
+    //     { label: "blueprint json", tab: BlueprintJsonTab },
+    //   ]
+    // }
+  }, [build.latest_version.hash])
 
   return (
-    <Layout title={build.name}>
+    <Layout title={build.title}>
       <SC.BuildHeader>
         <Stacker orientation="vertical" gutter={16}>
           <Stacker orientation="horizontal" gutter={16}>
-            {build.metadata.icons.length > 0 && (
-              <BuildIcon icons={build.metadata.icons} size="large" />
+            {build.icons.length > 0 && (
+              <BuildIcon icons={build.icons} size="large" />
             )}
             <Stacker orientation="vertical" gutter={8}>
               <SC.BuildTitle>
-                <WithIcons input={build.name} />
+                <WithIcons input={build.title} />
               </SC.BuildTitle>
               <Stacker orientation="horizontal" gutter={16}>
-                {gameStates.map((gameState) => (
+                {/* {gameStates.map((gameState) => (
                   <SC.BuildHeaderMeta key={gameState.value}>
                     {gameState.icon} {gameState.name}
                   </SC.BuildHeaderMeta>
-                ))}
-                {build.metadata.categories.map((categoryName) => {
+                ))} */}
+                {/* {build.metadata.categories.map((categoryName) => {
                   const category = getCategory(categoryName)
 
                   return (
@@ -147,21 +147,21 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
                       {category.icon} {category.name}
                     </SC.BuildHeaderMeta>
                   )
-                })}
+                })} */}
               </Stacker>
             </Stacker>
           </Stacker>
           <Stacker orientation="horizontal" gutter={16}>
             <span>
-              by <b>{build.owner.name}</b>
+              by <b>{build.owner.display_name}</b>
             </span>
             {/* prettier-ignore */}
             <span>
-              created <b>{formatDate(build.createdAt)}</b> ({formatSince(build.createdAt)})
+              created <b>{formatDate(build.created_at)}</b> ({formatSince(build.created_at)})
             </span>
             {/* prettier-ignore */}
             <span>
-              updated at <b>{formatDate(build.updatedAt)}</b> ({formatSince(build.updatedAt)})
+              updated at <b>{formatDate(build.updated_at)}</b> ({formatSince(build.updated_at)})
             </span>
           </Stacker>
         </Stacker>
@@ -172,20 +172,21 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
         tabs={tabs}
         aside={
           <Stacker orientation="vertical" gutter={16}>
-            {(isAdmin || ownedByMe) && (
-              <Link href={`/build/${build.id}/edit`}>
+            {/* {(isAdmin || ownedByMe) && ( */}
+            {ownedByMe && (
+              <Link href={`/builds/${build.owner.username}/${build.slug}/edit`}>
                 <SC.EditBuild>
                   {ownedByMe ? "edit build" : "edit build as admin"}
                 </SC.EditBuild>
               </Link>
             )}
             <SC.BuildImage>
-              {build.image ? (
+              {build._links.cover ? (
                 <Image
-                  src={build.image.src}
+                  src={build._links.cover.href}
                   alt=""
-                  width={build.image.width}
-                  height={build.image.height}
+                  width={build._links.cover.width}
+                  height={build._links.cover.height}
                   layout="responsive"
                 />
               ) : (

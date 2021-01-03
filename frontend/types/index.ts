@@ -32,6 +32,69 @@ export enum ERole {
   "USER" = "USER",
 }
 
+interface IBuildLinks {
+  cover: {
+    href: string
+    width: number
+    height: number
+  }
+  self: {
+    href: string
+  }
+  versions: {
+    href: string
+  }
+  "add-version": {
+    href: string
+    method: "post"
+  }
+  "toggle-favorite": {
+    href: string
+    method: "post"
+  }
+  followers: {
+    href: string
+    count: 0
+  }
+}
+
+export interface IFullBuild {
+  title: string
+  slug: string
+  description: {
+    markdown: string
+    html: string
+  }
+  tags: string[]
+  icons: IIcon[]
+  owner: IOwner
+  latest_version: {
+    hash: string
+    created_at: string
+    payload: {
+      hash: string
+      game_version: string
+      encoded: string
+      blueprint: IBlueprint | IBlueprintBook
+      _links: {
+        self: {
+          href: string
+        }
+        raw: {
+          href: string
+        }
+        "blueprint-editor": {
+          href: string
+        }
+      }
+    }
+  }
+  latest_game_version: string
+  created_at: string
+  updated_at: string
+  _links: IBuildLinks
+}
+
 export interface IMetadata {
   tileable: boolean
   area: number
@@ -119,7 +182,7 @@ export interface IBlueprintBook {
   version: number
 }
 
-export interface IIndexedBuildIcon {
+export interface IIcon {
   index: number
   type: string
   name: string
@@ -130,35 +193,18 @@ export interface IIndexedBuild {
   slug: string
   owner: { username: string }
   latest_game_version: string
-  icons: IIndexedBuildIcon[]
+  icons: IIcon[]
   tags: string[]
   created_at: string
   updated_at: string
-  _links: {
-    cover: {
-      href: string
-      width: number
-      height: number
-    }
-    self: {
-      href: string
-    }
-    versions: {
-      href: string
-    }
-    "add-version": {
-      href: string
-      method: "post"
-    }
-    "toggle-favorite": {
-      href: string
-      method: "post"
-    }
-    followers: {
-      href: string
-      count: number
-    }
-  }
+  _links: IBuildLinks
+}
+
+// IOwner vs IUser??
+interface IOwner {
+  display_name: string
+  registered_at: Date
+  username: string
 }
 
 export interface IUser {

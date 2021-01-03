@@ -1,6 +1,6 @@
 import React from "react"
 import ReactMarkdown from "react-markdown"
-import Stacker from "../../../ui/Stacker"
+// import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
 import { CopyStringToClipboard } from "../clipboard-button.component"
@@ -22,9 +22,11 @@ const QuickInfo = ({ label, value }: IQuickInfoProps): JSX.Element => {
 const DetailsTab: TTabComponent = (props) => {
   return (
     <Tab {...props}>
-      <CopyStringToClipboard toCopy={props.build.blueprint} />
+      <CopyStringToClipboard
+        toCopy={props.build.latest_version.payload.encoded}
+      />
 
-      <h3>Quick info</h3>
+      {/* <h3>Quick info</h3>
       <Stacker orientation="vertical" gutter={4}>
         <QuickInfo
           label="Inputs are marked"
@@ -35,12 +37,12 @@ const DetailsTab: TTabComponent = (props) => {
           label="With beacons"
           value={props.build.metadata.withBeacons}
         />
-      </Stacker>
+      </Stacker> */}
 
       <h3>Description</h3>
       <SC.Description>
         {props.build.description ? (
-          <ReactMarkdown source={props.build.description} />
+          <ReactMarkdown source={props.build.description.markdown} />
         ) : (
           <em>No description provided</em>
         )}

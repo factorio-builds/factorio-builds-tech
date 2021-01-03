@@ -1,12 +1,12 @@
+import axios from "axios"
 import { GetServerSideProps } from "next"
-import Layout from "../../components/ui/Layout"
 import BuildPage from "../../components/pages/BuildPage"
-import { BuildRepository } from "../../db/repository/build.repository"
-import { Build } from "../../db/entities/build.entity"
+import Layout from "../../components/ui/Layout"
+import { IFullBuild } from "../../types"
 // import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"
 
 interface IBuildsPageProps {
-  build?: Build
+  build?: IFullBuild
   errors?: string
 }
 
@@ -31,13 +31,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   try {
-    const id = params?.id
+    const { user, slug } = params!
 
-    const buildRepository = await BuildRepository()
-    const build = await buildRepository.findOne(id as string).catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
+    const build = await axios
+      .get(`/builds/${user}/${slug}`, {
+        baseURL: "https://api.local.factorio.tech",
+      })
+      .then((response) => response.data)
+      .catch((err) => {
+        console.error(err)
+      })
 
     if (!build) throw new Error("Build not found")
 
