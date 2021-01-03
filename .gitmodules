@@ -1,0 +1,9 @@
+[submodule "fbsr-wrapper/deps/Factorio-FBSR"]
+	path = fbsr-wrapper/deps/Factorio-FBSR
+	url = git@github.com:demodude4u/Factorio-FBSR.git
+[submodule "fbsr-wrapper/deps/Java-Factorio-Data-Wrapper"]
+	path = fbsr-wrapper/deps/Java-Factorio-Data-Wrapper
+	url = git@github.com:demodude4u/Java-Factorio-Data-Wrapper.git
+[submodule "fbsr-wrapper/deps/Discord-Core-Bot-Apple"]
+	path = fbsr-wrapper/deps/Discord-Core-Bot-Apple
+	url = git@github.com:demodude4u/Discord-Core-Bot-Apple.git

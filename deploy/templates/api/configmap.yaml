@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-api
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+data:
+  AppConfig__FactorioDir: /mnt/factorio/Factorio_1.0.0
+  AppConfig__WorkingDir: /mnt/data
+  AppConfig__FbsrWrapperUri: http://{{ include "factorio-tech.fullname" . }}-fbsr-wrapper

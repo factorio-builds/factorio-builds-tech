@@ -1,0 +1,1 @@
+kubectl port-forward $(kubectl get pod --selector "app.kubernetes.io/component=postgres" --output name) 5432:5432

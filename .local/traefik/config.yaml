@@ -1,0 +1,15 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.local.factorio.tech`)"
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "local.factorio.tech"
+            sans:
+              - "*.local.factorio.tech"
+
+tls:
+  certificates:
+    - certFile: "/etc/certs/local-cert.pem"
+      keyFile: "/etc/certs/local-key.pem"

@@ -1,0 +1,20 @@
+@page
+@model ErrorModel
+@{ ViewData["Title"] = "Error"; }
+
+<div class="container error-500">
+    <h1 class="text-danger display-1">@ViewData["Title"]</h1>
+    <h2 class="text-danger mb-4">An error occurred while processing your request 😢</h2>
+
+    <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorId))
+    {
+        <p><strong>Error ID:</strong> <code>@Model.ErrorId</code></p>
+    }
+
+    <p>
+        Please help us fix this error by <a href="https://github.com/dstockhammer/factorio-tech/issues" title="issue tracker on GitHub">creating a ticket in the GitHub issue tracker</a>.
+        Please quote the ID(s) above and describe what you did when the issue occurred. Thank you very much ❤️ 🚀
+    </p>
+</div>
