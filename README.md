@@ -1,10 +1,17 @@
-# factorio.tech
+<img src="https://user-images.githubusercontent.com/3461986/98061159-41affb80-1e19-11eb-81d3-3d27f174cf8d.png" alt="Factorio builds" align="center" />
 
-A [Factorio](https://www.factorio.com) blueprints hub. Currently in **public beta**: https://beta.factorio.tech
+This project aims to be a website and tool to share and browse [blueprints](https://wiki.factorio.com/Blueprint) for the [Factorio](https://factorio.com/) game, with strong values in user experience to make it the least painful experience to search/filter, and create builds.
+
+## Quick links
+
+- [Figma](https://www.figma.com/file/eDiTI6ZiAHHgoGSgXaWBO0/factorio-builds?node-id=393%3A11)
+- [Issues](https://github.com/factorio-builds/factorio-builds-tech/issues)
+- [Pull requests](https://github.com/factorio-builds/factorio-builds-tech/pulls)
+- [Roadmap](https://github.com/factorio-builds/factorio-builds-tech/milestones?direction=asc&sort=title&state=open)
 
 ## Running locally
 
-The entire factorio.tech stack can be run in a self-contained local environment using [docker-compose](https://docs.docker.com/compose).
+The entire stack can be run in a self-contained local environment using [docker-compose](https://docs.docker.com/compose).
 
 1. Set up and configure prerequisites:
 
@@ -34,30 +41,14 @@ Due to licensing restrictions, we can not distribute the Factorio game assets wi
 
 ### Optional: external OAuth providers
 
-The factorio.tech application does not support logging in with username/password, but instead relies on external OAuth providers. To run the application locally, you need to configure at least one of the available providers from the table below. The callback URL must be set to `https://identity.local.factorio.tech` for running in Docker and `https://localhost:5001` for running in the IDE or `dotnet`.
+The factorio.tech application does not support logging in with username/password, but instead relies on external OAuth providers. To run the application locally, you need to configure at least one of the available providers from the table below. The callback URL must be set to `https://identity.local.factorio.tech`.
 
 | Key       | URL                                         |
 | --------- | ------------------------------------------- |
 | `GitHub`  | https://github.com/settings/developers      |
 | `Discord` | https://discord.com/developers/applications |
 
-
-Once you've created an OAuth app with your provider of choice, you have to configure the local environment to use the provider (replace `{key}` with the prover's key from the table above):
-
-- For **Docker** (with `docker-compose`): Create *two* configuration files that contain the `client_id` and the `client_secret` respectively for each OAuth provider you wish to configure and put them into the `secrets` folder. See the [secrets readme](.local/secrets) for more details.
-
-- For **IDE or dotnet**: Create `src/FactorioTech.Web/appsettings.secret.json` if it doesn't exist yet and **merge** the following settings, replacing the tokens in brackets `{}`:
-
-    ```json
-    {
-        "OAuthProviders": {
-            "{key}": {
-                "ClientId": "{client_id}",
-                "ClientSecret": "{client_secret}"
-            }
-        }
-    }
-    ```
+Once you've created an OAuth app with your provider of choice, you have to configure the local environment to use the provider: Create *two* configuration files that contain the `client_id` and the `client_secret` respectively for each OAuth provider you wish to configure and put them into the `secrets` folder. See the [secrets readme](.local/secrets) for more details.
 
 ### Optional: trusted development certificates
 
@@ -76,50 +67,10 @@ docker restart factorio-tech_traefik_1
 
 ## Contributing
 
-factorio.tech is an [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-5.0) application. For local development you need the [.NET 5 SDK](https://dotnet.microsoft.com/download) installed on your machine along with a compatible IDE such as [Visual Studio Code](https://code.visualstudio.com), [Visual Studio Community](https://visualstudio.microsoft.com/vs/community) or [Rider](https://www.jetbrains.com/rider).
+This is a monorepo that contains components in different tech stacks that make up factorio builds:
 
-### Build and run
+- A [**frontend**](frontend) written in [React](https://reactjs.org)/[Nextjs](https://nextjs.org) + [TypeScript](https://www.typescriptlang.org)
+- Multiple [**backend services**](backend) written in [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-5.0)
+- A [Spring Boot](https://spring.io/projects/spring-boot) [**wrapper**](fbsr-wrapper) that makes it possible to run [Factorio-FBSR](Factorio-FBSR) in Docker
 
-```bash
-dotnet run --project src/FactorioTech.Web/FactorioTech.Web.csproj
-```
-
-### Run tests
-
-```bash
-dotnet test
-```
-
-This command will run **all tests**. To only run **fast** unit test, you can filter for tests with the matching type:
-
-```bash
-dotnet test --filter Type=Fast
-```
-
-Conversely, you could opt to run only **slow** tests with db or other *slow* dependencies:
-
-```bash
-dotnet test --filter Type=Slow
-```
-
-### Create a migration
-
-```bash
-dotnet ef migrations add "xxx" -o Data/Migrations -p src/FactorioTech.Core/FactorioTech.Core.csproj
-```
-
-### Apply migrations
-
-```bash
-dotnet ef database update -p src/FactorioTech.Core/FactorioTech.Core.csproj
-```
-
-or using Docker
-
-```bash
-docker build -t factorio-tech/build --target build .
-docker run --rm --network factorio-tech_default factorio-tech/build \
-    ef database update --configuration Release --no-build \
-        --project /app/src/FactorioTech.Core/FactorioTech.Core.csproj \
-        --connection "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
-```
+You can find instructions on how to build and contribute to those components in the respective folders.

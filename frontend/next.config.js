@@ -3,7 +3,7 @@ module.exports = {
     frontendUrl: process.env.FRONTEND_URL || "https://local.factorio.tech",
     identityUrl:
       process.env.IDENTITY_URL || "https://identity.local.factorio.tech",
-    clientId: "nextjs-client",
+    clientId: "frontend",
     clientSecret: "511536EF-F270-4058-80CA-1C89C192F69A",
   },
   images: {
