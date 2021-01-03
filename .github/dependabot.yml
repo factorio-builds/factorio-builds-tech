@@ -8,32 +8,30 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # infrastructure
   - package-ecosystem: "terraform"
     directory: "/infrastructure/"
     schedule:
       interval: "daily"
-   
-  # factorio-tech/web
- 
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "daily"
+
+  # frontend
+  # - package-ecosystem: "npm"
+  #   directory: "/frontend/"
+  #   schedule:
+  #     interval: "weekly"
+
+  # backend
   - package-ecosystem: "nuget"
-    directory: "/"
+    directory: "/backend/"
     schedule:
       interval: "daily"
-  - package-ecosystem: "npm"
-    directory: "/src/FactorioTech.Web/"
-    schedule:
-      interval: "daily"
-  
-  # factorio-tech/fbsr-wrapper
-  
-  - package-ecosystem: "docker"
-    directory: "/fbsr-wrapper/"
-    schedule:
-      interval: "weekly"
+
+  # fbsr-wrapper
   - package-ecosystem: "maven"
     directory: "/fbsr-wrapper/"
     schedule:

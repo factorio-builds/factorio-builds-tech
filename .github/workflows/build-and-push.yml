@@ -8,7 +8,7 @@ on:
       - deploy/**
       - infrastructure/**
       - scripts/**
-      - README.md
+      - "**/README.md"
   pull_request:
     branches:
       - main
@@ -46,6 +46,29 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
+      - name: Build backend base image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          target: build
+          push: false
+          load: true
+          build-args: |
+            version=${{ env.version }}
+            build_branch=${{ github.ref }}
+            build_sha=${{ github.sha }}
+            build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          tags: ${{ github.repository }}/build:ci
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      - name: Run tests
+        run: |
+          docker run --rm ${{ github.repository }}/build:ci test \
+            --no-restore --no-build --configuration Release \
+            --verbosity normal --logger trx --filter Type=Fast
+
       - name: Build and push - fbsr-wrapper
         uses: docker/build-push-action@v2
         with:
@@ -63,32 +86,31 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
 
-      - name: Build base image
+      - name: Build and push - frontend
         uses: docker/build-push-action@v2
         with:
-          context: .
-          target: build
-          push: false
-          load: true
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
           build-args: |
             version=${{ env.version }}
             build_branch=${{ github.ref }}
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          tags: factorio-tech/build:ci
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
-
-      - name: Run tests
-        run: |
-          docker run --rm factorio-tech/build:ci test \
-            --no-restore --no-build --configuration Release \
-            --verbosity normal --logger trx --filter Type=Fast
+          tags: |
+            ghcr.io/${{ github.repository }}/frontend:${{ env.version }}
+            ghcr.io/${{ github.repository }}/frontend:ci
+          labels: |
+            org.opencontainers.image.version=${{ env.version }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.ref.name=${{ github.ref }}
 
       - name: Build and push - api
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./backend
+          file: ./backend/Dockerfile
           target: api
           push: true
           build-args: |
@@ -108,7 +130,8 @@ jobs:
       - name: Build and push - identity
         uses: docker/build-push-action@v2
         with:
-          context: .
+          context: ./backend
+          file: ./backend/Dockerfile
           target: identity
           push: true
           build-args: |
@@ -125,43 +148,44 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # todo: deployment disabled for now
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-push
+  #   if: ${{ github.ref == 'refs/heads/main' }}
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Login to AKS
-        uses: azure/aks-set-context@v1
-        with:
-            creds: "${{ secrets.AZURE_CREDENTIALS }}"
-            resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
-            cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+  #     - name: Login to AKS
+  #       uses: azure/aks-set-context@v1
+  #       with:
+  #           creds: "${{ secrets.AZURE_CREDENTIALS }}"
+  #           resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+  #           cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
 
-      - name: Install Helm
-        uses: azure/setup-helm@v1
+  #     - name: Install Helm
+  #       uses: azure/setup-helm@v1
 
-      - name: Package Helm chart
-        run: |
-          helm package ./deploy \
-            --version ${{ env.version }} \
-            --app-version ${{ env.version }}
+  #     - name: Package Helm chart
+  #       run: |
+  #         helm package ./deploy \
+  #           --version ${{ env.version }} \
+  #           --app-version ${{ env.version }}
 
-      - name: Deploy Helm chart to AKS
-        run: |
-          helm upgrade factorio-tech factorio-tech-${{ env.version }}.tgz \
-            --install --atomic \
-            --values deploy/values.yaml \
-            --set-string postgres.database=${{ secrets.POSTGRES_DATABASE }} \
-            --set-string postgres.username=${{ secrets.POSTGRES_USERNAME }} \
-            --set-string postgres.password=${{ secrets.POSTGRES_PASSWORD }} \
-            --set-string postgres.diskName=${{ secrets.POSTGRES_DISK_NAME }} \
-            --set-string postgres.diskURI=${{ secrets.POSTGRES_DISK_URI }} \
-            --set-string oAuthProviders[0].name=GitHub \
-            --set-string oAuthProviders[0].clientId=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
-            --set-string oAuthProviders[0].clientSecret=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
-            --set-string oAuthProviders[1].name=Discord \
-            --set-string oAuthProviders[1].clientId=${{ secrets.OAUTH_DISCORD_CLIENT_ID }} \
-            --set-string oAuthProviders[1].clientSecret=${{ secrets.OAUTH_DISCORD_CLIENT_SECRET }}
+  #     - name: Deploy Helm chart to AKS
+  #       run: |
+  #         helm upgrade factorio-tech factorio-tech-${{ env.version }}.tgz \
+  #           --install --atomic \
+  #           --values deploy/values.yaml \
+  #           --set-string postgres.database=${{ secrets.POSTGRES_DATABASE }} \
+  #           --set-string postgres.username=${{ secrets.POSTGRES_USERNAME }} \
+  #           --set-string postgres.password=${{ secrets.POSTGRES_PASSWORD }} \
+  #           --set-string postgres.diskName=${{ secrets.POSTGRES_DISK_NAME }} \
+  #           --set-string postgres.diskURI=${{ secrets.POSTGRES_DISK_URI }} \
+  #           --set-string oAuthProviders[0].name=GitHub \
+  #           --set-string oAuthProviders[0].clientId=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
+  #           --set-string oAuthProviders[0].clientSecret=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
+  #           --set-string oAuthProviders[1].name=Discord \
+  #           --set-string oAuthProviders[1].clientId=${{ secrets.OAUTH_DISCORD_CLIENT_ID }} \
+  #           --set-string oAuthProviders[1].clientSecret=${{ secrets.OAUTH_DISCORD_CLIENT_SECRET }}
