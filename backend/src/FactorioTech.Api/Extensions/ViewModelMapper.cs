@@ -29,12 +29,12 @@ namespace FactorioTech.Api.Extensions
             };
 
         public static BuildsModel ToViewModel(this IReadOnlyCollection<Blueprint> blueprints,
-            IUrlHelper urlHelper, BuildController.BuildsQueryParams query, bool hasMore, int totalCount) =>
+            IUrlHelper urlHelper, BuildsQueryParams query, bool hasMore, int totalCount) =>
             new()
             {
                 Links = urlHelper.BuildLinks(blueprints, query, hasMore),
-                Builds = blueprints.Take(BuildController.BuildsQueryParams.PageSize).Select(b => b.ToThinViewModel(urlHelper)),
-                CurrentCount = Math.Min(blueprints.Count, BuildController.BuildsQueryParams.PageSize),
+                Builds = blueprints.Take(BuildsQueryParams.PageSize).Select(b => b.ToThinViewModel(urlHelper)),
+                CurrentCount = Math.Min(blueprints.Count, BuildsQueryParams.PageSize),
                 TotalCount = totalCount,
             };
 

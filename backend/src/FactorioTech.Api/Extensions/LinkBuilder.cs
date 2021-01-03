@@ -13,7 +13,7 @@ namespace FactorioTech.Api.Extensions
     public static class LinkBuilder
     {
         public static IReadOnlyDictionary<string, LinkModel> BuildLinks(this IUrlHelper urlHelper,
-            IReadOnlyCollection<Blueprint> blueprints, BuildController.BuildsQueryParams query, bool hasMore)
+            IReadOnlyCollection<Blueprint> blueprints, BuildsQueryParams query, bool hasMore)
         {
             var links = new Dictionary<string, LinkModel>
             {
