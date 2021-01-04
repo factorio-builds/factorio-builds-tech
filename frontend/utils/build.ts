@@ -24,7 +24,7 @@ export function getIcons(
 }
 
 export function isBook(payload: IFullPayload): boolean {
-  return payload.blueprint.type === "blueprint-book"
+  return payload.type === "blueprint-book"
 }
 
 export function countEntities(
