@@ -163,6 +163,7 @@ export interface IDecodedBlueprintBookData {
 }
 
 export interface IBlueprint {
+  type: "blueprint"
   icons?: Array<IBlueprintIcon>
   entities: Array<IBlueprintEntity>
   item: string
@@ -172,6 +173,7 @@ export interface IBlueprint {
 }
 
 export interface IBlueprintBook {
+  type: "blueprint-book"
   blueprints: Array<{
     blueprint: IBlueprint
     index: number
