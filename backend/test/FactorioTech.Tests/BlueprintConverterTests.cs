@@ -1,4 +1,3 @@
-using FactorioTech.Core;
 using FactorioTech.Core.Services;
 using FactorioTech.Tests.Helpers;
 using FluentAssertions;
@@ -23,7 +22,8 @@ namespace FactorioTech.Tests
         [InlineData(281474976710656, "1.0.0.0")]
         public void ParseVersion(ulong encoded, string expected)
         {
-            Utils.DecodeGameVersion(encoded).Should().Be(Version.Parse(expected));
+            var converter = new BlueprintConverter();
+            converter.DecodeGameVersion(encoded).Should().Be(Version.Parse(expected));
         }
 
         [Fact]

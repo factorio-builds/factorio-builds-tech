@@ -6,9 +6,9 @@ using System.Text.Json;
 namespace FactorioTech.Core
 {
     /// <summary>
-    /// workaround for missing snake_case policy in System.Text.Json (coming in .NET 6)
-    /// see https://github.com/dotnet/runtime/issues/782
-    /// code taken from https://github.com/efcore/EFCore.NamingConventions/blob/36a41daa870175ff90f8981bb0204611fec7a646/EFCore.NamingConventions/Internal/SnakeCaseNameRewriter.cs
+    /// Workaround for missing snake_case policy in System.Text.Json (coming in .NET 6)
+    /// See https://github.com/dotnet/runtime/issues/782
+    /// Code taken from https://github.com/efcore/EFCore.NamingConventions/blob/36a41daa870175ff90f8981bb0204611fec7a646/EFCore.NamingConventions/Internal/SnakeCaseNameRewriter.cs
     /// </summary>
     public class SnakeCaseNamingPolicy : JsonNamingPolicy
     {

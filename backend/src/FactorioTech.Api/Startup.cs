@@ -46,6 +46,7 @@ namespace FactorioTech.Api
             services.AddHttpClient();
             services.AddControllers().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new VersionJsonConverter());
                 options.JsonSerializerOptions.Converters.Add(new HashJsonConverter());

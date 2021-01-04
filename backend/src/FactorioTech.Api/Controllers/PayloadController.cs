@@ -161,7 +161,11 @@ namespace FactorioTech.Api.Controllers
                 return BadRequest("A blueprint book must contain at least one blueprint");
 
             var hash = Hash.Compute(request.Encoded);
-            var payload = new BlueprintPayload(hash, request.Encoded, Utils.DecodeGameVersion(envelope.Version));
+            var payload = new BlueprintPayload(
+                hash,
+                _blueprintConverter.ParseType(envelope.Item),
+                _blueprintConverter.DecodeGameVersion(envelope.Version),
+                request.Encoded);
 
             var cache = new PayloadCache();
             cache.TryAdd(envelope, payload);

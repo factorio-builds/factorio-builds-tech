@@ -11,11 +11,40 @@ namespace FactorioTech.Api.ViewModels
 {
     public class BuildLinks
     {
+        /// <summary>
+        /// The absolute URL to this build's full details.
+        /// </summary>
+        [Required]
         public LinkModel Self { get; init; }
+
+        /// <summary>
+        /// The absolute URL to this build's cover image.
+        /// </summary>
+        [Required]
         public ImageLinkModel Cover { get; init; }
+
+        /// <summary>
+        /// The absolute URL to the list of this build's versions.
+        /// </summary>
+        [Required]
         public LinkModel Versions { get; init; }
+        
+        /// <summary>
+        /// The absolute URL to the list of this build's followers.
+        /// </summary>
+        [Required]
         public LinkModel Followers { get; init; }
+
+        /// <summary>
+        /// The absolute URL to the API endpoint to add a version to this build.
+        /// Only available if the call has been made with an authenticated user token.
+        /// </summary>
         public LinkModel? AddVersion { get; init; }
+
+        /// <summary>
+        /// The absolute URL to the API endpoint to add a version to this build.
+        /// Only available if the call has been made with an authenticated user token.
+        /// </summary>
         public LinkModel? ToggleFavorite { get; init; }
     }
 
@@ -72,6 +101,12 @@ namespace FactorioTech.Api.ViewModels
         /// <example>1.2.3.4</example>
         [Required]
         public Version LatestGameVersion { get; set; }
+
+        /// <summary>
+        /// The build's latest version's blueprint type.
+        /// </summary>
+        [Required]
+        public BlueprintType LatestType { get; set; }
 
         /// <summary>
         /// The build's tags.
