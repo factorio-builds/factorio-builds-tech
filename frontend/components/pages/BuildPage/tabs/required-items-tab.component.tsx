@@ -1,5 +1,5 @@
 import React, { useMemo } from "react"
-import { getCountPerItem, isBook } from "../../../../utils/blueprint"
+import { isBook } from "../../../../utils/build"
 import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
@@ -19,18 +19,19 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
 }
 
 const RequiredItemsTab: TTabComponent = (props) => {
-  const itemsCount = useMemo(() => {
-    if (!isBook(props.build.json)) {
-      return getCountPerItem(props.build.json.blueprint)
-    }
-    return {}
-  }, [props.build.blueprint])
+  const encoded = props.build.latest_version.payload.encoded
 
   const sortedRequiredItems = useMemo(() => {
-    return Object.keys(itemsCount)
+    if (!props.payload.data) {
+      return []
+    }
+
+    const entities = (props.payload.data.blueprint as any).entities
+
+    return Object.keys(entities)
       .map((itemName) => {
         return {
-          count: itemsCount[itemName],
+          count: entities[itemName],
           name: itemName,
         }
       })
@@ -39,13 +40,13 @@ const RequiredItemsTab: TTabComponent = (props) => {
 
         return a.count < b.count ? 1 : -1
       })
-  }, [itemsCount])
+  }, [props.payload.data])
 
   return (
     <Tab {...props}>
-      <CopyStringToClipboard toCopy={props.build.blueprint} />
+      <CopyStringToClipboard toCopy={encoded} />
 
-      {!isBook(props.build.json) && (
+      {!isBook(props.build) && (
         <Stacker gutter={8}>
           {sortedRequiredItems.map((item) => {
             return (
