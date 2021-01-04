@@ -44,11 +44,11 @@ interface IBuildLinks {
   versions: {
     href: string
   }
-  "add-version": {
+  add_version: {
     href: string
     method: "post"
   }
-  "toggle-favorite": {
+  toggle_favorite: {
     href: string
     method: "post"
   }
