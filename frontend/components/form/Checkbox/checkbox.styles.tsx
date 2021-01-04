@@ -30,6 +30,7 @@ export const Label = styled.label`
   ${getTypo(ETypo.FORM_LABEL)};
   display: flex;
   align-items: center;
+  cursor: pointer;
 
   &.is-inline {
     font-weight: 400;
@@ -38,7 +39,6 @@ export const Label = styled.label`
 
 export const CheckboxWrapper = styled.div`
   display: flex;
-  cursor: pointer;
 
   &:hover ${Square} {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
