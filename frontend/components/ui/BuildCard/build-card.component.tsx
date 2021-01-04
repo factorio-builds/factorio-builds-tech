@@ -1,20 +1,20 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { IIndexedBuild } from "../../../types"
+import { IThinBuild } from "../../../types"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
-  title: IIndexedBuild["title"]
-  icons: IIndexedBuild["icons"]
+  title: IThinBuild["title"]
+  icons: IThinBuild["icons"]
   isBook: boolean
   // TODO: probably switch to IMetadata["categories"] later
-  categories: IIndexedBuild["tags"]
-  image: IIndexedBuild["_links"]["cover"]
-  // TODO: switch to IIndexedBuild["_links"]["self"]
+  categories: IThinBuild["tags"]
+  image: IThinBuild["_links"]["cover"]
+  // TODO: switch to IThinBuild["_links"]["self"]
   link: string
 }
 

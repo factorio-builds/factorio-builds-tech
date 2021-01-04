@@ -190,7 +190,7 @@ export interface IIcon {
   name: string
 }
 
-export interface IIndexedBuild {
+export interface IThinBuild {
   title: string
   slug: string
   owner: { username: string }
@@ -232,7 +232,7 @@ export interface SearchResponse<T> {
   builds: T[]
 }
 
-export type ApiSeachBuild = ApiResponse<SearchResponse<IIndexedBuild>>
+export type ApiSeachBuild = ApiResponse<SearchResponse<IThinBuild>>
 
 // TODO: properly extend IncomingMessage
 export interface ExtendedReq extends IncomingMessage {

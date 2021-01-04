@@ -2,7 +2,7 @@ import axios from "axios"
 import { GetServerSideProps, NextPage } from "next"
 import BuildListPage from "../components/pages/BuildListPage"
 import { wrapper } from "../redux/store"
-import { ApiSeachBuild, IIndexedBuild, SearchResponse } from "../types"
+import { ApiSeachBuild, IThinBuild, SearchResponse } from "../types"
 
 const IndexPage: NextPage = () => {
   return <BuildListPage />
@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     // console.log(searchResults)
 
     // const deserializedSearchResults = JSON.parse(JSON.stringify(searchResults))
-    const deserializedSearchResults: SearchResponse<IIndexedBuild> = JSON.parse(
+    const deserializedSearchResults: SearchResponse<IThinBuild> = JSON.parse(
       JSON.stringify(searchResults)
     )
 

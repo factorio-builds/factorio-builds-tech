@@ -1,7 +1,7 @@
 import * as React from "react"
 import sortBy from "lodash/sortBy"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
-import { ESortType, IIndexedBuild } from "../../../types"
+import { ESortType, IThinBuild } from "../../../types"
 import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
 import BuildListSort from "../BuildListSort"
@@ -9,7 +9,7 @@ import * as SC from "./build-card-list.styles"
 import { COLS, GUTTER } from "./design-tokens"
 
 interface IBuildCardListProps {
-  items: IIndexedBuild[]
+  items: IThinBuild[]
   count: number
   totalCount: number
   lookupTime: number
@@ -70,7 +70,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
                   // TODO: fill isBook once reimplemented
                   isBook={false}
                   image={item._links.cover}
-                  // TODO: switch to IIndexedBuild["_links"]["self"]
+                  // TODO: switch to IThinBuild["_links"]["self"]
                   link={`${item.owner.username}/${item.slug}`}
                 />
               </SC.Item>
