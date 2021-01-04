@@ -4,8 +4,8 @@ export const BuildIconWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   background: linear-gradient(135deg, #235581, #133756);
   border: 2px dashed #7fbace;
 
@@ -21,6 +21,11 @@ export const BuildIconWrapper = styled.div`
   &.medium-icons img {
     width: 40%;
     height: 40%;
+  }
+
+  &.large-icons {
+    justify-content: center;
+    align-items: center;
   }
 
   &.size-medium {
