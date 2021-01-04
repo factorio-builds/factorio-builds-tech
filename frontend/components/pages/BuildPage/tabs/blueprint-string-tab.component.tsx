@@ -7,10 +7,12 @@ import Tab from "./tab.component"
 const BlueprintStringTab: TTabComponent = (props) => {
   return (
     <Tab {...props}>
-      <CopyStringToClipboard toCopy={props.build.blueprint} />
+      <CopyStringToClipboard
+        toCopy={props.build.latest_version.payload.encoded}
+      />
 
       <SC.BlueprintData
-        value={props.build.blueprint}
+        value={props.build.latest_version.payload.encoded}
         readOnly
         onClick={(e) => e.currentTarget.select()}
       />

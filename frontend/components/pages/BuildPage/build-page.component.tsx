@@ -8,15 +8,15 @@ import Link from "next/link"
 // import { useGameStates } from "../../../hooks/useGameStates"
 import { IStoreState } from "../../../redux/store"
 // import { ERole } from "../../../types"
-// import { isBook } from "../../../utils/blueprint"
 import { IFullBuild } from "../../../types"
+import { isBook } from "../../../utils/build"
 import BuildIcon from "../../ui/BuildIcon"
 import Layout from "../../ui/Layout"
 import Stacker from "../../ui/Stacker"
 import WithIcons from "../../ui/WithIcons"
 import * as SC from "./build-page.styles"
-// import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
-// import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
+import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
+import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
 // import BlueprintsTab from "./tabs/blueprints-tab.component"
 import DetailsTab from "./tabs/details-tab.component"
 // import RequiredItemsTab from "./tabs/required-items-tab.component"
@@ -101,24 +101,24 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
   // const gameStates = build.metadata.state.map(getGameState)
 
   const tabs = useMemo(() => {
-    // if (isBook(build.json)) {
-    return [
-      { label: "details", tab: DetailsTab },
-      // {
-      //   label: `blueprints (${build.json.blueprint_book.blueprints.length})`,
-      //   tab: BlueprintsTab,
-      // },
-      // { label: "blueprint string", tab: BlueprintStringTab },
-      // { label: "blueprint json", tab: BlueprintJsonTab },
-    ]
-    // } else {
-    //   return [
-    //     { label: "details", tab: DetailsTab },
-    //     { label: "required items", tab: RequiredItemsTab },
-    //     { label: "blueprint string", tab: BlueprintStringTab },
-    //     { label: "blueprint json", tab: BlueprintJsonTab },
-    //   ]
-    // }
+    if (isBook(build)) {
+      return [
+        { label: "details", tab: DetailsTab },
+        // {
+        //   label: `blueprints (${build.json.blueprint_book.blueprints.length})`,
+        //   tab: BlueprintsTab,
+        // },
+        { label: "blueprint string", tab: BlueprintStringTab },
+        { label: "blueprint json", tab: BlueprintJsonTab },
+      ]
+    } else {
+      return [
+        { label: "details", tab: DetailsTab },
+        //     { label: "required items", tab: RequiredItemsTab },
+        { label: "blueprint string", tab: BlueprintStringTab },
+        { label: "blueprint json", tab: BlueprintJsonTab },
+      ]
+    }
   }, [build.latest_version.hash])
 
   return (

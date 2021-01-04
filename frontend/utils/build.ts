@@ -1,6 +1,6 @@
 import { Build } from "../db/entities/build.entity"
-import { IBlueprint, IBlueprintIcon } from "../types"
-import { isBook } from "./blueprint"
+import { IBlueprint, IBlueprintIcon, IFullBuild } from "../types"
+import { isBook as blueprintIsBook } from "./blueprint"
 
 export function getIcons(blueprint: IBlueprint): IBlueprintIcon[]
 export function getIcons(build: Build): IBlueprintIcon[]
@@ -9,7 +9,8 @@ export function getIcons(
 ): IBlueprintIcon[] {
   const maybeBuild = buildOrBlueprint as Build
   if (maybeBuild.json !== undefined) {
-    const icons = isBook(maybeBuild.json)
+    // TODO: use utils.build.isBook
+    const icons = blueprintIsBook(maybeBuild.json)
       ? maybeBuild.json.blueprint_book.icons
       : maybeBuild.json.blueprint.icons
 
@@ -19,4 +20,8 @@ export function getIcons(
 
     return blueprint.icons || []
   }
+}
+
+export function isBook(build: IFullBuild): boolean {
+  return build.latest_version.payload.blueprint.type === "blueprint-book"
 }
