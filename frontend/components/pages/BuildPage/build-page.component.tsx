@@ -107,7 +107,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
   // const gameStates = build.metadata.state.map(getGameState)
 
   const tabs = useMemo(() => {
-    if (isBook(build)) {
+    if (isBook(build.latest_version.payload)) {
       const childrenLength =
         !payload.error && !payload.loading && payload.data
           ? // TODO: define payload type

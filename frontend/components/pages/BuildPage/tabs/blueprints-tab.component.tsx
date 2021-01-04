@@ -1,9 +1,7 @@
 import React from "react"
 import { isBook } from "../../../../utils/build"
-import BuildIcon from "../../../ui/BuildIcon"
-import Stacker from "../../../ui/Stacker"
+import BlueprintItem from "../../../ui/BlueprintItem"
 import { TTabComponent } from "../build-page.component"
-import * as SC from "../build-page.styles"
 import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
@@ -20,24 +18,25 @@ const BlueprintsTab: TTabComponent = (props) => {
       {!props.payload.loading &&
         !props.payload.error &&
         props.payload.data &&
-        isBook(props.build) && (
-          <Stacker gutter={4}>
+        props.payload.data.children &&
+        isBook(props.build.latest_version.payload) && (
+          <>
             {/* TODO: remove once API/payload is typed */}
-            {(props.payload.data as any).children.map((bp) => {
+            {props.payload.data.children.map((bp) => {
               return (
-                <SC.BlueprintItem
+                <BlueprintItem
                   key={bp.hash}
-                  orientation="horizontal"
-                  gutter={5}
-                >
-                  {bp.blueprint.icons && (
-                    <BuildIcon icons={bp.blueprint.icons} />
-                  )}
-                  <span>{bp.blueprint.label}</span>
-                </SC.BlueprintItem>
+                  depth={0}
+                  isBook={isBook(bp)}
+                  title={bp.blueprint.label}
+                  icons={bp.blueprint.icons}
+                  description={bp.blueprint.description}
+                  // image={bp._links.cover}
+                  nodes={bp.children}
+                />
               )
             })}
-          </Stacker>
+          </>
         )}
     </Tab>
   )

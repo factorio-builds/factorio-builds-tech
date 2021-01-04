@@ -44,7 +44,7 @@ const RequiredItemsTab: TTabComponent = (props) => {
     <Tab {...props}>
       <CopyStringToClipboard toCopy={encoded} />
 
-      {!isBook(props.build) && (
+      {!isBook(props.build.latest_version.payload) && (
         <Stacker gutter={8}>
           {sortedRequiredItems.map((item) => {
             return (
