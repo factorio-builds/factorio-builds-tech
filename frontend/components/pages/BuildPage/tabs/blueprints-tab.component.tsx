@@ -29,6 +29,7 @@ const BlueprintsTab: TTabComponent = (props) => {
                   description={bp.blueprint.description}
                   // image={bp._links.cover}
                   nodes={bp.children}
+                  entities={bp.blueprint.entities}
                 />
               )
             })}
