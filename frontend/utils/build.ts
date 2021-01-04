@@ -28,7 +28,7 @@ export function isBook(payload: IFullPayload): boolean {
 }
 
 export function countEntities(
-  entities: IFullPayload["blueprint"]["entities"]
+  entities?: IFullPayload["blueprint"]["entities"]
 ): number {
   if (!entities) {
     return 0
