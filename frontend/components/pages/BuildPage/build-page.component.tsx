@@ -17,9 +17,10 @@ import WithIcons from "../../ui/WithIcons"
 import * as SC from "./build-page.styles"
 import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
 import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
-// import BlueprintsTab from "./tabs/blueprints-tab.component"
+import BlueprintsTab from "./tabs/blueprints-tab.component"
 import DetailsTab from "./tabs/details-tab.component"
-// import RequiredItemsTab from "./tabs/required-items-tab.component"
+import RequiredItemsTab from "./tabs/required-items-tab.component"
+import usePayload, { TPayload } from "./usePayload"
 
 interface IBuildPageProps {
   build: IFullBuild
@@ -28,6 +29,7 @@ interface IBuildPageProps {
 export type ITabComponentProps = {
   build: IFullBuild
   isActive: boolean
+  payload: TPayload
 }
 
 export type TTabComponent = (props: ITabComponentProps) => JSX.Element
@@ -40,6 +42,7 @@ interface ITab {
 interface ITabs {
   build: IFullBuild
   tabs: ITab[]
+  payload: TPayload
   aside: React.ReactElement
 }
 
@@ -72,6 +75,7 @@ const Tabs = (props: ITabs): JSX.Element => {
               <Tab
                 key={tab.label}
                 build={props.build}
+                payload={props.payload}
                 isActive={currentTab === index}
               />
             )
@@ -85,6 +89,8 @@ const Tabs = (props: ITabs): JSX.Element => {
 
 function BuildPage({ build }: IBuildPageProps): JSX.Element {
   const user = useSelector((state: IStoreState) => state.auth.user)
+  const payload = usePayload(build)
+
   // const { getGameState } = useGameStates()
   // const { getCategory } = useCategories()
 
@@ -102,24 +108,30 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   const tabs = useMemo(() => {
     if (isBook(build)) {
+      const childrenLength =
+        !payload.error && !payload.loading && payload.data
+          ? // TODO: define payload type
+            (payload.data as any).children.length
+          : "..."
+
       return [
         { label: "details", tab: DetailsTab },
-        // {
-        //   label: `blueprints (${build.json.blueprint_book.blueprints.length})`,
-        //   tab: BlueprintsTab,
-        // },
+        {
+          label: `blueprints (${childrenLength})`,
+          tab: BlueprintsTab,
+        },
         { label: "blueprint string", tab: BlueprintStringTab },
         { label: "blueprint json", tab: BlueprintJsonTab },
       ]
     } else {
       return [
         { label: "details", tab: DetailsTab },
-        //     { label: "required items", tab: RequiredItemsTab },
+        { label: "required items", tab: RequiredItemsTab },
         { label: "blueprint string", tab: BlueprintStringTab },
         { label: "blueprint json", tab: BlueprintJsonTab },
       ]
     }
-  }, [build.latest_version.hash])
+  }, [build.latest_version.hash, payload.data])
 
   return (
     <Layout title={build.title}>
@@ -170,6 +182,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
       <Tabs
         build={build}
         tabs={tabs}
+        payload={payload}
         aside={
           <Stacker orientation="vertical" gutter={16}>
             {/* {(isAdmin || ownedByMe) && ( */}

@@ -1,6 +1,5 @@
 import React from "react"
-import { isBook } from "../../../../utils/blueprint"
-import { getIcons } from "../../../../utils/build"
+import { isBook } from "../../../../utils/build"
 import BuildIcon from "../../../ui/BuildIcon"
 import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
@@ -9,23 +8,37 @@ import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const BlueprintsTab: TTabComponent = (props) => {
+  const encoded = props.build.latest_version.payload.encoded
+
   return (
     <Tab {...props}>
-      <CopyStringToClipboard toCopy={props.build.blueprint} />
+      <CopyStringToClipboard toCopy={encoded} />
 
-      {isBook(props.build.json) && (
-        <Stacker gutter={4}>
-          {props.build.json.blueprint_book.blueprints.map((bp, index) => {
-            const icons = getIcons(bp.blueprint)
-            return (
-              <SC.BlueprintItem key={index} orientation="horizontal" gutter={5}>
-                {icons && <BuildIcon icons={icons} />}
-                {bp.blueprint.label}
-              </SC.BlueprintItem>
-            )
-          })}
-        </Stacker>
-      )}
+      {props.payload.loading && "loading..."}
+      {props.payload.error && "error?"}
+
+      {!props.payload.loading &&
+        !props.payload.error &&
+        props.payload.data &&
+        isBook(props.build) && (
+          <Stacker gutter={4}>
+            {/* TODO: remove once API/payload is typed */}
+            {(props.payload.data as any).children.map((bp) => {
+              return (
+                <SC.BlueprintItem
+                  key={bp.hash}
+                  orientation="horizontal"
+                  gutter={5}
+                >
+                  {bp.blueprint.icons && (
+                    <BuildIcon icons={bp.blueprint.icons} />
+                  )}
+                  <span>{bp.blueprint.label}</span>
+                </SC.BlueprintItem>
+              )
+            })}
+          </Stacker>
+        )}
     </Tab>
   )
 }
