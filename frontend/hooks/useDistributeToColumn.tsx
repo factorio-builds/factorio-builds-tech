@@ -1,4 +1,4 @@
-import { IIndexedBuild } from "../types"
+import { IThinBuild } from "../types"
 
 function calcRatio(width: number, height: number): number {
   const ratio = height / width
@@ -11,7 +11,7 @@ function calcRatio(width: number, height: number): number {
 }
 
 function columnHeight(
-  items: IIndexedBuild[],
+  items: IThinBuild[],
   colWidth: number,
   gutter: number
 ): number {
@@ -27,7 +27,7 @@ function columnHeight(
 }
 
 function getShortestColumn(
-  columns: IIndexedBuild[][],
+  columns: IThinBuild[][],
   colWidth: number,
   gutter: number
 ) {
@@ -41,11 +41,11 @@ function getShortestColumn(
 }
 
 export function useDistributeToColumn(
-  items: IIndexedBuild[],
+  items: IThinBuild[],
   colCount: number,
   containerWidth: number,
   gutter: number
-): IIndexedBuild[][] {
+): IThinBuild[][] {
   if (colCount === 0) {
     return []
   }
@@ -53,7 +53,7 @@ export function useDistributeToColumn(
   const colWidth =
     containerWidth / colCount - (gutter * (colCount - 1)) / colCount
 
-  const columns = Array.from({ length: colCount }, () => [] as IIndexedBuild[])
+  const columns = Array.from({ length: colCount }, () => [] as IThinBuild[])
 
   // TODO: memoize
   items.forEach((item) => {

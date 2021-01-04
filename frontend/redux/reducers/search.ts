@@ -4,7 +4,7 @@ import { ThunkAction } from "redux-thunk"
 import {
   ApiSeachBuild,
   EFilterType,
-  IIndexedBuild,
+  IThinBuild,
   SearchResponse,
 } from "../../types"
 import { IPayloadAction, IStoreState } from "../store"
@@ -12,7 +12,7 @@ import { IPayloadAction, IStoreState } from "../store"
 export interface IStoreSearchState {
   current_count: number
   total_count: number
-  builds: IIndexedBuild[]
+  builds: IThinBuild[]
   processingTimeMs: number
 }
 
@@ -26,7 +26,7 @@ const initialSearchState: IStoreSearchState = {
 type TSearchBuildsAction = Action<"SEARCH_BUILDS">
 type TSearchBuildsSuccessAction = IPayloadAction<
   "SEARCH_BUILDS_SUCCESS",
-  SearchResponse<IIndexedBuild>
+  SearchResponse<IThinBuild>
 >
 
 export type TSearchAction = TSearchBuildsAction | TSearchBuildsSuccessAction
