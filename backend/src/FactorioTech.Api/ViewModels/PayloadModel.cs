@@ -7,7 +7,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class PayloadModelBase : ViewModelBase
+    public class PayloadLinks
+    {
+        public LinkModel Self { get; init; }
+        public LinkModel Raw { get; init; }
+        public LinkModel? RenderingFull { get; init; }
+        public LinkModel? RenderingThumb { get; init; }
+    }
+
+    public abstract class PayloadModelBase : ViewModelBase<PayloadLinks>
     {
         /// <summary>
         /// The `md5` hash of the payload's encoded blueprint string.

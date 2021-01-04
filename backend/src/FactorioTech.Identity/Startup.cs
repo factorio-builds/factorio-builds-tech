@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using System.IO;
 using System.Linq;
@@ -32,10 +33,8 @@ namespace FactorioTech.Identity
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>();
-
-            services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
-            services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
+            var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
+            services.AddSingleton(Options.Create(appConfig));
 
             services.AddRazorPages();
             services.Configure<RouteOptions>(options =>
@@ -68,12 +67,12 @@ namespace FactorioTech.Identity
                 {
                     options.UserInteraction.ErrorUrl = "/errors/500";
                 })
+                .AddAspNetIdentity<User>()
+                .AddOperationalStore<AppDbContext>()
+                .AddProfileService<CustomProfileService>()
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
                 .AddInMemoryClients(IdentityConfig.GetClients(_environment, appConfig, oAuthClientConfig.OAuthClients))
-                .AddAspNetIdentity<User>()
-                .AddProfileService<CustomProfileService>()
-                .AddDeveloperSigningCredential(true, Path.Join(appConfig.ProtectedDataDir, "signing_key.jwk")) // todo productionise
-                .AddOperationalStore<AppDbContext>();
+                .AddDeveloperSigningCredential(true, Path.Join(appConfig.ProtectedDataDir, "signing_key.jwk")); // todo productionise
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -84,7 +83,6 @@ namespace FactorioTech.Identity
             });
 
             var authenticationBuilder = services.AddAuthentication();
-
             var oAuthProviderConfig = _configuration.Get<OAuthProviderConfig>();
             if (oAuthProviderConfig?.OAuthProviders?.Any() == true)
             {

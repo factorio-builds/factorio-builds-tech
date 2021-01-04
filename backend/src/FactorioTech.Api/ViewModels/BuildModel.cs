@@ -9,7 +9,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class BuildModelBase<TUser> : ViewModelBase
+    public class BuildLinks
+    {
+        public LinkModel Self { get; init; }
+        public ImageLinkModel Cover { get; init; }
+        public LinkModel Versions { get; init; }
+        public LinkModel Followers { get; init; }
+        public LinkModel? AddVersion { get; init; }
+        public LinkModel? ToggleFavorite { get; init; }
+    }
+
+    public abstract class BuildModelBase<TUser> : ViewModelBase<BuildLinks>
         where TUser : ThinUserModel
     {
         /// <summary>
@@ -66,6 +76,7 @@ namespace FactorioTech.Api.ViewModels
         /// <summary>
         /// The build's tags.
         /// </summary>
+        [Required]
         public IEnumerable<string> Tags { get; set; }
     }
 
@@ -73,7 +84,7 @@ namespace FactorioTech.Api.ViewModels
     {
     }
 
-    public class FullBuildModel : BuildModelBase<UserModel>
+    public class FullBuildModel : BuildModelBase<FullUserModel>
     {
         public class DescriptionModel
         {
@@ -96,6 +107,7 @@ namespace FactorioTech.Api.ViewModels
         /// <summary>
         /// The build's most recently added version.
         /// </summary>
+        [Required]
         public FullVersionModel LatestVersion { get; set; }
     }
 }

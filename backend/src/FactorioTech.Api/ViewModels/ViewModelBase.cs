@@ -4,11 +4,11 @@ using System.Text.Json.Serialization;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class ViewModelBase
+    public abstract class ViewModelBase<TLinks> where TLinks: new()
     {
         [Required]
         [JsonPropertyName("_links")]
-        public IReadOnlyDictionary<string, LinkModel> Links { get; init; } = new Dictionary<string, LinkModel>();
+        public TLinks Links { get; init; } = new();
     }
 
     public class LinkModel
@@ -35,12 +35,9 @@ namespace FactorioTech.Api.ViewModels
 
             // todo: this is intended behavior, but maybe there's a better way to handle polymorphism?
             // see https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-polymorphism
-            foreach (var prop in additionalProperties)
+            foreach (var (name, value) in additionalProperties) if (value != null)
             {
-                if (prop.Value != null)
-                {
-                    AdditionalProperties.TryAdd(prop.Name, prop.Value);
-                }
+                AdditionalProperties.TryAdd(name, value);
             }
         }
     };

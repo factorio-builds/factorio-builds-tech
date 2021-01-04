@@ -10,6 +10,6 @@ namespace FactorioTech.Api.ViewModels
         public int Count { get; set; }
 
         [Required]
-        public IEnumerable<UserModel> Users { get; set; } = Enumerable.Empty<UserModel>();
+        public IEnumerable<FullUserModel> Users { get; set; } = Enumerable.Empty<FullUserModel>();
     }
 }

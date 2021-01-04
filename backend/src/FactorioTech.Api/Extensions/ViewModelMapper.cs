@@ -20,7 +20,7 @@ namespace FactorioTech.Api.Extensions
                 Count = users.Count,
             };
 
-        public static UserModel ToViewModel(this User user) =>
+        public static FullUserModel ToViewModel(this User user) =>
             new()
             {
                 Username = user.UserName,

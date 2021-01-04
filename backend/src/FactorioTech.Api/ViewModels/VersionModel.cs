@@ -6,7 +6,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class VersionModelBase : ViewModelBase
+    public class VersionLinks
+    {
+        public LinkModel Payload { get; init; }
+    }
+
+    public abstract class VersionModelBase : ViewModelBase<VersionLinks>
     {
         [Required]
         public Hash Hash { get; set; }
