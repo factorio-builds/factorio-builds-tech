@@ -12,16 +12,20 @@ namespace FactorioTech.Core.Domain
         public Hash Hash { get; init; }
 
         [Required]
-        public string Encoded { get; init; }
+        public BlueprintType Type { get; init; }
 
         [Required]
         public Version GameVersion { get; init; }
 
-        public BlueprintPayload(Hash hash, string encoded, Version gameVersion)
+        [Required]
+        public string Encoded { get; init; }
+
+        public BlueprintPayload(Hash hash, BlueprintType type, Version gameVersion, string encoded)
         {
             Hash = hash;
-            Encoded = encoded;
+            Type = type;
             GameVersion = gameVersion;
+            Encoded = encoded;
         }
 
 #pragma warning disable 8618 // required for EF

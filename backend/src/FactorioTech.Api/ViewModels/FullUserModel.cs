@@ -19,15 +19,18 @@ namespace FactorioTech.Api.ViewModels
         public string Username { get; set; }
     }
 
-    public class UserModel : ThinUserModel
+    public class FullUserModel : ThinUserModel
     {
         /// <summary>
         /// The user's display name can **optionally** be set by a user. It is meant to be displayed across the site in place of the `username`.
-        /// If it is not set (`null`), the `username` should be displayed instead.
+        /// If the value is unset (`null`), the `username` should be displayed instead.
         /// </summary>
         /// <example>Factorio Fritz</example>
         public string? DisplayName { get; set; }
 
+        /// <summary>
+        /// The user's registration timestamp in UTC.
+        /// </summary>
         [Required]
         [DataType(DataType.DateTime)]
         public Instant RegisteredAt { get; set; }

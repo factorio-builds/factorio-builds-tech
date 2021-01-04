@@ -1,3 +1,4 @@
+using FactorioTech.Core.Domain;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using System;
@@ -28,6 +29,26 @@ namespace FactorioTech.Core.Services
             IgnoreNullValues = true,
             WriteIndented = false,
         };
+
+        public Version DecodeGameVersion(ulong version)
+        {
+            var bytes = BitConverter.GetBytes(version).AsSpan();
+
+            return new Version(
+                BitConverter.ToUInt16(bytes[6..8]),
+                BitConverter.ToUInt16(bytes[4..6]),
+                BitConverter.ToUInt16(bytes[2..4]),
+                BitConverter.ToUInt16(bytes[0..2]));
+        }
+
+        public BlueprintType ParseType(string item) =>
+            item switch
+            {
+                "" => BlueprintType.Blueprint, // todo: this seems fishy?
+                "blueprint" => BlueprintType.Blueprint,
+                "blueprint-book" => BlueprintType.Book,
+                _ => throw new ArgumentException($"Invalid blueprint type: {item}", nameof(item)),
+            };
 
         public async Task<FactorioApi.BlueprintEnvelope> Decode(string blueprint)
         {

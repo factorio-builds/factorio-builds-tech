@@ -7,7 +7,34 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public abstract class PayloadModelBase : ViewModelBase
+    public class PayloadLinks
+    {
+        /// <summary>
+        /// The absolute URL to this payload's full details.
+        /// </summary>
+        [Required]
+        public LinkModel Self { get; init; }
+
+        /// <summary>
+        /// The absolute URL to this payload's raw encoded blueprint string for import in the game or other tools.
+        /// </summary>
+        [Required]
+        public LinkModel Raw { get; init; }
+
+        /// <summary>
+        /// The absolute URL to this payload's full-size rendering.
+        /// Only available if the payload is of type `blueprint`.
+        /// </summary>
+        public LinkModel? RenderingFull { get; init; }
+
+        /// <summary>
+        /// The absolute URL to this payload's rendering thumbnail.
+        /// Only available if the payload is of type `blueprint`.
+        /// </summary>
+        public LinkModel? RenderingThumb { get; init; }
+    }
+
+    public abstract class PayloadModelBase : ViewModelBase<PayloadLinks>
     {
         /// <summary>
         /// The `md5` hash of the payload's encoded blueprint string.
@@ -15,6 +42,12 @@ namespace FactorioTech.Api.ViewModels
         /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
         [Required]
         public Hash Hash { get; set; }
+
+        /// <summary>
+        /// The payload's blueprint type.
+        /// </summary>
+        [Required]
+        public BlueprintType Type { get; set; }
 
         /// <summary>
         /// The game version that was used to create the blueprint.
@@ -30,6 +63,9 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         public string Encoded { get; set; }
 
+        /// <summary>
+        /// The blueprint envelope that is attached to this payload.
+        /// </summary>
         [Required]
         public BlueprintEnvelopeModel Blueprint { get; set; }
     }

@@ -147,8 +147,15 @@ namespace FactorioTech.Api
                 }
 
                 var envelope = await _blueprintConverter.Decode(blueprint.Encoded);
-                var payload = new BlueprintPayload(Hash.Compute(blueprint.Encoded), blueprint.Encoded, Utils.DecodeGameVersion(envelope.Version));
-                var icons = envelope.Icons?.Select(x => new GameIcon((short)x.Index, x.Signal.Type, x.Signal.Name)) ?? Enumerable.Empty<GameIcon>();
+
+                var payload = new BlueprintPayload(
+                    Hash.Compute(blueprint.Encoded),
+                    _blueprintConverter.ParseType(envelope.Item),
+                    _blueprintConverter.DecodeGameVersion(envelope.Version),
+                    blueprint.Encoded);
+
+                var icons = envelope.Icons?.Select(x => new GameIcon((short)x.Index, x.Signal.Type, x.Signal.Name))
+                    ?? Enumerable.Empty<GameIcon>();
 
                 var cache = new PayloadCache();
                 cache.TryAdd(envelope, payload);

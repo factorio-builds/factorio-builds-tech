@@ -22,13 +22,16 @@ namespace FactorioTech.Core.Domain
         public Hash Hash { get; init; }
 
         [Required]
+        public BlueprintType Type { get; init; }
+
+        [Required]
         public Version GameVersion { get; init; }
 
         [MaxLength(100)]
         public string? Name { get; init; }
 
         public string? Description { get; init; }
-        
+
         [Required]
         public IEnumerable<GameIcon> Icons { get; init; }
 
@@ -38,13 +41,23 @@ namespace FactorioTech.Core.Domain
 
         public Blueprint? Blueprint { get; init; }
 
-        public BlueprintVersion(Guid versionId, Guid blueprintId, Instant createdAt, Hash hash, Version gameVersion, string? name, string? description, IEnumerable<GameIcon> icons)
+        public BlueprintVersion(
+            Guid versionId,
+            Guid blueprintId,
+            Instant createdAt,
+            Hash hash,
+            BlueprintType type,
+            Version gameVersion,
+            string? name,
+            string? description,
+            IEnumerable<GameIcon> icons)
         {
             VersionId = versionId;
             BlueprintId = blueprintId;
             CreatedAt = createdAt;
             GameVersion = gameVersion;
             Hash = hash;
+            Type = type;
             Name = name;
             Description = description;
             Icons = icons;

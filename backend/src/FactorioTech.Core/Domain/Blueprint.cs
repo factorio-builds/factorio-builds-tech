@@ -50,6 +50,9 @@ namespace FactorioTech.Core.Domain
         public string LatestGameVersion { get; private set; }
 
         [Required]
+        public BlueprintType LatestType { get; private set; }
+
+        [Required]
         public IEnumerable<GameIcon> Icons { get; private set; }
 
         // navigation properties -> will be null if not included explicitly
@@ -85,6 +88,7 @@ namespace FactorioTech.Core.Domain
             Title = title;
             Description = description;
             LatestGameVersion = "0.0.0.0";
+            LatestType = BlueprintType.Blueprint;
             Icons = Array.Empty<GameIcon>();
 
             Tags = new HashSet<Tag>();
@@ -107,6 +111,7 @@ namespace FactorioTech.Core.Domain
             LatestVersion = version;
             LatestVersionId = version.VersionId;
             LatestGameVersion = version.GameVersion.ToString(4);
+            LatestType = version.Type;
             Icons = version.Icons;
         }
 

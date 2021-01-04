@@ -9,6 +9,7 @@ namespace FactorioTech.Core
     public interface IEncodableBlueprint
     {
         ulong Version { get; }
+        string Item { get; }
     }
 
     public sealed class PayloadCache : Dictionary<IEncodableBlueprint, BlueprintPayload>
@@ -30,7 +31,12 @@ namespace FactorioTech.Core
                 _ => throw new Exception("Invalid item type"),
             };
 
-            payload = new BlueprintPayload(Hash.Compute(encoded), encoded, Utils.DecodeGameVersion(item.Version));
+            payload = new BlueprintPayload(
+                Hash.Compute(encoded),
+                converter.ParseType(item.Item),
+                converter.DecodeGameVersion(item.Version),
+                encoded);
+
             TryAdd(item, payload);
             TryAddFirstChild(item as FactorioApi.BlueprintEnvelope, payload);
             return payload;

@@ -17,7 +17,7 @@ namespace FactorioTech.Tests.Helpers
 
         public async Task<BlueprintPayload> Save(AppDbContext dbContext)
         {
-            var payload = new BlueprintPayload(Hash.Compute(_encoded), _encoded, Version.Parse("1.0.0.0"));
+            var payload = new BlueprintPayload(Hash.Compute(_encoded), BlueprintType.Book, Version.Parse("1.0.0.0"), _encoded);
 
             dbContext.Add(payload);
             await dbContext.SaveChangesAsync();

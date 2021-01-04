@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -39,14 +40,13 @@ namespace FactorioTech.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>();
-
-            services.Configure<AppConfig>(_configuration.GetSection(nameof(AppConfig)));
-            services.Configure<BuildInformation>(_configuration.GetSection(nameof(BuildInformation)));
+            var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
+            services.AddSingleton(Options.Create(appConfig));
 
             services.AddHttpClient();
             services.AddControllers().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new VersionJsonConverter());
                 options.JsonSerializerOptions.Converters.Add(new HashJsonConverter());
@@ -105,7 +105,6 @@ namespace FactorioTech.Api
                                             "https://local.factorio.tech", "http://localhost:3000")));
             });
 
-            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseNpgsql(_configuration.GetConnectionString("Postgres"), o => o.UseNodaTime());
@@ -166,7 +165,6 @@ namespace FactorioTech.Api
             if (!env.IsProduction())
             {
                 IdentityModelEventSource.ShowPII = true;
-                app.UseDeveloperExceptionPage();
             }
 
             if (!env.IsDevelopment())

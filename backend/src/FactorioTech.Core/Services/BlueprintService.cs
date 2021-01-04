@@ -208,6 +208,7 @@ namespace FactorioTech.Core.Services
                 success.Blueprint.BlueprintId,
                 success.Blueprint.UpdatedAt,
                 payload.Hash,
+                payload.Type,
                 payload.GameVersion,
                 request.Version.Name?.Trim(),
                 request.Version.Description?.Trim(),

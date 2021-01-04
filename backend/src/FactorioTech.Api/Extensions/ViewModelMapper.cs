@@ -1,4 +1,3 @@
-using FactorioTech.Api.Controllers;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
@@ -20,7 +19,7 @@ namespace FactorioTech.Api.Extensions
                 Count = users.Count,
             };
 
-        public static UserModel ToViewModel(this User user) =>
+        public static FullUserModel ToViewModel(this User user) =>
             new()
             {
                 Username = user.UserName,
@@ -48,6 +47,7 @@ namespace FactorioTech.Api.Extensions
                 Icons = blueprint.Icons,
                 Title = blueprint.Title,
                 Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
+                LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
                 Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
             };
@@ -66,6 +66,7 @@ namespace FactorioTech.Api.Extensions
                     Markdown = description,
                     Html = MarkdownConverter.ToHtml(description),
                 }),
+                LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
                 LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(Blueprint.LatestVersion)),
                 Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(Blueprint.Owner)),
@@ -84,6 +85,7 @@ namespace FactorioTech.Api.Extensions
             {
                 Links = urlHelper.BuildLinks(version),
                 Hash = version.Hash,
+                Type = version.Type,
                 CreatedAt = version.CreatedAt,
                 Name = version.Name,
                 Description = version.Description,
@@ -94,6 +96,7 @@ namespace FactorioTech.Api.Extensions
             {
                 Links = urlHelper.BuildLinks(version),
                 Hash = version.Hash,
+                Type = version.Type,
                 CreatedAt = version.CreatedAt,
                 Name = version.Name,
                 Description = version.Description,
@@ -111,6 +114,7 @@ namespace FactorioTech.Api.Extensions
             {
                 Links = urlHelper.BuildLinks(payload, envelope),
                 Hash = payload.Hash,
+                Type = payload.Type,
                 GameVersion = payload.GameVersion,
                 Encoded = payload.Encoded,
                 Blueprint = envelope.ToViewModel(),
@@ -121,6 +125,7 @@ namespace FactorioTech.Api.Extensions
             {
                 Links = urlHelper.BuildLinks(payload, envelope),
                 Hash = payload.Hash,
+                Type = payload.Type,
                 GameVersion = payload.GameVersion,
                 Encoded = payload.Encoded,
                 Blueprint = envelope.ToViewModel(),
@@ -131,7 +136,6 @@ namespace FactorioTech.Api.Extensions
         public static BlueprintEnvelopeModel ToViewModel(this FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
-                Type = envelope.Item,
                 Label = envelope.Label,
                 Description = envelope.Description,
                 Entities = envelope.Blueprint?.Entities
