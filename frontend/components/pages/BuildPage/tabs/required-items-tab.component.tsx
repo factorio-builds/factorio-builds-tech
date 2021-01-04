@@ -24,7 +24,7 @@ const RequiredItemsTab: TTabComponent = (props) => {
       return []
     }
 
-    const entities = (props.payload.data.blueprint as any).entities
+    const entities = props.payload.data.blueprint.entities
 
     return Object.keys(entities)
       .map((itemName) => {
