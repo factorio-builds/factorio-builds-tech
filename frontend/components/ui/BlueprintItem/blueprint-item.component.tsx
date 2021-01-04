@@ -30,6 +30,8 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
     [expanded]
   )
 
+  const isExpandable = props.nodes || props.description
+
   return (
     <SC.BlueprintItemWrapper depth={props.depth}>
       <SC.BlueprintItemInner onClick={expand}>
@@ -55,13 +57,13 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                 </SC.Meta>
               )}
             </Stacker>
-            {props.isBook && (
+            {isExpandable && (
               <SC.Expand>
                 expand <Caret inverted={expanded} />
               </SC.Expand>
             )}
           </SC.Title>
-          {expanded && props.description && (
+          {props.description && expanded && (
             <SC.Description>
               {props.description.split("\n").map((text) => (
                 <>
