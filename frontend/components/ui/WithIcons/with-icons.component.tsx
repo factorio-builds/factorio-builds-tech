@@ -23,7 +23,7 @@ function WithIcons(props: IWithIcons): JSX.Element {
         return <span key={index}>{part}</span>
       }
 
-      return <ItemIcon key={index} itemName={match[1]} />
+      return <ItemIcon key={index} type="item" name={match[1]} />
     })
   }, [props.input])
 

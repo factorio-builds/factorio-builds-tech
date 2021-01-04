@@ -15,7 +15,7 @@ interface IUseGameStates {
 }
 
 export function useGameStates(): IUseGameStates {
-  const getIcon = (iconName: string) => <ItemIcon itemName={iconName} />
+  const getIcon = (iconName: string) => <ItemIcon type="item" name={iconName} />
 
   const gameStates = [
     {
