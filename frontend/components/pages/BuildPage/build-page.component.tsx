@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { useSelector } from "react-redux"
 import cx from "classnames"
-import { format, formatDistanceToNow, parseISO } from "date-fns"
 import Image from "next/image"
 import Link from "next/link"
 // import { useCategories } from "../../../hooks/useCategories"
@@ -10,6 +9,7 @@ import { IStoreState } from "../../../redux/store"
 // import { ERole } from "../../../types"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
+import { formatDate, formatSince } from "../../../utils/date"
 import BuildIcon from "../../ui/BuildIcon"
 import Layout from "../../ui/Layout"
 import Stacker from "../../ui/Stacker"
@@ -93,14 +93,6 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   // const { getGameState } = useGameStates()
   // const { getCategory } = useCategories()
-
-  const formatDate = (isoString: string) => {
-    return format(parseISO(isoString), "yyyy-MM-dd")
-  }
-
-  const formatSince = (isoString: string) => {
-    return formatDistanceToNow(parseISO(isoString), { addSuffix: true })
-  }
 
   // const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.username === user?.name

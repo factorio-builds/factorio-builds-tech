@@ -1,5 +1,6 @@
 import React from "react"
 import { IThinBuild } from "../../../types/models"
+import BuildList from "../../ui/BuildList"
 import FilterList from "../../ui/FilterList"
 import Layout from "../../ui/Layout"
 import Search from "../../ui/Search"
@@ -19,9 +20,7 @@ function UserBuildListPage(props: IUserBuildListPageProps): JSX.Element {
         </Stacker>
       }
     >
-      {props.builds.map((build) => (
-        <div key={build.slug}>{build.title}</div>
-      ))}
+      <BuildList items={props.builds} />
     </Layout>
   )
 }
