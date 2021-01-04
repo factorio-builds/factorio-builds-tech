@@ -2,7 +2,8 @@ import axios from "axios"
 import { GetServerSideProps, NextPage } from "next"
 import BuildListPage from "../components/pages/BuildListPage"
 import { wrapper } from "../redux/store"
-import { ApiSeachBuild, IThinBuild, SearchResponse } from "../types"
+import { ApiSeachBuild, SearchResponse } from "../types"
+import { IThinBuild } from "../types/models"
 
 const IndexPage: NextPage = () => {
   return <BuildListPage />

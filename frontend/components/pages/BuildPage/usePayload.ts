@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { IFullBuild } from "../../../types"
+import { IFullBuild } from "../../../types/models"
 
 interface IPayloadStateInitial {
   loading: false

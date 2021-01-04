@@ -1,5 +1,5 @@
 import { Action } from "redux"
-import { IUser } from "../../types"
+import { IUser } from "../../types/models"
 import { IPayloadAction } from "../store"
 
 export interface IStoreAuthState {

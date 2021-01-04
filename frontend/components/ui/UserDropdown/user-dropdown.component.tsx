@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import cx from "classnames"
 import Link from "next/link"
 import Caret from "../../../icons/caret"
-import { IUser } from "../../../types"
+import { IUser } from "../../../types/models"
 import * as SC from "./user-dropdown.styles"
 
 interface IUserDropdownProps {

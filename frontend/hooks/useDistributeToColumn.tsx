@@ -1,4 +1,4 @@
-import { IThinBuild } from "../types"
+import { IThinBuild } from "../types/models"
 
 function calcRatio(width: number, height: number): number {
   const ratio = height / width

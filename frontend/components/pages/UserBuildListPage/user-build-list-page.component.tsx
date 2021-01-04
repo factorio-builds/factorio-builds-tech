@@ -1,5 +1,5 @@
 import React from "react"
-import { IThinBuild } from "../../../types"
+import { IThinBuild } from "../../../types/models"
 import FilterList from "../../ui/FilterList"
 import Layout from "../../ui/Layout"
 import Search from "../../ui/Search"
