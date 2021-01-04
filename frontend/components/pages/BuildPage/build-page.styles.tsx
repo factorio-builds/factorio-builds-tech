@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import ItemIcon from "../../ui/ItemIcon"
 import Stacker from "../../ui/Stacker"
 
 export const BuildHeader = styled.header`
@@ -52,7 +53,7 @@ export const BlueprintItem = styled(Stacker)`
   align-items: center;
 `
 
-export const IconImg = styled.img`
+export const IconImg = styled(ItemIcon)`
   width: 20px;
 `
 

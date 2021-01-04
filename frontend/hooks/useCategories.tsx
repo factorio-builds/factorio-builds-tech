@@ -20,7 +20,7 @@ interface IUseCategories {
 }
 
 export function useCategories(): IUseCategories {
-  const getIcon = (iconName: string) => <ItemIcon itemName={iconName} />
+  const getIcon = (iconName: string) => <ItemIcon type="item" name={iconName} />
 
   const categories = [
     {

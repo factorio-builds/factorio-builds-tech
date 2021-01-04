@@ -1,23 +1,31 @@
 import * as React from "react"
+import startCase from "lodash/startCase"
+import { IIcon } from "../../../types"
 import * as SC from "./item-icon.styles"
 
 interface IItemIconProps {
-  itemName: string
+  name: IIcon["name"]
+  type?: IIcon["type"]
 }
 
 const ItemIcon: React.FC<IItemIconProps> = (props) => {
-  const nameFix = React.useMemo(() => {
-    switch (props.itemName) {
+  const name = React.useMemo(() => {
+    switch (props.name) {
       case "rail":
         return "straight-rail"
       default:
-        return props.itemName
+        return props.name
     }
-  }, [props.itemName])
+  }, [props.name])
 
-  const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${nameFix}.png`
+  const type = startCase(props.type)
 
-  return <SC.ItemIconWrapper src={iconSrc} />
+  return (
+    <SC.ItemIconWrapper
+      {...props}
+      src={`https://api.local.factorio.tech/assets/icon/64/${type}/${name}.png`}
+    />
+  )
 }
 
 export default ItemIcon

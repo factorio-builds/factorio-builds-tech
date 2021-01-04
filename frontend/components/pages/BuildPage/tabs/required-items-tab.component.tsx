@@ -7,12 +7,10 @@ import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
-  const iconSrc = `https://d3s5hh02rbjbr5.cloudfront.net/img/icons/large/${props.itemName}.png`
-
   return (
     <SC.WithRequiredItem orientation="horizontal" gutter={5}>
       <span>{props.count}</span>
-      <SC.IconImg src={iconSrc} />
+      <SC.IconImg type="item" name={props.itemName} />
       <span>{props.itemName.replace(/-/g, " ")}</span>
     </SC.WithRequiredItem>
   )
