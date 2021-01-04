@@ -705,6 +705,26 @@ export interface components {
       instance?: string | null
     } & { [key: string]: { [key: string]: any } }
     LinkModel: { href: string } & { [key: string]: { [key: string]: any } }
+    BuildsLinks: {
+      create_build?: components["schemas"]["LinkModel"]
+      create_payload?: components["schemas"]["LinkModel"]
+      prev?: components["schemas"]["LinkModel"]
+      next?: components["schemas"]["LinkModel"]
+    }
+    ImageLinkModel: {
+      href: string
+      width: number
+      height: number
+      alt?: string | null
+    } & { [key: string]: { [key: string]: any } }
+    BuildLinks: {
+      self: components["schemas"]["LinkModel"]
+      cover: components["schemas"]["ImageLinkModel"]
+      versions: components["schemas"]["LinkModel"]
+      followers: components["schemas"]["LinkModel"]
+      add_version?: components["schemas"]["LinkModel"]
+      toggle_favorite?: components["schemas"]["LinkModel"]
+    }
     GameIcon: { index: number; type: string; name: string }
     ThinUserModel: {
       /**
@@ -714,7 +734,7 @@ export interface components {
       username: string
     }
     ThinBuildModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["BuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -742,14 +762,28 @@ export interface components {
        */
       latest_game_version: string
       /**
+       * The build's latest version's blueprint type.
+       */
+      latest_type: "blueprint" | "blueprint-book"
+      /**
        * The build's tags.
        */
-      tags?: string[] | null
+      tags: string[]
     }
     BuildsModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["BuildsLinks"]
+      /**
+       * The number of results on the current page.
+       */
       current_count: number
+      /**
+       * The total count of matching results.
+       * TODO: currently this is the absolute total number of builds without any filtering applied.
+       */
       total_count: number
+      /**
+       * The paged, filtered and ordered list of matching builds.
+       */
       builds: components["schemas"]["ThinBuildModel"][]
     }
     CreateBuildRequest: {
@@ -789,7 +823,7 @@ export interface components {
        */
       slug: string
     }
-    UserModel: {
+    FullUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
        * It is used in URLs like the user's profile or build pages.
@@ -797,28 +831,38 @@ export interface components {
       username: string
       /**
        * The user's display name can **optionally** be set by a user. It is meant to be displayed across the site in place of the `username`.
-       * If it is not set (`null`), the `username` should be displayed instead.
+       * If the value is unset (`null`), the `username` should be displayed instead.
        */
       display_name?: string | null
+      /**
+       * The user's registration timestamp in UTC.
+       */
       registered_at: string
     }
     DescriptionModel: { markdown: string; html: string }
+    VersionLinks: { payload: components["schemas"]["LinkModel"] }
+    PayloadLinks: {
+      self: components["schemas"]["LinkModel"]
+      raw: components["schemas"]["LinkModel"]
+      rendering_full?: components["schemas"]["LinkModel"]
+      rendering_thumb?: components["schemas"]["LinkModel"]
+    }
     BlueprintEnvelopeModel: {
-      /**
-       * The blueprint type; either `blueprint` or `blueprint-book`.
-       */
-      type: string
       label?: string | null
       description?: string | null
       icons: components["schemas"]["GameIcon"][]
       entities: { [key: string]: number }
     }
     ThinPayloadModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["PayloadLinks"]
       /**
        * The `md5` hash of the payload's encoded blueprint string.
        */
       hash: string
+      /**
+       * The payload's blueprint type.
+       */
+      type: "blueprint" | "blueprint-book"
       /**
        * The game version that was used to create the blueprint.
        */
@@ -830,15 +874,31 @@ export interface components {
       blueprint: components["schemas"]["BlueprintEnvelopeModel"]
     }
     FullVersionModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["VersionLinks"]
+      /**
+       * The version's payload hash.
+       */
       hash: string
+      /**
+       * The version's blueprint type.
+       */
+      type: "blueprint" | "blueprint-book"
+      /**
+       * The timestamp in UTC at which the version was created.
+       */
       created_at: string
+      /**
+       * An optional name assigned to the version.
+       */
       name?: string | null
+      /**
+       * An optional description for the version.
+       */
       description?: string | null
       payload: components["schemas"]["ThinPayloadModel"]
     }
     FullBuildModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["BuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -860,28 +920,63 @@ export interface components {
        * The title or display name of the build.
        */
       title: string
-      owner: components["schemas"]["UserModel"]
+      owner: components["schemas"]["FullUserModel"]
       /**
        * The game version that was used to create the the most recently added version of this build.
        */
       latest_game_version: string
       /**
+       * The build's latest version's blueprint type.
+       */
+      latest_type: "blueprint" | "blueprint-book"
+      /**
        * The build's tags.
        */
-      tags?: string[] | null
+      tags: string[]
       description?: components["schemas"]["DescriptionModel"]
-      latest_version?: components["schemas"]["FullVersionModel"]
+      latest_version: components["schemas"]["FullVersionModel"]
     }
-    UsersModel: { count: number; users: components["schemas"]["UserModel"][] }
+    UsersModel: {
+      /**
+       * The number of results on the current page.
+       */
+      count: number
+      /**
+       * The paged, filtered and ordered list of matching users.
+       */
+      users: components["schemas"]["FullUserModel"][]
+    }
     ThinVersionModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["VersionLinks"]
+      /**
+       * The version's payload hash.
+       */
       hash: string
+      /**
+       * The version's blueprint type.
+       */
+      type: "blueprint" | "blueprint-book"
+      /**
+       * The timestamp in UTC at which the version was created.
+       */
       created_at: string
+      /**
+       * An optional name assigned to the version.
+       */
       name?: string | null
+      /**
+       * An optional description for the version.
+       */
       description?: string | null
     }
     VersionsModel: {
+      /**
+       * The number of results on the current page.
+       */
       count: number
+      /**
+       * The paged, filtered and ordered list of matching versions.
+       */
       versions: components["schemas"]["ThinVersionModel"][]
     }
     CreateVersionRequest: {
@@ -921,11 +1016,15 @@ export interface components {
       expected_previous_version_id: string
     }
     FullPayloadModel: {
-      _links: { [key: string]: components["schemas"]["LinkModel"] }
+      _links: components["schemas"]["PayloadLinks"]
       /**
        * The `md5` hash of the payload's encoded blueprint string.
        */
       hash: string
+      /**
+       * The payload's blueprint type.
+       */
+      type: "blueprint" | "blueprint-book"
       /**
        * The game version that was used to create the blueprint.
        */
