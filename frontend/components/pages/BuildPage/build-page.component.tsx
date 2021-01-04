@@ -100,11 +100,9 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   const tabs = useMemo(() => {
     if (isBook(build.latest_version.payload)) {
-      const childrenLength =
-        !payload.error && !payload.loading && payload.data
-          ? // TODO: define payload type
-            (payload.data as any).children.length
-          : "..."
+      const childrenLength = payload.data?.children
+        ? payload.data.children.length
+        : "..."
 
       return [
         { label: "details", tab: DetailsTab },

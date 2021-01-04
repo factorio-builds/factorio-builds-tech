@@ -15,13 +15,9 @@ const BlueprintsTab: TTabComponent = (props) => {
       {props.payload.loading && "loading..."}
       {props.payload.error && "error?"}
 
-      {!props.payload.loading &&
-        !props.payload.error &&
-        props.payload.data &&
-        props.payload.data.children &&
+      {props.payload.data?.children &&
         isBook(props.build.latest_version.payload) && (
           <>
-            {/* TODO: remove once API/payload is typed */}
             {props.payload.data.children.map((bp) => {
               return (
                 <BlueprintItem
