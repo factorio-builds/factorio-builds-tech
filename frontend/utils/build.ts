@@ -1,5 +1,6 @@
 import { Build } from "../db/entities/build.entity"
-import { IBlueprint, IBlueprintIcon, IFullBuild } from "../types"
+import { IBlueprint, IBlueprintIcon } from "../types"
+import { IFullBuild } from "../types/models"
 import { isBook as blueprintIsBook } from "./blueprint"
 
 export function getIcons(blueprint: IBlueprint): IBlueprintIcon[]

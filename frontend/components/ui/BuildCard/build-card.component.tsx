@@ -1,7 +1,7 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { IThinBuild } from "../../../types"
+import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"

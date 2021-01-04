@@ -1,12 +1,8 @@
 import axios from "axios"
 import { Action } from "redux"
 import { ThunkAction } from "redux-thunk"
-import {
-  ApiSeachBuild,
-  EFilterType,
-  IThinBuild,
-  SearchResponse,
-} from "../../types"
+import { ApiSeachBuild, EFilterType, SearchResponse } from "../../types"
+import { IThinBuild } from "../../types/models"
 import { IPayloadAction, IStoreState } from "../store"
 
 export interface IStoreSearchState {

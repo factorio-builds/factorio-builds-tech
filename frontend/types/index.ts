@@ -1,5 +1,6 @@
 import { IncomingMessage } from "http"
 import { User } from "../db/entities/user.entity"
+import { IThinBuild } from "./models"
 
 export enum EFilterType {
   "STATE",
@@ -30,69 +31,6 @@ export enum ECategory {
 export enum ERole {
   "ADMIN" = "ADMIN",
   "USER" = "USER",
-}
-
-interface IBuildLinks {
-  cover: {
-    href: string
-    width: number
-    height: number
-  }
-  self: {
-    href: string
-  }
-  versions: {
-    href: string
-  }
-  add_version: {
-    href: string
-    method: "post"
-  }
-  toggle_favorite: {
-    href: string
-    method: "post"
-  }
-  followers: {
-    href: string
-    count: 0
-  }
-}
-
-export interface IFullBuild {
-  title: string
-  slug: string
-  description: {
-    markdown: string
-    html: string
-  }
-  tags: string[]
-  icons: IIcon[]
-  owner: IOwner
-  latest_version: {
-    hash: string
-    created_at: string
-    payload: {
-      hash: string
-      game_version: string
-      encoded: string
-      blueprint: IBlueprint | IBlueprintBook
-      _links: {
-        self: {
-          href: string
-        }
-        raw: {
-          href: string
-        }
-        "blueprint-editor": {
-          href: string
-        }
-      }
-    }
-  }
-  latest_game_version: string
-  created_at: string
-  updated_at: string
-  _links: IBuildLinks
 }
 
 export interface IMetadata {
@@ -190,28 +128,11 @@ export interface IIcon {
   name: string
 }
 
-export interface IThinBuild {
-  title: string
-  slug: string
-  owner: { username: string }
-  latest_game_version: string
-  icons: IIcon[]
-  tags: string[]
-  created_at: string
-  updated_at: string
-  _links: IBuildLinks
-}
-
 // IOwner vs IUser??
 interface IOwner {
   display_name: string
   registered_at: Date
   username: string
-}
-
-export interface IUser {
-  id: string
-  name: string
 }
 
 interface ApiResponseSuccess<R = any> {

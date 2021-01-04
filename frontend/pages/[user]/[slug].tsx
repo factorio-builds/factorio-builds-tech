@@ -2,7 +2,7 @@ import axios from "axios"
 import { GetServerSideProps } from "next"
 import BuildPage from "../../components/pages/BuildPage"
 import Layout from "../../components/ui/Layout"
-import { IFullBuild } from "../../types"
+import { IFullBuild } from "../../types/models"
 // import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"
 
 interface IBuildsPageProps {
