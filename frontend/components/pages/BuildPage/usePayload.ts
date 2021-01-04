@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { IFullBuild } from "../../../types/models"
+import { IFullBuild, IFullPayload } from "../../../types/models"
 
 interface IPayloadStateInitial {
   loading: false
@@ -11,8 +11,7 @@ interface IPayloadStateInitial {
 interface IPayloadStateSuccess {
   loading: false
   error: false
-  // TODO: type API/payload
-  data: Record<string, unknown>
+  data: IFullPayload
 }
 
 interface IPayloadStateError {

@@ -49,10 +49,6 @@ export const WithRequiredItem = styled(Stacker)`
   align-items: center;
 `
 
-export const BlueprintItem = styled(Stacker)`
-  align-items: center;
-`
-
 export const IconImg = styled(ItemIcon)`
   width: 20px;
 `

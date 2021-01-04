@@ -1,6 +1,6 @@
 import { Build } from "../db/entities/build.entity"
 import { IBlueprint, IBlueprintIcon } from "../types"
-import { IFullBuild } from "../types/models"
+import { IFullPayload } from "../types/models"
 import { isBook as blueprintIsBook } from "./blueprint"
 
 export function getIcons(blueprint: IBlueprint): IBlueprintIcon[]
@@ -23,6 +23,18 @@ export function getIcons(
   }
 }
 
-export function isBook(build: IFullBuild): boolean {
-  return build.latest_version.payload.blueprint.type === "blueprint-book"
+export function isBook(payload: IFullPayload): boolean {
+  return payload.blueprint.type === "blueprint-book"
+}
+
+export function countEntities(
+  entities: IFullPayload["blueprint"]["entities"]
+): number {
+  if (!entities) {
+    return 0
+  }
+
+  return Object.keys(entities).reduce((acc, curr) => {
+    return acc + entities[curr]
+  }, 0)
 }
