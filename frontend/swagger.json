@@ -1,0 +1,2287 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "factorio.tech",
+    "version": "v1"
+  },
+  "paths": {
+    "/assets/icon/{size}/{type}/{key}.png": {
+      "get": {
+        "tags": [
+          "Asset"
+        ],
+        "summary": "Get a Factorio game icon",
+        "parameters": [
+          {
+            "name": "size",
+            "in": "path",
+            "description": "The desired size. Valid values are `64`, `32`, `16` and `8`",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The desired size. Valid values are `64`, `32`, `16` and `8`",
+              "example": 64
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "description": "The icon type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "Item",
+                "Virtual"
+              ],
+              "type": "string",
+              "description": "The icon type",
+              "example": "Item"
+            }
+          },
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The item's or signal's name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The item's or signal's name",
+              "nullable": true,
+              "example": "stone-wall"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested game icon",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested icon does not exist",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds": {
+      "get": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Get a paged, filtered and ordered list of builds",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The desired page",
+            "schema": {
+              "type": "integer",
+              "description": "The desired page",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort_field",
+            "in": "query",
+            "description": "The desired field to sort the results",
+            "schema": {
+              "enum": [
+                "Title",
+                "Created",
+                "Updated",
+                "Favorites"
+              ],
+              "type": "string",
+              "description": "The desired field to sort the results"
+            }
+          },
+          {
+            "name": "sort_direction",
+            "in": "query",
+            "description": "The desired direction to sort the results",
+            "schema": {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string",
+              "description": "The desired direction to sort the results"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "An optional search term to filter the results by",
+            "schema": {
+              "type": "string",
+              "description": "An optional search term to filter the results by",
+              "nullable": true
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "An optional comma-separated list of tags to filter the results by",
+            "schema": {
+              "type": "string",
+              "description": "An optional comma-separated list of tags to filter the results by",
+              "nullable": true
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "An optional game version to filter the results by",
+            "schema": {
+              "type": "string",
+              "description": "An optional game version to filter the results by",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The paged, filtered and ordered list of matching builds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildsModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Create a new build with a previously created payload",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBuildRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBuildRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBuildRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThinBuildModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/builds/{owner}/{slug}": {
+      "get": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Get all details of a build",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "description": "The username of the desired build's owner",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The username of the desired build's owner",
+              "nullable": true,
+              "example": "factorio_fritz"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "The slug of the desired build",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The slug of the desired build",
+              "nullable": true,
+              "example": "my-awesome-build"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The details of the requested build",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullBuildModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested build does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{owner}/{slug}/followers": {
+      "get": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Get all users who have added this build to their favorites, ordered by the date when they started following the build",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "description": "The username of the desired build's owner",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The username of the desired build's owner",
+              "nullable": true,
+              "example": "factorio_fritz"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "The slug of the desired build",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The slug of the desired build",
+              "nullable": true,
+              "example": "my-awesome-build"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An ordered list of followers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested build does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/builds/{owner}/{slug}/versions": {
+      "get": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Get all versions of a build, ordered by the creation date",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "description": "The username of the desired build's owner",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The username of the desired build's owner",
+              "nullable": true,
+              "example": "factorio_fritz"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "The slug of the desired build",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The slug of the desired build",
+              "nullable": true,
+              "example": "my-awesome-build"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An ordered list of versions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionsModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested build does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Add a new version with a previously created payload to a build",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "path",
+            "description": "The username of the desired build's owner",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The username of the desired build's owner",
+              "nullable": true,
+              "example": "factorio_fritz"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "description": "The slug of the desired build",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The slug of the desired build",
+              "nullable": true,
+              "example": "my-awesome-build"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The request parameters",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVersionRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVersionRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVersionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullVersionModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested build does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "An ordered list of versions"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/builds/{buildId}/cover": {
+      "get": {
+        "tags": [
+          "Build"
+        ],
+        "summary": "Get the cover image of a build",
+        "parameters": [
+          {
+            "name": "buildId",
+            "in": "path",
+            "description": "The id of the desired build",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The id of the desired build",
+              "format": "uuid",
+              "example": "1c3828e3-de0d-41b8-9b3a-a15688f4217b"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The cover image of the requested build",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "image/gif": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "image/gif": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested build does not exist",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "image/gif": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payloads/{hash}": {
+      "get": {
+        "tags": [
+          "Payload"
+        ],
+        "summary": "Get payload details",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "The hash of the desired payload",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The hash of the desired payload",
+              "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+            }
+          },
+          {
+            "name": "include_children",
+            "in": "query",
+            "description": "Specify whether to load the entire graph with all children or only the requested payload",
+            "schema": {
+              "type": "boolean",
+              "description": "Specify whether to load the entire graph with all children or only the requested payload",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The details of the requested payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FullPayloadModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested payload does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payloads/{hash}/raw": {
+      "get": {
+        "tags": [
+          "Payload"
+        ],
+        "summary": "Get the raw encoded blueprint string for import in the game or other tools",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "The hash of the desired payload",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The hash of the desired payload",
+              "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The raw encoded blueprint string",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested payload does not exist",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payloads/{hash}/rendering/{type}": {
+      "get": {
+        "tags": [
+          "Payload"
+        ],
+        "summary": "Get the rendering for this payload in the specified type",
+        "parameters": [
+          {
+            "name": "hash",
+            "in": "path",
+            "description": "The hash of the desired payload",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The hash of the desired payload",
+              "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "description": "The desired type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "Full",
+                "Thumb"
+              ],
+              "type": "string",
+              "description": "The desired type",
+              "example": "Full"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The rendered blueprint image",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested payload does not exist",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payloads": {
+      "put": {
+        "tags": [
+          "Payload"
+        ],
+        "summary": "Create a payload for the encoded blueprint string. If the blueprint is a `blueprint-book`,\r\npayloads for all children will be created too.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayloadRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayloadRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayloadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePayloadResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/rpc/render-markdown": {
+      "post": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Convert markdown to HTML.\r\nThis operation is **safe** and **idempotent**.",
+        "requestBody": {
+          "description": "The markdown text that should be converted to HTML",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "description": "The markdown text that should be converted to HTML",
+                "nullable": true,
+                "example": "\"Hello **world**!\""
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string",
+                "description": "The markdown text that should be converted to HTML",
+                "nullable": true,
+                "example": "\"Hello **world**!\""
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string",
+                "description": "The markdown text that should be converted to HTML",
+                "nullable": true,
+                "example": "\"Hello **world**!\""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The converted HTML",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/rpc/validate-username": {
+      "post": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Verify that a username is valid and available.\r\nThis operation is **safe** and **idempotent**.",
+        "requestBody": {
+          "description": "The username to validate",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "description": "The username to validate",
+                "nullable": true,
+                "example": "\"bob\""
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string",
+                "description": "The username to validate",
+                "nullable": true,
+                "example": "\"bob\""
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string",
+                "description": "The username to validate",
+                "nullable": true,
+                "example": "\"bob\""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The validation result",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rpc/validate-slug": {
+      "post": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Verify that a slug is valid and available for the authenticated user.\r\nThis operation is **safe** and **idempotent**.",
+        "requestBody": {
+          "description": "The slug to validate",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "description": "The slug to validate",
+                "nullable": true,
+                "example": "\"my-build\""
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string",
+                "description": "The slug to validate",
+                "nullable": true,
+                "example": "\"my-build\""
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string",
+                "description": "The slug to validate",
+                "nullable": true,
+                "example": "\"my-build\""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The validation result",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/rpc/toggle-favorite": {
+      "post": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Add or remove a build from the authenticated user's favorites",
+        "requestBody": {
+          "description": "The build id",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "description": "The build id",
+                "format": "uuid"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "string",
+                "description": "The build id",
+                "format": "uuid"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "string",
+                "description": "The build id",
+                "format": "uuid"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The build has been added or removed successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/rpc/test-ping": {
+      "get": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "The ping endpoint always returns the string `pong`.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rpc/test-auth": {
+      "get": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Get the authenticated user's claims.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/rpc/test-moderator": {
+      "get": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Get the authenticated user's claims. Requires the `Moderator` role.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/rpc/test-admin": {
+      "get": {
+        "tags": [
+          "Rpc"
+        ],
+        "summary": "Get the authenticated user's claims. Requires the `Administrator` role.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "OAuth2": [
+              "openid profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{username}/builds": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get a paged, filtered and ordered list of builds created by the user",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "The desired user's username",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The desired user's username",
+              "nullable": true,
+              "example": "factorio_fritz"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The desired page",
+            "schema": {
+              "type": "integer",
+              "description": "The desired page",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort_field",
+            "in": "query",
+            "description": "The desired field to sort the results",
+            "schema": {
+              "enum": [
+                "Title",
+                "Created",
+                "Updated",
+                "Favorites"
+              ],
+              "type": "string",
+              "description": "The desired field to sort the results"
+            }
+          },
+          {
+            "name": "sort_direction",
+            "in": "query",
+            "description": "The desired direction to sort the results",
+            "schema": {
+              "enum": [
+                "Asc",
+                "Desc"
+              ],
+              "type": "string",
+              "description": "The desired direction to sort the results"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "An optional search term to filter the results by",
+            "schema": {
+              "type": "string",
+              "description": "An optional search term to filter the results by",
+              "nullable": true
+            }
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "description": "An optional comma-separated list of tags to filter the results by",
+            "schema": {
+              "type": "string",
+              "description": "An optional comma-separated list of tags to filter the results by",
+              "nullable": true
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "An optional game version to filter the results by",
+            "schema": {
+              "type": "string",
+              "description": "An optional game version to filter the results by",
+              "nullable": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The paged, filtered and ordered list of matching builds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildsModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The request is malformed or invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The requested user does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "LinkModel": {
+        "required": [
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": { }
+      },
+      "BuildsLinks": {
+        "type": "object",
+        "properties": {
+          "create_build": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "create_payload": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "prev": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "next": {
+            "$ref": "#/components/schemas/LinkModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImageLinkModel": {
+        "required": [
+          "height",
+          "href",
+          "width"
+        ],
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "alt": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "BuildLinks": {
+        "required": [
+          "cover",
+          "followers",
+          "self",
+          "versions"
+        ],
+        "type": "object",
+        "properties": {
+          "self": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "cover": {
+            "$ref": "#/components/schemas/ImageLinkModel"
+          },
+          "versions": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "followers": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "add_version": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "toggle_favorite": {
+            "$ref": "#/components/schemas/LinkModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GameIcon": {
+        "required": [
+          "index",
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "index": {
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThinUserModel": {
+        "required": [
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 100,
+            "minLength": 3,
+            "pattern": "[a-zA-Z0-9_-]+",
+            "type": "string",
+            "description": "The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.\r\nIt is used in URLs like the user's profile or build pages.",
+            "example": "factorio_fritz"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThinBuildModel": {
+        "required": [
+          "_links",
+          "created_at",
+          "icons",
+          "latest_game_version",
+          "latest_type",
+          "owner",
+          "slug",
+          "tags",
+          "title",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/BuildLinks"
+          },
+          "slug": {
+            "maxLength": 100,
+            "minLength": 3,
+            "pattern": "[a-zA-Z0-9_-]+",
+            "type": "string",
+            "description": "The slug is used in the build's URL and must be unique per user.\r\nIt can consist only of latin alphanumeric characters, underscores and hyphens.",
+            "example": "my-awesome-build"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp in UTC of when the first version of the build was created.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp in UTC of when the build was last updated.",
+            "format": "date-time"
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameIcon"
+            },
+            "description": "The build's icons."
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 3,
+            "type": "string",
+            "description": "The title or display name of the build.",
+            "example": "My Awesome Build"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/ThinUserModel"
+          },
+          "latest_game_version": {
+            "type": "string",
+            "description": "The game version that was used to create the the most recently added version of this build.",
+            "example": "1.2.3.4"
+          },
+          "latest_type": {
+            "enum": [
+              "blueprint",
+              "blueprint-book"
+            ],
+            "type": "string",
+            "description": "The build's latest version's blueprint type."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The build's tags."
+          }
+        },
+        "additionalProperties": false
+      },
+      "BuildsModel": {
+        "required": [
+          "_links",
+          "builds",
+          "current_count",
+          "total_count"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/BuildsLinks"
+          },
+          "current_count": {
+            "type": "integer",
+            "description": "The number of results on the current page.",
+            "format": "int32"
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "The total count of matching results.\r\nTODO: currently this is the absolute total number of builds without any filtering applied.",
+            "format": "int32"
+          },
+          "builds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThinBuildModel"
+            },
+            "description": "The paged, filtered and ordered list of matching builds."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateBuildRequest": {
+        "required": [
+          "hash",
+          "icons",
+          "slug",
+          "tags",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "The hash of payload that should be used to create this build version.\r\nThe payload must have been previously created.",
+            "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 3,
+            "type": "string",
+            "description": "The title or display name of the build.",
+            "example": "My Awesome Build"
+          },
+          "description": {
+            "type": "string",
+            "description": "The build description in Markdown.",
+            "nullable": true,
+            "example": "Hello **World**!"
+          },
+          "version_name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string",
+            "description": "An optional name for the version to be created.\r\nIf empty, the hash will be used as version name.",
+            "nullable": true
+          },
+          "version_description": {
+            "type": "string",
+            "description": "An optional description for the version to be created.",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The build's tags."
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameIcon"
+            },
+            "description": "The build's icons."
+          },
+          "slug": {
+            "maxLength": 100,
+            "minLength": 3,
+            "pattern": "[a-zA-Z0-9_-]+",
+            "type": "string",
+            "description": "The slug for the new build. It is used in the build's URL and must be unique per user.\r\nIt can consist only of latin alphanumeric characters, underscores and hyphens.",
+            "example": "my-awesome-build"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FullUserModel": {
+        "required": [
+          "registered_at",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "maxLength": 100,
+            "minLength": 3,
+            "pattern": "[a-zA-Z0-9_-]+",
+            "type": "string",
+            "description": "The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.\r\nIt is used in URLs like the user's profile or build pages.",
+            "example": "factorio_fritz"
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The user's display name can **optionally** be set by a user. It is meant to be displayed across the site in place of the `username`.\r\nIf the value is unset (`null`), the `username` should be displayed instead.",
+            "nullable": true,
+            "example": "Factorio Fritz"
+          },
+          "registered_at": {
+            "type": "string",
+            "description": "The user's registration timestamp in UTC.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DescriptionModel": {
+        "required": [
+          "html",
+          "markdown"
+        ],
+        "type": "object",
+        "properties": {
+          "markdown": {
+            "type": "string",
+            "format": "multiline",
+            "example": "Hello **World**!"
+          },
+          "html": {
+            "type": "string",
+            "format": "html",
+            "example": "Hello <strong>World<strong>!"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VersionLinks": {
+        "required": [
+          "payload"
+        ],
+        "type": "object",
+        "properties": {
+          "payload": {
+            "$ref": "#/components/schemas/LinkModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PayloadLinks": {
+        "required": [
+          "raw",
+          "self"
+        ],
+        "type": "object",
+        "properties": {
+          "self": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "raw": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "rendering_full": {
+            "$ref": "#/components/schemas/LinkModel"
+          },
+          "rendering_thumb": {
+            "$ref": "#/components/schemas/LinkModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BlueprintEnvelopeModel": {
+        "required": [
+          "entities",
+          "icons"
+        ],
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameIcon"
+            }
+          },
+          "entities": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThinPayloadModel": {
+        "required": [
+          "_links",
+          "blueprint",
+          "encoded",
+          "game_version",
+          "hash",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/PayloadLinks"
+          },
+          "hash": {
+            "type": "string",
+            "description": "The `md5` hash of the payload's encoded blueprint string.",
+            "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+          },
+          "type": {
+            "enum": [
+              "blueprint",
+              "blueprint-book"
+            ],
+            "type": "string",
+            "description": "The payload's blueprint type."
+          },
+          "game_version": {
+            "type": "string",
+            "description": "The game version that was used to create the blueprint.",
+            "example": "1.2.3.4"
+          },
+          "encoded": {
+            "type": "string",
+            "description": "The raw encoded blueprint string for import in the game or other tools",
+            "example": "0eNqllMtugzAQRX8FzRqiQszLyyy77bKqKh6jaiTbWLapghD/XhOkNEpJ04adx56553r8GKEWPWpDygEfoUXbGNKOOgUcnnvrgiqwJLXA4Jy4gxCo6ZQF/jqCpQ9VibnYDRp9FTmUPkNVco7wqA1aGzlTKas746IahYPJS6gWj8DjKbwrYjW1aJzxrr4Lk+ktBFSOHOFi5RQM76qXNRqvfM9ECLqztGx2hNlLud+lIQzAi3nkWS0ZbJaMZDZ6hUgeQCT/Q+wfQLDbCLaCYGeExJZ6GaHw6YaaSHcCf2+TR00rkummxqTrotmmA02vW5GtIPJNvm80o9h0hH/yXW5CsJ+3xL+t0xvkFx9ECKLyYn7uZfkSDhdLn2jscomLmOWszLM8fsrSbJq+AEDWdWo="
+          },
+          "blueprint": {
+            "$ref": "#/components/schemas/BlueprintEnvelopeModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FullVersionModel": {
+        "required": [
+          "_links",
+          "created_at",
+          "hash",
+          "payload",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/VersionLinks"
+          },
+          "hash": {
+            "type": "string",
+            "description": "The version's payload hash."
+          },
+          "type": {
+            "enum": [
+              "blueprint",
+              "blueprint-book"
+            ],
+            "type": "string",
+            "description": "The version's blueprint type."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp in UTC at which the version was created.",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string",
+            "description": "An optional name assigned to the version.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional description for the version.",
+            "nullable": true
+          },
+          "payload": {
+            "$ref": "#/components/schemas/ThinPayloadModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FullBuildModel": {
+        "required": [
+          "_links",
+          "created_at",
+          "icons",
+          "latest_game_version",
+          "latest_type",
+          "latest_version",
+          "owner",
+          "slug",
+          "tags",
+          "title",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/BuildLinks"
+          },
+          "slug": {
+            "maxLength": 100,
+            "minLength": 3,
+            "pattern": "[a-zA-Z0-9_-]+",
+            "type": "string",
+            "description": "The slug is used in the build's URL and must be unique per user.\r\nIt can consist only of latin alphanumeric characters, underscores and hyphens.",
+            "example": "my-awesome-build"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp in UTC of when the first version of the build was created.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "The timestamp in UTC of when the build was last updated.",
+            "format": "date-time"
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameIcon"
+            },
+            "description": "The build's icons."
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 3,
+            "type": "string",
+            "description": "The title or display name of the build.",
+            "example": "My Awesome Build"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/FullUserModel"
+          },
+          "latest_game_version": {
+            "type": "string",
+            "description": "The game version that was used to create the the most recently added version of this build.",
+            "example": "1.2.3.4"
+          },
+          "latest_type": {
+            "enum": [
+              "blueprint",
+              "blueprint-book"
+            ],
+            "type": "string",
+            "description": "The build's latest version's blueprint type."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The build's tags."
+          },
+          "description": {
+            "$ref": "#/components/schemas/DescriptionModel"
+          },
+          "latest_version": {
+            "$ref": "#/components/schemas/FullVersionModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UsersModel": {
+        "required": [
+          "count",
+          "users"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "The number of results on the current page.",
+            "format": "int32"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FullUserModel"
+            },
+            "description": "The paged, filtered and ordered list of matching users."
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThinVersionModel": {
+        "required": [
+          "_links",
+          "created_at",
+          "hash",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/VersionLinks"
+          },
+          "hash": {
+            "type": "string",
+            "description": "The version's payload hash."
+          },
+          "type": {
+            "enum": [
+              "blueprint",
+              "blueprint-book"
+            ],
+            "type": "string",
+            "description": "The version's blueprint type."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "The timestamp in UTC at which the version was created.",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string",
+            "description": "An optional name assigned to the version.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional description for the version.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VersionsModel": {
+        "required": [
+          "count",
+          "versions"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "description": "The number of results on the current page.",
+            "format": "int32"
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThinVersionModel"
+            },
+            "description": "The paged, filtered and ordered list of matching versions."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateVersionRequest": {
+        "required": [
+          "expected_previous_version_id",
+          "hash",
+          "icons",
+          "tags",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "The hash of payload that should be used to create this build version.\r\nThe payload must have been previously created.",
+            "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+          },
+          "title": {
+            "maxLength": 100,
+            "minLength": 3,
+            "type": "string",
+            "description": "The title or display name of the build.",
+            "example": "My Awesome Build"
+          },
+          "description": {
+            "type": "string",
+            "description": "The build description in Markdown.",
+            "nullable": true,
+            "example": "Hello **World**!"
+          },
+          "version_name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string",
+            "description": "An optional name for the version to be created.\r\nIf empty, the hash will be used as version name.",
+            "nullable": true
+          },
+          "version_description": {
+            "type": "string",
+            "description": "An optional description for the version to be created.",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The build's tags."
+          },
+          "icons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GameIcon"
+            },
+            "description": "The build's icons."
+          },
+          "expected_previous_version_id": {
+            "type": "string",
+            "description": "The current (latest) version of the build. It must be specified to avoid concurrency issues.",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FullPayloadModel": {
+        "required": [
+          "_links",
+          "blueprint",
+          "encoded",
+          "game_version",
+          "hash",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "_links": {
+            "$ref": "#/components/schemas/PayloadLinks"
+          },
+          "hash": {
+            "type": "string",
+            "description": "The `md5` hash of the payload's encoded blueprint string.",
+            "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+          },
+          "type": {
+            "enum": [
+              "blueprint",
+              "blueprint-book"
+            ],
+            "type": "string",
+            "description": "The payload's blueprint type."
+          },
+          "game_version": {
+            "type": "string",
+            "description": "The game version that was used to create the blueprint.",
+            "example": "1.2.3.4"
+          },
+          "encoded": {
+            "type": "string",
+            "description": "The raw encoded blueprint string for import in the game or other tools",
+            "example": "0eNqllMtugzAQRX8FzRqiQszLyyy77bKqKh6jaiTbWLapghD/XhOkNEpJ04adx56553r8GKEWPWpDygEfoUXbGNKOOgUcnnvrgiqwJLXA4Jy4gxCo6ZQF/jqCpQ9VibnYDRp9FTmUPkNVco7wqA1aGzlTKas746IahYPJS6gWj8DjKbwrYjW1aJzxrr4Lk+ktBFSOHOFi5RQM76qXNRqvfM9ECLqztGx2hNlLud+lIQzAi3nkWS0ZbJaMZDZ6hUgeQCT/Q+wfQLDbCLaCYGeExJZ6GaHw6YaaSHcCf2+TR00rkummxqTrotmmA02vW5GtIPJNvm80o9h0hH/yXW5CsJ+3xL+t0xvkFx9ECKLyYn7uZfkSDhdLn2jscomLmOWszLM8fsrSbJq+AEDWdWo="
+          },
+          "blueprint": {
+            "$ref": "#/components/schemas/BlueprintEnvelopeModel"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FullPayloadModel"
+            },
+            "description": "If the payload is a `blueprint-book`, children contains all nested blueprints.\r\nFor payloads of type `blueprint`, this collection is empty.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePayloadRequest": {
+        "required": [
+          "encoded"
+        ],
+        "type": "object",
+        "properties": {
+          "encoded": {
+            "pattern": "^0(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
+            "type": "string",
+            "description": "The encoded blueprint string.",
+            "example": "0eNqllMtugzAQRX8FzRqiQszLyyy77bKqKh6jaiTbWLapghD/XhOkNEpJ04adx56553r8GKEWPWpDygEfoUXbGNKOOgUcnnvrgiqwJLXA4Jy4gxCo6ZQF/jqCpQ9VibnYDRp9FTmUPkNVco7wqA1aGzlTKas746IahYPJS6gWj8DjKbwrYjW1aJzxrr4Lk+ktBFSOHOFi5RQM76qXNRqvfM9ECLqztGx2hNlLud+lIQzAi3nkWS0ZbJaMZDZ6hUgeQCT/Q+wfQLDbCLaCYGeExJZ6GaHw6YaaSHcCf2+TR00rkummxqTrotmmA02vW5GtIPJNvm80o9h0hH/yXW5CsJ+3xL+t0xvkFx9ECKLyYn7uZfkSDhdLn2jscomLmOWszLM8fsrSbJq+AEDWdWo="
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePayloadResult": {
+        "required": [
+          "all_hashes",
+          "extracted_tags",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "The hash of the primary (or parent) payload that was created.",
+            "example": "f8283ab0085a7e31c0ad3c43db36ae87"
+          },
+          "all_hashes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The hashes of all payloads that were created in this operation."
+          },
+          "extracted_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The tags that have been extracted for this payload."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "authorizationCode": {
+            "authorizationUrl": "https://identity.local.factorio.tech/connect/authorize",
+            "tokenUrl": "https://identity.local.factorio.tech/connect/token",
+            "scopes": {
+              "openid": "Informs the authorization server that the client is making an OpenID Connect request.",
+              "profile": "Requests access to the user's profile information."
+            }
+          }
+        }
+      }
+    }
+  }
+}
