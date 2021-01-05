@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useDispatch } from "react-redux"
 import cx from "classnames"
+import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { ESortType } from "../../../types"
 import Stacker from "../Stacker"
 import * as SC from "./build-list-sort.styles"
@@ -17,29 +18,42 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
       type: "SET_SORT",
       payload: sortType,
     })
+    dispatch(searchBuildsAsync())
   }
 
   return (
     <SC.BuildListSortWrapper>
       Sort by
       <Stacker orientation="horizontal" gutter={8}>
-        <SC.Option
+        {/* <SC.Option
           className={cx({ "is-active": sort === ESortType.RELEVANCY })}
           onClick={() => set(ESortType.RELEVANCY)}
         >
           relevance
+        </SC.Option> */}
+        <SC.Option
+          className={cx({ "is-active": sort === ESortType.TITLE })}
+          onClick={() => set(ESortType.TITLE)}
+        >
+          title
         </SC.Option>
         <SC.Option
-          className={cx({ "is-active": sort === ESortType.VIEWS })}
-          onClick={() => set(ESortType.VIEWS)}
+          className={cx({ "is-active": sort === ESortType.CREATED })}
+          onClick={() => set(ESortType.CREATED)}
         >
-          views
+          created
         </SC.Option>
         <SC.Option
-          className={cx({ "is-active": sort === ESortType.NEWEST })}
-          onClick={() => set(ESortType.NEWEST)}
+          className={cx({ "is-active": sort === ESortType.UPDATED })}
+          onClick={() => set(ESortType.UPDATED)}
         >
-          newest
+          updated
+        </SC.Option>
+        <SC.Option
+          className={cx({ "is-active": sort === ESortType.FAVORITES })}
+          onClick={() => set(ESortType.FAVORITES)}
+        >
+          favorites
         </SC.Option>
       </Stacker>
     </SC.BuildListSortWrapper>

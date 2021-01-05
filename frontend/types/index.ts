@@ -9,8 +9,10 @@ export enum EFilterType {
 
 export enum ESortType {
   "RELEVANCY" = "RELEVANCY",
-  "VIEWS" = "VIEWS",
-  "NEWEST" = "NEWEST",
+  "TITLE" = "TITLE",
+  "CREATED" = "CREATED",
+  "UPDATED" = "UPDATED",
+  "FAVORITES" = "FAVORITES",
 }
 
 export enum EState {
