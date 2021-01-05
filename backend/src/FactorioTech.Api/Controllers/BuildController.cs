@@ -1,17 +1,12 @@
 using FactorioTech.Api.Extensions;
 using FactorioTech.Api.ViewModels;
-using FactorioTech.Core;
 using FactorioTech.Core.Data;
-using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -83,19 +78,34 @@ namespace FactorioTech.Api.Controllers
                     null),
                 User.GetUserId());
 
-            return result switch
+            var success = result as BlueprintService.CreateResult.Success;
+            if (success == null) return result switch
             {
-                BlueprintService.CreateResult.Success success => Created(
-                    Url.ActionLink(nameof(GetDetails), "Build", new
-                    {
-                        owner = success.Blueprint.OwnerSlug,
-                        slug = success.Blueprint.Slug,
-                    }),
-                    success.Blueprint.ToThinViewModel(Url)),
                 BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
                 BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
                 _ => BadRequest(result.ToProblem()),
             };
+
+            if (request.Cover.File != null)
+            {
+                await _imageService.SaveCroppedCover(
+                    success.Blueprint.BlueprintId,
+                    request.Cover.File.OpenReadStream(),
+                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
+            }
+            else if (request.Cover.Hash != null)
+            {
+                await _imageService.SaveCroppedCover(
+                    success.Blueprint.BlueprintId,
+                    success.Blueprint.LatestVersionId!.Value, request.Cover.Hash.Value,
+                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
+            }
+
+            return Created(Url.ActionLink(nameof(GetDetails), "Build", new
+            {
+                owner = success.Blueprint.OwnerSlug,
+                slug = success.Blueprint.Slug,
+            }), success.Blueprint.ToThinViewModel(Url));
         }
 
         /// <summary>
@@ -207,19 +217,34 @@ namespace FactorioTech.Api.Controllers
                     request.ExpectedPreviousVersionId),
                 User.GetUserId());
 
-            return result switch
+            var success = result as BlueprintService.CreateResult.Success;
+            if (success == null) return result switch
             {
-                BlueprintService.CreateResult.Success success => Created(
-                    Url.ActionLink(nameof(GetDetails), "Build", new
-                    {
-                        owner = success.Blueprint.OwnerSlug,
-                        slug = success.Blueprint.Slug,
-                    }),
-                    success.Blueprint.ToThinViewModel(Url)),
                 BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
-                BlueprintService.CreateResult.ParentNotFound error => NotFound(error.ToProblem()),
+                BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
                 _ => BadRequest(result.ToProblem()),
             };
+
+            if (request.Cover.File != null)
+            {
+                await _imageService.SaveCroppedCover(
+                    success.Blueprint.BlueprintId,
+                    request.Cover.File.OpenReadStream(),
+                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
+            }
+            else if (request.Cover.Hash != null)
+            {
+                await _imageService.SaveCroppedCover(
+                    success.Blueprint.BlueprintId,
+                    success.Blueprint.LatestVersionId!.Value, request.Cover.Hash.Value,
+                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
+            }
+
+            return Created(Url.ActionLink(nameof(GetDetails), "Build", new
+            {
+                owner = success.Blueprint.OwnerSlug,
+                slug = success.Blueprint.Slug,
+            }), success.Blueprint.ToThinViewModel(Url));
         }
 
         /// <summary>
@@ -242,78 +267,6 @@ namespace FactorioTech.Api.Controllers
                 return NotFound();
 
             return File(file, format);
-        }
-
-        public class CreateRequestBase
-        {
-            /// <summary>
-            /// The hash of payload that should be used to create this build version.
-            /// The payload must have been previously created.
-            /// </summary>
-            /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
-            [Required]
-            public Hash Hash { get; set; }
-
-            /// <summary>
-            /// The title or display name of the build.
-            /// </summary>
-            /// <example>My Awesome Build</example>
-            [Required]
-            [StringLength(100, MinimumLength = 3)]
-            public string Title { get; set; } = null!;
-
-            /// <summary>
-            /// The build description in Markdown.
-            /// </summary>
-            /// <example>Hello **World**!</example>
-            public string? Description { get; set; }
-
-            /// <summary>
-            /// An optional name for the version to be created.
-            /// If empty, the hash will be used as version name.
-            /// </summary>
-            [StringLength(100, MinimumLength = 2)]
-            public string? VersionName { get; set; }
-
-            /// <summary>
-            /// An optional description for the version to be created.
-            /// </summary>
-            [DisplayName("Description")]
-            public string? VersionDescription { get; set; }
-
-            /// <summary>
-            /// The build's tags.
-            /// </summary>
-            [Required]
-            public IEnumerable<string> Tags { get; set; } = null!;
-
-            /// <summary>
-            /// The build's icons.
-            /// </summary>
-            [Required]
-            public IEnumerable<GameIcon> Icons { get; set; } = null!;
-        }
-
-        public class CreateVersionRequest : CreateRequestBase
-        {
-            /// <summary>
-            /// The current (latest) version of the build. It must be specified to avoid concurrency issues.
-            /// </summary>
-            [Required]
-            public Guid ExpectedPreviousVersionId { get; set; }
-        }
-
-        public class CreateBuildRequest : CreateRequestBase
-        {
-            /// <summary>
-            /// The slug for the new build. It is used in the build's URL and must be unique per user.
-            /// It can consist only of latin alphanumeric characters, underscores and hyphens.
-            /// </summary>
-            /// <example>my-awesome-build</example>
-            [Required]
-            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
-            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
-            public string Slug { get; set; } = null!;
         }
     }
 }
