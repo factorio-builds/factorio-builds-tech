@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityServer4.EntityFramework.Storage" Version="4.1.1" />
-    <PackageReference Include="Markdig" Version="0.22.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
       <PrivateAssets>all</PrivateAssets>

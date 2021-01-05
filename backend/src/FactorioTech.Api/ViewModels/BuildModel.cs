@@ -33,7 +33,7 @@ namespace FactorioTech.Api.ViewModels
         /// The absolute URL to the list of this build's followers.
         /// </summary>
         [Required]
-        public LinkModel Followers { get; init; }
+        public CollectionLinkModel Followers { get; init; }
 
         /// <summary>
         /// The absolute URL to the API endpoint to add a version to this build.
@@ -90,6 +90,12 @@ namespace FactorioTech.Api.ViewModels
         public string Title { get; set; }
 
         /// <summary>
+        /// The build's description in Markdown.
+        /// </summary>
+        [DataType(DataType.MultilineText)]
+        public string? Description { get; set; }
+
+        /// <summary>
         /// The user who created the build.
         /// </summary>
         [Required]
@@ -121,24 +127,6 @@ namespace FactorioTech.Api.ViewModels
 
     public class FullBuildModel : BuildModelBase<FullUserModel>
     {
-        public class DescriptionModel
-        {
-            /// <example>Hello **World**!</example>
-            [Required]
-            [DataType(DataType.MultilineText)]
-            public string Markdown { get; set; }
-
-            /// <example>Hello &lt;strong&gt;World&lt;strong&gt;!</example>
-            [Required]
-            [DataType(DataType.Html)]
-            public string Html { get; set; }
-        }
-
-        /// <summary>
-        /// The build description as entered by the user in Markdown and converted to HTML.
-        /// </summary>
-        public DescriptionModel? Description { get; set; }
-
         /// <summary>
         /// The build's most recently added version.
         /// </summary>
