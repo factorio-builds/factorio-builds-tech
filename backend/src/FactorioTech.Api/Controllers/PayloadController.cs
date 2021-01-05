@@ -57,8 +57,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested payload does not exist</response>
         [HttpGet("{hash}")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(BlueprintPayloadModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BookPayloadModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PayloadModelBase), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDetails(Hash hash, [FromQuery(Name = "include_children")]bool includeChildren = false)

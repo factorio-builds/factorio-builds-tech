@@ -41,7 +41,7 @@ namespace FactorioTech.Api.Extensions
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
                 Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues), AppConfig.Cover.Width, AppConfig.Cover.Height),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
-                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues)),
+                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
                 AddVersion = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post"),
                 ToggleFavorite = new(urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", buildIdValues), "post"),
             };

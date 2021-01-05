@@ -28,17 +28,6 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
-        /// Convert markdown to HTML.
-        /// This operation is **safe** and **idempotent**.
-        /// </summary>
-        /// <param name="content" example='"Hello **world**!"'>The markdown text that should be converted to HTML</param>
-        /// <response code="200" type="text/html" example="Hello &lt;strong&gt;World&lt;strong&gt;!">The converted HTML</response>
-        /// <response code="400" type="application/json">The request is malformed or invalid</response>
-        [Authorize]
-        [HttpPost("render-markdown")]
-        public string RenderMarkdown([FromBody]string content) => MarkdownConverter.ToHtml(content);
-
-        /// <summary>
         /// Verify that a username is valid and available.
         /// This operation is **safe** and **idempotent**.
         /// </summary>

@@ -12,10 +12,16 @@ namespace FactorioTech.Api.ViewModels
 
     public class LinkModel
     {
+        /// <summary>
+        /// The absolute URI the the linked resource.
+        /// </summary>
         [Required]
         public string Href { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        /// <summary>
+        /// The HTTP method to request the linked resource.
+        /// Defaults to `GET` if unset (`null`).
+        /// </summary>
         public string? Method { get; set; }
 
         public LinkModel(string href, string? method = null)
@@ -23,24 +29,40 @@ namespace FactorioTech.Api.ViewModels
             Href = href;
             Method = method;
         }
-    };
+    }
 
     public class ImageLinkModel : LinkModel
     {
+        /// <summary>
+        /// The width of the linked image.
+        /// </summary>
         [Required]
         public int Width { get; init; }
-
+        
+        /// <summary>
+        /// The height of the linked image.
+        /// </summary>
         [Required]
         public int Height { get; init; }
 
-        [StringLength(256)]
-        public string? Alt { get; init; }
-
-        public ImageLinkModel(string href, int width, int height, string? alt = null) : base(href)
+        public ImageLinkModel(string href, int width, int height) : base(href)
         {
             Width = width;
             Height = height;
-            Alt = alt;
+        }
+    }
+
+    public class CollectionLinkModel : LinkModel
+    {
+        /// <summary>
+        /// The number of items in the linked collection.
+        /// </summary>
+        [Required]
+        public int Count { get; init; }
+
+        public CollectionLinkModel(string href, int count) : base(href)
+        {
+            Count = count;
         }
     }
 }

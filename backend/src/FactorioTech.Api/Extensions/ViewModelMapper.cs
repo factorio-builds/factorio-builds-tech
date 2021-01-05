@@ -46,6 +46,7 @@ namespace FactorioTech.Api.Extensions
                 UpdatedAt = blueprint.UpdatedAt,
                 Icons = blueprint.Icons,
                 Title = blueprint.Title,
+                Description = blueprint.Description,
                 Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
@@ -61,11 +62,7 @@ namespace FactorioTech.Api.Extensions
                 UpdatedAt = blueprint.UpdatedAt,
                 Icons = blueprint.Icons,
                 Title = blueprint.Title,
-                Description = blueprint.Description?.Let(description => new FullBuildModel.DescriptionModel
-                {
-                    Markdown = description,
-                    Html = MarkdownConverter.ToHtml(description),
-                }),
+                Description = blueprint.Description,
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
                 LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(blueprint.LatestVersion)),
