@@ -50,6 +50,8 @@ export const searchBuildsAsync = (): ThunkAction<
             state: mapFilters(getState(), EFilterType.STATE) || undefined,
             categories:
               mapFilters(getState(), EFilterType.CATEGORY) || undefined,
+            sort_field: getState().filters.sort.toLowerCase(),
+            sort_direction: "asc",
           },
         })
         .then((response) => response.data)

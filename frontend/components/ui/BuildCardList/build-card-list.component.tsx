@@ -1,5 +1,4 @@
 import * as React from "react"
-import sortBy from "lodash/sortBy"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
 import { ESortType } from "../../../types"
 import { IThinBuild } from "../../../types/models"
@@ -28,21 +27,8 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   const COL_GUTTER = GUTTER
   const CONTAINER_WIDTH = 1052 // needs to be dynamic on window resize
 
-  // TODO: send logic to search API
-  const sortedItems = React.useMemo(() => {
-    if (sort === ESortType.NEWEST) {
-      return sortBy(items, [(item) => Date.parse(item.updated_at)]).reverse()
-    }
-
-    if (sort === ESortType.VIEWS) {
-      return sortBy(items, ["views"]).reverse()
-    }
-
-    return items
-  }, [JSON.stringify(items), sort])
-
   const columns = useDistributeToColumn(
-    sortedItems,
+    items,
     COL_COUNT,
     CONTAINER_WIDTH,
     COL_GUTTER

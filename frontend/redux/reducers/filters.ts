@@ -25,7 +25,7 @@ export interface IStoreFiltersState {
 
 const initialFiltersState: IStoreFiltersState = {
   query: "",
-  sort: ESortType.RELEVANCY,
+  sort: ESortType.TITLE,
   [EFilterType.STATE]: {
     [EState.EARLY_GAME]: false,
     [EState.MID_GAME]: false,
