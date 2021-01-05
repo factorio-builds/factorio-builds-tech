@@ -1,4 +1,5 @@
 using FactorioTech.Api.Extensions;
+using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
@@ -46,6 +47,7 @@ namespace FactorioTech.Api
             services.AddHttpClient();
             services.AddControllers().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.Converters.Add(new PolymorphicJsonConverter<PayloadModelBase>());
                 options.JsonSerializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new VersionJsonConverter());
@@ -77,15 +79,15 @@ namespace FactorioTech.Api
                     },
                 });
 
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                options.IncludeXmlComments(xmlPath);
-                options.UseInlineDefinitionsForEnums();
-                options.OperationFilter<OAuthResponsesOperationFilter>();
+                options.EnableAnnotations(true, true);
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
                 options.MapType(typeof(Instant), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(Hash), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(Version), () => new OpenApiSchema { Type = "string" });
                 options.MapType(typeof(AssetService.IconSize), () => new OpenApiSchema { Type = "integer" });
+                options.OperationFilter<OAuthResponsesOperationFilter>();
+                options.UseAllOfToExtendReferenceSchemas();
+                options.UseInlineDefinitionsForEnums();
             });
 
             services.AddCors(options =>

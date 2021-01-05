@@ -74,6 +74,9 @@ namespace FactorioTech.Core
             [JsonPropertyName("entities")]
             public IEnumerable<Entity> Entities { get; init; } = Enumerable.Empty<Entity>();
 
+            [JsonPropertyName("Tiles")]
+            public IEnumerable<Entity> Tiles { get; init; } = Enumerable.Empty<Entity>();
+
             [JsonPropertyName("label"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string? Label { get; init; }
 

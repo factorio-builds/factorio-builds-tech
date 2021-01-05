@@ -57,6 +57,6 @@ namespace FactorioTech.Api.ViewModels
         /// The payload attached to the version.
         /// </summary>
         [Required]
-        public ThinPayloadModel Payload { get; set; }
+        public PayloadModelBase Payload { get; set; }
     }
 }
