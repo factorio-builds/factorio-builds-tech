@@ -57,7 +57,7 @@
     "@types/react-select": "^3.1.2",
     "@types/styled-components": "^5.1.7",
     "@types/text-encoding": "^0.0.35",
-    "@types/validator": "^13.1.1",
+    "@types/validator": "^13.1.2",
     "@types/yup": "^0.29.11",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.10.0",
