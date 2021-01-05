@@ -19,6 +19,17 @@ export const BuildTitle = styled.h2`
   margin: 0;
 `
 
+export const StyledLink = styled.a`
+  font-weight: 700;
+  color: ${COLOR.PURPLE900};
+  text-decoration: none;
+
+  &:hover {
+    color: #fff;
+    border-bottom: 2px solid #fff;
+  }
+`
+
 export const BuildHeaderMeta = styled.div`
   font-weight: 700;
   display: flex;

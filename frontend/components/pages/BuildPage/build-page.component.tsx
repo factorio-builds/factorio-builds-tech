@@ -155,7 +155,10 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
           </Stacker>
           <Stacker orientation="horizontal" gutter={16}>
             <span>
-              by <b>{build.owner.display_name}</b>
+              by{" "}
+              <Link href={`/${build.owner.username}/builds`} passHref>
+                <SC.StyledLink>{build.owner.display_name}</SC.StyledLink>
+              </Link>
             </span>
             {/* prettier-ignore */}
             <span>
