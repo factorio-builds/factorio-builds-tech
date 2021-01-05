@@ -53,7 +53,7 @@ namespace FactorioTech.Api.Extensions
                 Payload = new(urlHelper.ActionLink(nameof(PayloadController.GetDetails), "Payload", new
                 {
                     hash = version.Hash,
-                    includeChildren = true,
+                    include_children = "true",
                 })),
             };
 
@@ -63,7 +63,7 @@ namespace FactorioTech.Api.Extensions
                 Self = new(urlHelper.ActionLink(nameof(PayloadController.GetDetails), "Payload", new
                 {
                     hash = payload.Hash,
-                    includeChildren = true,
+                    include_children = "true",
                 })),
 
                 Raw = new (urlHelper.ActionLink(nameof(PayloadController.GetRaw), "Payload", new
@@ -75,7 +75,7 @@ namespace FactorioTech.Api.Extensions
                     ? new(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
                     {
                         hash = payload.Hash,
-                        type = ImageService.RenderingType.Full,
+                        type = ImageService.RenderingType.Full.ToString().ToLowerInvariant(),
                     }))
                     : null,
 
@@ -83,7 +83,7 @@ namespace FactorioTech.Api.Extensions
                     ? new(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
                     {
                         hash = payload.Hash,
-                        type = ImageService.RenderingType.Thumb,
+                        type = ImageService.RenderingType.Thumb.ToString().ToLowerInvariant(),
                     }))
                     : null,
             };

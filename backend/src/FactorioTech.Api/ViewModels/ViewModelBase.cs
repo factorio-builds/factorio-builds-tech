@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -16,29 +15,13 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         public string Href { get; set; }
 
-        [Required]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? Method { get; set; }
 
-        [JsonExtensionData]
-        public IDictionary<string, object> AdditionalProperties { get; } = new Dictionary<string, object>();
-
-        public LinkModel(string href, params (string Name, object? Value)[] additionalProperties)
-            : this(href, null, additionalProperties)
-        {
-        }
-
-        public LinkModel(string href, string? method = null, params (string Name, object? Value)[] additionalProperties)
+        public LinkModel(string href, string? method = null)
         {
             Href = href;
             Method = method;
-
-            // todo: this is intended behavior, but maybe there's a better way to handle polymorphism?
-            // see https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-polymorphism
-            foreach (var (name, value) in additionalProperties) if (value != null)
-            {
-                AdditionalProperties.TryAdd(name, value);
-            }
         }
     };
 
@@ -53,8 +36,7 @@ namespace FactorioTech.Api.ViewModels
         [StringLength(256)]
         public string? Alt { get; init; }
 
-        public ImageLinkModel(string href, int width, int height, string? alt = null)
-            : base(href, (nameof(width), width), (nameof(height), height), (nameof(alt), alt))
+        public ImageLinkModel(string href, int width, int height, string? alt = null) : base(href)
         {
             Width = width;
             Height = height;

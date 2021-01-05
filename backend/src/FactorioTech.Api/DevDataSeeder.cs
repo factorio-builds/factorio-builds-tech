@@ -154,9 +154,6 @@ namespace FactorioTech.Api
                     _blueprintConverter.DecodeGameVersion(envelope.Version),
                     blueprint.Encoded);
 
-                var icons = envelope.Icons?.Select(x => new GameIcon((short)x.Index, x.Signal.Type, x.Signal.Name))
-                    ?? Enumerable.Empty<GameIcon>();
-
                 var cache = new PayloadCache();
                 cache.TryAdd(envelope, payload);
 
@@ -168,7 +165,7 @@ namespace FactorioTech.Api
                     blueprint.Title,
                     blueprint.Description,
                     blueprint.Tags.Select(t => t.TrimEnd('/')),
-                    (payload.Hash, null, null, icons),
+                    (payload.Hash, null, null, envelope.Icons.ToGameIcons()),
                     null);
 
                 var result = await _blueprintService.CreateOrAddVersion(request, owner.Id);

@@ -1,7 +1,9 @@
 using FactorioTech.Core.Domain;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 #pragma warning disable 8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
@@ -34,6 +36,9 @@ namespace FactorioTech.Api.ViewModels
         public LinkModel? RenderingThumb { get; init; }
     }
 
+    [SwaggerDiscriminator("type")]
+    [SwaggerSubType(typeof(BlueprintPayloadModel), DiscriminatorValue = "blueprint")]
+    [SwaggerSubType(typeof(BookPayloadModel), DiscriminatorValue = "blueprint-book")]
     public abstract class PayloadModelBase : ViewModelBase<PayloadLinks>
     {
         /// <summary>
@@ -64,23 +69,46 @@ namespace FactorioTech.Api.ViewModels
         public string Encoded { get; set; }
 
         /// <summary>
-        /// The blueprint envelope that is attached to this payload.
+        /// The ordered list of 1 to 4 icons that is included in the ingame blueprint payload.
         /// </summary>
         [Required]
-        public BlueprintEnvelopeModel Blueprint { get; set; }
+        public IEnumerable<GameIcon> Icons { get; set; } = Enumerable.Empty<GameIcon>();
+
+        /// <summary>
+        /// An optional label that is included in the ingame blueprint payload.
+        /// </summary>
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// An optional description that is included in the ingame blueprint payload.
+        /// </summary>
+        public string? Description { get; set; }
     }
 
-    public class ThinPayloadModel : PayloadModelBase
-    {
-
-    }
-
-    public class FullPayloadModel : PayloadModelBase
+    public class BlueprintPayloadModel : PayloadModelBase
     {
         /// <summary>
-        /// If the payload is a `blueprint-book`, children contains all nested blueprints.
-        /// For payloads of type `blueprint`, this collection is empty.
+        /// A map of item `name` to `count` of all **entities** in this payload's blueprint.
+        /// Only items with a count greater than 0 are included.
         /// </summary>
-        public IEnumerable<FullPayloadModel> Children { get; set; }
+        [Required]
+        public IReadOnlyDictionary<string, int> Entities { get; set; } = new Dictionary<string, int>();
+
+        /// <summary>
+        /// A map of item `name` to `count` of all **tiles** in this payload's blueprint.
+        /// Only items with a count greater than 0 are included.
+        /// </summary>
+        [Required]
+        public IReadOnlyDictionary<string, int> Tiles { get; set; } = new Dictionary<string, int>();
+    }
+
+    public class BookPayloadModel : PayloadModelBase
+    {
+        /// <summary>
+        /// All payloads that are included in this blueprint book.
+        /// Only set when the `include_children` query parameter is `true`.
+        /// </summary>
+        [Required]
+        public IEnumerable<PayloadModelBase>? Children { get; set; }
     }
 }

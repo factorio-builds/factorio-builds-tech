@@ -28,7 +28,7 @@ namespace FactorioTech.Api.ViewModels
         /// </summary>
         [Required]
         public LinkModel Versions { get; init; }
-        
+
         /// <summary>
         /// The absolute URL to the list of this build's followers.
         /// </summary>

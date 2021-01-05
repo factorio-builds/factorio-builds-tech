@@ -49,7 +49,7 @@ namespace FactorioTech.Api.Extensions
                 Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
+                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
             };
 
         public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
@@ -68,9 +68,9 @@ namespace FactorioTech.Api.Extensions
                 }),
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(Blueprint.LatestVersion)),
-                Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(Blueprint.Owner)),
-                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(Blueprint.Tags)),
+                LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(blueprint.LatestVersion)),
+                Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(blueprint.Owner)),
+                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
             };
 
         public static VersionsModel ToViewModel(this IReadOnlyCollection<BlueprintVersion> versions, IUrlHelper urlHelper) =>
@@ -100,16 +100,19 @@ namespace FactorioTech.Api.Extensions
                 CreatedAt = version.CreatedAt,
                 Name = version.Name,
                 Description = version.Description,
-                Payload = version.Payload?.ToThinViewModel(urlHelper, envelope)
-                          ?? throw new ArgumentNullException(nameof(BlueprintVersion.Payload)),
+                Payload = version.Payload?.ToViewModel(urlHelper, envelope)
+                          ?? throw new ArgumentNullException(nameof(version.Payload)),
             };
 
         public static PayloadModelBase ToViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph = null) =>
-            payloadGraph == null
-                ? payload.ToThinViewModel(urlHelper, envelope)
-                : payload.ToFullViewModel(urlHelper, envelope, payloadGraph);
+            payload.Type switch
+            {
+                BlueprintType.Blueprint => payload.ToBlueprintViewModel(urlHelper, envelope),
+                BlueprintType.Book => payload.ToBookViewModel(urlHelper, envelope, payloadGraph),
+                _ => throw new ArgumentOutOfRangeException(nameof(payload.Type)),
+            };
 
-        public static ThinPayloadModel ToThinViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+        public static BlueprintPayloadModel ToBlueprintViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
                 Links = urlHelper.BuildLinks(payload, envelope),
@@ -117,36 +120,25 @@ namespace FactorioTech.Api.Extensions
                 Type = payload.Type,
                 GameVersion = payload.GameVersion,
                 Encoded = payload.Encoded,
-                Blueprint = envelope.ToViewModel(),
-            };
-
-        public static FullPayloadModel ToFullViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache payloadGraph) =>
-            new()
-            {
-                Links = urlHelper.BuildLinks(payload, envelope),
-                Hash = payload.Hash,
-                Type = payload.Type,
-                GameVersion = payload.GameVersion,
-                Encoded = payload.Encoded,
-                Blueprint = envelope.ToViewModel(),
-                Children = envelope.BlueprintBook?.Blueprints?.Select(e => payloadGraph[e].ToFullViewModel(urlHelper, e, payloadGraph))
-                           ?? Enumerable.Empty<FullPayloadModel>(),
-            };
-
-        public static BlueprintEnvelopeModel ToViewModel(this FactorioApi.BlueprintEnvelope envelope) =>
-            new()
-            {
                 Label = envelope.Label,
                 Description = envelope.Description,
-                Entities = envelope.Blueprint?.Entities
-                    .GroupBy(e => e.Name)
-                    .OrderByDescending(g => g.Count())
-                    .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Count())
-                    ?? new Dictionary<string, int>(),
-                Icons = envelope.Icons?
-                    .OrderBy(i => i.Index)
-                    .Select(i => new GameIcon((short)i.Index, i.Signal.Type, i.Signal.Name))
-                    ?? Enumerable.Empty<GameIcon>(),
+                Icons = envelope.Icons.ToGameIcons(),
+                Entities = envelope.Blueprint?.Entities.ToItemStats() ?? throw new ArgumentNullException(nameof(envelope.Blueprint)),
+                Tiles = envelope.Blueprint?.Tiles.ToItemStats() ?? throw new ArgumentNullException(nameof(envelope.Blueprint)),
+            };
+
+        public static BookPayloadModel ToBookViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph) =>
+            new()
+            {
+                Links = urlHelper.BuildLinks(payload, envelope),
+                Hash = payload.Hash,
+                Type = payload.Type,
+                GameVersion = payload.GameVersion,
+                Encoded = payload.Encoded,
+                Label = envelope.Label,
+                Description = envelope.Description,
+                Icons = envelope.Icons.ToGameIcons(),
+                Children = payloadGraph != null ? MapChildren(urlHelper, envelope, payloadGraph) : null,
             };
 
         public static ProblemDetails ToProblem(this BlueprintService.CreateResult result) =>
@@ -159,5 +151,9 @@ namespace FactorioTech.Api.Extensions
                     { "details", result },
                 },
             };
+
+        private static IEnumerable<PayloadModelBase> MapChildren(IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache payloadGraph) =>
+            envelope.BlueprintBook?.Blueprints?.Select(e => payloadGraph[e].ToViewModel(urlHelper, e, payloadGraph))
+            ?? Enumerable.Empty<PayloadModelBase>();
     }
 }
