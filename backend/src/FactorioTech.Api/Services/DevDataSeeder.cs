@@ -17,7 +17,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace FactorioTech.Api
+namespace FactorioTech.Api.Services
 {
     internal static class DevDataSeederExtensions
     {

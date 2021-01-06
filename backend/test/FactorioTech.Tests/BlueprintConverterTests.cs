@@ -16,6 +16,7 @@ namespace FactorioTech.Tests
         public BlueprintConverterTests(ITestOutputHelper output) => _output = output;
 
         [Theory]
+        [Trait("Type", "Fast")]
         [InlineData(64424902656, "0.15.6.0")]
         [InlineData(64425099264, "0.15.9.0")]
         [InlineData(68722819072, "0.16.51.0")]

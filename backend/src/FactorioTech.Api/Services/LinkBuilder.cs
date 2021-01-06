@@ -1,4 +1,5 @@
 using FactorioTech.Api.Controllers;
+using FactorioTech.Api.Extensions;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
@@ -6,18 +7,25 @@ using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
-namespace FactorioTech.Api.Extensions
+namespace FactorioTech.Api.Services
 {
     public static class LinkBuilder
     {
         public static BuildsLinks BuildLinks(this IUrlHelper urlHelper, IEnumerable<Blueprint> blueprints, BuildsQueryParams query, bool hasMore) =>
             new()
             {
-                CreateBuild = new(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), "post"),
-                CreatePayload = new(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), "put"),
+                CreateBuild = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
+                    ? new(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), "post")
+                    : null,
+
+                CreatePayload = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
+                    ? new(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), "put")
+                    : null,
+
                 Prev = query.Page > 1
                     ? new(urlHelper.ActionLink(nameof(BuildController.ListBuilds), "Build", query.ToValues(query.Page - 1)))
                     : null,
+
                 Next = hasMore
                     ? new(urlHelper.ActionLink(nameof(BuildController.ListBuilds), "Build", query.ToValues(query.Page + 1)))
                     : null,
@@ -42,8 +50,14 @@ namespace FactorioTech.Api.Extensions
                 Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues), AppConfig.Cover.Width, AppConfig.Cover.Height),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
-                AddVersion = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post"),
-                ToggleFavorite = new(urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", buildIdValues), "post"),
+
+                AddVersion = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
+                    ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
+                    : null,
+
+                ToggleFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
+                    ? new(urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", buildIdValues), "post")
+                    : null,
             };
         }
 

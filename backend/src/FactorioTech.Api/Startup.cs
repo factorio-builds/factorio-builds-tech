@@ -1,4 +1,6 @@
 using FactorioTech.Api.Extensions;
+using FactorioTech.Api.Extensions.Json;
+using FactorioTech.Api.Services;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
@@ -47,14 +49,14 @@ namespace FactorioTech.Api
             services.AddHttpClient();
             services.AddControllers().AddJsonOptions(options =>
             {
+                options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
                 options.JsonSerializerOptions.Converters.Add(new PolymorphicJsonConverter<PayloadModelBase>());
                 options.JsonSerializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.Converters.Add(new VersionJsonConverter());
                 options.JsonSerializerOptions.Converters.Add(new HashJsonConverter());
-                options.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
                 options.JsonSerializerOptions.IgnoreNullValues = true;
-                options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                options.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
             });
 
             services.AddSwaggerGen(options =>

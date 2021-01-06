@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace FactorioTech.Api.Extensions
+namespace FactorioTech.Api.Services
 {
     public static class ViewModelMapper
     {

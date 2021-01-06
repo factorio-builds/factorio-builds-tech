@@ -17,7 +17,7 @@ namespace FactorioTech.Core.Services
         public enum RenderingType
         {
             Full,
-            Thumb
+            Thumb,
         }
 
         private readonly ILogger<ImageService> _logger;
@@ -88,6 +88,9 @@ namespace FactorioTech.Core.Services
 
                     await SaveRenderingThumb(hash, rendering);
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
             return TryLoadIfExists();
@@ -156,7 +159,8 @@ namespace FactorioTech.Core.Services
 
             var imageFqfn = GetRenderingFqfn(hash, RenderingType.Thumb);
 
-            try {
+            try
+            {
                 await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
                 await image.SaveAsync(outFile, format);
 

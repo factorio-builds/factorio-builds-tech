@@ -1,44 +1,31 @@
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core
 {
-    public interface IEncodableBlueprint
+    public sealed class PayloadCache : Dictionary<FactorioApi.IBlueprint, BlueprintPayload>
     {
-        ulong Version { get; }
-        string Item { get; }
-    }
-
-    public sealed class PayloadCache : Dictionary<IEncodableBlueprint, BlueprintPayload>
-    {
-        public async Task<BlueprintPayload> EnsureInitialized(IEncodableBlueprint item)
+        public async Task<BlueprintPayload> EnsureInitialized(FactorioApi.IBlueprint blueprint)
         {
-            if (TryGetValue(item, out var payload))
+            if (TryGetValue(blueprint, out var payload))
             {
-                TryAddFirstChild(item as FactorioApi.BlueprintEnvelope, payload);
+                TryAddFirstChild(blueprint as FactorioApi.BlueprintEnvelope, payload);
                 return payload;
             }
 
             var converter = new BlueprintConverter();
-            var encoded = item switch
-            {
-                FactorioApi.Blueprint bp => await converter.Encode(bp),
-                FactorioApi.BlueprintBook bb => await converter.Encode(bb),
-                FactorioApi.BlueprintEnvelope e => await converter.Encode(e),
-                _ => throw new Exception("Invalid item type"),
-            };
+            var encoded = await converter.Encode(blueprint);
 
             payload = new BlueprintPayload(
                 Hash.Compute(encoded),
-                converter.ParseType(item.Item),
-                converter.DecodeGameVersion(item.Version),
+                converter.ParseType(blueprint.Item),
+                converter.DecodeGameVersion(blueprint.Version),
                 encoded);
 
-            TryAdd(item, payload);
-            TryAddFirstChild(item as FactorioApi.BlueprintEnvelope, payload);
+            TryAdd(blueprint, payload);
+            TryAddFirstChild(blueprint as FactorioApi.BlueprintEnvelope, payload);
             return payload;
         }
 

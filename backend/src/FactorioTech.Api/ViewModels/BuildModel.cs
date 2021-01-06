@@ -37,7 +37,8 @@ namespace FactorioTech.Api.ViewModels
 
         /// <summary>
         /// The absolute URL to the API endpoint to add a version to this build.
-        /// Only available if the call has been made with an authenticated user token.
+        /// Only available if the call has been made with an authenticated user token
+        /// and the authenticated user is the owner of the build.
         /// </summary>
         public LinkModel? AddVersion { get; init; }
 

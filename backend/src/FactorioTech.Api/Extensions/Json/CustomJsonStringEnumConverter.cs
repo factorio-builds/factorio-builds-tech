@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FactorioTech.Api.Extensions
+namespace FactorioTech.Api.Extensions.Json
 {
     /// <summary>
     /// Workaround for System.Text.Json not supporting custom enum conversion (yet).
