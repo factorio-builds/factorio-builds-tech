@@ -6,7 +6,18 @@ namespace FactorioTech.Core
 {
     public static class FactorioApi
     {
-        public sealed class BlueprintEnvelope : IEncodableBlueprint
+        public interface IBlueprint
+        {
+            ulong Version { get; }
+            string Item { get; }
+        }
+
+        public interface IItem
+        {
+            string Name { get; }
+        }
+
+        public sealed class BlueprintEnvelope : IBlueprint
         {
             [JsonPropertyName("blueprint"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public Blueprint? Blueprint { get; init; }
@@ -36,7 +47,7 @@ namespace FactorioTech.Core
             public Dictionary<string, object>? ExtensionData { get; init; }
         }
 
-        public sealed class BlueprintBook : IEncodableBlueprint
+        public sealed class BlueprintBook : IBlueprint
         {
             [JsonPropertyName("version")]
             public ulong Version { get; init; }
@@ -63,7 +74,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Blueprint_object
         /// </summary>
-        public sealed class Blueprint : IEncodableBlueprint
+        public sealed class Blueprint : IBlueprint
         {
             [JsonPropertyName("version")]
             public ulong Version { get; init; }
@@ -75,7 +86,7 @@ namespace FactorioTech.Core
             public IEnumerable<Entity> Entities { get; init; } = Enumerable.Empty<Entity>();
 
             [JsonPropertyName("Tiles")]
-            public IEnumerable<Entity> Tiles { get; init; } = Enumerable.Empty<Entity>();
+            public IEnumerable<Tile> Tiles { get; init; } = Enumerable.Empty<Tile>();
 
             [JsonPropertyName("label"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string? Label { get; init; }
@@ -93,13 +104,34 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Entity_object
         /// </summary>
-        public sealed class Entity
+        public sealed class Entity : IItem
         {
             /// <summary>
             /// Prototype name of the entity (e.g. "offshore-pump").
             /// </summary>
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
+
+            /// <summary>
+            /// #Position object, position of the entity within the blueprint.
+            /// </summary>
+            [JsonPropertyName("position")]
+            public Position Position { get; init; } = new();
+
+            [JsonExtensionData]
+            public Dictionary<string, object>? ExtensionData { get; init; }
+        }
+
+        /// <summary>
+        /// https://wiki.factorio.com/Blueprint_string_format#Tile_object
+        /// </summary>
+        public sealed class Tile : IItem
+        {
+            [JsonPropertyName("name")]
+            public string Name { get; init; } = string.Empty;
+
+            [JsonPropertyName("position")]
+            public Position Position { get; init; } = new();
 
             [JsonExtensionData]
             public Dictionary<string, object>? ExtensionData { get; init; }
@@ -123,7 +155,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#SignalID_object
         /// </summary>
-        public sealed class SignalId
+        public sealed class SignalId : IItem
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -133,6 +165,18 @@ namespace FactorioTech.Core
 
             [JsonExtensionData]
             public Dictionary<string, object>? ExtensionData { get; init; }
+        }
+
+        /// <summary>
+        /// https://wiki.factorio.com/Blueprint_string_format#Position_object
+        /// </summary>
+        public sealed class Position
+        {
+            [JsonPropertyName("x")]
+            public float X { get; init; }
+
+            [JsonPropertyName("y")]
+            public float Y { get; init; }
         }
     }
 }

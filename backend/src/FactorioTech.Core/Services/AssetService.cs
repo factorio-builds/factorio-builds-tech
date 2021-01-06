@@ -59,7 +59,7 @@ namespace FactorioTech.Core.Services
                 IconSize.Square32 => new Rectangle(64, 0, 32, 32),
                 IconSize.Square16 => new Rectangle(64 + 32, 0, 16, 16),
                 IconSize.Square8 => new Rectangle(64 + 32 + 16, 0, 8, 8),
-                _ => throw new ArgumentOutOfRangeException(nameof(size)),
+                _ => throw new ArgumentOutOfRangeException(nameof(size), size, null),
             };
 
             image.Mutate(x => x.Crop(cropRectangle));

@@ -226,10 +226,6 @@ namespace FactorioTech.Core.Services
             return result;
         }
 
-
-        public async Task<bool> SlugExistsForUser(Guid userId, string slug) =>
-            await _dbContext.Blueprints.AnyAsync(bp => bp.NormalizedSlug == slug.ToUpperInvariant() && bp.OwnerId == userId);
-
         public async Task SavePayloadGraph(Hash parentHash, IReadOnlyCollection<BlueprintPayload> payloads)
         {
             var newHashes = payloads.Select(p => p.Hash);

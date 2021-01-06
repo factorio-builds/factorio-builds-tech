@@ -1,6 +1,8 @@
 using FactorioTech.Api.Extensions;
+using FactorioTech.Api.Services;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core.Data;
+using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -78,34 +80,13 @@ namespace FactorioTech.Api.Controllers
                     null),
                 User.GetUserId());
 
-            var success = result as BlueprintService.CreateResult.Success;
-            if (success == null) return result switch
+            return result switch
             {
+                BlueprintService.CreateResult.Success success => await HandleCreateSuccess(success.Blueprint, request.Cover),
                 BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
                 BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
-                _ => BadRequest(result.ToProblem()),
+                {} error => BadRequest(error.ToProblem()),
             };
-
-            if (request.Cover.File != null)
-            {
-                await _imageService.SaveCroppedCover(
-                    success.Blueprint.BlueprintId,
-                    request.Cover.File.OpenReadStream(),
-                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
-            }
-            else if (request.Cover.Hash != null)
-            {
-                await _imageService.SaveCroppedCover(
-                    success.Blueprint.BlueprintId,
-                    success.Blueprint.LatestVersionId!.Value, request.Cover.Hash.Value,
-                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
-            }
-
-            return Created(Url.ActionLink(nameof(GetDetails), "Build", new
-            {
-                owner = success.Blueprint.OwnerSlug,
-                slug = success.Blueprint.Slug,
-            }), success.Blueprint.ToThinViewModel(Url));
         }
 
         /// <summary>
@@ -217,34 +198,13 @@ namespace FactorioTech.Api.Controllers
                     request.ExpectedPreviousVersionId),
                 User.GetUserId());
 
-            var success = result as BlueprintService.CreateResult.Success;
-            if (success == null) return result switch
+            return result switch
             {
+                BlueprintService.CreateResult.Success success => await HandleCreateSuccess(success.Blueprint, request.Cover),
                 BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
-                BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
-                _ => BadRequest(result.ToProblem()),
+                BlueprintService.CreateResult.ParentNotFound error => NotFound(error.ToProblem()),
+                {} error => BadRequest(error.ToProblem()),
             };
-
-            if (request.Cover.File != null)
-            {
-                await _imageService.SaveCroppedCover(
-                    success.Blueprint.BlueprintId,
-                    request.Cover.File.OpenReadStream(),
-                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
-            }
-            else if (request.Cover.Hash != null)
-            {
-                await _imageService.SaveCroppedCover(
-                    success.Blueprint.BlueprintId,
-                    success.Blueprint.LatestVersionId!.Value, request.Cover.Hash.Value,
-                    (request.Cover.X, request.Cover.Y, request.Cover.Width, request.Cover.Height));
-            }
-
-            return Created(Url.ActionLink(nameof(GetDetails), "Build", new
-            {
-                owner = success.Blueprint.OwnerSlug,
-                slug = success.Blueprint.Slug,
-            }), success.Blueprint.ToThinViewModel(Url));
         }
 
         /// <summary>
@@ -267,6 +227,30 @@ namespace FactorioTech.Api.Controllers
                 return NotFound();
 
             return File(file, format);
+        }
+
+        private async Task<IActionResult> HandleCreateSuccess(Blueprint created, CreateRequestBase.ImageData cover)
+        {
+            if (cover.File != null)
+            {
+                await _imageService.SaveCroppedCover(
+                    created.BlueprintId,
+                    cover.File.OpenReadStream(),
+                    (cover.X, cover.Y, cover.Width, cover.Height));
+            }
+            else if (cover.Hash != null)
+            {
+                await _imageService.SaveCroppedCover(
+                    created.BlueprintId,
+                    created.LatestVersionId!.Value, cover.Hash.Value,
+                    (cover.X, cover.Y, cover.Width, cover.Height));
+            }
+
+            return Created(Url.ActionLink(nameof(GetDetails), "Build", new
+            {
+                owner = created.OwnerSlug,
+                slug = created.Slug,
+            }), created.ToThinViewModel(Url));
         }
     }
 }

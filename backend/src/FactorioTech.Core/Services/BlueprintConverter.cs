@@ -89,14 +89,16 @@ namespace FactorioTech.Core.Services
             }
         }
 
-        public async Task<string> Encode(FactorioApi.Blueprint blueprint) =>
-            await Encode(new FactorioApi.BlueprintEnvelope { Blueprint = blueprint });
-
-        public async Task<string> Encode(FactorioApi.BlueprintBook book) =>
-            await Encode(new FactorioApi.BlueprintEnvelope { BlueprintBook = book });
-
-        public async Task<string> Encode(FactorioApi.BlueprintEnvelope envelope)
+        public async Task<string> Encode(FactorioApi.IBlueprint blueprint)
         {
+            var envelope = blueprint switch
+            {
+                FactorioApi.Blueprint bp => new FactorioApi.BlueprintEnvelope { Blueprint = bp },
+                FactorioApi.BlueprintBook bb => new FactorioApi.BlueprintEnvelope { BlueprintBook = bb },
+                FactorioApi.BlueprintEnvelope e => e,
+                _ => throw new ArgumentOutOfRangeException(nameof(blueprint), blueprint.GetType(), null),
+            };
+
             await using var json = new MemoryStream();
             await JsonSerializer.SerializeAsync(json, envelope, JsonSerializerOptions);
             json.Seek(0, SeekOrigin.Begin);

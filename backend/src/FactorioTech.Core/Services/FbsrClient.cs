@@ -23,7 +23,7 @@ namespace FactorioTech.Core.Services
         private readonly AppConfig _appConfig;
         private readonly HttpClient _httpClient;
 
-        private static readonly JsonSerializerOptions _options = new()
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
             IgnoreNullValues = true,
@@ -47,7 +47,7 @@ namespace FactorioTech.Core.Services
                 MaxWidth = AppConfig.Rendering.MaxWidth,
                 MaxHeight = AppConfig.Rendering.MaxHeight,
                 ShowInfoPanels = false,
-            }, _options);
+            }, JsonSerializerOptions);
 
             if (!response.IsSuccessStatusCode)
             {
