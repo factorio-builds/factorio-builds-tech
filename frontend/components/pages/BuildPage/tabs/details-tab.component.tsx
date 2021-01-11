@@ -42,7 +42,7 @@ const DetailsTab: TTabComponent = (props) => {
       <h3>Description</h3>
       <SC.Description>
         {props.build.description ? (
-          <ReactMarkdown source={props.build.description.markdown} />
+          <ReactMarkdown source={props.build.description} />
         ) : (
           <em>No description provided</em>
         )}

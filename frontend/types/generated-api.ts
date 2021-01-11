@@ -27,19 +27,25 @@ export interface paths {
          * The requested game icon
          */
         "200": {
-          "image/png": string
+          "text/plain": string
+          "application/json": string
+          "text/json": string
         }
         /**
          * The request is malformed or invalid
          */
         "400": {
-          "image/png": components["schemas"]["ProblemDetails"]
+          "text/plain": components["schemas"]["ProblemDetails"]
+          "application/json": components["schemas"]["ProblemDetails"]
+          "text/json": components["schemas"]["ProblemDetails"]
         }
         /**
          * The requested icon does not exist
          */
         "404": {
-          "image/png": components["schemas"]["ProblemDetails"]
+          "text/plain": components["schemas"]["ProblemDetails"]
+          "application/json": components["schemas"]["ProblemDetails"]
+          "text/json": components["schemas"]["ProblemDetails"]
         }
       }
     }
@@ -97,9 +103,67 @@ export interface paths {
     }
     post: {
       requestBody: {
-        "application/json": components["schemas"]["CreateBuildRequest"]
-        "text/json": components["schemas"]["CreateBuildRequest"]
-        "application/*+json": components["schemas"]["CreateBuildRequest"]
+        "multipart/form-data": {
+          /**
+           * The slug for the new build. It is used in the build's URL and must be unique per user.
+           * It can consist only of latin alphanumeric characters, underscores and hyphens.
+           */
+          Slug: string
+          /**
+           * The hash of payload that should be used to create this build version.
+           * The payload must have been previously created.
+           */
+          Hash: string
+          /**
+           * The title or display name of the build.
+           */
+          Title: string
+          /**
+           * The build description in Markdown.
+           */
+          Description?: string | null
+          /**
+           * The build's tags.
+           */
+          Tags: string[]
+          /**
+           * The build's icons.
+           */
+          Icons: components["schemas"]["GameIcon"][]
+          /**
+           * An optional name for the version to be created.
+           * If empty, the hash will be used as version name.
+           */
+          "Version.Name"?: string | null
+          /**
+           * An optional description for the version to be created.
+           */
+          "Version.Description"?: string | null
+          /**
+           * The vertical horizontal of the crop rectangle.
+           */
+          "Cover.X": number
+          /**
+           * The vertical position of the crop rectangle.
+           */
+          "Cover.Y": number
+          /**
+           * The width of the crop rectangle.
+           */
+          "Cover.Width": number
+          /**
+           * The height of the crop rectangle.
+           */
+          "Cover.Height": number
+          /**
+           * The uploaded form-file.
+           */
+          "Cover.File"?: string | null
+          /**
+           * The hash of an existing blueprint rendering.
+           */
+          "Cover.Hash"?: components["schemas"]["Hash"] | null
+        }
       }
       responses: {
         /**
@@ -246,9 +310,66 @@ export interface paths {
         }
       }
       requestBody: {
-        "application/json": components["schemas"]["CreateVersionRequest"]
-        "text/json": components["schemas"]["CreateVersionRequest"]
-        "application/*+json": components["schemas"]["CreateVersionRequest"]
+        "multipart/form-data": {
+          /**
+           * The current (latest) version of the build. It must be specified to avoid concurrency issues.
+           */
+          ExpectedPreviousVersionId: string
+          /**
+           * The hash of payload that should be used to create this build version.
+           * The payload must have been previously created.
+           */
+          Hash: string
+          /**
+           * The title or display name of the build.
+           */
+          Title: string
+          /**
+           * The build description in Markdown.
+           */
+          Description?: string | null
+          /**
+           * The build's tags.
+           */
+          Tags: string[]
+          /**
+           * The build's icons.
+           */
+          Icons: components["schemas"]["GameIcon"][]
+          /**
+           * An optional name for the version to be created.
+           * If empty, the hash will be used as version name.
+           */
+          "Version.Name"?: string | null
+          /**
+           * An optional description for the version to be created.
+           */
+          "Version.Description"?: string | null
+          /**
+           * The vertical horizontal of the crop rectangle.
+           */
+          "Cover.X": number
+          /**
+           * The vertical position of the crop rectangle.
+           */
+          "Cover.Y": number
+          /**
+           * The width of the crop rectangle.
+           */
+          "Cover.Width": number
+          /**
+           * The height of the crop rectangle.
+           */
+          "Cover.Height": number
+          /**
+           * The uploaded form-file.
+           */
+          "Cover.File"?: string | null
+          /**
+           * The hash of an existing blueprint rendering.
+           */
+          "Cover.Hash"?: components["schemas"]["Hash"] | null
+        }
       }
       responses: {
         /**
@@ -343,7 +464,9 @@ export interface paths {
          * The details of the requested payload
          */
         "200": {
-          "application/json": components["schemas"]["FullPayloadModel"]
+          "application/json":
+            | components["schemas"]["BlueprintPayloadModel"]
+            | components["schemas"]["BookPayloadModel"]
         }
         /**
          * The request is malformed or invalid
@@ -448,37 +571,6 @@ export interface paths {
         "400": {
           "application/json": components["schemas"]["ProblemDetails"]
         }
-        /**
-         * Unauthorized
-         */
-        "401": unknown
-        /**
-         * Forbidden
-         */
-        "403": unknown
-      }
-    }
-  }
-  "/rpc/render-markdown": {
-    post: {
-      requestBody: {
-        "application/json": string
-        "text/json": string
-        "application/*+json": string
-      }
-      responses: {
-        /**
-         * The converted HTML
-         */
-        "200": {
-          "text/plain": string
-          "application/json": string
-          "text/json": string
-        }
-        /**
-         * The request is malformed or invalid
-         */
-        "400": unknown
         /**
          * Unauthorized
          */
@@ -704,28 +796,103 @@ export interface components {
       detail?: string | null
       instance?: string | null
     } & { [key: string]: { [key: string]: any } }
-    LinkModel: { href: string } & { [key: string]: { [key: string]: any } }
+    LinkModel: {
+      /**
+       * The absolute URI the the linked resource.
+       */
+      href: string
+      /**
+       * The HTTP method to request the linked resource.
+       * Defaults to `GET` if unset (`null`).
+       */
+      method?: string | null
+    }
     BuildsLinks: {
-      create_build?: components["schemas"]["LinkModel"]
-      create_payload?: components["schemas"]["LinkModel"]
-      prev?: components["schemas"]["LinkModel"]
-      next?: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to the API endpoint to create a new build.
+       * Only available if the call has been made with an authenticated user token.
+       */
+      create_build?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the API endpoint to add a payload.
+       * Only available if the call has been made with an authenticated user token.
+       */
+      create_payload?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the previous page of the results list.
+       * Only available if the current page is not the first page.
+       */
+      prev?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the next page of the results list.
+       * Only available if there are more results to be returned.
+       */
+      next?: components["schemas"]["LinkModel"] | null
     }
     ImageLinkModel: {
+      /**
+       * The absolute URI the the linked resource.
+       */
       href: string
+      /**
+       * The HTTP method to request the linked resource.
+       * Defaults to `GET` if unset (`null`).
+       */
+      method?: string | null
+      /**
+       * The width of the linked image.
+       */
       width: number
+      /**
+       * The height of the linked image.
+       */
       height: number
-      alt?: string | null
-    } & { [key: string]: { [key: string]: any } }
-    BuildLinks: {
-      self: components["schemas"]["LinkModel"]
-      cover: components["schemas"]["ImageLinkModel"]
-      versions: components["schemas"]["LinkModel"]
-      followers: components["schemas"]["LinkModel"]
-      add_version?: components["schemas"]["LinkModel"]
-      toggle_favorite?: components["schemas"]["LinkModel"]
     }
-    GameIcon: { index: number; type: string; name: string }
+    CollectionLinkModel: {
+      /**
+       * The absolute URI the the linked resource.
+       */
+      href: string
+      /**
+       * The HTTP method to request the linked resource.
+       * Defaults to `GET` if unset (`null`).
+       */
+      method?: string | null
+      /**
+       * The number of items in the linked collection.
+       */
+      count: number
+    }
+    BuildLinks: {
+      /**
+       * The absolute URL to this build's full details.
+       */
+      self: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to this build's cover image.
+       */
+      cover: components["schemas"]["ImageLinkModel"]
+      /**
+       * The absolute URL to the list of this build's versions.
+       */
+      versions: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to the list of this build's followers.
+       */
+      followers: components["schemas"]["CollectionLinkModel"]
+      /**
+       * The absolute URL to the API endpoint to add a version to this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user is the owner of the build.
+       */
+      add_version?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the API endpoint to add a version to this build.
+       * Only available if the call has been made with an authenticated user token.
+       */
+      toggle_favorite?: components["schemas"]["LinkModel"] | null
+    }
+    GameIcon: { type: string; name: string }
     ThinUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -756,6 +923,13 @@ export interface components {
        * The title or display name of the build.
        */
       title: string
+      /**
+       * The build's description in Markdown.
+       */
+      description?: string | null
+      /**
+       * The user who created the build.
+       */
       owner: components["schemas"]["ThinUserModel"]
       /**
        * The game version that was used to create the the most recently added version of this build.
@@ -786,43 +960,7 @@ export interface components {
        */
       builds: components["schemas"]["ThinBuildModel"][]
     }
-    CreateBuildRequest: {
-      /**
-       * The hash of payload that should be used to create this build version.
-       * The payload must have been previously created.
-       */
-      hash: string
-      /**
-       * The title or display name of the build.
-       */
-      title: string
-      /**
-       * The build description in Markdown.
-       */
-      description?: string | null
-      /**
-       * An optional name for the version to be created.
-       * If empty, the hash will be used as version name.
-       */
-      version_name?: string | null
-      /**
-       * An optional description for the version to be created.
-       */
-      version_description?: string | null
-      /**
-       * The build's tags.
-       */
-      tags: string[]
-      /**
-       * The build's icons.
-       */
-      icons: components["schemas"]["GameIcon"][]
-      /**
-       * The slug for the new build. It is used in the build's URL and must be unique per user.
-       * It can consist only of latin alphanumeric characters, underscores and hyphens.
-       */
-      slug: string
-    }
+    Hash: { [key: string]: any }
     FullUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -839,30 +977,52 @@ export interface components {
        */
       registered_at: string
     }
-    DescriptionModel: { markdown: string; html: string }
-    VersionLinks: { payload: components["schemas"]["LinkModel"] }
+    VersionLinks: {
+      /**
+       * The absolute URL to this version's full payload.
+       */
+      payload: components["schemas"]["LinkModel"]
+    }
+    BookPayloadModel: components["schemas"]["PayloadModelBase"] & {
+      /**
+       * All payloads that are included in this blueprint book.
+       * Only set when the `include_children` query parameter is `true`.
+       */
+      children: (
+        | components["schemas"]["BlueprintPayloadModel"]
+        | components["schemas"]["BookPayloadModel"]
+      )[]
+    }
     PayloadLinks: {
+      /**
+       * The absolute URL to this payload's full details.
+       */
       self: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to this payload's raw encoded blueprint string for import in the game or other tools.
+       */
       raw: components["schemas"]["LinkModel"]
-      rendering_full?: components["schemas"]["LinkModel"]
-      rendering_thumb?: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to this payload's full-size rendering.
+       * Only available if the payload is of type `blueprint`.
+       */
+      rendering_full?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to this payload's rendering thumbnail.
+       * Only available if the payload is of type `blueprint`.
+       */
+      rendering_thumb?: components["schemas"]["LinkModel"] | null
     }
-    BlueprintEnvelopeModel: {
-      label?: string | null
-      description?: string | null
-      icons: components["schemas"]["GameIcon"][]
-      entities: { [key: string]: number }
-    }
-    ThinPayloadModel: {
+    PayloadModelBase: {
+      /**
+       * The payload's blueprint type.
+       */
+      type: "blueprint" | "blueprint-book"
       _links: components["schemas"]["PayloadLinks"]
       /**
        * The `md5` hash of the payload's encoded blueprint string.
        */
       hash: string
-      /**
-       * The payload's blueprint type.
-       */
-      type: "blueprint" | "blueprint-book"
       /**
        * The game version that was used to create the blueprint.
        */
@@ -871,7 +1031,30 @@ export interface components {
        * The raw encoded blueprint string for import in the game or other tools
        */
       encoded: string
-      blueprint: components["schemas"]["BlueprintEnvelopeModel"]
+      /**
+       * The ordered list of 1 to 4 icons that is included in the ingame blueprint payload.
+       */
+      icons: components["schemas"]["GameIcon"][]
+      /**
+       * An optional label that is included in the ingame blueprint payload.
+       */
+      label?: string | null
+      /**
+       * An optional description that is included in the ingame blueprint payload.
+       */
+      description?: string | null
+    }
+    BlueprintPayloadModel: components["schemas"]["PayloadModelBase"] & {
+      /**
+       * A map of item `name` to `count` of all **entities** in this payload's blueprint.
+       * Only items with a count greater than 0 are included.
+       */
+      entities: { [key: string]: number }
+      /**
+       * A map of item `name` to `count` of all **tiles** in this payload's blueprint.
+       * Only items with a count greater than 0 are included.
+       */
+      tiles: { [key: string]: number }
     }
     FullVersionModel: {
       _links: components["schemas"]["VersionLinks"]
@@ -895,7 +1078,12 @@ export interface components {
        * An optional description for the version.
        */
       description?: string | null
-      payload: components["schemas"]["ThinPayloadModel"]
+      /**
+       * The payload attached to the version.
+       */
+      payload:
+        | components["schemas"]["BlueprintPayloadModel"]
+        | components["schemas"]["BookPayloadModel"]
     }
     FullBuildModel: {
       _links: components["schemas"]["BuildLinks"]
@@ -920,6 +1108,13 @@ export interface components {
        * The title or display name of the build.
        */
       title: string
+      /**
+       * The build's description in Markdown.
+       */
+      description?: string | null
+      /**
+       * The user who created the build.
+       */
       owner: components["schemas"]["FullUserModel"]
       /**
        * The game version that was used to create the the most recently added version of this build.
@@ -933,7 +1128,9 @@ export interface components {
        * The build's tags.
        */
       tags: string[]
-      description?: components["schemas"]["DescriptionModel"]
+      /**
+       * The build's most recently added version.
+       */
       latest_version: components["schemas"]["FullVersionModel"]
     }
     UsersModel: {
@@ -978,67 +1175,6 @@ export interface components {
        * The paged, filtered and ordered list of matching versions.
        */
       versions: components["schemas"]["ThinVersionModel"][]
-    }
-    CreateVersionRequest: {
-      /**
-       * The hash of payload that should be used to create this build version.
-       * The payload must have been previously created.
-       */
-      hash: string
-      /**
-       * The title or display name of the build.
-       */
-      title: string
-      /**
-       * The build description in Markdown.
-       */
-      description?: string | null
-      /**
-       * An optional name for the version to be created.
-       * If empty, the hash will be used as version name.
-       */
-      version_name?: string | null
-      /**
-       * An optional description for the version to be created.
-       */
-      version_description?: string | null
-      /**
-       * The build's tags.
-       */
-      tags: string[]
-      /**
-       * The build's icons.
-       */
-      icons: components["schemas"]["GameIcon"][]
-      /**
-       * The current (latest) version of the build. It must be specified to avoid concurrency issues.
-       */
-      expected_previous_version_id: string
-    }
-    FullPayloadModel: {
-      _links: components["schemas"]["PayloadLinks"]
-      /**
-       * The `md5` hash of the payload's encoded blueprint string.
-       */
-      hash: string
-      /**
-       * The payload's blueprint type.
-       */
-      type: "blueprint" | "blueprint-book"
-      /**
-       * The game version that was used to create the blueprint.
-       */
-      game_version: string
-      /**
-       * The raw encoded blueprint string for import in the game or other tools
-       */
-      encoded: string
-      blueprint: components["schemas"]["BlueprintEnvelopeModel"]
-      /**
-       * If the payload is a `blueprint-book`, children contains all nested blueprints.
-       * For payloads of type `blueprint`, this collection is empty.
-       */
-      children?: components["schemas"]["FullPayloadModel"][] | null
     }
     CreatePayloadRequest: {
       /**
