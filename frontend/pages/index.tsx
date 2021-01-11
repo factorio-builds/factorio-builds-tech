@@ -20,14 +20,10 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         console.error(err)
       })
 
-    // console.log(searchResults)
-
     // const deserializedSearchResults = JSON.parse(JSON.stringify(searchResults))
     const deserializedSearchResults: SearchResponse<IThinBuild> = JSON.parse(
       JSON.stringify(searchResults)
     )
-
-    console.log(deserializedSearchResults)
 
     ctx.store.dispatch({
       type: "SEARCH_BUILDS_SUCCESS",

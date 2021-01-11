@@ -207,7 +207,6 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
               loading: false,
               error: false,
             })
-            console.log(res)
             router.push(`/${res.data.owner.username}/${res.data.slug}`)
           })
           .catch((err) => {
