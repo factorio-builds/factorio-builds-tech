@@ -150,7 +150,9 @@ namespace FactorioTech.Api.Services
             };
 
         private static IEnumerable<PayloadModelBase> MapChildren(IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache payloadGraph) =>
-            envelope.BlueprintBook?.Blueprints?.Select(e => payloadGraph[e].ToViewModel(urlHelper, e, payloadGraph))
+            envelope.BlueprintBook?.Blueprints?
+                .Where(e => e.Blueprint != null || e.BlueprintBook != null)
+                .Select(e => payloadGraph[e].ToViewModel(urlHelper, e, payloadGraph))
             ?? Enumerable.Empty<PayloadModelBase>();
     }
 }

@@ -110,7 +110,7 @@ export interface paths {
            */
           Slug: string
           /**
-           * The hash of payload that should be used to create this build version.
+           * The hash of the payload that should be used to create this build version.
            * The payload must have been previously created.
            */
           Hash: string
@@ -132,7 +132,6 @@ export interface paths {
           Icons: components["schemas"]["GameIcon"][]
           /**
            * An optional name for the version to be created.
-           * If empty, the hash will be used as version name.
            */
           "Version.Name"?: string | null
           /**
@@ -140,7 +139,7 @@ export interface paths {
            */
           "Version.Description"?: string | null
           /**
-           * The vertical horizontal of the crop rectangle.
+           * The horizontal position of the crop rectangle.
            */
           "Cover.X": number
           /**
@@ -156,7 +155,7 @@ export interface paths {
            */
           "Cover.Height": number
           /**
-           * The uploaded form-file.
+           * The uploaded cover image.
            */
           "Cover.File"?: string | null
           /**
@@ -316,7 +315,7 @@ export interface paths {
            */
           ExpectedPreviousVersionId: string
           /**
-           * The hash of payload that should be used to create this build version.
+           * The hash of the payload that should be used to create this build version.
            * The payload must have been previously created.
            */
           Hash: string
@@ -338,7 +337,6 @@ export interface paths {
           Icons: components["schemas"]["GameIcon"][]
           /**
            * An optional name for the version to be created.
-           * If empty, the hash will be used as version name.
            */
           "Version.Name"?: string | null
           /**
@@ -346,7 +344,7 @@ export interface paths {
            */
           "Version.Description"?: string | null
           /**
-           * The vertical horizontal of the crop rectangle.
+           * The horizontal position of the crop rectangle.
            */
           "Cover.X": number
           /**
@@ -362,7 +360,7 @@ export interface paths {
            */
           "Cover.Height": number
           /**
-           * The uploaded form-file.
+           * The uploaded cover image.
            */
           "Cover.File"?: string | null
           /**
