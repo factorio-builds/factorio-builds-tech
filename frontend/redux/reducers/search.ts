@@ -1,8 +1,8 @@
-import axios from "axios"
 import { Action } from "redux"
 import { ThunkAction } from "redux-thunk"
 import { ApiSeachBuild, EFilterType, SearchResponse } from "../../types"
 import { IThinBuild } from "../../types/models"
+import { axios } from "../../utils/axios"
 import { IPayloadAction, IStoreState } from "../store"
 
 export interface IStoreSearchState {
@@ -44,7 +44,6 @@ export const searchBuildsAsync = (): ThunkAction<
       axios
         // .get<ApiSeachBuild>("/builds", {
         .get("/builds", {
-          baseURL: "https://api.local.factorio.tech/",
           params: {
             q: getState().filters.query || undefined,
             state: mapFilters(getState(), EFilterType.STATE) || undefined,
