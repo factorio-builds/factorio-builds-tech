@@ -25,12 +25,12 @@ const Step2: React.FC<IStep2Props> = (props) => {
       <SC.Content>
         <Stacker>
           <Field
-            name="name"
-            label="Name"
+            name="title"
+            label="Title"
             type="text"
             required
             component={Input}
-            validate={validate("name")}
+            validate={validate("title")}
           />
 
           <Field
@@ -40,16 +40,6 @@ const Step2: React.FC<IStep2Props> = (props) => {
             rows="5"
             component={Input}
             validate={validate("description")}
-          />
-
-          <Field
-            name="blueprint"
-            label="Blueprint"
-            type="textarea"
-            rows="5"
-            required
-            component={Input}
-            validate={validate("blueprint")}
           />
 
           <Stacker gutter={8}>
