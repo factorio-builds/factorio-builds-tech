@@ -1,6 +1,6 @@
 import * as React from "react"
 import startCase from "lodash/startCase"
-import { IIcon } from "../../../types"
+import { IIcon } from "../../../types/models"
 import * as SC from "./item-icon.styles"
 
 interface IItemIconProps {

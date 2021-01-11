@@ -124,12 +124,6 @@ export interface IBlueprintBook {
   version: number
 }
 
-export interface IIcon {
-  index: number
-  type: string
-  name: string
-}
-
 // IOwner vs IUser??
 interface IOwner {
   display_name: string

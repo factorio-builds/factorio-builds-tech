@@ -15,21 +15,37 @@ const BlueprintsTab: TTabComponent = (props) => {
       {props.payload.loading && "loading..."}
       {props.payload.error && "error?"}
 
-      {props.payload.data?.children &&
+      {props.payload.data &&
+        isBook(props.payload.data) &&
         isBook(props.build.latest_version.payload) && (
           <>
             {props.payload.data.children.map((bp) => {
+              if (isBook(bp)) {
+                return (
+                  <BlueprintItem
+                    key={bp.hash}
+                    depth={0}
+                    isBook={true}
+                    title={bp.label}
+                    icons={bp.icons}
+                    description={bp.description}
+                    // image={bp._links.cover}
+                    nodes={bp.children}
+                  />
+                )
+              }
+
               return (
                 <BlueprintItem
                   key={bp.hash}
                   depth={0}
-                  isBook={isBook(bp)}
-                  title={bp.blueprint.label}
-                  icons={bp.blueprint.icons}
-                  description={bp.blueprint.description}
+                  isBook={false}
+                  title={bp.label}
+                  icons={bp.icons}
+                  description={bp.description}
                   // image={bp._links.cover}
-                  nodes={bp.children}
-                  entities={bp.blueprint.entities}
+                  entities={bp.entities}
+                  tiles={bp.tiles}
                 />
               )
             })}

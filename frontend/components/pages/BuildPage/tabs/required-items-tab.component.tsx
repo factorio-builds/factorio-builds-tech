@@ -20,11 +20,12 @@ const RequiredItemsTab: TTabComponent = (props) => {
   const encoded = props.build.latest_version.payload.encoded
 
   const sortedRequiredItems = useMemo(() => {
-    if (!props.payload.data) {
+    // shouldn't ever happen, this component is not rendered for books
+    if (!props.payload.data || isBook(props.payload.data)) {
       return []
     }
 
-    const entities = props.payload.data.blueprint.entities
+    const entities = props.payload.data.entities
 
     return Object.keys(entities)
       .map((itemName) => {

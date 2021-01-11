@@ -95,14 +95,15 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
   // const { getCategory } = useCategories()
 
   // const isAdmin = user?.roleName === ERole.ADMIN
-  const ownedByMe = build.owner.username === user?.name
+  const ownedByMe = build.owner.username === user?.username
   // const gameStates = build.metadata.state.map(getGameState)
 
   const tabs = useMemo(() => {
     if (isBook(build.latest_version.payload)) {
-      const childrenLength = payload.data?.children
-        ? payload.data.children.length
-        : "..."
+      const childrenLength =
+        payload.data && isBook(payload.data) && payload.data.children
+          ? payload.data.children.length
+          : "..."
 
       return [
         { label: "details", tab: DetailsTab },

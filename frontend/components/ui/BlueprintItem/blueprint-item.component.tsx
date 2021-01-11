@@ -1,36 +1,48 @@
 import React, { useCallback, useState } from "react"
 import Caret from "../../../icons/caret"
 // import Image from "next/image"
-import { IFullPayload } from "../../../types/models"
+import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { countEntities, isBook } from "../../../utils/build"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
 import * as SC from "./blueprint-item.styles"
 
-interface IBlueprintItemProps {
+interface IBaseBlueprintItemProps {
   depth: number
   isBook: boolean
-  title: IFullPayload["blueprint"]["label"]
-  icons: IFullPayload["blueprint"]["icons"]
-  description: IFullPayload["blueprint"]["description"]
+  title: IFullPayload["label"]
+  icons: IFullPayload["icons"]
+  description: IFullPayload["description"]
   // image: IFullPayload["_links"]["cover"]
-  nodes?: IFullPayload[] | null
-  entities?: IFullPayload["blueprint"]["entities"]
 }
+
+interface IBlueprintItemPropsBook extends IBaseBlueprintItemProps {
+  isBook: true
+  nodes: IFullPayload[]
+}
+
+interface IBlueprintItemPropsBlueprint extends IBaseBlueprintItemProps {
+  isBook: false
+  entities: IBlueprintPayload["entities"]
+  tiles: IBlueprintPayload["tiles"]
+}
+
+type IBlueprintItemProps =
+  | IBlueprintItemPropsBook
+  | IBlueprintItemPropsBlueprint
 
 function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
   const [expanded, setExpanded] = useState(false)
 
   const title = props.title || "[unnamed]"
-  console.log(props)
 
   const expand = useCallback(
     () => setExpanded((prevExpanded) => !prevExpanded),
     [expanded]
   )
 
-  const isExpandable = props.nodes || props.description
+  const isExpandable = props.isBook || props.description
 
   return (
     <SC.BlueprintItemWrapper depth={props.depth}>
@@ -49,7 +61,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
             {props.icons.length > 0 && <BuildIcon icons={props.icons} />}
             <Stacker orientation="vertical" gutter={4}>
               <WithIcons input={title} />
-              {props.isBook && props.nodes ? (
+              {props.isBook ? (
                 <SC.Meta>Contains {props.nodes.length} blueprints</SC.Meta>
               ) : (
                 <SC.Meta>
@@ -75,21 +87,39 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
           )}
         </SC.Content>
       </SC.BlueprintItemInner>
-      {props.nodes && expanded && (
+      {props.isBook && expanded && (
         <SC.Expanded>
-          {props.nodes.map((node) => (
-            <BlueprintItem
-              key={node.hash}
-              depth={props.depth + 1}
-              isBook={isBook(node)}
-              title={node.blueprint.label}
-              icons={node.blueprint.icons}
-              description={node.blueprint.description}
-              // image={node._links.cover}
-              nodes={node.children}
-              entities={node.blueprint.entities}
-            />
-          ))}
+          {props.nodes &&
+            props.nodes.map((node) => {
+              if (isBook(node)) {
+                return (
+                  <BlueprintItem
+                    key={node.hash}
+                    depth={props.depth + 1}
+                    isBook={true}
+                    title={node.label}
+                    icons={node.icons}
+                    description={node.description}
+                    // image={node._links.cover}
+                    nodes={node.children}
+                  />
+                )
+              }
+
+              return (
+                <BlueprintItem
+                  key={node.hash}
+                  depth={props.depth + 1}
+                  isBook={false}
+                  title={node.label}
+                  icons={node.icons}
+                  description={node.description}
+                  // image={node._links.cover}
+                  entities={node.entities}
+                  tiles={node.tiles}
+                />
+              )
+            })}
         </SC.Expanded>
       )}
     </SC.BlueprintItemWrapper>
