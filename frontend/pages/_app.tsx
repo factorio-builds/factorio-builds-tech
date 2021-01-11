@@ -41,16 +41,19 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
-  const session = await auth.getSession(ctx.req!)
+  if (typeof window === "undefined") {
+    const session = await auth.getSession(ctx.req!)
 
-  if (session?.user) {
-    ctx.store.dispatch({
-      type: "SET_USER",
-      payload: {
-        id: session.user.sub,
-        name: session.user.username,
-      },
-    })
+    if (session?.user) {
+      ctx.store.dispatch({
+        type: "SET_USER",
+        payload: {
+          id: session.user.sub,
+          name: session.user.username,
+          accessToken: session.accessToken,
+        },
+      })
+    }
   }
 
   return {

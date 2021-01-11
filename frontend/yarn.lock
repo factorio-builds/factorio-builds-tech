@@ -1666,6 +1666,14 @@ axe-core@^4.0.2:
   resolved "https://registry.yarnpkg.com/axe-core/-/axe-core-4.1.1.tgz#70a7855888e287f7add66002211a423937063eaf"
   integrity sha512-5Kgy8Cz6LPC9DJcNb3yjAXTu3XihQgEdnIg50c//zOC/MyLP0Clg+Y8Sh9ZjjnvBrDZU4DgXS9C3T9r4/scGZQ==
 
+axios-hooks@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/axios-hooks/-/axios-hooks-2.2.0.tgz#82393c850efd8a768b9bdca9a66741bf62c586f7"
+  integrity sha512-6/Kl2YczjBdBvJRy2Ohf4p6R5sKrscve+ZY4kDSWLPlrunc+3Yo+xvW9BGMZTSmVzdNji5Pg0sP0sAcIgL/OMg==
+  dependencies:
+    "@babel/runtime" "7.12.5"
+    lru-cache "6.0.0"
+
 axios@^0.21.1:
   version "0.21.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
