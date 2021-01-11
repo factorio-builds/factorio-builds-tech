@@ -8,6 +8,7 @@ interface ITextProps {
   value: React.ReactText
   placeholder?: string
   icon?: JSX.Element
+  spellCheck?: boolean
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void
 }
@@ -17,6 +18,7 @@ interface ITextareaProps {
   name?: string
   value: React.ReactText
   placeholder?: string
+  spellCheck?: boolean
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   onKeyPress?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }
@@ -27,6 +29,7 @@ const Text: React.FC<ITextProps> = ({
   value,
   placeholder,
   icon,
+  spellCheck,
   onChange,
   onKeyPress,
 }) => {
@@ -48,6 +51,7 @@ const Text: React.FC<ITextProps> = ({
         name={name}
         value={value}
         placeholder={placeholder}
+        spellCheck={spellCheck}
         onChange={onChange}
         onKeyPress={onKeyPress}
         onFocus={setFocus}
@@ -58,7 +62,7 @@ const Text: React.FC<ITextProps> = ({
 }
 
 const Textarea: React.FC<ITextareaProps> = (props) => {
-  const { id, name, value, placeholder, ...restProps } = props
+  const { id, name, value, placeholder, spellCheck, ...restProps } = props
 
   return (
     <SC.StyledTextarea
@@ -66,6 +70,7 @@ const Textarea: React.FC<ITextareaProps> = (props) => {
       id={id}
       value={value}
       placeholder={placeholder}
+      spellCheck={spellCheck}
       onChange={restProps.onChange}
       onKeyPress={restProps.onKeyPress}
     />

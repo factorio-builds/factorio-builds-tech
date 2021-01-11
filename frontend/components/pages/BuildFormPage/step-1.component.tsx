@@ -191,6 +191,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
             type="textarea"
             rows="5"
             required
+            spellCheck={false}
             component={Input}
             validate={validate("encoded")}
             onChange={props.formikProps.handleChange}
