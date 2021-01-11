@@ -14,6 +14,7 @@ import { blueprintHeuristics } from "../../../utils/blueprint-heuristics"
 import Input from "../../form/FormikInputWrapper"
 import Button from "../../ui/Button"
 import Stacker from "../../ui/Stacker"
+import WithIcons from "../../ui/WithIcons"
 import { IFormValues, validate } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
@@ -203,7 +204,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
             <>
               {/* prettier-ignore */}
               <p>
-                Blueprint with a name of <b>{stepState.data.label}</b>, totalling <b>{stepState.data.entityCount}</b> entities.<br />
+                Blueprint with a name of <b><WithIcons input={stepState.data.label} /></b>, totalling <b>{stepState.data.entityCount}</b> entities.<br />
                 {stepState.data.isBook && <>Found a <b>blueprint book</b>, with <b>{stepState.data.blueprintCount}</b> blueprints.</>}
                 {!stepState.data.isBook && <>Found a <b>single blueprint</b>.</>}
                 {/*Assuming category of ABC, game state of DEF with ZZ% confidence.*/}

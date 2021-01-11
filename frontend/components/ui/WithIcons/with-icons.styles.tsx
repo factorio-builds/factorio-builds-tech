@@ -1,6 +1,8 @@
 import styled from "styled-components"
 
 export const WithIconsWrapper = styled.div`
+  display: inline-block;
+
   &::after {
     content: "";
     clear: both;
