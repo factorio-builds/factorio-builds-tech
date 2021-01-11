@@ -1,8 +1,9 @@
-import axios from "axios"
+import { useState } from "react"
 import { GetServerSideProps } from "next"
 import BuildPage from "../../components/pages/BuildPage"
 import Layout from "../../components/ui/Layout"
 import { IFullBuild } from "../../types/models"
+import { axios } from "../../utils/axios"
 // import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"
 
 interface IBuildsPageProps {
@@ -34,9 +35,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     const { user, slug } = params!
 
     const build = await axios
-      .get(`/builds/${user}/${slug}`, {
-        baseURL: "https://api.local.factorio.tech",
-      })
+      .get(`/builds/${user}/${slug}`)
       .then((response) => response.data)
       .catch((err) => {
         console.error(err)

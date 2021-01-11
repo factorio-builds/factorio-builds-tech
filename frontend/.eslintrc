@@ -35,6 +35,18 @@
         "aspects": ["invalidHref", "preferButton"]
       }
     ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "axios",
+            "importNames": ["default"],
+            "message": "Please use axios from '/utils/axios' instead."
+          }
+        ]
+      }
+    ],
     "import/order": [
       2,
       {

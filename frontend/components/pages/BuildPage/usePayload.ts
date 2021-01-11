@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
+import { useApi } from "../../../hooks/useApi"
 import { IFullBuild, IFullPayload } from "../../../types/models"
 
 interface IPayloadStateInitial {
@@ -33,6 +33,13 @@ export type TPayload =
   | IPayloadStateLoading
 
 function usePayload(build: IFullBuild): TPayload {
+  const { execute } = useApi(
+    {
+      url: `/payloads/${build.latest_version.hash}`,
+      params: { include_children: true },
+    },
+    { manual: true }
+  )
   const [payload, setPayload] = useState<TPayload>({
     loading: false,
     error: false,
@@ -45,10 +52,7 @@ function usePayload(build: IFullBuild): TPayload {
       error: false,
       data: undefined,
     })
-    axios({
-      url: `https://api.local.factorio.tech/payloads/${build.latest_version.hash}`,
-      params: { include_children: true },
-    })
+    execute()
       .then((response) => {
         setPayload({
           error: false,

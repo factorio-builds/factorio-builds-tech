@@ -2,6 +2,9 @@ import { useSelector } from "react-redux"
 import { AxiosRequestConfig } from "axios"
 import useAxios, { Options } from "axios-hooks"
 import { IStoreState } from "../redux/store"
+import getConfig from "next/config"
+
+const { publicRuntimeConfig } = getConfig()
 
 const isManual = (config: AxiosRequestConfig, options?: Options) => {
   if (options && options.manual) {
@@ -23,7 +26,7 @@ export function useApi(config: AxiosRequestConfig, options?: Options) {
   const [{ data, loading, error }, execute] = useAxios(
     {
       ...config,
-      baseURL: "https://api.local.factorio.tech",
+      baseURL: publicRuntimeConfig.apiUrl,
       headers: {
         ...config.headers,
         "content-type": config?.headers?.["content-type"] || "application/json",
