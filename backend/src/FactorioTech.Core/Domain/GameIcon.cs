@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Core.Domain
@@ -15,5 +16,12 @@ namespace FactorioTech.Core.Domain
             Type = type;
             Name = name;
         }
+
+#pragma warning disable 8618
+        [Obsolete("Do not use this constructor. It's required for model binding only.", true)]
+        public GameIcon()
+        {
+        }
+#pragma warning restore 8618
     }
 }

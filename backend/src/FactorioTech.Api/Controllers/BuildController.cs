@@ -69,14 +69,14 @@ namespace FactorioTech.Api.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateBuild([FromBody]CreateBuildRequest request)
+        public async Task<IActionResult> CreateBuild([FromForm]CreateBuildRequest request)
         {
             var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
                     request.Slug.Trim(),
                     request.Title.Trim(),
                     request.Description?.Trim(),
                     request.Tags,
-                    (request.Hash, request.VersionName?.Trim(), request.VersionDescription?.Trim(), request.Icons),
+                    (request.Hash, request.Version?.Name?.Trim(), request.Version?.Description?.Trim(), request.Icons),
                     null),
                 User.GetUserId());
 
@@ -187,14 +187,14 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(FullVersionModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddVersion(string owner, string slug, [FromBody]CreateVersionRequest request)
+        public async Task<IActionResult> AddVersion(string owner, string slug, [FromForm]CreateVersionRequest request)
         {
             var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
                     slug,
                     request.Title.Trim(),
                     request.Description?.Trim(),
                     request.Tags,
-                    (request.Hash, request.VersionName?.Trim(), request.VersionDescription?.Trim(), request.Icons),
+                    (request.Hash, request.Version?.Name?.Trim(), request.Version?.Description?.Trim(), request.Icons),
                     request.ExpectedPreviousVersionId),
                 User.GetUserId());
 
