@@ -6,6 +6,7 @@ interface IFormikInputProps extends FieldProps {
   id: string
   type: "text" | "textarea"
   onChange?: FormikHandlers["handleChange"]
+  spellCheck?: boolean
   onKeyPress?: (
     e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void
@@ -26,6 +27,7 @@ const FormikInput: React.FC<IFormikInputProps> = ({
         onChange={field.onChange}
         onKeyPress={restProps.onKeyPress}
         value={field.value}
+        spellCheck={restProps.spellCheck}
       />
     )
   }
@@ -37,6 +39,7 @@ const FormikInput: React.FC<IFormikInputProps> = ({
       onChange={field.onChange}
       onKeyPress={restProps.onKeyPress}
       value={field.value}
+      spellCheck={restProps.spellCheck}
     />
   )
 }

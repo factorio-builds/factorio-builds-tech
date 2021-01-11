@@ -13,6 +13,7 @@ interface IFormikInputProps extends FieldProps {
   type: "text" | "textarea" | "checkbox" | "select"
   size: "small" | "large"
   required?: boolean
+  spellCheck?: boolean
   inline?: boolean
   validFeedback?: string
   onChange: FormikHandlers["handleChange"]
