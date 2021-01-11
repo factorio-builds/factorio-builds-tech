@@ -64,10 +64,7 @@ namespace FactorioTech.Core.Domain
         }
 
 #pragma warning disable 8618 // required for EF
-        private BlueprintVersion(ICollection<GameIcon> icons)
-        {
-            Icons = icons;
-        }
+        private BlueprintVersion() { }
 #pragma warning restore 8618
     }
 }

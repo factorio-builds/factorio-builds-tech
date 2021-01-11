@@ -10,7 +10,7 @@ namespace FactorioTech.Api.ViewModels
     public class CreateRequestBase : IValidatableObject
     {
         /// <summary>
-        /// The hash of payload that should be used to create this build version.
+        /// The hash of the payload that should be used to create this build version.
         /// The payload must have been previously created.
         /// </summary>
         /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
@@ -60,7 +60,7 @@ namespace FactorioTech.Api.ViewModels
         public class ImageData
         {
             /// <summary>
-            /// The vertical horizontal of the crop rectangle.
+            /// The horizontal position of the crop rectangle.
             /// </summary>
             [Required]
             [Range(0, int.MaxValue)]
@@ -88,7 +88,7 @@ namespace FactorioTech.Api.ViewModels
             public int Height { get; set; }
 
             /// <summary>
-            /// The uploaded form-file.
+            /// The uploaded cover image.
             /// </summary>
             [DataType(DataType.Upload)]
             public IFormFile? File { get; set; }
@@ -103,7 +103,6 @@ namespace FactorioTech.Api.ViewModels
         {
             /// <summary>
             /// An optional name for the version to be created.
-            /// If empty, the hash will be used as version name.
             /// </summary>
             [StringLength(100, MinimumLength = 2)]
             [DataType(DataType.Text)]

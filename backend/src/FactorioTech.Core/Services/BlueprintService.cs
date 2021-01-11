@@ -44,7 +44,8 @@ namespace FactorioTech.Core.Services
                 Guid VersionId,
                 Guid BlueprintId,
                 string Slug,
-                (Guid Id, string UserName) Owner)
+                Guid OwnerId,
+                string OwnerSlug)
                 : CreateResult { }
 
             public sealed record DuplicateSlug(
@@ -70,7 +71,8 @@ namespace FactorioTech.Core.Services
             public sealed record OwnerMismatch(
                     Guid BlueprintId,
                     string Slug,
-                    (Guid Id, string UserName) Owner)
+                    Guid OwnerId,
+                    string OwnerSlug)
                 : CreateResult { }
 
             private CreateResult() { }
@@ -177,7 +179,7 @@ namespace FactorioTech.Core.Services
             {
                 _logger.LogWarning("Attempted to save duplicate payload with hash {Hash}. The hash already exists in {VersionId} of blueprint {BlueprintId}",
                     request.Version.Hash, dupe.VersionId, dupe.BlueprintId);
-                return new CreateResult.DuplicateHash(dupe.VersionId, dupe.BlueprintId, dupe.Slug, (dupe.OwnerId, dupe.OwnerSlug));
+                return new CreateResult.DuplicateHash(dupe.VersionId, dupe.BlueprintId, dupe.Slug, dupe.OwnerId, dupe.OwnerSlug);
             }
 
             var payload = await _dbContext.BlueprintPayloads.FirstOrDefaultAsync(x => x.Hash == request.Version.Hash);
@@ -260,7 +262,7 @@ namespace FactorioTech.Core.Services
             {
                 _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
                     existing.BlueprintId, existing.OwnerId);
-                return new CreateResult.OwnerMismatch(existing.BlueprintId, existing.Slug, (existing.OwnerId, existing.OwnerSlug));
+                return new CreateResult.OwnerMismatch(existing.BlueprintId, existing.Slug, existing.OwnerId, existing.OwnerSlug);
             }
 
             if (existing.LatestVersionId != request.ExpectedVersionId)

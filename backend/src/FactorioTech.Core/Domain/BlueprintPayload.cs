@@ -29,9 +29,7 @@ namespace FactorioTech.Core.Domain
         }
 
 #pragma warning disable 8618 // required for EF
-        private BlueprintPayload()
-        {
-        }
+        private BlueprintPayload() { }
 #pragma warning restore 8618
 
         private sealed class HashEqualityComparer : IEqualityComparer<BlueprintPayload>

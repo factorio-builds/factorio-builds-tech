@@ -100,9 +100,7 @@ namespace FactorioTech.Core.Domain
         }
 
 #pragma warning disable 8618 // required for EF
-        private Blueprint()
-        {
-        }
+        private Blueprint() { }
 #pragma warning restore 8618
 
         public void UpdateLatestVersion(BlueprintVersion version)

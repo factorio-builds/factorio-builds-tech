@@ -19,9 +19,7 @@ namespace FactorioTech.Core.Domain
 
 #pragma warning disable 8618
         [Obsolete("Do not use this constructor. It's required for model binding only.", true)]
-        public GameIcon()
-        {
-        }
+        public GameIcon() { }
 #pragma warning restore 8618
     }
 }
