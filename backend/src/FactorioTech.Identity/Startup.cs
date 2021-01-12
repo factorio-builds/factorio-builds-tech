@@ -59,7 +59,6 @@ namespace FactorioTech.Identity
             });
 
             services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
-            services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomUserClaimsPrincipalFactory>();
 
             var oAuthClientConfig = _configuration.Get<OAuthClientConfig>();
 

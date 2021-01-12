@@ -52,10 +52,6 @@ namespace FactorioTech.Core.Services
                     string Slug)
                 : CreateResult { }
 
-            public sealed record InvalidSlug(
-                    string Slug)
-                : CreateResult { }
-
             public sealed record ParentNotFound(
                     string Slug)
                 : CreateResult { }
@@ -160,9 +156,6 @@ namespace FactorioTech.Core.Services
 
         public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, Guid ownerId)
         {
-            if (AppConfig.Policies.Slug.Blocklist.Contains(request.Slug.ToLowerInvariant()))
-                return new CreateResult.InvalidSlug(request.Slug);
-
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == request.Version.Hash)
                 .Select(x => new

@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mime;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Api.Controllers
@@ -36,7 +36,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<bool> ValidateUsername([FromBody]string username)
         {
-            if (!Regex.IsMatch(username, $"^{AppConfig.Policies.Slug.AllowedCharactersRegex}$"))
+            if (!TryValidateModel(new SlugValidationModel(username)))
                 return false;
 
             var exists = await _dbContext.Users
@@ -56,7 +56,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<bool> ValidateSlug([FromBody]string slug)
         {
-            if (!Regex.IsMatch(slug, $"^{AppConfig.Policies.Slug.AllowedCharactersRegex}$"))
+            if (!TryValidateModel(new SlugValidationModel(slug)))
                 return false;
 
             var exists = await _dbContext.Blueprints
@@ -129,5 +129,16 @@ namespace FactorioTech.Api.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
         public IEnumerable<KeyValuePair<string, string>> TestAdmin() => User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
+
+        public class SlugValidationModel
+        {
+            [Required]
+            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
+            [Blocklist(AppConfig.Policies.Slug.Blocklist)]
+            public string? Slug { get; set; }
+
+            public SlugValidationModel(string? slug) => Slug = slug;
+        }
     }
 }

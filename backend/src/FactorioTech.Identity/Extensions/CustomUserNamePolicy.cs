@@ -3,6 +3,7 @@ using FactorioTech.Core.Domain;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Identity.Extensions
@@ -18,7 +19,7 @@ namespace FactorioTech.Identity.Extensions
             {
                 errors.Add(new IdentityError
                 {
-                    Description = "That username is not allowed. Please choose a different one!"
+                    Description = "That username is not allowed. Please choose a different one!",
                 });
             }
 
@@ -27,7 +28,16 @@ namespace FactorioTech.Identity.Extensions
             {
                 errors.Add(new IdentityError
                 {
-                    Description = $"The username must be between {AppConfig.Policies.Slug.MinimumLength} and {AppConfig.Policies.Slug.MaximumLength} characters in length."
+                    Description = $"The username must be between {AppConfig.Policies.Slug.MinimumLength} " +
+                                  $"and {AppConfig.Policies.Slug.MaximumLength} characters in length.",
+                });
+            }
+
+            if (!Regex.IsMatch(user.UserName, $"^{AppConfig.Policies.Slug.AllowedCharactersRegex}$"))
+            {
+                errors.Add(new IdentityError
+                {
+                    Description = $"The username must consist only of latin alpanumeric characters, hyphen or underscore.",
                 });
             }
 
