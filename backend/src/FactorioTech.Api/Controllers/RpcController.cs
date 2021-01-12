@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -66,37 +65,6 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
-        /// Add or remove a build from the authenticated user's favorites
-        /// </summary>
-        /// <param name="buildId" example='"0758cb59-804e-437f-9f2e-d3885047a548"'>The build id</param>
-        /// <response code="200">The build has been added or removed successfully</response>
-        [Authorize]
-        [HttpPost("toggle-favorite")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ToggleFavorite([FromBody]Guid buildId)
-        {
-            var favorite = await _dbContext.Favorites.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.BlueprintId == buildId && x.UserId == User.GetUserId());
-
-            if (favorite != null)
-            {
-                _dbContext.Remove(favorite);
-            }
-            else
-            {
-                _dbContext.Add(new Favorite
-                {
-                    BlueprintId = buildId,
-                    UserId = User.GetUserId(),
-                });
-            }
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        /// <summary>
         /// The ping endpoint always returns the string `pong`.
         /// </summary>
         [HttpGet("test-ping")]
@@ -115,7 +83,7 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get the authenticated user's claims. Requires the `Moderator` role.
         /// </summary>
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Roles = Role.Moderator)]
         [HttpGet("test-moderator")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
@@ -124,7 +92,7 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get the authenticated user's claims. Requires the `Administrator` role.
         /// </summary>
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = Role.Administrator)]
         [HttpGet("test-admin")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]

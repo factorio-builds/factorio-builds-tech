@@ -31,7 +31,7 @@ namespace FactorioTech.Api.Services
                     : null,
             };
 
-        public static BuildLinks BuildLinks(this IUrlHelper urlHelper, Blueprint blueprint)
+        public static ThinBuildLinks BuildThinLinks(this IUrlHelper urlHelper, Blueprint blueprint)
         {
             var buildIdValues = new
             {
@@ -55,8 +55,46 @@ namespace FactorioTech.Api.Services
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
                     : null,
 
-                ToggleFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
-                    ? new(urlHelper.ActionLink(nameof(RpcController.ToggleFavorite), "Rpc", buildIdValues), "post")
+                Delete = urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
+                    : null,
+            };
+        }
+
+        public static FullBuildLinks BuildFullLinks(this IUrlHelper urlHelper, Blueprint blueprint, bool currentUserIsFollower)
+        {
+            var buildIdValues = new
+            {
+                buildId = blueprint.BlueprintId,
+            };
+
+            var buildValues = new
+            {
+                owner = blueprint.OwnerSlug,
+                slug = blueprint.Slug,
+            };
+
+            return new()
+            {
+                Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
+                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues), AppConfig.Cover.Width, AppConfig.Cover.Height),
+                Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
+                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
+
+                AddFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower == false
+                    ? new(urlHelper.ActionLink(nameof(BuildController.AddFavorite), "Build", buildValues), "put")
+                    : null,
+
+                RemoveFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower
+                    ? new(urlHelper.ActionLink(nameof(BuildController.RemoveFavorite), "Build", buildValues), "delete")
+                    : null,
+
+                AddVersion = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
+                    ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
+                    : null,
+
+                Delete = urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
             };
         }

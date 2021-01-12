@@ -68,19 +68,21 @@
                     <p>In dev environments you can use any of the dev accounts to login. This option is disabled in production.</p>
                     <table class="table">
                         <thead>
-                        <tr>
-                            <th scope="col">Username</th>
-                            <th scope="col">Password</th>
-                        </tr>
+                            <tr>
+                                <th scope="col">Username</th>
+                                <th scope="col">Password</th>
+                                <th scope="col">Role</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        @foreach (var user in DevDataSeeder.Users)
-                        {
-                            <tr>
-                                <th scope="row">@user.UserName</th>
-                                <td><code>@DevDataSeeder.Password</code></td>
-                            </tr>
-                        }
+                            @foreach (var (user, role) in DevDataSeeder.Users)
+                            {
+                                <tr>
+                                    <th scope="row">@user.UserName</th>
+                                    <td><code>@DevDataSeeder.Password</code></td>
+                                    <td>@role</td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

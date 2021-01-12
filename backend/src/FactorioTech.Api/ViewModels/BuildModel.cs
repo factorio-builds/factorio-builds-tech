@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels
 {
-    public class BuildLinks
+    public abstract class BuildLinksBase
     {
         /// <summary>
         /// The absolute URL to this build's full details.
@@ -43,14 +43,38 @@ namespace FactorioTech.Api.ViewModels
         public LinkModel? AddVersion { get; init; }
 
         /// <summary>
-        /// The absolute URL to the API endpoint to add a version to this build.
-        /// Only available if the call has been made with an authenticated user token.
+        /// The absolute URL to the API endpoint to delete this build.
+        /// Only available if the call has been made with an authenticated user token
+        /// and the authenticated user is an administrator.
         /// </summary>
-        public LinkModel? ToggleFavorite { get; init; }
+        public LinkModel? Delete { get; init; }
     }
 
-    public abstract class BuildModelBase<TUser> : ViewModelBase<BuildLinks>
+    public class FullBuildLinks : BuildLinksBase
+    {
+        /// <summary>
+        /// The absolute URL to the API endpoint to **add** this build to the authenticated user's favorites.
+        /// Only available if the call has been made with an authenticated user token
+        /// and the user currently **does not** follow this build.
+        /// </summary>
+        public LinkModel? AddFavorite { get; init; }
+
+        /// <summary>
+        /// The absolute URL to the API endpoint to **remove** this build to the authenticated user's favorites.
+        /// Only available if the call has been made with an authenticated user token
+        /// and the user currently **does** follow this build.
+        /// </summary>
+        public LinkModel? RemoveFavorite { get; init; }
+    }
+
+    public class ThinBuildLinks : BuildLinksBase
+    {
+
+    }
+
+    public abstract class BuildModelBase<TUser, TLinks> : ViewModelBase<TLinks>
         where TUser : ThinUserModel
+        where TLinks : BuildLinksBase, new()
     {
         /// <summary>
         /// The slug is used in the build's URL and must be unique per user.
@@ -122,11 +146,11 @@ namespace FactorioTech.Api.ViewModels
         public IEnumerable<string> Tags { get; set; }
     }
 
-    public class ThinBuildModel : BuildModelBase<ThinUserModel>
+    public class ThinBuildModel : BuildModelBase<ThinUserModel, ThinBuildLinks>
     {
     }
 
-    public class FullBuildModel : BuildModelBase<FullUserModel>
+    public class FullBuildModel : BuildModelBase<FullUserModel, FullBuildLinks>
     {
         /// <summary>
         /// The build's most recently added version.

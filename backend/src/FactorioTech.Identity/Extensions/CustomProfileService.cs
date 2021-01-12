@@ -1,5 +1,6 @@
 using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Configuration;
+using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -32,14 +33,19 @@ namespace FactorioTech.Identity.Extensions
             {
                 context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.UserName, user.UserName));
                 context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.RegisteredAt, user.RegisteredAt.ToDateTimeUtc().ToString("O")));
+
                 if (user.DisplayName != null)
                 {
                     context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.DisplayName, user.DisplayName));
                 }
+
                 if (user.TimeZone != null)
                 {
                     context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.TimeZone, user.TimeZone.Id));
                 }
+
+                var roles = await _userManager.GetRolesAsync(user);
+                context.IssuedClaims.AddRange(roles.Select(role => new Claim(IdentityConfig.ClaimTypes.Role, role)));
             }
         }
 

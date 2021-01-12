@@ -223,6 +223,46 @@ export interface paths {
         }
       }
     }
+    delete: {
+      parameters: {
+        path: {
+          /**
+           * The username of the desired build's owner
+           */
+          owner: string
+          /**
+           * The slug of the desired build
+           */
+          slug: string
+        }
+      }
+      responses: {
+        /**
+         * The build was deleted successfully
+         */
+        "204": never
+        /**
+         * The request is malformed or invalid
+         */
+        "400": {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+        /**
+         * Unauthorized
+         */
+        "401": unknown
+        /**
+         * Forbidden
+         */
+        "403": unknown
+        /**
+         * The requested build does not exist
+         */
+        "404": {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
   }
   "/builds/{owner}/{slug}/followers": {
     get: {
@@ -251,6 +291,82 @@ export interface paths {
         "400": {
           "application/json": components["schemas"]["ProblemDetails"]
         }
+        /**
+         * The requested build does not exist
+         */
+        "404": {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
+    put: {
+      parameters: {
+        path: {
+          /**
+           * The username of the desired build's owner
+           */
+          owner: string
+          /**
+           * The slug of the desired build
+           */
+          slug: string
+        }
+      }
+      responses: {
+        /**
+         * The build was added to the user's favorites
+         */
+        "204": never
+        /**
+         * The request is malformed or invalid
+         */
+        "400": unknown
+        /**
+         * Unauthorized
+         */
+        "401": unknown
+        /**
+         * Forbidden
+         */
+        "403": unknown
+        /**
+         * The requested build does not exist
+         */
+        "404": {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
+    delete: {
+      parameters: {
+        path: {
+          /**
+           * The username of the desired build's owner
+           */
+          owner: string
+          /**
+           * The slug of the desired build
+           */
+          slug: string
+        }
+      }
+      responses: {
+        /**
+         * The build was removed from the user's favorites
+         */
+        "204": never
+        /**
+         * The request is malformed or invalid
+         */
+        "400": unknown
+        /**
+         * Unauthorized
+         */
+        "401": unknown
+        /**
+         * Forbidden
+         */
+        "403": unknown
         /**
          * The requested build does not exist
          */
@@ -626,29 +742,6 @@ export interface paths {
       }
     }
   }
-  "/rpc/toggle-favorite": {
-    post: {
-      requestBody: {
-        "application/json": string
-        "text/json": string
-        "application/*+json": string
-      }
-      responses: {
-        /**
-         * The build has been added or removed successfully
-         */
-        "200": unknown
-        /**
-         * Unauthorized
-         */
-        "401": unknown
-        /**
-         * Forbidden
-         */
-        "403": unknown
-      }
-    }
-  }
   "/rpc/test-ping": {
     get: {
       responses: {
@@ -861,7 +954,7 @@ export interface components {
        */
       count: number
     }
-    BuildLinks: {
+    ThinBuildLinks: {
       /**
        * The absolute URL to this build's full details.
        */
@@ -885,10 +978,11 @@ export interface components {
        */
       add_version?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the API endpoint to add a version to this build.
-       * Only available if the call has been made with an authenticated user token.
+       * The absolute URL to the API endpoint to delete this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user is an administrator.
        */
-      toggle_favorite?: components["schemas"]["LinkModel"] | null
+      delete?: components["schemas"]["LinkModel"] | null
     }
     GameIcon: { type: string; name: string }
     ThinUserModel: {
@@ -899,7 +993,7 @@ export interface components {
       username: string
     }
     ThinBuildModel: {
-      _links: components["schemas"]["BuildLinks"]
+      _links: components["schemas"]["ThinBuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -959,6 +1053,48 @@ export interface components {
       builds: components["schemas"]["ThinBuildModel"][]
     }
     Hash: { [key: string]: any }
+    FullBuildLinks: {
+      /**
+       * The absolute URL to this build's full details.
+       */
+      self: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to this build's cover image.
+       */
+      cover: components["schemas"]["ImageLinkModel"]
+      /**
+       * The absolute URL to the list of this build's versions.
+       */
+      versions: components["schemas"]["LinkModel"]
+      /**
+       * The absolute URL to the list of this build's followers.
+       */
+      followers: components["schemas"]["CollectionLinkModel"]
+      /**
+       * The absolute URL to the API endpoint to add a version to this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user is the owner of the build.
+       */
+      add_version?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the API endpoint to delete this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user is an administrator.
+       */
+      delete?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the API endpoint to **add** this build to the authenticated user's favorites.
+       * Only available if the call has been made with an authenticated user token
+       * and the user currently **does not** follow this build.
+       */
+      add_favorite?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL to the API endpoint to **remove** this build to the authenticated user's favorites.
+       * Only available if the call has been made with an authenticated user token
+       * and the user currently **does** follow this build.
+       */
+      remove_favorite?: components["schemas"]["LinkModel"] | null
+    }
     FullUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -1084,7 +1220,7 @@ export interface components {
         | components["schemas"]["BookPayloadModel"]
     }
     FullBuildModel: {
-      _links: components["schemas"]["BuildLinks"]
+      _links: components["schemas"]["FullBuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.

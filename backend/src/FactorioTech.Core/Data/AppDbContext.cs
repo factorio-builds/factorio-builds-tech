@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Data
@@ -63,15 +62,6 @@ namespace FactorioTech.Core.Data
                     .HasConversion(
                         tz => tz!.Id,
                         tz => DateTimeZoneProviders.Tzdb[tz]);
-            });
-
-            builder.Entity<Favorite>(entity =>
-            {
-                if (Database.IsNpgsql())
-                {
-                    entity.Property(e => e.CreatedAt)
-                        .HasDefaultValueSql("timezone('utc', now())");
-                }
             });
 
             builder.Entity<Blueprint>(entity =>
