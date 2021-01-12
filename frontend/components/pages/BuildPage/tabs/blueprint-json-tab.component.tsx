@@ -23,7 +23,7 @@ const BlueprintJsonTab: TTabComponent = (props) => {
     <Tab {...props}>
       <Stacker orientation="horizontal" gutter={8}>
         <CopyStringToClipboard toCopy={encoded} />
-        <CopyJsonToClipboard toCopy={parsed.json} />
+        <CopyJsonToClipboard toCopy={parsed.stringified} />
       </Stacker>
 
       <SC.BlueprintData

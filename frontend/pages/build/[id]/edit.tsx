@@ -2,11 +2,10 @@ import { GetServerSideProps } from "next"
 import React from "react"
 import BuildFormPage from "../../../components/pages/BuildFormPage"
 import Layout from "../../../components/ui/Layout"
-import { Build } from "../../../db/entities/build.entity"
-import { BuildRepository } from "../../../db/repository/build.repository"
+import { IFullBuild } from "../../../types/models"
 
 interface IBuildsEditPageProps {
-  build?: Build
+  build?: IFullBuild
   errors?: string
 }
 
@@ -29,12 +28,13 @@ export default BuildsEditPage
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
+    const build = { id: id }
 
-    const buildRepository = await BuildRepository()
-    const build = await buildRepository.findOne(id as string).catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find build data")
-    })
+    // const buildRepository = await BuildRepository()
+    // const build = await buildRepository.findOne(id as string).catch((error) => {
+    //   console.error(error)
+    //   throw new Error("Cannot find build data")
+    // })
 
     if (!build) throw new Error("Build not found")
 

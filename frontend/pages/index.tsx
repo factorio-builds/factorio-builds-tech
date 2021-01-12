@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from "next"
 import BuildListPage from "../components/pages/BuildListPage"
 import { wrapper } from "../redux/store"
-import { ApiSeachBuild, SearchResponse } from "../types"
+import { ApiSearchBuild, SearchResponse } from "../types"
 import { IThinBuild } from "../types/models"
 import { axios } from "../utils/axios"
 
@@ -12,7 +12,7 @@ const IndexPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
     const searchResults = await axios
-      .get<ApiSeachBuild>("/builds")
+      .get<ApiSearchBuild>("/builds")
       .then((response) => response.data)
       .catch((err) => {
         console.error(err)

@@ -1,5 +1,3 @@
-import { IncomingMessage } from "http"
-import { User } from "../db/entities/user.entity"
 import { IThinBuild } from "./models"
 
 export enum EFilterType {
@@ -142,13 +140,4 @@ export interface SearchResponse<T> {
   builds: T[]
 }
 
-export type ApiSeachBuild = ApiResponse<SearchResponse<IThinBuild>>
-
-// TODO: properly extend IncomingMessage
-export interface ExtendedReq extends IncomingMessage {
-  session: {
-    passport: {
-      user: User
-    }
-  }
-}
+export type ApiSearchBuild = ApiResponse<SearchResponse<IThinBuild>>

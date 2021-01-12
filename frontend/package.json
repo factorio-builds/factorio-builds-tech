@@ -39,8 +39,6 @@
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.2.1",
     "text-encoding": "^0.7.0",
-    "typeorm": "^0.2.29",
-    "typeorm-seeding": "^1.6.1",
     "yup": "^0.32.8"
   },
   "devDependencies": {
