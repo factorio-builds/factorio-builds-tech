@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import cx from "classnames"
 import Link from "next/link"
 import Caret from "../../../icons/caret"
-import { IUser } from "../../../types/models"
+import { IStoreUser } from "../../../types/models"
 import * as SC from "./user-dropdown.styles"
 
 interface IUserDropdownProps {
-  user: IUser
+  user: IStoreUser
 }
 
 function UserDropdown(props: IUserDropdownProps): JSX.Element {
@@ -16,8 +16,8 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
     <SC.DropdownWrapper className={cx({ "is-open": open })}>
       <SC.Dropdown>
         <SC.User onClick={() => setOpen((prev) => !prev)}>
-          <SC.Avatar>{props.user.name[0]}</SC.Avatar>
-          <span>{props.user.name}</span>
+          <SC.Avatar>{props.user.username[0]}</SC.Avatar>
+          <span>{props.user.username}</span>
           <Caret />
         </SC.User>
         <SC.DropdownContent>

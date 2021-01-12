@@ -27,6 +27,7 @@ function BuildSubheader(props: IBuildSubheader): JSX.Element {
           {props.isBook && (
             <SC.Book src="/img/blueprint-book.png" alt="Blueprint book" />
           )}
+          {/* @ts-ignore */}
           {icons.length > 0 && <BuildIcon icons={icons} />}
           <WithIcons input={props.build.name} />
         </>

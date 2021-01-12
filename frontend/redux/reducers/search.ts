@@ -1,6 +1,6 @@
 import { Action } from "redux"
 import { ThunkAction } from "redux-thunk"
-import { ApiSeachBuild, EFilterType, SearchResponse } from "../../types"
+import { EFilterType, SearchResponse } from "../../types"
 import { IThinBuild } from "../../types/models"
 import { axios } from "../../utils/axios"
 import { IPayloadAction, IStoreState } from "../store"
@@ -40,34 +40,28 @@ export const searchBuildsAsync = (): ThunkAction<
       .join(",")
 
   return async function (dispatch, getState) {
-    return (
-      axios
-        // .get<ApiSeachBuild>("/builds", {
-        .get("/builds", {
-          params: {
-            q: getState().filters.query || undefined,
-            state: mapFilters(getState(), EFilterType.STATE) || undefined,
-            categories:
-              mapFilters(getState(), EFilterType.CATEGORY) || undefined,
-            sort_field: getState().filters.sort.toLowerCase(),
-            sort_direction: "asc",
+    return axios
+      .get("/builds", {
+        params: {
+          q: getState().filters.query || undefined,
+          state: mapFilters(getState(), EFilterType.STATE) || undefined,
+          categories: mapFilters(getState(), EFilterType.CATEGORY) || undefined,
+          sort_field: getState().filters.sort.toLowerCase(),
+          sort_direction: "asc",
+        },
+      })
+      .then((response) => response.data)
+      .then((data) => {
+        dispatch({
+          type: "SEARCH_BUILDS_SUCCESS",
+          payload: {
+            current_count: data.current_count,
+            total_count: data.total_count,
+            builds: data.builds,
+            processingTimeMs: 5,
           },
         })
-        .then((response) => response.data)
-        .then((data) => {
-          // if (response.data.success) {
-          dispatch({
-            type: "SEARCH_BUILDS_SUCCESS",
-            payload: {
-              current_count: data.current_count,
-              total_count: data.total_count,
-              builds: data.builds,
-              processingTimeMs: 5,
-            },
-          })
-          // }
-        })
-    )
+      })
   }
 }
 

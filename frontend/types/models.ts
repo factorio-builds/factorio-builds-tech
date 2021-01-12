@@ -10,3 +10,9 @@ export type IBlueprintPayload = components["schemas"]["BlueprintPayloadModel"]
 export type IBookPayload = components["schemas"]["BookPayloadModel"]
 export type IFullPayload = IBlueprintPayload | IBookPayload
 export type IIcon = components["schemas"]["GameIcon"]
+
+export interface IStoreUser {
+  id: string
+  username: string
+  accessToken: string
+}
