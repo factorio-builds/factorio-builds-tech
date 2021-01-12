@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-export const WithIconsWrapper = styled.div`
+export const WithIconsWrapper = styled.span`
   display: inline-block;
 
   &::after {
