@@ -6,41 +6,6 @@ import { ETypo } from "../../../design/tokens/typo"
 import ItemIcon from "../../ui/ItemIcon"
 import Stacker from "../../ui/Stacker"
 
-export const BuildHeader = styled.header`
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid ${COLOR.PURPLE500};
-  color: ${COLOR.PURPLE700};
-`
-
-export const BuildTitle = styled.h2`
-  ${getTypo(ETypo.PAGE_HEADER)};
-  color: ${COLOR.PURPLE900};
-  margin: 0;
-`
-
-export const StyledLink = styled.a`
-  font-weight: 700;
-  color: ${COLOR.PURPLE900};
-  text-decoration: none;
-
-  &:hover {
-    color: #fff;
-    border-bottom: 2px solid #fff;
-  }
-`
-
-export const BuildHeaderMeta = styled.div`
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-
-  img {
-    width: 20px;
-    margin-right: 8px;
-  }
-`
-
 export const BuildImage = styled.div`
   border: 4px solid ${COLOR.PURPLE300};
   border-radius: 4px;

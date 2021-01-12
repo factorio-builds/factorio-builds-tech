@@ -3,17 +3,13 @@ import { useSelector } from "react-redux"
 import cx from "classnames"
 import Image from "next/image"
 import Link from "next/link"
-// import { useCategories } from "../../../hooks/useCategories"
-// import { useGameStates } from "../../../hooks/useGameStates"
 import { IStoreState } from "../../../redux/store"
 // import { ERole } from "../../../types"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
-import { formatDate, formatSince } from "../../../utils/date"
-import BuildIcon from "../../ui/BuildIcon"
+import BuildHeader from "../../ui/BuildHeader"
 import Layout from "../../ui/Layout"
 import Stacker from "../../ui/Stacker"
-import WithIcons from "../../ui/WithIcons"
 import * as SC from "./build-page.styles"
 import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
 import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
@@ -91,12 +87,8 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
   const user = useSelector((state: IStoreState) => state.auth.user)
   const payload = usePayload(build)
 
-  // const { getGameState } = useGameStates()
-  // const { getCategory } = useCategories()
-
   // const isAdmin = user?.roleName === ERole.ADMIN
   const ownedByMe = build.owner.username === user?.username
-  // const gameStates = build.metadata.state.map(getGameState)
 
   const tabs = useMemo(() => {
     if (isBook(build.latest_version.payload)) {
@@ -126,52 +118,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
   return (
     <Layout title={build.title}>
-      <SC.BuildHeader>
-        <Stacker orientation="vertical" gutter={16}>
-          <Stacker orientation="horizontal" gutter={16}>
-            {build.icons.length > 0 && (
-              <BuildIcon icons={build.icons} size="large" />
-            )}
-            <Stacker orientation="vertical" gutter={8}>
-              <SC.BuildTitle>
-                <WithIcons input={build.title} />
-              </SC.BuildTitle>
-              <Stacker orientation="horizontal" gutter={16}>
-                {/* {gameStates.map((gameState) => (
-                  <SC.BuildHeaderMeta key={gameState.value}>
-                    {gameState.icon} {gameState.name}
-                  </SC.BuildHeaderMeta>
-                ))} */}
-                {/* {build.metadata.categories.map((categoryName) => {
-                  const category = getCategory(categoryName)
-
-                  return (
-                    <SC.BuildHeaderMeta key={category.name}>
-                      {category.icon} {category.name}
-                    </SC.BuildHeaderMeta>
-                  )
-                })} */}
-              </Stacker>
-            </Stacker>
-          </Stacker>
-          <Stacker orientation="horizontal" gutter={16}>
-            <span>
-              by{" "}
-              <Link href={`/${build.owner.username}/builds`} passHref>
-                <SC.StyledLink>{build.owner.display_name}</SC.StyledLink>
-              </Link>
-            </span>
-            {/* prettier-ignore */}
-            <span>
-              created <b>{formatDate(build.created_at)}</b> ({formatSince(build.created_at)})
-            </span>
-            {/* prettier-ignore */}
-            <span>
-              updated at <b>{formatDate(build.updated_at)}</b> ({formatSince(build.updated_at)})
-            </span>
-          </Stacker>
-        </Stacker>
-      </SC.BuildHeader>
+      <BuildHeader build={build} />
 
       <Tabs
         build={build}
