@@ -3,13 +3,13 @@ import { Form, Formik } from "formik"
 import kebabCase from "lodash/kebabCase"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
-import { Build } from "../../../db/entities/build.entity"
 import { useApi } from "../../../hooks/useApi"
 import { ECategory, EState } from "../../../types"
 import { isValidBlueprint } from "../../../utils/blueprint"
 import Layout from "../../ui/Layout"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
+import { IFullBuild } from "../../../types/models"
 
 export interface IFormValues {
   hash: string
@@ -162,7 +162,7 @@ interface IBuildFormPageCreating {
 
 interface IBuildFormPageEditing {
   type: "EDIT"
-  build: Build
+  build: IFullBuild
 }
 
 type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing

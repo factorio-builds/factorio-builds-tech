@@ -1,21 +1,15 @@
 import { initAuth0 } from "@auth0/nextjs-auth0"
 import getConfig from "next/config"
 
-const { serverRuntimeConfig } = getConfig()
-
-// todo -- why? @veksen I'm sure you can figure this one out. hard coded below for now
-// Unhandled Runtime Error
-// TypeError: serverRuntimeConfig.identityUrl is undefined
-// const domain = serverRuntimeConfig.identityUrl.replace(/(^\w+:|^)\/\//, '')
-// console.log('domain', domain)
+const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
 
 export default initAuth0({
-  domain: "identity.local.factorio.tech",
+  domain: publicRuntimeConfig.identityUrl.replace("https://", ""),
   clientId: serverRuntimeConfig.clientId,
   clientSecret: serverRuntimeConfig.clientSecret,
   scope: "openid profile",
-  redirectUri: `${serverRuntimeConfig.frontendUrl}/api/callback`,
-  postLogoutRedirectUri: `${serverRuntimeConfig.frontendUrl}/why-is-this-not-working`,
+  redirectUri: `${publicRuntimeConfig.frontendUrl}/api/callback`,
+  postLogoutRedirectUri: `${publicRuntimeConfig.frontendUrl}/why-is-this-not-working`,
   session: {
     // The secret used to encrypt the cookie.
     cookieSecret: "b762654a-98e7-4c3a-9dbf-1e52d56d6f1b",

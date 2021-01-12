@@ -1,10 +1,9 @@
 import { GetServerSideProps } from "next"
 import Layout from "../../components/ui/Layout"
-import { User } from "../../db/entities/user.entity"
-import { UserRepository } from "../../db/repository/user.repository"
+import { IUser } from "../../types/models"
 
 interface IUsersPageProps {
-  user?: User
+  user?: IUser
   errors?: string
 }
 
@@ -19,7 +18,7 @@ const UsersPage = ({ user, errors }: IUsersPageProps): JSX.Element => {
     )
   }
 
-  return <Layout title={user.name}>{user.name}</Layout>
+  return <Layout title={user.username}>{user.username}</Layout>
 }
 
 export default UsersPage
@@ -27,12 +26,13 @@ export default UsersPage
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   try {
     const id = params?.id
+    const user = { id: id }
 
-    const userRepository = await UserRepository()
-    const user = await userRepository.findOne(id as string).catch((error) => {
-      console.error(error)
-      throw new Error("Cannot find user data")
-    })
+    // const userRepository = await UserRepository()
+    // const user = await userRepository.findOne(id as string).catch((error) => {
+    //   console.error(error)
+    //   throw new Error("Cannot find user data")
+    // })
 
     if (!user) throw new Error("User not found")
 

@@ -38,7 +38,7 @@ services:
     # image: ghcr.io/dstockhammer/factorio-tech/frontend:ci
     image: factorio-tech/frontend
     build:
-      context: frontend-merge-me
+      context: frontend
     volumes:
       - /etc/localtime:/etc/localtime:ro
     environment:

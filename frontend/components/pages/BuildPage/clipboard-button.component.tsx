@@ -1,6 +1,5 @@
 import React from "react"
 import { useCallback } from "react"
-import { Build } from "../../../db/entities/build.entity"
 import Copy from "../../../icons/copy"
 import Button from "../../ui/Button"
 import * as SC from "./build-page.styles"
@@ -31,11 +30,9 @@ export const CopyStringToClipboard: React.FC<{ toCopy: string }> = (props) => {
   )
 }
 
-export const CopyJsonToClipboard: React.FC<{ toCopy: Build["json"] }> = (
-  props
-) => {
+export const CopyJsonToClipboard: React.FC<{ toCopy: string }> = (props) => {
   return (
-    <MemoizedCopyToClipboard toCopy={JSON.stringify(props.toCopy, null, 1)}>
+    <MemoizedCopyToClipboard toCopy={props.toCopy}>
       copy JSON to clipboard
     </MemoizedCopyToClipboard>
   )
