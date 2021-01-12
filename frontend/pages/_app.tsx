@@ -49,7 +49,7 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
         type: "SET_USER",
         payload: {
           id: session.user.sub,
-          name: session.user.username,
+          username: session.user.username,
           accessToken: session.accessToken,
         },
       })

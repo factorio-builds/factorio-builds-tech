@@ -124,13 +124,6 @@ export interface IBlueprintBook {
   version: number
 }
 
-// IOwner vs IUser??
-interface IOwner {
-  display_name: string
-  registered_at: Date
-  username: string
-}
-
 interface ApiResponseSuccess<R = any> {
   success: true
   result: R

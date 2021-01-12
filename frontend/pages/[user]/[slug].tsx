@@ -1,10 +1,8 @@
-import { useState } from "react"
 import { GetServerSideProps } from "next"
 import BuildPage from "../../components/pages/BuildPage"
 import Layout from "../../components/ui/Layout"
 import { IFullBuild } from "../../types/models"
 import { axios } from "../../utils/axios"
-// import { viewBuildIncrementUseCase } from "../../server/usecase/build.usecase"
 
 interface IBuildsPageProps {
   build?: IFullBuild
@@ -27,13 +25,10 @@ const BuildsPage = ({ build, errors }: IBuildsPageProps) => {
 
 export default BuildsPage
 
-export const getServerSideProps: GetServerSideProps = async ({
-  req,
-  params,
-}) => {
-  try {
-    const { user, slug } = params!
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const { user, slug } = params!
 
+  try {
     const build = await axios
       .get(`/builds/${user}/${slug}`)
       .then((response) => response.data)
@@ -42,14 +37,6 @@ export const getServerSideProps: GetServerSideProps = async ({
       })
 
     if (!build) throw new Error("Build not found")
-
-    // await viewBuildIncrementUseCase({
-    //   build,
-    //   ip:
-    //     (req.headers["x-forwarded-for"] as string) ||
-    //     req.connection.remoteAddress ||
-    //     "0.0.0.0",
-    // })
 
     return {
       props: { build: JSON.parse(JSON.stringify(build)) },

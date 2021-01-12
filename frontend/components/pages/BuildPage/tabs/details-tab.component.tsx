@@ -6,18 +6,18 @@ import * as SC from "../build-page.styles"
 import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
-interface IQuickInfoProps {
-  label: string
-  value: boolean
-}
+// interface IQuickInfoProps {
+//   label: string
+//   value: boolean
+// }
 
-const QuickInfo = ({ label, value }: IQuickInfoProps): JSX.Element => {
-  return (
-    <div>
-      {label}: {value ? "yes" : "no"}
-    </div>
-  )
-}
+// const QuickInfo = ({ label, value }: IQuickInfoProps): JSX.Element => {
+//   return (
+//     <div>
+//       {label}: {value ? "yes" : "no"}
+//     </div>
+//   )
+// }
 
 const DetailsTab: TTabComponent = (props) => {
   return (
