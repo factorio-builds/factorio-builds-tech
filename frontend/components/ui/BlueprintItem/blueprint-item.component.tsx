@@ -44,6 +44,33 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
 
   const isExpandable = props.isBook || props.description
 
+  const renderEntities = (
+    entities: IBlueprintPayload["entities"],
+    tiles: IBlueprintPayload["tiles"]
+  ) => {
+    const entitiesData = {
+      count: countEntities(entities),
+      name: "entity|entities",
+    }
+    const tilesData = {
+      count: countEntities(tiles),
+      name: "tile|tiles",
+    }
+
+    if (!entitiesData.count && !tilesData.count) {
+      return null
+    }
+
+    return `Contains ${[entitiesData, tilesData]
+      .filter((d) => d.count)
+      .map((d) => {
+        const [single, plural] = d.name.split("|")
+        const singleOrPlural = d.count === 1 ? single : plural
+        return `${d.count} ${singleOrPlural}`
+      })
+      .join(" & ")}`
+  }
+
   return (
     <SC.BlueprintItemWrapper depth={props.depth}>
       <SC.BlueprintItemInner onClick={expand}>
@@ -64,9 +91,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
               {props.isBook ? (
                 <SC.Meta>Contains {props.nodes.length} blueprints</SC.Meta>
               ) : (
-                <SC.Meta>
-                  Contains {countEntities(props.entities)} entities
-                </SC.Meta>
+                <SC.Meta>{renderEntities(props.entities, props.tiles)}</SC.Meta>
               )}
             </Stacker>
             {isExpandable && (
