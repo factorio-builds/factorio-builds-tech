@@ -167,15 +167,14 @@ namespace FactorioTech.Api.Services
                     blueprint.Tags.Select(t => t.TrimEnd('/')),
                     (payload.Hash, null, null, envelope.Icons.ToGameIcons()),
                     null);
-
-                var result = await _blueprintService.CreateOrAddVersion(request, owner.Id);
+                
+                var cover = await _httpClient.GetStreamAsync(blueprint.CoverUri);
+                using var handle = await _imageService.SaveCroppedCover(cover);
+                var result = await _blueprintService.CreateOrAddVersion(request, handle, owner.Id);
 
                 switch (result)
                 {
-                    case BlueprintService.CreateResult.Success created:
-                        var cover = await _httpClient.GetStreamAsync(blueprint.CoverUri);
-                        await _imageService.SaveCroppedCover(created.Blueprint.BlueprintId, cover);
-
+                    case BlueprintService.CreateResult.Success:
                         createdCount++;
                         _logger.LogInformation("Blueprint {Title} by {Owner} created successfully", blueprint.Title, blueprint.Owner);
                         break;
