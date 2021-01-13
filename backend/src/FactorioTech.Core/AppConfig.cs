@@ -31,7 +31,7 @@ namespace FactorioTech.Core
                 public const int MaximumLength = 100;
                 public const string AllowedCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
                 public const string AllowedCharactersRegex = "[a-zA-Z0-9_-]+";
-                public static IReadOnlySet<string> Blocklist = new HashSet<string> { "account", "admin", "administrator", "delete", "edit", "import", "raw" };
+                public const string Blocklist = "account,admin,administrator,delete,edit,import,build,raw";
             }
 
             public class BlueprintString

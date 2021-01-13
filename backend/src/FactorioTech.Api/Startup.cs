@@ -118,12 +118,13 @@ namespace FactorioTech.Api
             {
                 options.Authority = $"{appConfig.IdentityUri.Scheme}://{appConfig.IdentityUri.Authority}";
 
-                if (!_environment.IsProduction() && appConfig.IdentityUri.Host.EndsWith("local.factorio.tech"))
+                if (!_environment.IsProduction()
+                    && (appConfig.IdentityUri.IsLoopback
+                        || appConfig.IdentityUri.Host.EndsWith("local.factorio.tech")))
                 {
                     options.BackchannelHttpHandler = new HttpClientHandler
                     {
                         ClientCertificateOptions = ClientCertificateOption.Manual,
-                        SslProtocols = SslProtocols.Tls13,
                         ServerCertificateCustomValidationCallback = (_, _, _, _) => true,
                     };
                 }
@@ -154,9 +155,10 @@ namespace FactorioTech.Api
 
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();
+            services.AddTransient<BlueprintService>();
+            services.AddTransient<FollowerService>();
             services.AddTransient<ImageService>();
             services.AddTransient<AssetService>();
-            services.AddTransient<BlueprintService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

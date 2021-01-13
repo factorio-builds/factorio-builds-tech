@@ -31,24 +31,24 @@ namespace FactorioTech.Identity
         private static readonly TimeSpan CheckMigrationsInterval = TimeSpan.FromSeconds(2);
         private static readonly TimeSpan CheckMigrationsTimeout = TimeSpan.FromSeconds(30);
 
-        public static IEnumerable<User> Users => new []
+        public static IEnumerable<(User User, string Role)> Users => new []
         {
-            new User
+            (new User
             {
                 UserName = "alice",
                 DisplayName = "Alice Smith",
                 Email = "AliceSmith@email.com",
                 EmailConfirmed = true,
                 RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
-            },
-            new User
+            }, Role.Administrator),
+            (new User
             {
                 UserName = "bob",
                 DisplayName = "Bob Smith",
                 Email = "BobSmith@email.com",
                 EmailConfirmed = true,
                 RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
-            }
+            }, Role.Moderator),
         };
 
         public static string Password => "Pass123$";
@@ -75,9 +75,9 @@ namespace FactorioTech.Identity
             if (!migrationsApplied)
                 throw new Exception("Failed to seed development data");
 
-            foreach (var user in Users)
+            foreach (var (user, role) in Users)
             {
-                await EnsureUserExists(user);
+                await EnsureUserExists(user, new[] { role });
             }
         }
 
@@ -100,7 +100,7 @@ namespace FactorioTech.Identity
             return false;
         }
 
-        private async Task EnsureUserExists(User user, IReadOnlyCollection<Claim>? claims = null)
+        private async Task EnsureUserExists(User user, IReadOnlyCollection<string>? roles = null, IReadOnlyCollection<Claim>? claims = null)
         {
             var existingUser = await _userManager.FindByNameAsync(user.UserName);
             if (existingUser != null)
@@ -114,6 +114,11 @@ namespace FactorioTech.Identity
             {
                 _logger.LogError("Failed to create user {Username} : {ErrorMessage}", user.UserName, result.Errors.First().Description);
                 return;
+            }
+
+            if (roles?.Any() == true)
+            {
+                await _userManager.AddToRolesAsync(user, roles);
             }
 
             if (claims?.Any() == true)

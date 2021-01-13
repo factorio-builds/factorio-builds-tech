@@ -4,7 +4,7 @@ import getConfig from "next/config"
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
 
 export default initAuth0({
-  domain: publicRuntimeConfig.identityUrl.replace("https://", ""),
+  domain: new URL(publicRuntimeConfig.identityUrl).hostname,
   clientId: serverRuntimeConfig.clientId,
   clientSecret: serverRuntimeConfig.clientSecret,
   scope: "openid profile",

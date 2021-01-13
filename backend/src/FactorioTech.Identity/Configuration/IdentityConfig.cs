@@ -16,6 +16,7 @@ namespace FactorioTech.Identity.Configuration
             public const string DisplayName = JwtClaimTypes.Name;
             public const string RegisteredAt = "registered_at";
             public const string TimeZone = JwtClaimTypes.ZoneInfo;
+            public const string Role = JwtClaimTypes.Role;
         }
 
         public class Profile : IdentityResource
@@ -32,6 +33,7 @@ namespace FactorioTech.Identity.Configuration
                     ClaimTypes.DisplayName,
                     ClaimTypes.RegisteredAt,
                     ClaimTypes.TimeZone,
+                    ClaimTypes.Role,
                 };
             }
         }

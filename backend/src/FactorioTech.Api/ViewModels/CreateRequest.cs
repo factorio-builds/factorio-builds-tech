@@ -151,6 +151,7 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
         [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
+        [Blocklist(AppConfig.Policies.Slug.Blocklist)]
         public string Slug { get; set; } = null!;
     }
 }

@@ -40,7 +40,7 @@ namespace FactorioTech.Api.Services
         public static ThinBuildModel ToThinViewModel(this Blueprint blueprint, IUrlHelper urlHelper) =>
             new()
             {
-                Links = urlHelper.BuildLinks(blueprint),
+                Links = urlHelper.BuildThinLinks(blueprint),
                 Slug = blueprint.Slug,
                 CreatedAt = blueprint.CreatedAt,
                 UpdatedAt = blueprint.UpdatedAt,
@@ -53,10 +53,10 @@ namespace FactorioTech.Api.Services
                 Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
             };
 
-        public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+        public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, bool currentUserIsFollower) =>
             new()
             {
-                Links = urlHelper.BuildLinks(blueprint),
+                Links = urlHelper.BuildFullLinks(blueprint, currentUserIsFollower),
                 Slug = blueprint.Slug,
                 CreatedAt = blueprint.CreatedAt,
                 UpdatedAt = blueprint.UpdatedAt,

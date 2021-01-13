@@ -11,7 +11,7 @@ module.exports = {
   },
   images: {
     domains: [
-      process.env.API_URL ? process.env.API_URL.replace("https://", "") : "api.local.factorio.tech",
+      new URL(process.env.API_URL || "https://api.local.factorio.tech").hostname,
     ],
   },
 }

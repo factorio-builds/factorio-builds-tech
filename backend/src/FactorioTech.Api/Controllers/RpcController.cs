@@ -6,11 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mime;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Api.Controllers
@@ -36,7 +35,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<bool> ValidateUsername([FromBody]string username)
         {
-            if (!Regex.IsMatch(username, $"^{AppConfig.Policies.Slug.AllowedCharactersRegex}$"))
+            if (!TryValidateModel(new SlugValidationModel(username)))
                 return false;
 
             var exists = await _dbContext.Users
@@ -56,44 +55,13 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         public async Task<bool> ValidateSlug([FromBody]string slug)
         {
-            if (!Regex.IsMatch(slug, $"^{AppConfig.Policies.Slug.AllowedCharactersRegex}$"))
+            if (!TryValidateModel(new SlugValidationModel(slug)))
                 return false;
 
             var exists = await _dbContext.Blueprints
                 .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant() && x.OwnerId == User.GetUserId());
 
             return !exists;
-        }
-
-        /// <summary>
-        /// Add or remove a build from the authenticated user's favorites
-        /// </summary>
-        /// <param name="buildId" example='"0758cb59-804e-437f-9f2e-d3885047a548"'>The build id</param>
-        /// <response code="200">The build has been added or removed successfully</response>
-        [Authorize]
-        [HttpPost("toggle-favorite")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ToggleFavorite([FromBody]Guid buildId)
-        {
-            var favorite = await _dbContext.Favorites.AsNoTracking()
-                .FirstOrDefaultAsync(x => x.BlueprintId == buildId && x.UserId == User.GetUserId());
-
-            if (favorite != null)
-            {
-                _dbContext.Remove(favorite);
-            }
-            else
-            {
-                _dbContext.Add(new Favorite
-                {
-                    BlueprintId = buildId,
-                    UserId = User.GetUserId(),
-                });
-            }
-
-            await _dbContext.SaveChangesAsync();
-
-            return Ok();
         }
 
         /// <summary>
@@ -115,7 +83,7 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get the authenticated user's claims. Requires the `Moderator` role.
         /// </summary>
-        [Authorize(Roles = "Moderator")]
+        [Authorize(Roles = Role.Moderator)]
         [HttpGet("test-moderator")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
@@ -124,10 +92,21 @@ namespace FactorioTech.Api.Controllers
         /// <summary>
         /// Get the authenticated user's claims. Requires the `Administrator` role.
         /// </summary>
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = Role.Administrator)]
         [HttpGet("test-admin")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
         public IEnumerable<KeyValuePair<string, string>> TestAdmin() => User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
+
+        public class SlugValidationModel
+        {
+            [Required]
+            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
+            [Blocklist(AppConfig.Policies.Slug.Blocklist)]
+            public string? Slug { get; set; }
+
+            public SlugValidationModel(string? slug) => Slug = slug;
+        }
     }
 }

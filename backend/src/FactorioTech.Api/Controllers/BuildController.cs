@@ -24,17 +24,20 @@ namespace FactorioTech.Api.Controllers
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BlueprintService _blueprintService;
+        private readonly FollowerService _followerService;
         private readonly ImageService _imageService;
 
         public BuildController(
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
             BlueprintService blueprintService,
+            FollowerService followerService,
             ImageService imageService)
         {
             _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
             _blueprintService = blueprintService;
+            _followerService = followerService;
             _imageService = imageService;
         }
 
@@ -108,8 +111,12 @@ namespace FactorioTech.Api.Controllers
             if (build?.LatestVersion?.Payload == null)
                 return NotFound();
 
+            var currentUserId = User.TryGetUserId();
+            var currentUserIsFollower = currentUserId != null && await _dbContext.Favorites.AsNoTracking()
+                .AnyAsync(f => f.BlueprintId == build.BlueprintId && f.UserId == currentUserId);
+
             var envelope = await _blueprintConverter.Decode(build.LatestVersion.Payload.Encoded);
-            return Ok(build.ToFullViewModel(Url, envelope));
+            return Ok(build.ToFullViewModel(Url, envelope, currentUserIsFollower));
         }
 
         /// <summary>
@@ -127,11 +134,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFollowers(string owner, string slug)
         {
-            var buildId = await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
-                .Select(bp => bp.BlueprintId)
-                .FirstOrDefaultAsync();
-
+            var buildId = await TryFindBuildId(owner, slug);
             if (buildId == Guid.Empty)
                 return NotFound();
 
@@ -143,6 +146,52 @@ namespace FactorioTech.Api.Controllers
                 .ToListAsync();
 
             return Ok(followers.ToViewModel());
+        }
+
+        /// <summary>
+        /// Add the build to the user's favorites
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <response code="204" type="application/json">The build was added to the user's favorites</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [HttpPut("{owner}/{slug}/followers")]
+        [Authorize]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddFavorite(string owner, string slug)
+        {
+            var buildId = await TryFindBuildId(owner, slug);
+            if (buildId == Guid.Empty)
+                return NotFound();
+
+            await _followerService.AddToFavorites(buildId, User.GetUserId());
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Remove the build from the user's favorites
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <response code="204" type="application/json">The build was removed from the user's favorites</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [HttpDelete("{owner}/{slug}/followers")]
+        [Authorize]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemoveFavorite(string owner, string slug)
+        {
+            var buildId = await TryFindBuildId(owner, slug);
+            if (buildId == Guid.Empty)
+                return NotFound();
+
+            await _followerService.RemoveFromFavorites(buildId, User.GetUserId());
+            return NoContent();
         }
 
         /// <summary>
@@ -170,6 +219,42 @@ namespace FactorioTech.Api.Controllers
                 return NotFound();
 
             return Ok(versions.ToViewModel(Url));
+        }
+
+        /// <summary>
+        /// Delete a build with all versions.
+        /// **NOTE**: This is currently a HARD DELETE that requires the `Administrator` role.
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <response code="204">The build was deleted successfully</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [HttpDelete("{owner}/{slug}")]
+        [Authorize(Roles = Role.Administrator)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteBuild(string owner, string slug)
+        {
+            var build = await _dbContext.Blueprints
+                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
+                .FirstOrDefaultAsync();
+
+            if (build == null)
+                return NotFound();
+
+            var versions = await _dbContext.BlueprintVersions
+                .Where(v => v.BlueprintId == build.BlueprintId)
+                .ToListAsync();
+
+            _dbContext.Remove(build);
+            _dbContext.RemoveRange(versions);
+
+            await _dbContext.SaveChangesAsync();
+
+            return NoContent();
         }
 
         /// <summary>
@@ -252,5 +337,11 @@ namespace FactorioTech.Api.Controllers
                 slug = created.Slug,
             }), created.ToThinViewModel(Url));
         }
+
+        private async Task<Guid> TryFindBuildId(string owner, string slug) =>
+            await _dbContext.Blueprints.AsNoTracking()
+                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
+                .Select(bp => bp.BlueprintId)
+                .FirstOrDefaultAsync();
     }
 }
