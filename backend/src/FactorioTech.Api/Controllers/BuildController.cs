@@ -111,8 +111,9 @@ namespace FactorioTech.Api.Controllers
             if (build?.LatestVersion?.Payload == null)
                 return NotFound();
 
-            var currentUserIsFollower = await _dbContext.Favorites.AsNoTracking()
-                .AnyAsync(f => f.BlueprintId == build.BlueprintId && f.UserId == User.GetUserId());
+            var currentUserId = User.TryGetUserId();
+            var currentUserIsFollower = currentUserId != null && await _dbContext.Favorites.AsNoTracking()
+                .AnyAsync(f => f.BlueprintId == build.BlueprintId && f.UserId == currentUserId);
 
             var envelope = await _blueprintConverter.Decode(build.LatestVersion.Payload.Encoded);
             return Ok(build.ToFullViewModel(Url, envelope, currentUserIsFollower));
