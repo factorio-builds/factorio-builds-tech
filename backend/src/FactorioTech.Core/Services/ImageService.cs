@@ -183,21 +183,20 @@ namespace FactorioTech.Core.Services
             }
         }
 
-        public async Task SaveCroppedCover(Guid blueprintId, Guid versionId, Hash hash, (int X, int Y, int Width, int Height)? rectangle = null)
+        public async Task<ITempCoverHandle> SaveCroppedCover(Hash hash, (int X, int Y, int Width, int Height)? rectangle = null)
         {
             var rendering = await TryLoadRendering(hash, RenderingType.Full);
             if (rendering == null)
             {
-                _logger.LogCritical("Failed to load rendering for version {VersionId} with hash {Hash} to create blueprint image",
-                    versionId, hash);
+                throw new Exception($"Failed to load rendering with hash {hash} to create blueprint image");
             }
             else
             {
-                await SaveCroppedCover(blueprintId, rendering, rectangle);
+                return await SaveCroppedCover(rendering, rectangle);
             }
         }
 
-        public async Task SaveCroppedCover(Guid blueprintId, Stream stream, (int X, int Y, int Width, int Height)? rectangle = null)
+        public async Task<ITempCoverHandle> SaveCroppedCover(Stream stream, (int X, int Y, int Width, int Height)? rectangle = null)
         {
             var (image, format) = await Image.LoadWithFormatAsync(stream);
 
@@ -207,8 +206,8 @@ namespace FactorioTech.Core.Services
                     : new Rectangle(0, 0, Math.Min(image.Height, image.Width), Math.Min(image.Height, image.Width)))
                 .Resize(AppConfig.Cover.Width, AppConfig.Cover.Width));
 
-            var imageFqfn = GetCoverFqfn(blueprintId);
-
+            var handle = new TempCoverHandle(_logger, GetCoverFqfn);
+            var imageFqfn = GetCoverFqfn(handle.TempId);
             var baseDir = Path.GetDirectoryName(imageFqfn);
             if (baseDir != null && !Directory.Exists(baseDir))
             {
@@ -217,6 +216,8 @@ namespace FactorioTech.Core.Services
 
             await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
             await image.SaveAsync(outFile, format);
+
+            return handle;
         }
 
         private string GetRenderingFqfn(Hash hash, RenderingType type) =>

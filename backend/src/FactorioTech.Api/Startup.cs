@@ -6,6 +6,7 @@ using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +26,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
-using System.Security.Authentication;
 using System.Text.Json.Serialization;
 
 namespace FactorioTech.Api
@@ -46,6 +46,7 @@ namespace FactorioTech.Api
             var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
             services.AddSingleton(Options.Create(appConfig));
 
+            services.AddProblemDetails();
             services.AddHttpClient();
             services.AddControllers().AddJsonOptions(options =>
             {
@@ -188,6 +189,7 @@ namespace FactorioTech.Api
             });
 
             app.UseHttpsRedirection();
+            app.UseProblemDetails();
             app.UseRouting();
             app.UseCors();
             app.UseAuthentication();

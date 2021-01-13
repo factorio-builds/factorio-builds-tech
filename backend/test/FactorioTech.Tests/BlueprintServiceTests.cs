@@ -83,7 +83,7 @@ namespace FactorioTech.Tests
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 null);
 
-            var result = await _service.CreateOrAddVersion(request, owner.Id);
+            var result = await _service.CreateOrAddVersion(request, new NullTempCoverHandle(), owner.Id);
 
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
@@ -119,7 +119,7 @@ namespace FactorioTech.Tests
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 existing.LatestVersionId);
 
-            var result = await _service.CreateOrAddVersion(request, owner.Id);
+            var result = await _service.CreateOrAddVersion(request, new NullTempCoverHandle(), owner.Id);
             result.Should().BeOfType<BlueprintService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);

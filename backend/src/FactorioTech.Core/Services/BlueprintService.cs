@@ -154,7 +154,7 @@ namespace FactorioTech.Core.Services
             return blueprint;
         }
 
-        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, Guid ownerId)
+        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, ITempCoverHandle cover, Guid ownerId)
         {
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == request.Version.Hash)
@@ -217,6 +217,8 @@ namespace FactorioTech.Core.Services
 
             await _dbContext.SaveChangesAsync();
             await tx.CommitAsync();
+
+            cover.Assign(success.Blueprint.BlueprintId);
 
             return result;
         }

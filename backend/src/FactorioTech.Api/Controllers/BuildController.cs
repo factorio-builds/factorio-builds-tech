@@ -4,6 +4,7 @@ using FactorioTech.Api.ViewModels;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -74,6 +75,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateBuild([FromForm]CreateBuildRequest request)
         {
+            using var cover = await SaveTempCover(request.Cover);
             var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
                     request.Slug.Trim(),
                     request.Title.Trim(),
@@ -81,14 +83,18 @@ namespace FactorioTech.Api.Controllers
                     request.Tags,
                     (request.Hash, request.Version?.Name?.Trim(), request.Version?.Description?.Trim(), request.Icons),
                     null),
-                User.GetUserId());
+                cover, User.GetUserId());
 
             return result switch
             {
-                BlueprintService.CreateResult.Success success => await HandleCreateSuccess(success.Blueprint, request.Cover),
+                BlueprintService.CreateResult.Success success => Created(Url.ActionLink(nameof(GetDetails), "Build", new
+                {
+                    owner = success.Blueprint.OwnerSlug,
+                    slug = success.Blueprint.Slug,
+                }), success.Blueprint.ToThinViewModel(Url)),
                 BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
                 BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
-                {} error => BadRequest(error.ToProblem()),
+                { } error => BadRequest(error.ToProblem()),
             };
         }
 
@@ -274,6 +280,8 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddVersion(string owner, string slug, [FromForm]CreateVersionRequest request)
         {
+            using var cover = await SaveTempCover(request.Cover);
+
             var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
                     slug,
                     request.Title.Trim(),
@@ -281,11 +289,15 @@ namespace FactorioTech.Api.Controllers
                     request.Tags,
                     (request.Hash, request.Version?.Name?.Trim(), request.Version?.Description?.Trim(), request.Icons),
                     request.ExpectedPreviousVersionId),
-                User.GetUserId());
+                cover, User.GetUserId());
 
             return result switch
             {
-                BlueprintService.CreateResult.Success success => await HandleCreateSuccess(success.Blueprint, request.Cover),
+                BlueprintService.CreateResult.Success success => Created(Url.ActionLink(nameof(GetDetails), "Build", new
+                {
+                    owner = success.Blueprint.OwnerSlug,
+                    slug = success.Blueprint.Slug,
+                }), success.Blueprint.ToThinViewModel(Url)),
                 BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
                 BlueprintService.CreateResult.ParentNotFound error => NotFound(error.ToProblem()),
                 {} error => BadRequest(error.ToProblem()),
@@ -314,23 +326,38 @@ namespace FactorioTech.Api.Controllers
             return File(file, format);
         }
 
-        private async Task<IActionResult> HandleCreateSuccess(Blueprint created, CreateRequestBase.ImageData cover)
+        private async Task<ITempCoverHandle> SaveTempCover(CreateRequestBase.ImageData cover)
         {
-            if (cover.File != null)
+            try
             {
-                await _imageService.SaveCroppedCover(
-                    created.BlueprintId,
-                    cover.File.OpenReadStream(),
-                    (cover.X, cover.Y, cover.Width, cover.Height));
-            }
-            else if (cover.Hash != null)
-            {
-                await _imageService.SaveCroppedCover(
-                    created.BlueprintId,
-                    created.LatestVersionId!.Value, cover.Hash.Value,
-                    (cover.X, cover.Y, cover.Width, cover.Height));
-            }
+                if (cover.File != null)
+                {
+                    return await _imageService.SaveCroppedCover(
+                        cover.File.OpenReadStream(),
+                        (cover.X, cover.Y, cover.Width, cover.Height));
+                }
 
+                if (cover.Hash != null)
+                {
+                    return await _imageService.SaveCroppedCover(
+                        cover.Hash.Value,
+                        (cover.X, cover.Y, cover.Width, cover.Height));
+                }
+
+                throw new Exception($"Either {nameof(cover.File)} or {nameof(cover.Hash)} must be set.");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(nameof(CreateRequestBase.Cover), ex.Message);
+                throw new ProblemDetailsException(new ValidationProblemDetails(ModelState)
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                });
+            }
+        }
+
+        private IActionResult HandleCreateSuccess(Blueprint created)
+        {
             return Created(Url.ActionLink(nameof(GetDetails), "Build", new
             {
                 owner = created.OwnerSlug,
