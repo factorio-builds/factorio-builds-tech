@@ -1,13 +1,15 @@
-imageNamespace: ghcr.io/dstockhammer/factorio-tech
+imageNamespace: ghcr.io/factorio-builds/factorio-build-tech
 
 hostNames:
+  web: staging.factorio.tech
   api: api.factorio.tech
-  web: beta.factorio.tech
+  identity: identity.factorio.tech
 
 replicas:
-  fbsrWrapper: 1
   web: 1
   api: 1
+  identity: 1
+  fbsrWrapper: 1
 
 postgres:
   image: postgres:13-alpine

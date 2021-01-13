@@ -32,59 +32,38 @@ spec:
               memory: 2Gi
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 3000
               protocol: TCP
-          volumeMounts:
-            - name: config
-              mountPath: /mnt/config
-              readOnly: true
-            - name: secrets
-              mountPath: /mnt/secrets
-              readOnly: true
-            - name: session
-              mountPath: /mnt/session
-              readOnly: false
-            - name: app-data
-              mountPath: /mnt/data
-              readOnly: false
-            - name: factorio-data
-              mountPath: /mnt/factorio
-              readOnly: true
+          env:
+            - name: WEB_URL
+              value: https://{{ .Values.hostNames.web }}
+            - name: API_URL
+              value: https://{{ .Values.hostNames.api }}
+            - name: IDENTITY_URL
+              value: https://{{ .Values.hostNames.identity }}
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "factorio-tech.fullname" . }}-web
+                  key: clientId
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "factorio-tech.fullname" . }}-web
+                  key: clientSecret
+            - name: COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "factorio-tech.fullname" . }}-web
+                  key: cookieSecret
+            - name: INSTRUMENTATION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: application-insights
+                  key: instrumentation_key
           securityContext:
             runAsUser: 1000
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             capabilities:
               add: ["NET_ADMIN", "SYS_TIME"]
-      volumes:
-        - name: config
-          configMap:
-            name: {{ include "factorio-tech.fullname" . }}-web
-        - name: secrets
-          projected:
-            sources:
-              - secret:
-                  name: {{ include "factorio-tech.fullname" . }}-web
-              - secret:
-                  name: {{ include "factorio-tech.fullname" . }}-postgres
-                  items:
-                    - key: connection_string
-                      path: ConnectionStrings__Postgres
-              - secret:
-                  name: application-insights
-                  items:
-                    - key: instrumentation_key
-                      path: ApplicationInsights__InstrumentationKey
-        - name: session
-          persistentVolumeClaim:
-            claimName: {{ include "factorio-tech.fullname" . }}-web-session
-        - name: app-data
-          azureFile:
-            secretName: app-data-share
-            shareName: app-data
-            readOnly: false
-        - name: factorio-data
-          azureFile:
-            secretName: factorio-data-share
-            shareName: factorio-data
-            readOnly: true

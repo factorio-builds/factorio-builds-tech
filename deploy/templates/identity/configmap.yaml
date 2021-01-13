@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-identity
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity
+data:
+  OAuthClients__Web__RedirectUri: https://{{ .Values.hostNames.web }}/api/callback
+  OAuthClients__Web__PostLogoutRedirectUri: https://{{ .Values.hostNames.web }}/api/callback

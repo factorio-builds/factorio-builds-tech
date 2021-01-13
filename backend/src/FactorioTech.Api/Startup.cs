@@ -105,8 +105,8 @@ namespace FactorioTech.Api
                         .AllowAnyMethod()
                         .AllowCredentials()
                         .Let(b => _environment.IsProduction()
-                            ? b.WithOrigins($"{appConfig.FrontendUri.Scheme}://{appConfig.FrontendUri.Authority}")
-                            : b.WithOrigins($"{appConfig.FrontendUri.Scheme}://{appConfig.FrontendUri.Authority}",
+                            ? b.WithOrigins($"{appConfig.WebUri.Scheme}://{appConfig.WebUri.Authority}")
+                            : b.WithOrigins($"{appConfig.WebUri.Scheme}://{appConfig.WebUri.Authority}",
                                             "https://local.factorio.tech", "http://localhost:3000")));
             });
 

@@ -28,7 +28,7 @@ namespace FactorioTech.Identity.Pages
         {
             _logger = logger;
             _signInManager = signInManager;
-            FrontendUri = appConfig.Value.FrontendUri;
+            FrontendUri = appConfig.Value.WebUri;
         }
 
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
