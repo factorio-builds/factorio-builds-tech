@@ -9,6 +9,10 @@ interface IWithIcons {
 
 function WithIcons(props: IWithIcons): JSX.Element {
   const formatted = React.useMemo(() => {
+    if (!props.input) {
+      return "[unnamed]"
+    }
+
     const regex = new RegExp(/(\[item=[A-z-]+\])/, "gi")
     const itemRegex = new RegExp(/\[item=([A-z-]+)\]/, "i")
     const parts = props.input.split(regex).filter(Boolean)
