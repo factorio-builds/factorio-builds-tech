@@ -1,5 +1,8 @@
 import React, { useMemo } from "react"
 import { Field, FormikProps } from "formik"
+import deburr from "lodash/deburr"
+import flow from "lodash/flow"
+import kebabCase from "lodash/kebabCase"
 import { useApi } from "../../../hooks/useApi"
 import {
   IDecodedBlueprintBookData,
@@ -54,6 +57,10 @@ interface IStep1Props {
   formikProps: FormikProps<IFormValues>
   goToNextStep: () => void
 }
+
+const stripNonAlpha = (str: string): string => str.replace(/[^0-9a-z\-_]/gi, "")
+const stripIcons = (str: string): string =>
+  str.replace(/[[A-z-]+=[A-z-]+\]/gi, "")
 
 const Step1: React.FC<IStep1Props> = (props) => {
   const { /*data, loading, error,*/ execute } = useApi({
@@ -117,6 +124,10 @@ const Step1: React.FC<IStep1Props> = (props) => {
     props.formikProps.setFieldValue("title", bp.label)
     props.formikProps.setFieldValue("description", bp.description || "")
     props.formikProps.setFieldValue("hash", res.data.hash)
+    props.formikProps.setFieldValue(
+      "slug",
+      flow([deburr, stripIcons, kebabCase, stripNonAlpha])(bp.label)
+    )
 
     // TODO: extract
     // TODO: guess metadata from blueprint content

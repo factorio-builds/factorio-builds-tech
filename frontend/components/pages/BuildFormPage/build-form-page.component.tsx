@@ -1,19 +1,19 @@
 import React, { useCallback, useState } from "react"
 import { Form, Formik } from "formik"
-import kebabCase from "lodash/kebabCase"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
 import { useApi } from "../../../hooks/useApi"
 import { ECategory, EState } from "../../../types"
+import { IFullBuild } from "../../../types/models"
 import { isValidBlueprint } from "../../../utils/blueprint"
 import Layout from "../../ui/Layout"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
-import { IFullBuild } from "../../../types/models"
 
 export interface IFormValues {
   hash: string
   title: string
+  slug: string
   encoded: string
   description: string
   state: EState[]
@@ -27,6 +27,7 @@ export interface IFormValues {
 interface IValidFormValues {
   hash: string
   title: string
+  slug: string
   encoded: string
   description: string
   state: EState[]
@@ -43,6 +44,7 @@ const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
 const baseInitialValues: IFormValues = {
   hash: "",
   title: "",
+  slug: "",
   encoded: "",
   description: "",
   state: [],
@@ -80,6 +82,17 @@ const validation = {
     .min(2, "Too Short!")
     .max(128, "Too Long!")
     .required("Required"),
+  slug: Yup.string()
+    .min(3, "Too Short!")
+    .max(100, "Too Long!")
+    .matches(
+      /[a-zA-Z0-9_-]+/,
+      "A slug can only contain alphanumerical characters, plus _ and -"
+    )
+    .not(
+      ["account", "admin", "administrator", "delete", "edit", "import", "raw"],
+      "A slug cannot use a reserved keyword"
+    ),
   encoded: Yup.string()
     .required("Required")
     .test("valid", "Invalid blueprint string", (blueprint) => {
@@ -123,9 +136,7 @@ export const validate = (fieldName: keyof IFormValues) => async (
 const toFormData = (formValues: IValidFormValues) => {
   const formData = new FormData()
 
-  // todo: kebab alone is not good enough;
-  // slug must be properly transliterated into [a-zA-Z0-9_-]+
-  formData.append("slug", kebabCase(formValues.title))
+  formData.append("slug", formValues.slug)
 
   formData.append("hash", formValues.hash)
   formData.append("title", formValues.title)
