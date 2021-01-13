@@ -9,3 +9,6 @@ data:
   AppConfig__FactorioDir: /mnt/factorio/Factorio_1.0.0
   AppConfig__WorkingDir: /mnt/data
   AppConfig__FbsrWrapperUri: http://{{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+  AppConfig__WebUri: https://{{ .Values.hostNames.web }}
+  AppConfig__ApiUri: https://{{ .Values.hostNames.api }}
+  AppConfig__IdentityUri: https://{{ .Values.hostNames.identity }}
