@@ -1,5 +1,7 @@
+import { withApplicationInsights } from "next-applicationinsights"
 import type { AppContext, AppProps } from "next/app"
 import Head from "next/head"
+import { compose } from "redux"
 import { ThemeProvider } from "styled-components"
 import { GlobalStyle } from "../design/styles/global-style"
 import { theme } from "../design/styles/theme"
@@ -65,4 +67,10 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
   }
 }
 
-export default wrapper.withRedux(MyApp)
+export default compose(
+  withApplicationInsights({
+    instrumentationKey: "YOUR_KEY_GOES_HERE",
+    isEnabled: process.env.NODE_ENV === "production",
+  }),
+  wrapper.withRedux
+)(MyApp)

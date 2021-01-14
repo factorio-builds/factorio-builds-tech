@@ -23,6 +23,7 @@
     "formik": "^2.2.6",
     "lodash": "^4.17.20",
     "next": "latest",
+    "next-applicationinsights": "^1.0.4",
     "next-redux-wrapper": "^6.0.2",
     "pako": "^2.0.2",
     "polished": "^4.0.5",
