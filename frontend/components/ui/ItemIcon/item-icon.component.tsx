@@ -1,7 +1,10 @@
 import * as React from "react"
 import startCase from "lodash/startCase"
+import getConfig from "next/config"
 import { IIcon } from "../../../types/models"
 import * as SC from "./item-icon.styles"
+
+const { publicRuntimeConfig } = getConfig()
 
 interface IItemIconProps {
   name: IIcon["name"]
@@ -23,7 +26,7 @@ const ItemIcon: React.FC<IItemIconProps> = (props) => {
   return (
     <SC.ItemIconWrapper
       {...props}
-      src={`https://api.local.factorio.tech/assets/icon/64/${type}/${name}.png`}
+      src={`${publicRuntimeConfig.apiUrl}/assets/icon/64/${type}/${name}.png`}
     />
   )
 }
