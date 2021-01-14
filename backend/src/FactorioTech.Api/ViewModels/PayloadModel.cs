@@ -12,25 +12,25 @@ namespace FactorioTech.Api.ViewModels
     public class PayloadLinks
     {
         /// <summary>
-        /// The absolute URL to this payload's full details.
+        /// The absolute URL of this payload's full details.
         /// </summary>
         [Required]
         public LinkModel Self { get; init; }
 
         /// <summary>
-        /// The absolute URL to this payload's raw encoded blueprint string for import in the game or other tools.
+        /// The absolute URL of this payload's raw encoded blueprint string for import in the game or other tools.
         /// </summary>
         [Required]
         public LinkModel Raw { get; init; }
 
         /// <summary>
-        /// The absolute URL to this payload's full-size rendering.
+        /// The absolute URL of this payload's full-size rendering.
         /// Only available if the payload is of type `blueprint`.
         /// </summary>
         public LinkModel? RenderingFull { get; init; }
 
         /// <summary>
-        /// The absolute URL to this payload's rendering thumbnail.
+        /// The absolute URL of this payload's rendering thumbnail.
         /// Only available if the payload is of type `blueprint`.
         /// </summary>
         public LinkModel? RenderingThumb { get; init; }

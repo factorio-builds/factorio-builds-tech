@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -26,7 +27,12 @@ namespace FactorioTech.Api.Extensions.Json
                     continue;
                 }
 
-                var propertyName = options.PropertyNamingPolicy?.ConvertName(property.Name) ?? property.Name;
+                var propertyName = property.CustomAttributes
+                        .FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyNameAttribute))
+                        ?.ConstructorArguments.FirstOrDefault().Value as string
+                    ?? options.PropertyNamingPolicy?.ConvertName(property.Name)
+                    ?? property.Name;
+   
                 writer.WritePropertyName(propertyName);
                 JsonSerializer.Serialize(writer, propertyValue, options);
             }

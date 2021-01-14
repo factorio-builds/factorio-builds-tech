@@ -12,40 +12,47 @@ namespace FactorioTech.Api.ViewModels
     public abstract class BuildLinksBase
     {
         /// <summary>
-        /// The absolute URL to this build's full details.
+        /// The absolute URL of this build's full details.
         /// </summary>
         [Required]
         public LinkModel Self { get; init; }
 
         /// <summary>
-        /// The absolute URL to this build's cover image.
+        /// The absolute URL of this build's cover image.
         /// </summary>
         [Required]
         public ImageLinkModel Cover { get; init; }
 
         /// <summary>
-        /// The absolute URL to the list of this build's versions.
+        /// The absolute URL of the list of this build's versions.
         /// </summary>
         [Required]
         public LinkModel Versions { get; init; }
 
         /// <summary>
-        /// The absolute URL to the list of this build's followers.
+        /// The absolute URL of the list of this build's followers.
         /// </summary>
         [Required]
         public CollectionLinkModel Followers { get; init; }
 
         /// <summary>
-        /// The absolute URL to the API endpoint to add a version to this build.
+        /// The absolute URL of the API endpoint to add a version to this build.
         /// Only available if the call has been made with an authenticated user token
         /// and the authenticated user is the owner of the build.
         /// </summary>
         public LinkModel? AddVersion { get; init; }
 
         /// <summary>
-        /// The absolute URL to the API endpoint to delete this build.
+        /// The absolute URL of the API endpoint to edit this build.
         /// Only available if the call has been made with an authenticated user token
-        /// and the authenticated user is an administrator.
+        /// and the authenticated user has the required permissions.
+        /// </summary>
+        public LinkModel? Edit { get; init; }
+
+        /// <summary>
+        /// The absolute URL of the API endpoint to delete this build.
+        /// Only available if the call has been made with an authenticated user token
+        /// and the authenticated user has the required permissions.
         /// </summary>
         public LinkModel? Delete { get; init; }
     }
@@ -53,14 +60,14 @@ namespace FactorioTech.Api.ViewModels
     public class FullBuildLinks : BuildLinksBase
     {
         /// <summary>
-        /// The absolute URL to the API endpoint to **add** this build to the authenticated user's favorites.
+        /// The absolute URL of the API endpoint to **add** this build to the authenticated user's favorites.
         /// Only available if the call has been made with an authenticated user token
         /// and the user currently **does not** follow this build.
         /// </summary>
         public LinkModel? AddFavorite { get; init; }
 
         /// <summary>
-        /// The absolute URL to the API endpoint to **remove** this build to the authenticated user's favorites.
+        /// The absolute URL of the API endpoint to **remove** this build to the authenticated user's favorites.
         /// Only available if the call has been made with an authenticated user token
         /// and the user currently **does** follow this build.
         /// </summary>

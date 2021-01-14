@@ -9,7 +9,7 @@ namespace FactorioTech.Api.ViewModels
     public class VersionLinks
     {
         /// <summary>
-        /// The absolute URL to this version's full payload.
+        /// The absolute URL of this version's full payload.
         /// </summary>
         [Required]
         public LinkModel Payload { get; init; }
