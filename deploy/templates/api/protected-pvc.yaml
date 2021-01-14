@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-api-session
+  name: {{ include "factorio-tech.fullname" . }}-api-protected
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
     app.kubernetes.io/component: api

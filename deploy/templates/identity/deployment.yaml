@@ -35,11 +35,14 @@ spec:
               containerPort: 8080
               protocol: TCP
           volumeMounts:
+            - name: config
+              mountPath: /mnt/config
+              readOnly: true
             - name: secrets
               mountPath: /mnt/secrets
               readOnly: true
-            - name: session
-              mountPath: /mnt/session
+            - name: protected
+              mountPath: /mnt/protected
               readOnly: false
           securityContext:
             runAsUser: 1000
@@ -48,6 +51,9 @@ spec:
             capabilities:
               add: ["NET_ADMIN", "SYS_TIME"]
       volumes:
+        - name: config
+          configMap:
+            name: {{ include "factorio-tech.fullname" . }}-identity
         - name: secrets
           projected:
             sources:
@@ -63,6 +69,6 @@ spec:
                   items:
                     - key: instrumentation_key
                       path: ApplicationInsights__InstrumentationKey
-        - name: session
+        - name: protected
           persistentVolumeClaim:
-            claimName: {{ include "factorio-tech.fullname" . }}-identity-session
+            claimName: {{ include "factorio-tech.fullname" . }}-identity-protected

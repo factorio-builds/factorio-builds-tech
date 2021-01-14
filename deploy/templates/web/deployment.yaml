@@ -41,6 +41,13 @@ spec:
               value: https://{{ .Values.hostNames.api }}
             - name: IDENTITY_URL
               value: https://{{ .Values.hostNames.identity }}
+            - name: ENABLE_APPLICATION_INSIGHTS
+              value: "true"
+            - name: INSTRUMENTATION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: application-insights
+                  key: instrumentation_key
             - name: CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -56,11 +63,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "factorio-tech.fullname" . }}-web
                   key: cookieSecret
-            - name: INSTRUMENTATION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: application-insights
-                  key: instrumentation_key
           securityContext:
             runAsUser: 1000
             runAsNonRoot: true

@@ -6,8 +6,9 @@ metadata:
     {{- include "factorio-tech.labels" . | nindent 4 }}
     app.kubernetes.io/component: api
 data:
+  AppConfig__DataDir: /mnt/data
+  AppConfig__ProtectedDataDir: /mnt/protected
   AppConfig__FactorioDir: /mnt/factorio/Factorio_1.0.0
-  AppConfig__WorkingDir: /mnt/data
   AppConfig__FbsrWrapperUri: http://{{ include "factorio-tech.fullname" . }}-fbsr-wrapper
   AppConfig__WebUri: https://{{ .Values.hostNames.web }}
   AppConfig__ApiUri: https://{{ .Values.hostNames.api }}

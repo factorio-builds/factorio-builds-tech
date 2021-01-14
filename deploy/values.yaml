@@ -1,4 +1,4 @@
-imageNamespace: ghcr.io/factorio-builds/factorio-build-tech
+imageNamespace: ghcr.io/factorio-builds/factorio-builds-tech
 
 hostNames:
   web: staging.factorio.tech

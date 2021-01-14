@@ -41,8 +41,8 @@ spec:
             - name: secrets
               mountPath: /mnt/secrets
               readOnly: true
-            - name: session
-              mountPath: /mnt/session
+            - name: protected
+              mountPath: /mnt/protected
               readOnly: false
             - name: app-data
               mountPath: /mnt/data
@@ -73,9 +73,9 @@ spec:
                   items:
                     - key: instrumentation_key
                       path: ApplicationInsights__InstrumentationKey
-        - name: session
+        - name: protected
           persistentVolumeClaim:
-            claimName: {{ include "factorio-tech.fullname" . }}-api-session
+            claimName: {{ include "factorio-tech.fullname" . }}-api-protected
         - name: app-data
           azureFile:
             secretName: app-data-share

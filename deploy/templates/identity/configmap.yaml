@@ -6,6 +6,7 @@ metadata:
     {{- include "factorio-tech.labels" . | nindent 4 }}
     app.kubernetes.io/component: identity
 data:
+  AppConfig__ProtectedDataDir: /mnt/protected
   AppConfig__WebUri: https://{{ .Values.hostNames.web }}
   AppConfig__ApiUri: https://{{ .Values.hostNames.api }}
   AppConfig__IdentityUri: https://{{ .Values.hostNames.identity }}
