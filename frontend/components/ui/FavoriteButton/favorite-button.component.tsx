@@ -35,7 +35,7 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({ owner, slug }) => {
       onClick={toggle}
       className={cx({ "is-error": error || errorToggle })}
     >
-      {isFavorited ? "unfavorite" : "favorite"}
+      {isFavorited ? "unfavorite" : "favorite"} {data?.count || 0}
       {(loading || loadingToggle) && "..."}
     </SC.FavoriteButtonWrapper>
   )
