@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "factorio-tech.fullname" . }}-identity
+  labels:
+    {{- include "factorio-tech.labels" . | nindent 4 }}
+    app.kubernetes.io/component: identity
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`{{ .Values.hostNames.identity }}`)
+      kind: Rule
+      services:
+      - name: {{ include "factorio-tech.fullname" . }}-identity
+        port: 80

@@ -6,7 +6,7 @@ namespace FactorioTech.Identity.Configuration
 
         public record AvailableOAuthClients
         {
-            public OAuthClientSettings Frontend { get; init; } = new()
+            public OAuthClientSettings Web { get; init; } = new()
             {
                 ClientId = "frontend",
                 ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A",

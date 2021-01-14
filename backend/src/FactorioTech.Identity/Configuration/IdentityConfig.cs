@@ -49,12 +49,12 @@ namespace FactorioTech.Identity.Configuration
             IWebHostEnvironment environment, AppConfig appConfig,
             OAuthClientConfig.AvailableOAuthClients clientConfig)
         {
-            var frontend = new Client
+            var web = new Client
             {
-                ClientId = clientConfig.Frontend.ClientId,
-                ClientSecrets = { new Secret(clientConfig.Frontend.ClientSecret.Sha256()) },
-                RedirectUris = { clientConfig.Frontend.RedirectUri },
-                PostLogoutRedirectUris = { clientConfig.Frontend.PostLogoutRedirectUri },
+                ClientId = clientConfig.Web.ClientId,
+                ClientSecrets = { new Secret(clientConfig.Web.ClientSecret.Sha256()) },
+                RedirectUris = { clientConfig.Web.RedirectUri },
+                PostLogoutRedirectUris = { clientConfig.Web.PostLogoutRedirectUri },
                 AllowedGrantTypes = GrantTypes.Code,
                 AllowOfflineAccess = true,
                 RequireConsent = false,
@@ -74,10 +74,10 @@ namespace FactorioTech.Identity.Configuration
             };
 
             if (environment.IsProduction())
-                return new[] { frontend };
+                return new[] { web };
 
-            frontend.RedirectUris.Add("http://localhost:3000/api/callback");
-            frontend.RedirectUris.Add("https://local.factorio.tech/api/callback");
+            web.RedirectUris.Add("http://localhost:3000/api/callback");
+            web.RedirectUris.Add("https://local.factorio.tech/api/callback");
 
             var swagger = new Client
             {
@@ -98,7 +98,7 @@ namespace FactorioTech.Identity.Configuration
                 },
             };
 
-            return new[] { frontend, swagger };
+            return new[] { web, swagger };
         }
     }
 }

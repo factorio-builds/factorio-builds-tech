@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-api
+  name: {{ include "factorio-tech.fullname" . }}-identity
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
-    app.kubernetes.io/component: api
+    app.kubernetes.io/component: identity
 data:
-  AppConfig__DataDir: /mnt/data
   AppConfig__ProtectedDataDir: /mnt/protected
-  AppConfig__FactorioDir: /mnt/factorio/Factorio_1.0.0
-  AppConfig__FbsrWrapperUri: http://{{ include "factorio-tech.fullname" . }}-fbsr-wrapper
   AppConfig__WebUri: https://{{ .Values.hostNames.web }}
   AppConfig__ApiUri: https://{{ .Values.hostNames.api }}
   AppConfig__IdentityUri: https://{{ .Values.hostNames.identity }}
+  OAuthClients__Web__RedirectUri: https://{{ .Values.hostNames.web }}/api/callback
+  OAuthClients__Web__PostLogoutRedirectUri: https://{{ .Values.hostNames.web }}/api/callback

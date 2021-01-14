@@ -60,7 +60,7 @@ namespace FactorioTech.Identity
 
             services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
 
-            var oAuthClientConfig = _configuration.Get<OAuthClientConfig>();
+            var oAuthClientConfig = _configuration.Get<OAuthClientConfig>() ?? new OAuthClientConfig();
 
             services.AddIdentityServer(options =>
                 {

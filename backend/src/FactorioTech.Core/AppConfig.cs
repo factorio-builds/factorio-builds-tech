@@ -1,6 +1,4 @@
-using NodaTime;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,8 +7,6 @@ namespace FactorioTech.Core
 {
     public class AppConfig
     {
-        public static readonly DateTimeZone DefaultTimeZone = DateTimeZoneProviders.Tzdb["Europe/Berlin"];
-
         public static class Cover
         {
             public const int Width = 480;
@@ -43,7 +39,7 @@ namespace FactorioTech.Core
 
         public Uri BlueprintEditorUri { get; init; } = new("https://teoxoy.github.io/factorio-blueprint-editor");
         public Uri FbsrWrapperUri { get; init; } = new("http://localhost:8080");
-        public Uri FrontendUri { get; init; } = new("http://localhost:3000");
+        public Uri WebUri { get; init; } = new("http://localhost:3000");
         public Uri ApiUri { get; init; } = new("https://localhost:5101");
         public Uri IdentityUri { get; init; } = new("https://localhost:5001");
         public string DataDir { get; init; } = Path.Join(GetLocalVolumesDir(), GetAppShortName(), "data");

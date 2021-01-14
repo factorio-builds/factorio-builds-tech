@@ -86,7 +86,7 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
 
-      - name: Build and push - frontend
+      - name: Build and push - web
         uses: docker/build-push-action@v2
         with:
           context: ./frontend
@@ -98,8 +98,8 @@ jobs:
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           tags: |
-            ghcr.io/${{ github.repository }}/frontend:${{ env.version }}
-            ghcr.io/${{ github.repository }}/frontend:ci
+            ghcr.io/${{ github.repository }}/web:${{ env.version }}
+            ghcr.io/${{ github.repository }}/web:ci
           labels: |
             org.opencontainers.image.version=${{ env.version }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
@@ -148,44 +148,52 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
 
-  # todo: deployment disabled for now
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build-and-push
-  #   if: ${{ github.ref == 'refs/heads/main' }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
+  deploy:
+    environment:
+      name: staging
+      url: https://staging.factorio.tech
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-  #     - name: Login to AKS
-  #       uses: azure/aks-set-context@v1
-  #       with:
-  #           creds: "${{ secrets.AZURE_CREDENTIALS }}"
-  #           resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
-  #           cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
+      - name: Login to AKS
+        uses: azure/aks-set-context@v1
+        with:
+            creds: "${{ secrets.AZURE_CREDENTIALS }}"
+            resource-group: ${{ secrets.AKS_RESOURCE_GROUP }}
+            cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
 
-  #     - name: Install Helm
-  #       uses: azure/setup-helm@v1
+      - name: Install Helm
+        uses: azure/setup-helm@v1
 
-  #     - name: Package Helm chart
-  #       run: |
-  #         helm package ./deploy \
-  #           --version ${{ env.version }} \
-  #           --app-version ${{ env.version }}
+      - name: Package Helm chart
+        run: |
+          helm package ./deploy \
+            --version ${{ env.version }} \
+            --app-version ${{ env.version }}
 
-  #     - name: Deploy Helm chart to AKS
-  #       run: |
-  #         helm upgrade factorio-tech factorio-tech-${{ env.version }}.tgz \
-  #           --install --atomic \
-  #           --values deploy/values.yaml \
-  #           --set-string postgres.database=${{ secrets.POSTGRES_DATABASE }} \
-  #           --set-string postgres.username=${{ secrets.POSTGRES_USERNAME }} \
-  #           --set-string postgres.password=${{ secrets.POSTGRES_PASSWORD }} \
-  #           --set-string postgres.diskName=${{ secrets.POSTGRES_DISK_NAME }} \
-  #           --set-string postgres.diskURI=${{ secrets.POSTGRES_DISK_URI }} \
-  #           --set-string oAuthProviders[0].name=GitHub \
-  #           --set-string oAuthProviders[0].clientId=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
-  #           --set-string oAuthProviders[0].clientSecret=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
-  #           --set-string oAuthProviders[1].name=Discord \
-  #           --set-string oAuthProviders[1].clientId=${{ secrets.OAUTH_DISCORD_CLIENT_ID }} \
-  #           --set-string oAuthProviders[1].clientSecret=${{ secrets.OAUTH_DISCORD_CLIENT_SECRET }}
+      - name: Deploy Helm chart to AKS
+        run: |
+          helm upgrade factorio-tech factorio-tech-${{ env.version }}.tgz \
+            --install --atomic \
+            --values deploy/values.yaml \
+            --set-string hostNames.web=${{ secrets.HOSTNAME_WEB }} \
+            --set-string hostNames.api=${{ secrets.HOSTNAME_API }} \
+            --set-string hostNames.identity=${{ secrets.HOSTNAME_IDENTITY }} \
+            --set-string postgres.database=${{ secrets.POSTGRES_DATABASE }} \
+            --set-string postgres.username=${{ secrets.POSTGRES_USERNAME }} \
+            --set-string postgres.password=${{ secrets.POSTGRES_PASSWORD }} \
+            --set-string postgres.diskName=${{ secrets.POSTGRES_DISK_NAME }} \
+            --set-string postgres.diskURI=${{ secrets.POSTGRES_DISK_URI }} \
+            --set-string web.clientId=${{ secrets.WEB_CLIENT_ID }} \
+            --set-string web.clientSecret=${{ secrets.WEB_CLIENT_SECRET }} \
+            --set-string web.cookieSecret=${{ secrets.WEB_COOKIE_SECRET }} \
+            --set-string identity.providers[0].name=GitHub \
+            --set-string identity.providers[0].clientId=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
+            --set-string identity.providers[0].clientSecret=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
+            --set-string identity.providers[1].name=Discord \
+            --set-string identity.providers[1].clientId=${{ secrets.OAUTH_DISCORD_CLIENT_ID }} \
+            --set-string identity.providers[1].clientSecret=${{ secrets.OAUTH_DISCORD_CLIENT_SECRET }}

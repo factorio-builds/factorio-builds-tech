@@ -1,5 +1,6 @@
 import { withApplicationInsights } from "next-applicationinsights"
 import type { AppContext, AppProps } from "next/app"
+import getConfig from "next/config"
 import Head from "next/head"
 import { compose } from "redux"
 import { ThemeProvider } from "styled-components"
@@ -7,6 +8,8 @@ import { GlobalStyle } from "../design/styles/global-style"
 import { theme } from "../design/styles/theme"
 import { wrapper } from "../redux/store"
 import auth from "../utils/auth"
+
+const { serverRuntimeConfig } = getConfig()
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -69,8 +72,8 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
 
 export default compose(
   withApplicationInsights({
-    instrumentationKey: "YOUR_KEY_GOES_HERE",
-    isEnabled: process.env.NODE_ENV === "production",
+    instrumentationKey: serverRuntimeConfig.instrumentationKey,
+    isEnabled: serverRuntimeConfig.enableApplicationInsights === "true",
   }),
   wrapper.withRedux
 )(MyApp)
