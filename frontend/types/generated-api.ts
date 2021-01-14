@@ -889,7 +889,7 @@ export interface components {
     } & { [key: string]: { [key: string]: any } }
     LinkModel: {
       /**
-       * The absolute URI the the linked resource.
+       * The absolute URL of the linked resource.
        */
       href: string
       /**
@@ -900,29 +900,29 @@ export interface components {
     }
     BuildsLinks: {
       /**
-       * The absolute URL to the API endpoint to create a new build.
+       * The absolute URL of the API endpoint to create a new build.
        * Only available if the call has been made with an authenticated user token.
        */
       create_build?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the API endpoint to add a payload.
+       * The absolute URL of the API endpoint to add a payload.
        * Only available if the call has been made with an authenticated user token.
        */
       create_payload?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the previous page of the results list.
+       * The absolute URL of the previous page of the results list.
        * Only available if the current page is not the first page.
        */
       prev?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the next page of the results list.
+       * The absolute URL of the next page of the results list.
        * Only available if there are more results to be returned.
        */
       next?: components["schemas"]["LinkModel"] | null
     }
     ImageLinkModel: {
       /**
-       * The absolute URI the the linked resource.
+       * The absolute URL of the linked resource.
        */
       href: string
       /**
@@ -941,7 +941,7 @@ export interface components {
     }
     CollectionLinkModel: {
       /**
-       * The absolute URI the the linked resource.
+       * The absolute URL of the linked resource.
        */
       href: string
       /**
@@ -956,31 +956,37 @@ export interface components {
     }
     ThinBuildLinks: {
       /**
-       * The absolute URL to this build's full details.
+       * The absolute URL of this build's full details.
        */
       self: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL to this build's cover image.
+       * The absolute URL of this build's cover image.
        */
       cover: components["schemas"]["ImageLinkModel"]
       /**
-       * The absolute URL to the list of this build's versions.
+       * The absolute URL of the list of this build's versions.
        */
       versions: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL to the list of this build's followers.
+       * The absolute URL of the list of this build's followers.
        */
       followers: components["schemas"]["CollectionLinkModel"]
       /**
-       * The absolute URL to the API endpoint to add a version to this build.
+       * The absolute URL of the API endpoint to add a version to this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user is the owner of the build.
        */
       add_version?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the API endpoint to delete this build.
+       * The absolute URL of the API endpoint to edit this build.
        * Only available if the call has been made with an authenticated user token
-       * and the authenticated user is an administrator.
+       * and the authenticated user has the required permissions.
+       */
+      edit?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL of the API endpoint to delete this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user has the required permissions.
        */
       delete?: components["schemas"]["LinkModel"] | null
     }
@@ -1055,41 +1061,47 @@ export interface components {
     Hash: { [key: string]: any }
     FullBuildLinks: {
       /**
-       * The absolute URL to this build's full details.
+       * The absolute URL of this build's full details.
        */
       self: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL to this build's cover image.
+       * The absolute URL of this build's cover image.
        */
       cover: components["schemas"]["ImageLinkModel"]
       /**
-       * The absolute URL to the list of this build's versions.
+       * The absolute URL of the list of this build's versions.
        */
       versions: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL to the list of this build's followers.
+       * The absolute URL of the list of this build's followers.
        */
       followers: components["schemas"]["CollectionLinkModel"]
       /**
-       * The absolute URL to the API endpoint to add a version to this build.
+       * The absolute URL of the API endpoint to add a version to this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user is the owner of the build.
        */
       add_version?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the API endpoint to delete this build.
+       * The absolute URL of the API endpoint to edit this build.
        * Only available if the call has been made with an authenticated user token
-       * and the authenticated user is an administrator.
+       * and the authenticated user has the required permissions.
+       */
+      edit?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL of the API endpoint to delete this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user has the required permissions.
        */
       delete?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the API endpoint to **add** this build to the authenticated user's favorites.
+       * The absolute URL of the API endpoint to **add** this build to the authenticated user's favorites.
        * Only available if the call has been made with an authenticated user token
        * and the user currently **does not** follow this build.
        */
       add_favorite?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to the API endpoint to **remove** this build to the authenticated user's favorites.
+       * The absolute URL of the API endpoint to **remove** this build to the authenticated user's favorites.
        * Only available if the call has been made with an authenticated user token
        * and the user currently **does** follow this build.
        */
@@ -1113,7 +1125,7 @@ export interface components {
     }
     VersionLinks: {
       /**
-       * The absolute URL to this version's full payload.
+       * The absolute URL of this version's full payload.
        */
       payload: components["schemas"]["LinkModel"]
     }
@@ -1129,20 +1141,20 @@ export interface components {
     }
     PayloadLinks: {
       /**
-       * The absolute URL to this payload's full details.
+       * The absolute URL of this payload's full details.
        */
       self: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL to this payload's raw encoded blueprint string for import in the game or other tools.
+       * The absolute URL of this payload's raw encoded blueprint string for import in the game or other tools.
        */
       raw: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL to this payload's full-size rendering.
+       * The absolute URL of this payload's full-size rendering.
        * Only available if the payload is of type `blueprint`.
        */
       rendering_full?: components["schemas"]["LinkModel"] | null
       /**
-       * The absolute URL to this payload's rendering thumbnail.
+       * The absolute URL of this payload's rendering thumbnail.
        * Only available if the payload is of type `blueprint`.
        */
       rendering_thumb?: components["schemas"]["LinkModel"] | null

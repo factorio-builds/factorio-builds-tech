@@ -13,7 +13,7 @@ namespace FactorioTech.Api.ViewModels
     public class LinkModel
     {
         /// <summary>
-        /// The absolute URI the the linked resource.
+        /// The absolute URL of the linked resource.
         /// </summary>
         [Required]
         public string Href { get; set; }
@@ -27,7 +27,7 @@ namespace FactorioTech.Api.ViewModels
         public LinkModel(string href, string? method = null)
         {
             Href = href;
-            Method = method;
+            Method = method?.ToLowerInvariant();
         }
     }
 
