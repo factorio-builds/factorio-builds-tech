@@ -166,7 +166,7 @@ namespace FactorioTech.Api
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto,
             });
 
             if (!env.IsProduction())
@@ -179,14 +179,17 @@ namespace FactorioTech.Api
                 app.UseHsts();
             }
 
-            app.UseSwagger(options => options.PreSerializeFilters.Add((doc, _) => doc.Servers?.Clear()));
-            app.UseSwaggerUI(options =>
+            if (!env.IsProduction())
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "factorio.tech v1");
-                options.OAuthClientId("swagger");
-                options.OAuthClientSecret("swagger");
-                options.OAuthUsePkce();
-            });
+                app.UseSwagger(options => options.PreSerializeFilters.Add((doc, _) => doc.Servers?.Clear()));
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "factorio.tech v1");
+                    options.OAuthClientId("swagger");
+                    options.OAuthClientSecret("swagger");
+                    options.OAuthUsePkce();
+                });
+            }
 
             app.UseHttpsRedirection();
             app.UseProblemDetails();

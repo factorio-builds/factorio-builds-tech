@@ -69,7 +69,7 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
 
 export default compose(
   withApplicationInsights({
-    instrumentationKey: "YOUR_KEY_GOES_HERE",
+    instrumentationKey: process.env.INSTRUMENTATION_KEY,
     isEnabled: process.env.NODE_ENV === "production",
   }),
   wrapper.withRedux
