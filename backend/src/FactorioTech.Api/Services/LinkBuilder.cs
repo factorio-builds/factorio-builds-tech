@@ -52,7 +52,15 @@ namespace FactorioTech.Api.Services
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
 
                 AddVersion = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
+                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
+                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
+                    : null,
+
+                Edit = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
+                       || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
+                       || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
 
                 Delete = urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
@@ -90,7 +98,15 @@ namespace FactorioTech.Api.Services
                     : null,
 
                 AddVersion = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
+                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
+                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
+                    : null,
+
+                Edit = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
+                        || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
+                        || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
 
                 Delete = urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
