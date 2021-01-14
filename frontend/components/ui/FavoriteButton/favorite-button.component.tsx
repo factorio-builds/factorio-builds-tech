@@ -1,5 +1,6 @@
 import React, { useCallback } from "react"
 import { useSelector } from "react-redux"
+import cx from "classnames"
 import { useApi } from "../../../hooks/useApi"
 import { IStoreState } from "../../../redux/store"
 import { IFullBuild, IUser } from "../../../types/models"
@@ -13,10 +14,10 @@ interface IFavoriteButtonProps
 
 const FavoriteButton: React.FC<IFavoriteButtonProps> = ({ owner, slug }) => {
   const authUser = useSelector((state: IStoreState) => state.auth?.user)
-  const { data, execute: refetch } = useApi({
+  const { data, loading, error, execute: refetch } = useApi({
     url: `/builds/${owner}/${slug}/followers`,
   })
-  const { execute } = useApi(
+  const { loading: loadingToggle, error: errorToggle, execute } = useApi(
     { url: `/builds/${owner}/${slug}/followers` },
     { manual: true }
   )
@@ -30,8 +31,12 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({ owner, slug }) => {
   }, [isFavorited])
 
   return (
-    <SC.FavoriteButtonWrapper onClick={toggle}>
+    <SC.FavoriteButtonWrapper
+      onClick={toggle}
+      className={cx({ "is-error": error || errorToggle })}
+    >
       {isFavorited ? "unfavorite" : "favorite"}
+      {(loading || loadingToggle) && "..."}
     </SC.FavoriteButtonWrapper>
   )
 }

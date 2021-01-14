@@ -4,4 +4,8 @@ import { ETypo } from "../../../design/tokens/typo"
 
 export const FavoriteButtonWrapper = styled.button`
   ${getTypo(ETypo.BUTTON)};
+
+  &.is-error {
+    border: 1px solid red;
+  }
 `
