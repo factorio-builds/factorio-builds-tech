@@ -60,10 +60,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
           <span>
               updated at <b>{formatDate(props.build.updated_at)}</b> ({formatSince(props.build.updated_at)})
             </span>
-          <FavoriteButton
-            owner={props.build.owner.username}
-            slug={props.build.slug}
-          />
+          <FavoriteButton build={props.build} />
         </Stacker>
       </Stacker>
     </SC.BuildHeaderWrapper>
