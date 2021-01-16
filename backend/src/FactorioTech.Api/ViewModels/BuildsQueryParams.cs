@@ -17,13 +17,13 @@ namespace FactorioTech.Api.ViewModels
         /// The desired field to sort the results
         /// </summary>
         [FromQuery(Name = "sort_field")]
-        public BlueprintService.SortField SortField { get; set; } = BlueprintService.SortField.Updated;
+        public BuildService.SortField SortField { get; set; } = BuildService.SortField.Updated;
 
         /// <summary>
         /// The desired direction to sort the results
         /// </summary>
         [FromQuery(Name = "sort_direction")]
-        public BlueprintService.SortDirection SortDirection { get; set; } = BlueprintService.SortDirection.Desc;
+        public BuildService.SortDirection SortDirection { get; set; } = BuildService.SortDirection.Desc;
 
         /// <summary>
         /// An optional search term to filter the results by

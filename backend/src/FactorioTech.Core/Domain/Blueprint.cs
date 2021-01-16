@@ -113,29 +113,40 @@ namespace FactorioTech.Core.Domain
             Icons = version.Icons;
         }
 
-        public void UpdateDetails(Instant now, string title, string? description, IReadOnlySet<Tag> tags)
+        public void UpdateDetails(Instant now, string? title, string? description, IReadOnlySet<Tag>? tags)
         {
+            if (title != null)
+            {
+                Title = title;
+            }
+
+            if (description != null)
+            {
+                Description = string.IsNullOrWhiteSpace(description) ? null : description;
+            }
+
+            if (tags != null)
+            {
+                if (Tags == null)
+                    throw new Exception("Must load tags before updating details!");
+
+                foreach (var tag in tags)
+                {
+                    tag.BlueprintId = BlueprintId;
+                }
+
+                foreach (var tag in Tags.Except(tags))
+                {
+                    Tags.Remove(tag);
+                }
+
+                foreach (var tag in tags.Except(Tags))
+                {
+                    Tags.Add(tag);
+                }
+            }
+
             UpdatedAt = now;
-            Title = title;
-            Description = description;
-
-            if (Tags == null)
-                throw new Exception("Must load tags before updating details!");
-
-            foreach (var tag in tags)
-            {
-                tag.BlueprintId = BlueprintId;
-            }
-
-            foreach (var tag in Tags.Except(tags))
-            {
-                Tags.Remove(tag);
-            }
-
-            foreach (var tag in tags.Except(Tags))
-            {
-                Tags.Add(tag);
-            }
         }
     }
 }

@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -47,7 +48,7 @@ namespace FactorioTech.Api.Services
         private readonly AppConfig _appConfig;
         private readonly AppDbContext _dbContext;
         private readonly HttpClient _httpClient;
-        private readonly BlueprintService _blueprintService;
+        private readonly BuildService _buildService;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly ImageService _imageService;
 
@@ -56,7 +57,7 @@ namespace FactorioTech.Api.Services
             IOptions<AppConfig> appConfig,
             AppDbContext dbContext,
             HttpClient httpClient,
-            BlueprintService blueprintService,
+            BuildService buildService,
             BlueprintConverter blueprintConverter,
             ImageService imageService)
         {
@@ -64,7 +65,7 @@ namespace FactorioTech.Api.Services
             _appConfig = appConfig.Value;
             _dbContext = dbContext;
             _httpClient = httpClient;
-            _blueprintService = blueprintService;
+            _buildService = buildService;
             _blueprintConverter = blueprintConverter;
             _imageService = imageService;
         }
@@ -158,23 +159,29 @@ namespace FactorioTech.Api.Services
                 cache.TryAdd(envelope, payload);
 
                 await cache.EnsureInitializedGraph(envelope);
-                await _blueprintService.SavePayloadGraph(payload.Hash, cache.Values);
+                await _buildService.SavePayloadGraph(payload.Hash, cache.Values);
 
-                var request = new BlueprintService.CreateRequest(
+                var request = new BuildService.CreateRequest(
+                    username,
                     slug,
                     blueprint.Title,
                     blueprint.Description,
                     blueprint.Tags.Select(t => t.TrimEnd('/')),
                     (payload.Hash, null, null, envelope.Icons.ToGameIcons()),
                     null);
-                
+
+                var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                {
+                    new(ClaimTypes.NameIdentifier, owner.Id.ToString()),
+                }));
+
                 var cover = await _httpClient.GetStreamAsync(blueprint.CoverUri);
                 using var handle = await _imageService.SaveCroppedCover(cover);
-                var result = await _blueprintService.CreateOrAddVersion(request, handle, owner.Id);
+                var result = await _buildService.CreateOrAddVersion(request, handle, principal);
 
                 switch (result)
                 {
-                    case BlueprintService.CreateResult.Success:
+                    case BuildService.CreateResult.Success:
                         createdCount++;
                         _logger.LogInformation("Blueprint {Title} by {Owner} created successfully", blueprint.Title, blueprint.Owner);
                         break;

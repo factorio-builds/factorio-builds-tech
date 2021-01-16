@@ -19,7 +19,7 @@ namespace FactorioTech.Tests
     {
         private AppDbContext _dbContext = null!;
         private PostgreSqlTestcontainer _postgresContainer = null!;
-        private BlueprintService _service = null!;
+        private BuildService _service = null!;
 
         public async Task InitializeAsync()
         {
@@ -36,7 +36,7 @@ namespace FactorioTech.Tests
             _dbContext = AppDbContextFactory.CreateDbContext(_postgresContainer.ConnectionString);
             await _dbContext.Database.MigrateAsync();
 
-            _service = new BlueprintService(new NullLogger<BlueprintService>(), _dbContext);
+            _service = new BuildService(new NullLogger<BuildService>(), _dbContext);
         }
 
         public async Task DisposeAsync()
@@ -55,9 +55,9 @@ namespace FactorioTech.Tests
             var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
             await new BlueprintBuilder().WithPayload(payload).WithOwner(owner).Save(_dbContext);
 
-            var (blueprints, hasMore, totalCount) = await _service.GetBlueprints(
+            var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
                 (1, 100),
-                (BlueprintService.SortField.Created, BlueprintService.SortDirection.Asc),
+                (BuildService.SortField.Created, BuildService.SortDirection.Asc),
                 Array.Empty<string>(),
                 null, null, null);
 
@@ -75,7 +75,8 @@ namespace FactorioTech.Tests
         {
             var owner = await new UserBuilder().Save(_dbContext);
             var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBookEncoded).Save(_dbContext);
-            var request = new BlueprintService.CreateRequest(
+            var request = new BuildService.CreateRequest(
+                owner.UserName,
                 "test-1",
                 "test blueprint 1",
                 "the description",
@@ -83,15 +84,15 @@ namespace FactorioTech.Tests
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 null);
 
-            var result = await _service.CreateOrAddVersion(request, new NullTempCoverHandle(), owner.Id);
+            var result = await _service.CreateOrAddVersion(request, new NullTempCoverHandle(), owner.ToClaimsPrincipal());
 
-            result.Should().BeOfType<BlueprintService.CreateResult.Success>();
+            result.Should().BeOfType<BuildService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);
             _dbContext.BlueprintPayloads.Should().HaveCount(1);
             _dbContext.BlueprintVersions.Should().HaveCount(1);
 
-            var blueprint = ((BlueprintService.CreateResult.Success)result).Blueprint;
+            var blueprint = ((BuildService.CreateResult.Success)result).Build;
             blueprint.Slug.Should().Be("test-1");
             blueprint.Title.Should().Be("test blueprint 1");
             blueprint.Description.Should().Be("the description");
@@ -111,7 +112,8 @@ namespace FactorioTech.Tests
             var existingPayload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
             var existing = await new BlueprintBuilder().WithPayload(existingPayload).WithOwner(owner).Save(_dbContext);
 
-            var request = new BlueprintService.CreateRequest(
+            var request = new BuildService.CreateRequest(
+                owner.UserName,
                 existing.Slug,
                 "different title",
                 "different description",
@@ -119,16 +121,14 @@ namespace FactorioTech.Tests
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 existing.LatestVersionId);
 
-            var result = await _service.CreateOrAddVersion(request, new NullTempCoverHandle(), owner.Id);
-            result.Should().BeOfType<BlueprintService.CreateResult.Success>();
+            var result = await _service.CreateOrAddVersion(request, new NullTempCoverHandle(), owner.ToClaimsPrincipal());
+            result.Should().BeOfType<BuildService.CreateResult.Success>();
 
             _dbContext.Blueprints.Should().HaveCount(1);
             _dbContext.BlueprintPayloads.Should().HaveCount(2);
             _dbContext.BlueprintVersions.Should().HaveCount(2);
 
-            await Task.Delay(100);
-
-            var blueprint = ((BlueprintService.CreateResult.Success)result).Blueprint;
+            var blueprint = ((BuildService.CreateResult.Success)result).Build;
             blueprint.Slug.Should().Be(existing.Slug);
             blueprint.Title.Should().Be("different title");
             blueprint.Description.Should().Be("different description");

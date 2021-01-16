@@ -14,12 +14,12 @@ namespace FactorioTech.Api.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly BlueprintService _blueprintService;
+        private readonly BuildService _buildService;
 
         public UserController(
-            BlueprintService blueprintService)
+            BuildService buildService)
         {
-            _blueprintService = blueprintService;
+            _buildService = buildService;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<BuildsModel> ListBuilds(string username, [FromQuery]BuildsQueryParams query)
         {
-            var (builds, hasMore, totalCount) = await _blueprintService.GetBlueprints(
+            var (builds, hasMore, totalCount) = await _buildService.GetBuilds(
                 (query.Page, BuildsQueryParams.PageSize),
                 (query.SortField, query.SortDirection),
                 query.TagsCsv?.Split(',') ?? Array.Empty<string>(),

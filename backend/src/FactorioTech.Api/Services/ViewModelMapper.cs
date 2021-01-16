@@ -1,7 +1,6 @@
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
-using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -138,10 +137,10 @@ namespace FactorioTech.Api.Services
                 Children = payloadGraph != null ? MapChildren(urlHelper, envelope, payloadGraph) : null,
             };
 
-        public static ProblemDetails ToProblem(this BlueprintService.CreateResult result) =>
+        public static ProblemDetails ToProblem<T>(this T result) =>
             new()
             {
-                Type = result.GetType().Name,
+                Type = result?.GetType().Name ?? "unknown",
                 Extensions =
                 {
                     { "traceId", Activity.Current?.Id },

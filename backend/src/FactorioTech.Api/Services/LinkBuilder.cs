@@ -1,5 +1,4 @@
 using FactorioTech.Api.Controllers;
-using FactorioTech.Api.Extensions;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
@@ -51,19 +50,15 @@ namespace FactorioTech.Api.Services
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
 
-                AddVersion = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
-                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
-                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(blueprint)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
                     : null,
 
-                Edit = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
-                       || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
-                       || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
+                Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(blueprint)
+                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
                     : null,
 
-                Delete = urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(blueprint)
                     ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
             };
@@ -97,19 +92,15 @@ namespace FactorioTech.Api.Services
                     ? new(urlHelper.ActionLink(nameof(BuildController.RemoveFavorite), "Build", buildValues), "delete")
                     : null,
 
-                AddVersion = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
-                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
-                             || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(blueprint)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
                     : null,
 
-                Edit = urlHelper.ActionContext.HttpContext.User.TryGetUserId() == blueprint.OwnerId
-                        || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Moderator)
-                        || urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
+                Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(blueprint)
+                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
                     : null,
 
-                Delete = urlHelper.ActionContext.HttpContext.User.IsInRole(Role.Administrator)
+                Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(blueprint)
                     ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
             };

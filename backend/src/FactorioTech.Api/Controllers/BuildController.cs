@@ -1,6 +1,7 @@
-using FactorioTech.Api.Extensions;
 using FactorioTech.Api.Services;
 using FactorioTech.Api.ViewModels;
+using FactorioTech.Api.ViewModels.Requests;
+using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
@@ -24,20 +25,20 @@ namespace FactorioTech.Api.Controllers
 
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
-        private readonly BlueprintService _blueprintService;
+        private readonly BuildService _buildService;
         private readonly FollowerService _followerService;
         private readonly ImageService _imageService;
 
         public BuildController(
             AppDbContext dbContext,
             BlueprintConverter blueprintConverter,
-            BlueprintService blueprintService,
+            BuildService buildService,
             FollowerService followerService,
             ImageService imageService)
         {
             _dbContext = dbContext;
             _blueprintConverter = blueprintConverter;
-            _blueprintService = blueprintService;
+            _buildService = buildService;
             _followerService = followerService;
             _imageService = imageService;
         }
@@ -54,7 +55,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<BuildsModel> ListBuilds([FromQuery]BuildsQueryParams query)
         {
-            var (builds, hasMore, totalCount) = await _blueprintService.GetBlueprints(
+            var (builds, hasMore, totalCount) = await _buildService.GetBuilds(
                 (query.Page, BuildsQueryParams.PageSize),
                 (query.SortField, query.SortDirection),
                 query.TagsCsv?.Split(',') ?? Array.Empty<string>(),
@@ -76,24 +77,25 @@ namespace FactorioTech.Api.Controllers
         public async Task<IActionResult> CreateBuild([FromForm]CreateBuildRequest request)
         {
             using var cover = await SaveTempCover(request.Cover);
-            var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
-                    request.Slug.Trim(),
-                    request.Title.Trim(),
-                    request.Description?.Trim(),
+            var result = await _buildService.CreateOrAddVersion(new BuildService.CreateRequest(
+                    User.GetUserName(),
+                    request.Slug,
+                    request.Title,
+                    request.Description,
                     request.Tags,
-                    (request.Hash, request.Version?.Name?.Trim(), request.Version?.Description?.Trim(), request.Icons),
+                    (request.Hash, request.Version.Name, request.Version.Description, request.Version.Icons),
                     null),
-                cover, User.GetUserId());
+                cover, User);
 
             return result switch
             {
-                BlueprintService.CreateResult.Success success => Created(Url.ActionLink(nameof(GetDetails), "Build", new
+                BuildService.CreateResult.Success success => Created(Url.ActionLink(nameof(GetDetails), "Build", new
                 {
-                    owner = success.Blueprint.OwnerSlug,
-                    slug = success.Blueprint.Slug,
-                }), success.Blueprint.ToThinViewModel(Url)),
-                BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
-                BlueprintService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
+                    owner = success.Build.OwnerSlug,
+                    slug = success.Build.Slug,
+                }), success.Build.ToThinViewModel(Url)),
+                BuildService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
+                BuildService.CreateResult.DuplicateSlug error => Conflict(error.ToProblem()),
                 { } error => BadRequest(error.ToProblem()),
             };
         }
@@ -113,16 +115,45 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDetails(string owner, string slug)
         {
-            var build = await _blueprintService.GetBlueprint(owner, slug);
+            var (build, currentUserIsFollower) = await _buildService.GetDetails(owner, slug, User);
             if (build?.LatestVersion?.Payload == null)
                 return NotFound();
 
-            var currentUserId = User.TryGetUserId();
-            var currentUserIsFollower = currentUserId != null && await _dbContext.Favorites.AsNoTracking()
-                .AnyAsync(f => f.BlueprintId == build.BlueprintId && f.UserId == currentUserId);
-
             var envelope = await _blueprintConverter.Decode(build.LatestVersion.Payload.Encoded);
             return Ok(build.ToFullViewModel(Url, envelope, currentUserIsFollower));
+        }
+
+        /// <summary>
+        /// Edit the metadata of a build.
+        /// </summary>
+        /// <param name="owner" example="factorio_fritz">The username of the desired build's owner</param>
+        /// <param name="slug" example="my-awesome-build">The slug of the desired build</param>
+        /// <param name="request">The request parameters</param>
+        /// <response code="200" type="application/json">The metadata to update.</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested build does not exist</response>
+        [Authorize]
+        [HttpPatch("{owner}/{slug}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> EditDetails(string owner, string slug, [FromForm]EditBuildRequest request)
+        {
+            using var cover = request.Cover != null
+                ? await SaveTempCover(request.Cover)
+                : new NullTempCoverHandle();
+
+            var result = await _buildService.Edit(new BuildService.EditRequest(
+                owner, slug, request.Title, request.Description, request.Tags), cover, User);
+
+            return result switch
+            {
+                BuildService.EditResult.Success success => Ok(success.Build.ToThinViewModel(Url)),
+                BuildService.EditResult.NotAuthorized _ => Forbid(),
+                BuildService.EditResult.BuildNotFound error => NotFound(error.ToProblem()),
+                {} error => BadRequest(error.ToProblem()),
+            };
         }
 
         /// <summary>
@@ -140,16 +171,9 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFollowers(string owner, string slug)
         {
-            var buildId = await TryFindBuildId(owner, slug);
-            if (buildId == Guid.Empty)
+            var followers = await _followerService.Get(owner, slug);
+            if (followers == null)
                 return NotFound();
-
-            var followers = await _dbContext.Favorites.AsNoTracking()
-                .Where(f => f.BlueprintId == buildId)
-                .OrderByDescending(f => f.CreatedAt)
-                .Select(f => f.User!)
-                .Distinct()
-                .ToListAsync();
 
             return Ok(followers.ToViewModel());
         }
@@ -162,18 +186,17 @@ namespace FactorioTech.Api.Controllers
         /// <response code="204" type="application/json">The build was added to the user's favorites</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
-        [HttpPut("{owner}/{slug}/followers")]
         [Authorize]
+        [HttpPut("{owner}/{slug}/followers")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddFavorite(string owner, string slug)
         {
-            var buildId = await TryFindBuildId(owner, slug);
-            if (buildId == Guid.Empty)
+            var mutated = await _followerService.Follow(owner, slug, User);
+            if (mutated == null)
                 return NotFound();
 
-            await _followerService.AddToFavorites(buildId, User.GetUserId());
             return NoContent();
         }
 
@@ -185,18 +208,17 @@ namespace FactorioTech.Api.Controllers
         /// <response code="204" type="application/json">The build was removed from the user's favorites</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
-        [HttpDelete("{owner}/{slug}/followers")]
         [Authorize]
+        [HttpDelete("{owner}/{slug}/followers")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveFavorite(string owner, string slug)
         {
-            var buildId = await TryFindBuildId(owner, slug);
-            if (buildId == Guid.Empty)
+            var mutated = await _followerService.Unfollow(owner, slug, User);
+            if (mutated == null)
                 return NotFound();
 
-            await _followerService.RemoveFromFavorites(buildId, User.GetUserId());
             return NoContent();
         }
 
@@ -236,31 +258,21 @@ namespace FactorioTech.Api.Controllers
         /// <response code="204">The build was deleted successfully</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
-        [HttpDelete("{owner}/{slug}")]
         [Authorize(Roles = Role.Administrator)]
+        [HttpDelete("{owner}/{slug}")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteBuild(string owner, string slug)
         {
-            var build = await _dbContext.Blueprints
-                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
-                .FirstOrDefaultAsync();
-
-            if (build == null)
-                return NotFound();
-
-            var versions = await _dbContext.BlueprintVersions
-                .Where(v => v.BlueprintId == build.BlueprintId)
-                .ToListAsync();
-
-            _dbContext.Remove(build);
-            _dbContext.RemoveRange(versions);
-
-            await _dbContext.SaveChangesAsync();
-
-            return NoContent();
+            return await _buildService.Delete(owner, slug, User) switch
+            {
+                BuildService.DeleteResult.Success _ => NoContent(),
+                BuildService.DeleteResult.NotAuthorized _ => Forbid(),
+                BuildService.DeleteResult.BuildNotFound error => NotFound(error.ToProblem()),
+                {} error => BadRequest(error.ToProblem()),
+            };
         }
 
         /// <summary>
@@ -282,24 +294,26 @@ namespace FactorioTech.Api.Controllers
         {
             using var cover = await SaveTempCover(request.Cover);
 
-            var result = await _blueprintService.CreateOrAddVersion(new BlueprintService.CreateRequest(
+            var result = await _buildService.CreateOrAddVersion(new BuildService.CreateRequest(
+                    owner,
                     slug,
-                    request.Title.Trim(),
-                    request.Description?.Trim(),
+                    request.Title,
+                    request.Description,
                     request.Tags,
-                    (request.Hash, request.Version?.Name?.Trim(), request.Version?.Description?.Trim(), request.Icons),
+                    (request.Hash, request.Version.Name, request.Version.Description, request.Version.Icons),
                     request.ExpectedPreviousVersionId),
-                cover, User.GetUserId());
+                cover, User);
 
             return result switch
             {
-                BlueprintService.CreateResult.Success success => Created(Url.ActionLink(nameof(GetDetails), "Build", new
+                BuildService.CreateResult.Success success => Created(Url.ActionLink(nameof(GetDetails), "Build", new
                 {
-                    owner = success.Blueprint.OwnerSlug,
-                    slug = success.Blueprint.Slug,
-                }), success.Blueprint.ToThinViewModel(Url)),
-                BlueprintService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
-                BlueprintService.CreateResult.ParentNotFound error => NotFound(error.ToProblem()),
+                    owner = success.Build.OwnerSlug,
+                    slug = success.Build.Slug,
+                }), success.Build.ToThinViewModel(Url)),
+                BuildService.CreateResult.NotAuthorized _ => Forbid(),
+                BuildService.CreateResult.DuplicateHash error => Conflict(error.ToProblem()),
+                BuildService.CreateResult.BuildNotFound error => NotFound(error.ToProblem()),
                 {} error => BadRequest(error.ToProblem()),
             };
         }
@@ -326,7 +340,7 @@ namespace FactorioTech.Api.Controllers
             return File(file, format);
         }
 
-        private async Task<ITempCoverHandle> SaveTempCover(CreateRequestBase.ImageData cover)
+        private async Task<ITempCoverHandle> SaveTempCover(CoverRequest cover)
         {
             try
             {
@@ -355,20 +369,5 @@ namespace FactorioTech.Api.Controllers
                 });
             }
         }
-
-        private IActionResult HandleCreateSuccess(Blueprint created)
-        {
-            return Created(Url.ActionLink(nameof(GetDetails), "Build", new
-            {
-                owner = created.OwnerSlug,
-                slug = created.Slug,
-            }), created.ToThinViewModel(Url));
-        }
-
-        private async Task<Guid> TryFindBuildId(string owner, string slug) =>
-            await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
-                .Select(bp => bp.BlueprintId)
-                .FirstOrDefaultAsync();
     }
 }

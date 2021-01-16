@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 using NodaTime;
 using Npgsql;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Services
@@ -22,17 +25,37 @@ namespace FactorioTech.Core.Services
             _dbContext = dbContext;
         }
 
-        public async Task AddToFavorites(Guid buildId, Guid userId)
+        public async Task<IReadOnlyCollection<User>?> Get(string owner, string slug)
         {
+            var buildId = await TryFindBuildId(owner, slug);
+            if (buildId == Guid.Empty)
+                return null;
+
+            return await _dbContext.Favorites.AsNoTracking()
+                .Where(f => f.BlueprintId == buildId)
+                .OrderByDescending(f => f.CreatedAt)
+                .Select(f => f.User!)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        public async Task<bool?> Follow(string owner, string slug, ClaimsPrincipal principal)
+        {
+            var buildId = await TryFindBuildId(owner, slug);
+            if (buildId == Guid.Empty)
+                return null;
+
+            var userId = principal.GetUserId();
+
             // todo: this is obviously a race condition!
             // instead of selecting and handling potential conflicts, this should be an upsert.
             // ef core doesn't currently support that and I'm too lazy to write proper raw sql.
 
             var existing = await _dbContext.Favorites.AsNoTracking()
-                .FirstOrDefaultAsync(f => f.BlueprintId == buildId);
+                .FirstOrDefaultAsync(f => f.BlueprintId == buildId && f.UserId == userId);
 
             if (existing != null)
-                return;
+                return false;
 
             try
             {
@@ -49,18 +72,27 @@ namespace FactorioTech.Core.Services
             {
                 // swallow unique key violations
                 _logger.LogWarning("Tried to add existing follower {UserId} to build {BuildId}", userId, buildId);
+                return false;
             }
+
+            return true;
         }
 
-        public async Task RemoveFromFavorites(Guid buildId, Guid userId)
+        public async Task<bool?> Unfollow(string owner, string slug, ClaimsPrincipal principal)
         {
+            var buildId = await TryFindBuildId(owner, slug);
+            if (buildId == Guid.Empty)
+                return null;
+
+            var userId = principal.GetUserId();
+
             // todo: this is obviously a race condition!
 
             var existing = await _dbContext.Favorites
-                .FirstOrDefaultAsync(f => f.BlueprintId == buildId);
+                .FirstOrDefaultAsync(f => f.BlueprintId == buildId && f.UserId == userId);
 
             if (existing == null)
-                return;
+                return false;
 
             try
             {
@@ -71,7 +103,17 @@ namespace FactorioTech.Core.Services
             {
                 // swallow concurrency exception
                 _logger.LogWarning("Tried to remove follower {UserId} from build {BuildId}", userId, buildId);
+                return false;
             }
+
+            return true;
         }
+
+        private async Task<Guid> TryFindBuildId(string owner, string slug) =>
+            await _dbContext.Blueprints.AsNoTracking()
+                .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
+                         && b.NormalizedSlug == slug.ToUpperInvariant())
+                .Select(b => b.BlueprintId)
+                .FirstOrDefaultAsync();
     }
 }
