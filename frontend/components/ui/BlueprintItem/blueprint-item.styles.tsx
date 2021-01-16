@@ -12,33 +12,33 @@ export const BlueprintItemWrapper = styled.div<{ depth: number }>`
   justify-content: flex-end;
   cursor: pointer;
   overflow: hidden;
-  margin-left: ${(props) => props.depth * 8}px;
-
-  & + & {
-    border-top: 1px solid ${COLOR.PURPLE500};
-  }
+  margin-left: ${(props) => props.depth * 40}px;
 `
 
 export const BlueprintItemInner = styled.div``
 
 export const ImageWrapper = styled.div`
-  width: 100%;
-  filter: contrast(0.8);
-
-  ${BlueprintItemInner}:hover & {
-    filter: contrast(1);
-  }
+  width: 200px;
 `
 
 export const Content = styled.div`
   padding: 16px;
   color: ${COLOR.PURPLE900};
   margin: 4px 0;
+  background: #241a34;
+  border-radius: 5px;
 
   ${BlueprintItemInner}:hover & {
     background: ${lighten(0.05, "#241a34")};
     color: #fff;
   }
+`
+
+export const Info = styled.div`
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  color: ${COLOR.PURPLE900};
 `
 
 export const Title = styled(Stacker)`
@@ -81,5 +81,10 @@ export const Category = styled.div`
 export const Expanded = styled.div``
 
 export const Description = styled.p`
-  margin: 16px 0 0 0;
+  margin: 0;
+  font-size: 15px;
+
+  & + & {
+    margin: 16px 0 0 0;
+  }
 `

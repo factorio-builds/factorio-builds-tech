@@ -29,7 +29,7 @@ const BlueprintsTab: TTabComponent = (props) => {
                     title={bp.label}
                     icons={bp.icons}
                     description={bp.description}
-                    // image={bp._links.cover}
+                    image={bp._links?.rendering_thumb}
                     nodes={bp.children}
                   />
                 )
@@ -43,7 +43,7 @@ const BlueprintsTab: TTabComponent = (props) => {
                   title={bp.label}
                   icons={bp.icons}
                   description={bp.description}
-                  // image={bp._links.cover}
+                  image={bp._links?.rendering_thumb}
                   entities={bp.entities}
                   tiles={bp.tiles}
                 />

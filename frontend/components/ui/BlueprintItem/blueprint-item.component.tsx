@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react"
+import cx from "classnames"
 import Caret from "../../../icons/caret"
-// import Image from "next/image"
 import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { countEntities, isBook } from "../../../utils/build"
 import BuildIcon from "../BuildIcon"
@@ -14,7 +14,7 @@ interface IBaseBlueprintItemProps {
   title: IFullPayload["label"]
   icons: IFullPayload["icons"]
   description: IFullPayload["description"]
-  // image: IFullPayload["_links"]["cover"]
+  image: IFullPayload["_links"]["rendering_thumb"]
 }
 
 interface IBlueprintItemPropsBook extends IBaseBlueprintItemProps {
@@ -42,7 +42,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
     [expanded]
   )
 
-  const isExpandable = props.isBook || props.description
+  const isExpandable = props.isBook || props.description || props.image
 
   const renderEntities = (
     entities: IBlueprintPayload["entities"],
@@ -71,18 +71,14 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
       .join(" & ")}`
   }
 
+  console.log(props.image)
+
   return (
-    <SC.BlueprintItemWrapper depth={props.depth}>
+    <SC.BlueprintItemWrapper
+      depth={props.depth}
+      className={cx({ "is-expanded": expanded })}
+    >
       <SC.BlueprintItemInner onClick={expand}>
-        <SC.ImageWrapper>
-          {/* <Image
-          src={props.image.href}
-          alt=""
-          width={props.image.width}
-          height={props.image.height}
-          layout="responsive"
-        /> */}
-        </SC.ImageWrapper>
         <SC.Content>
           <SC.Title orientation="horizontal" gutter={8}>
             {props.icons.length > 0 && <BuildIcon icons={props.icons} />}
@@ -100,15 +96,24 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
               </SC.Expand>
             )}
           </SC.Title>
-          {props.description && expanded && (
-            <SC.Description>
-              {props.description.split("\n").map((text) => (
-                <>
-                  {text}
-                  <br />
-                </>
-              ))}
-            </SC.Description>
+          {expanded && (props.image || props.description) && (
+            <SC.Info>
+              {props.image && (
+                <SC.ImageWrapper>
+                  <img src={props.image.href} alt="" width={200} />
+                </SC.ImageWrapper>
+              )}
+              {props.description && (
+                <SC.Description>
+                  {props.description.split("\n").map((text) => (
+                    <>
+                      {text}
+                      <br />
+                    </>
+                  ))}
+                </SC.Description>
+              )}
+            </SC.Info>
           )}
         </SC.Content>
       </SC.BlueprintItemInner>
@@ -125,7 +130,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                     title={node.label}
                     icons={node.icons}
                     description={node.description}
-                    // image={node._links.cover}
+                    image={node._links.rendering_thumb}
                     nodes={node.children}
                   />
                 )
@@ -139,7 +144,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   title={node.label}
                   icons={node.icons}
                   description={node.description}
-                  // image={node._links.cover}
+                  image={node._links.rendering_thumb}
                   entities={node.entities}
                   tiles={node.tiles}
                 />
