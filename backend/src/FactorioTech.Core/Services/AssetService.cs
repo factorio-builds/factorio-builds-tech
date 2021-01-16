@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
@@ -26,8 +27,12 @@ namespace FactorioTech.Core.Services
         }
 
         private readonly AppConfig _appConfig;
+        private readonly ILogger<AssetService> _logger;
 
-        public AssetService(IOptions<AppConfig> appConfigMonitor) => _appConfig = appConfigMonitor.Value;
+        public AssetService(IOptions<AppConfig> appConfigMonitor, ILogger<AssetService> logger) {
+            _appConfig = appConfigMonitor.Value;
+            _logger = logger;
+        }
 
         public async Task<Stream?> GetGameIcon(IconSize size, IconType type, string key)
         {
@@ -49,7 +54,10 @@ namespace FactorioTech.Core.Services
 
             var fqfn = Path.Combine(_appConfig.FactorioDir, "data", "base", "graphics", "icons", fileName);
             if (!File.Exists(fqfn))
+            {
+                _logger.LogError("Failed to load invalid icon: {Key}", sanitized);
                 return null;
+            }
 
             using var image = await Image.LoadAsync(fqfn);
 
