@@ -1,7 +1,6 @@
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
-using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

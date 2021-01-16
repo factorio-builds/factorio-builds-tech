@@ -55,7 +55,7 @@ namespace FactorioTech.Tests
             var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
             await new BlueprintBuilder().WithPayload(payload).WithOwner(owner).Save(_dbContext);
 
-            var (blueprints, hasMore, totalCount) = await _service.GetBlueprints(
+            var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
                 (1, 100),
                 (BuildService.SortField.Created, BuildService.SortDirection.Asc),
                 Array.Empty<string>(),

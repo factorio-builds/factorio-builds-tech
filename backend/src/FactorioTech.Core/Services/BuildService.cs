@@ -128,7 +128,7 @@ namespace FactorioTech.Core.Services
             _dbContext = dbContext;
         }
 
-        public async Task<(IReadOnlyCollection<Blueprint> Blueprints, bool HasMore, int TotalCount)> GetBlueprints(
+        public async Task<(IReadOnlyCollection<Blueprint> Blueprints, bool HasMore, int TotalCount)> GetBuilds(
             (int Current, int Size) page,
             (SortField Field, SortDirection Direction) sort,
             IReadOnlyCollection<string> tags,

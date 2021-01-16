@@ -55,7 +55,7 @@ namespace FactorioTech.Api.Services
                     : null,
 
                 Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(blueprint)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "put")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
                     : null,
 
                 Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(blueprint)
@@ -97,7 +97,7 @@ namespace FactorioTech.Api.Services
                     : null,
 
                 Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(blueprint)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "put")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
                     : null,
 
                 Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(blueprint)

@@ -1,4 +1,3 @@
-using FactorioTech.Api.Extensions;
 using FactorioTech.Api.Services;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Api.ViewModels.Requests;
@@ -56,7 +55,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<BuildsModel> ListBuilds([FromQuery]BuildsQueryParams query)
         {
-            var (builds, hasMore, totalCount) = await _buildService.GetBlueprints(
+            var (builds, hasMore, totalCount) = await _buildService.GetBuilds(
                 (query.Page, BuildsQueryParams.PageSize),
                 (query.SortField, query.SortDirection),
                 query.TagsCsv?.Split(',') ?? Array.Empty<string>(),
@@ -136,7 +135,7 @@ namespace FactorioTech.Api.Controllers
         [Authorize]
         [HttpPatch("{owner}/{slug}")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(FullBuildModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> EditDetails(string owner, string slug, [FromForm]EditBuildRequest request)
@@ -172,16 +171,9 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetFollowers(string owner, string slug)
         {
-            var buildId = await TryFindBuildId(owner, slug);
-            if (buildId == Guid.Empty)
+            var followers = await _followerService.Get(owner, slug);
+            if (followers == null)
                 return NotFound();
-
-            var followers = await _dbContext.Favorites.AsNoTracking()
-                .Where(f => f.BlueprintId == buildId)
-                .OrderByDescending(f => f.CreatedAt)
-                .Select(f => f.User!)
-                .Distinct()
-                .ToListAsync();
 
             return Ok(followers.ToViewModel());
         }
@@ -201,11 +193,10 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddFavorite(string owner, string slug)
         {
-            var buildId = await TryFindBuildId(owner, slug);
-            if (buildId == Guid.Empty)
+            var mutated = await _followerService.Follow(owner, slug, User);
+            if (mutated == null)
                 return NotFound();
 
-            await _followerService.AddToFavorites(buildId, User.GetUserId());
             return NoContent();
         }
 
@@ -224,11 +215,10 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveFavorite(string owner, string slug)
         {
-            var buildId = await TryFindBuildId(owner, slug);
-            if (buildId == Guid.Empty)
+            var mutated = await _followerService.Unfollow(owner, slug, User);
+            if (mutated == null)
                 return NotFound();
 
-            await _followerService.RemoveFromFavorites(buildId, User.GetUserId());
             return NoContent();
         }
 
@@ -379,11 +369,5 @@ namespace FactorioTech.Api.Controllers
                 });
             }
         }
-
-        private async Task<Guid> TryFindBuildId(string owner, string slug) =>
-            await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
-                .Select(bp => bp.BlueprintId)
-                .FirstOrDefaultAsync();
     }
 }
