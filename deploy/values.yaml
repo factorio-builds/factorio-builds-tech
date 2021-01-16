@@ -4,6 +4,7 @@ hostNames:
   web: staging.factorio.tech
   api: api.factorio.tech
   identity: identity.factorio.tech
+  cdn: static.factorio.tech
 
 replicas:
   web: 1

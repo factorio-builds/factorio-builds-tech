@@ -9,12 +9,14 @@ module.exports = {
     webUrl: process.env.WEB_URL || "http://localhost:3000",
     apiUrl: process.env.API_URL || "https://api.local.factorio.tech",
     identityUrl: process.env.IDENTITY_URL || "https://identity.local.factorio.tech",
+    cdnUrl: process.env.CDN_URL || "https://api.local.factorio.tech/assets",
     enableApplicationInsights: process.env.ENABLE_APPLICATION_INSIGHTS || false,
     instrumentationKey: process.env.INSTRUMENTATION_KEY,
   },
   images: {
     domains: [
       new URL(process.env.API_URL || "https://api.local.factorio.tech").hostname,
+      new URL(process.env.CDN_URL || "https://api.local.factorio.tech/assets").hostname,
     ],
   },
 }

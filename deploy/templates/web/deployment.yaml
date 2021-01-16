@@ -41,6 +41,8 @@ spec:
               value: https://{{ .Values.hostNames.api }}
             - name: IDENTITY_URL
               value: https://{{ .Values.hostNames.identity }}
+            - name: CDN_URL
+              value: https://{{ .Values.hostNames.cdn }}
             - name: ENABLE_APPLICATION_INSIGHTS
               value: "true"
             - name: INSTRUMENTATION_KEY
