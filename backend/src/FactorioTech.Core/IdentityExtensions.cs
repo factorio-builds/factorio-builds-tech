@@ -18,12 +18,12 @@ namespace FactorioTech.Core
                 ? userId : null;
 
         public static bool CanEdit(this ClaimsPrincipal principal, Blueprint build) =>
-            build.OwnerId == principal.GetUserId()
+            principal.TryGetUserId() == build.OwnerId
             || principal.IsInRole(Role.Moderator)
             || principal.IsInRole(Role.Administrator);
 
         public static bool CanAddVersion(this ClaimsPrincipal principal, Blueprint build) =>
-            build.OwnerId == principal.GetUserId()
+            principal.TryGetUserId() == build.OwnerId
             || principal.IsInRole(Role.Moderator)
             || principal.IsInRole(Role.Administrator);
 
