@@ -156,7 +156,7 @@ namespace FactorioTech.Api
 
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();
-            services.AddTransient<BlueprintService>();
+            services.AddTransient<BuildService>();
             services.AddTransient<FollowerService>();
             services.AddTransient<ImageService>();
             services.AddTransient<AssetService>();

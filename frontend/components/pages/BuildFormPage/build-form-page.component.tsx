@@ -136,8 +136,8 @@ const toFormData = (formValues: IValidFormValues) => {
   formData.append("tags[1]", "/train/rails")
 
   // again, this works but looks wonky
-  formData.append("icons[0].type", "item")
-  formData.append("icons[0].name", "stone-wall")
+  formData.append("version.icons[0].type", "item")
+  formData.append("version.icons[0].name", "stone-wall")
 
   // formData.append("version.name", "hello there") // optional
   // formData.append("version.description", "lorem ipsum") // optional

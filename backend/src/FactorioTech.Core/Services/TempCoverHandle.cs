@@ -7,7 +7,7 @@ namespace FactorioTech.Core.Services
     public interface ITempCoverHandle : IDisposable
     {
         public Guid TempId { get; }
-        public void Assign(Guid blueprintId);
+        public void Assign(Guid buildId);
     }
 
     public sealed class TempCoverHandle : ITempCoverHandle
@@ -25,8 +25,8 @@ namespace FactorioTech.Core.Services
             _logger = logger;
         }
 
-        public void Assign(Guid blueprintId) =>
-            File.Move(_getCoverFqfn(TempId), _getCoverFqfn(blueprintId));
+        public void Assign(Guid buildId) =>
+            File.Move(_getCoverFqfn(TempId), _getCoverFqfn(buildId));
 
         public void Dispose()
         {
@@ -44,7 +44,7 @@ namespace FactorioTech.Core.Services
     public sealed class NullTempCoverHandle : ITempCoverHandle
     {
         public Guid TempId => Guid.Empty;
-        public void Assign(Guid blueprintId) { }
+        public void Assign(Guid buildId) { }
         public void Dispose() { }
     }
 }

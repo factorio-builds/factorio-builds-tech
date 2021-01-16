@@ -6,11 +6,12 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Services
 {
-    public class BlueprintService
+    public class BuildService
     {
         public enum SortField
         {
@@ -26,7 +27,15 @@ namespace FactorioTech.Core.Services
             Desc,
         }
 
+        public record EditRequest(
+            string Owner,
+            string Slug,
+            string? Title,
+            string? Description,
+            IEnumerable<string>? Tags);
+
         public record CreateRequest(
+            string Owner,
             string Slug,
             string Title,
             string? Description,
@@ -34,10 +43,54 @@ namespace FactorioTech.Core.Services
             (Hash Hash, string? Name, string? Description, IEnumerable<GameIcon> Icons) Version,
             Guid? ExpectedVersionId);
 
+        public record EditResult
+        {
+            public sealed record Success(
+                    Blueprint Build)
+                : EditResult { }
+
+            public sealed record BuildNotFound(
+                    string Owner,
+                    string Slug)
+                : EditResult { }
+
+            public sealed record NotAuthorized(
+                    Guid UserId)
+                : EditResult { }
+
+            private EditResult() { }
+        }
+
+        public record DeleteResult
+        {
+            public sealed record Success
+                : DeleteResult { }
+
+            public sealed record BuildNotFound(
+                    string Owner,
+                    string Slug)
+                : DeleteResult { }
+
+            public sealed record NotAuthorized(
+                    Guid UserId)
+                : DeleteResult { }
+
+            private DeleteResult() { }
+        }
+
         public record CreateResult
         {
             public sealed record Success(
-                Blueprint Blueprint)
+                    Blueprint Build)
+                : CreateResult { }
+
+            public sealed record BuildNotFound(
+                    string Owner,
+                    string Slug)
+                : CreateResult { }
+            
+            public sealed record NotAuthorized(
+                    Guid UserId)
                 : CreateResult { }
 
             public sealed record DuplicateHash(
@@ -49,10 +102,7 @@ namespace FactorioTech.Core.Services
                 : CreateResult { }
 
             public sealed record DuplicateSlug(
-                    string Slug)
-                : CreateResult { }
-
-            public sealed record ParentNotFound(
+                    string Owner,
                     string Slug)
                 : CreateResult { }
 
@@ -64,21 +114,14 @@ namespace FactorioTech.Core.Services
                     Hash Hash)
                 : CreateResult { }
 
-            public sealed record OwnerMismatch(
-                    Guid BlueprintId,
-                    string Slug,
-                    Guid OwnerId,
-                    string OwnerSlug)
-                : CreateResult { }
-
             private CreateResult() { }
         }
 
-        private readonly ILogger<BlueprintService> _logger;
+        private readonly ILogger<BuildService> _logger;
         private readonly AppDbContext _dbContext;
 
-        public BlueprintService(
-            ILogger<BlueprintService> logger,
+        public BuildService(
+            ILogger<BuildService> logger,
             AppDbContext dbContext)
         {
             _logger = logger;
@@ -141,20 +184,27 @@ namespace FactorioTech.Core.Services
             return (results, results.Count > page.Size, totalCount);
         }
 
-        public async Task<Blueprint?> GetBlueprint(string owner, string slug)
+        public async Task<(Blueprint? Build, bool IsFollower)> GetDetails(string owner, string slug, ClaimsPrincipal principal)
         {
-            var blueprint = await _dbContext.Blueprints.AsNoTracking()
-                .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant()
-                          && bp.NormalizedSlug == slug.ToUpperInvariant())
+            var build = await _dbContext.Blueprints.AsNoTracking()
+                .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
+                         && b.NormalizedSlug == slug.ToUpperInvariant())
                 .Include(bp => bp.Owner)
                 .Include(bp => bp.Tags)
                 .Include(bp => bp.LatestVersion!).ThenInclude(v => v.Payload)
                 .FirstOrDefaultAsync();
 
-            return blueprint;
+            if (build?.LatestVersion?.Payload == null)
+                return (null, false);
+
+            var currentUserId = principal.TryGetUserId();
+            var currentUserIsFollower = currentUserId != null && await _dbContext.Favorites.AsNoTracking()
+                .AnyAsync(f => f.BlueprintId == build.BlueprintId && f.UserId == currentUserId);
+
+            return (build, currentUserIsFollower);
         }
 
-        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, ITempCoverHandle cover, Guid ownerId)
+        public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, ITempCoverHandle cover, ClaimsPrincipal principal)
         {
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
                 .Where(x => x.Hash == request.Version.Hash)
@@ -184,15 +234,15 @@ namespace FactorioTech.Core.Services
 
             await using var tx = await _dbContext.Database.BeginTransactionAsync();
 
-            var owner = await _dbContext.Users.FindAsync(ownerId);
-
             var existing = await _dbContext.Blueprints
-                .Include(bp => bp.Tags)
-                .FirstOrDefaultAsync(bp => bp.OwnerId == ownerId && bp.NormalizedSlug == request.Slug.ToUpperInvariant());
+                .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
+                            && b.NormalizedSlug == request.Slug.ToUpperInvariant())
+                .Include(b => b.Tags)
+                .FirstOrDefaultAsync();
 
             var result = request.ExpectedVersionId.HasValue
-                ? TryUpdateBlueprint(request, owner, existing)
-                : TryCreateBlueprint(request, owner, existing);
+                ? TryUpdate(request, principal, existing)
+                : await TryCreate(request, principal, existing);
 
             var success = result as CreateResult.Success;
             if (success == null)
@@ -200,8 +250,8 @@ namespace FactorioTech.Core.Services
 
             var version = new BlueprintVersion(
                 Guid.NewGuid(),
-                success.Blueprint.BlueprintId,
-                success.Blueprint.UpdatedAt,
+                success.Build.BlueprintId,
+                success.Build.UpdatedAt,
                 payload.Hash,
                 payload.Type,
                 payload.GameVersion,
@@ -213,14 +263,67 @@ namespace FactorioTech.Core.Services
 
             await _dbContext.SaveChangesAsync();
 
-            success.Blueprint.UpdateLatestVersion(version);
+            success.Build.UpdateLatestVersion(version);
 
             await _dbContext.SaveChangesAsync();
             await tx.CommitAsync();
 
-            cover.Assign(success.Blueprint.BlueprintId);
+            cover.Assign(success.Build.BlueprintId);
 
             return result;
+        }
+
+        public async Task<EditResult> Edit(EditRequest request, ITempCoverHandle cover, ClaimsPrincipal principal)
+        {
+            var build = await _dbContext.Blueprints
+                .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
+                         && b.NormalizedSlug == request.Slug.ToUpperInvariant())
+                .Include(b => b.Tags)
+                .FirstOrDefaultAsync();
+
+            if (build == null)
+                return new EditResult.BuildNotFound(request.Owner, request.Slug);
+
+            if (!principal.CanEdit(build))
+                return new EditResult.NotAuthorized(principal.GetUserId());
+
+            build.UpdateDetails(
+                SystemClock.Instance.GetCurrentInstant(),
+                request.Title?.Trim(),
+                request.Description?.Trim(),
+                request.Tags?.Select(Tag.FromString).ToHashSet());
+
+            await _dbContext.SaveChangesAsync();
+
+            cover.Assign(build.BlueprintId);
+
+            return new EditResult.Success(build);
+        }
+
+        public async Task<DeleteResult> Delete(string owner, string slug, ClaimsPrincipal principal)
+        {
+            var build = await _dbContext.Blueprints
+                .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
+                         && b.NormalizedSlug == slug.ToUpperInvariant())
+                .Include(b => b.Tags)
+                .FirstOrDefaultAsync();
+
+            if (build == null)
+                return new DeleteResult.BuildNotFound(owner, slug);
+            
+            if (!principal.CanDelete(build))
+                return new DeleteResult.NotAuthorized(principal.GetUserId());
+
+            var versions = await _dbContext.BlueprintVersions
+                .Where(v => v.BlueprintId == build.BlueprintId)
+                .ToListAsync();
+
+            _dbContext.Remove(build);
+            _dbContext.RemoveRange(versions);
+
+            await _dbContext.SaveChangesAsync();
+
+            return new DeleteResult.Success();
         }
 
         public async Task SavePayloadGraph(Hash parentHash, IReadOnlyCollection<BlueprintPayload> payloads)
@@ -245,19 +348,18 @@ namespace FactorioTech.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private CreateResult TryUpdateBlueprint(CreateRequest request, User owner, Blueprint? existing)
+        private CreateResult TryUpdate(CreateRequest request, ClaimsPrincipal principal, Blueprint? existing)
         {
             if (existing == null)
             {
                 _logger.LogWarning("Attempted to add version to unknown blueprint {Slug}", request.Slug);
-                return new CreateResult.ParentNotFound(request.Slug);
+                return new CreateResult.BuildNotFound(request.Owner, request.Slug);
             }
 
-            if (existing.OwnerId != owner.Id)
+            if (!principal.CanAddVersion(existing))
             {
-                _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} that is owned by {OwnerId}",
-                    existing.BlueprintId, existing.OwnerId);
-                return new CreateResult.OwnerMismatch(existing.BlueprintId, existing.Slug, existing.OwnerId, existing.OwnerSlug);
+                _logger.LogWarning("Attempted to add version, but user {UserId} is not authorized", principal.GetUserId());
+                return new CreateResult.NotAuthorized(principal.GetUserId());
             }
 
             if (existing.LatestVersionId != request.ExpectedVersionId)
@@ -279,16 +381,17 @@ namespace FactorioTech.Core.Services
             return new CreateResult.Success(existing);
         }
 
-        private CreateResult TryCreateBlueprint(CreateRequest request, User owner, Blueprint? existing)
+        private async Task<CreateResult> TryCreate(CreateRequest request, ClaimsPrincipal principal, Blueprint? existing)
         {
             if (existing != null)
             {
                 _logger.LogWarning("Attempted to save blueprint with existing slug {Slug}", request.Slug);
-                return new CreateResult.DuplicateSlug(request.Slug);
+                return new CreateResult.DuplicateSlug(request.Owner, request.Slug);
             }
 
+            var owner = await _dbContext.Users.FindAsync(principal.GetUserId());
             var currentInstant = SystemClock.Instance.GetCurrentInstant();
-            var blueprint = new Blueprint(
+            var build = new Blueprint(
                 Guid.NewGuid(),
                 owner,
                 currentInstant,
@@ -298,9 +401,9 @@ namespace FactorioTech.Core.Services
                 request.Title.Trim(),
                 request.Description?.Trim());
 
-            _dbContext.Add(blueprint);
+            _dbContext.Add(build);
 
-            return new CreateResult.Success(blueprint);
+            return new CreateResult.Success(build);
         }
     }
 }

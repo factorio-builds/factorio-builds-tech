@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace FactorioTech.Core.Domain
 {
+    [DebuggerStepThrough]
     public static class Tags
     {
         // from https://github.com/FactorioBlueprints/factorio-prints/blob/master/data/tags.json

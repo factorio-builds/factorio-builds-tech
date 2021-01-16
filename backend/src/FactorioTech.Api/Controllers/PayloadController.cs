@@ -30,20 +30,20 @@ namespace FactorioTech.Api.Controllers
         private readonly ILogger<PayloadController> _logger;
         private readonly AppDbContext _dbContext;
         private readonly ImageService _imageService;
-        private readonly BlueprintService _blueprintService;
+        private readonly BuildService _buildService;
         private readonly BlueprintConverter _blueprintConverter;
 
         public PayloadController(
             ILogger<PayloadController> logger,
             AppDbContext dbContext,
             ImageService imageService,
-            BlueprintService blueprintService,
+            BuildService buildService,
             BlueprintConverter blueprintConverter)
         {
             _logger = logger;
             _dbContext = dbContext;
             _imageService = imageService;
-            _blueprintService = blueprintService;
+            _buildService = buildService;
             _blueprintConverter = blueprintConverter;
         }
 
@@ -170,7 +170,7 @@ namespace FactorioTech.Api.Controllers
             cache.TryAdd(envelope, payload);
 
             await cache.EnsureInitializedGraph(envelope);
-            await _blueprintService.SavePayloadGraph(hash, cache.Values);
+            await _buildService.SavePayloadGraph(hash, cache.Values);
 
             return Ok(new CreatePayloadResult
             {

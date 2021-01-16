@@ -1,4 +1,6 @@
+using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FactorioTech.Tests.Helpers
 {
@@ -14,5 +16,11 @@ namespace FactorioTech.Tests.Helpers
             return db;
         }
 
+        public static ClaimsPrincipal ToClaimsPrincipal(this User user) =>
+            new(new ClaimsIdentity(new Claim[]
+            {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new("username", user.UserName),
+            }));
     }
 }

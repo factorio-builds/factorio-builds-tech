@@ -1,4 +1,3 @@
-using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
@@ -34,7 +33,8 @@ namespace FactorioTech.Tests.Helpers
             if (_payload == null)
                 throw new Exception("Must set payload.");
 
-            var request = new BlueprintService.CreateRequest(
+            var request = new BuildService.CreateRequest(
+                _owner.UserName,
                 "simple-book",
                 "Simple Blueprint Book",
                 null,
@@ -42,13 +42,13 @@ namespace FactorioTech.Tests.Helpers
                 (_payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 null);
 
-            var service = new BlueprintService(new NullLogger<BlueprintService>(), dbContext);
-            var result = await service.CreateOrAddVersion(request, new NullTempCoverHandle(), _owner.Id);
-            result.Should().BeOfType<BlueprintService.CreateResult.Success>("Test data setup failed.");
+            var service = new BuildService(new NullLogger<BuildService>(), dbContext);
+            var result = await service.CreateOrAddVersion(request, new NullTempCoverHandle(), _owner.ToClaimsPrincipal());
+            result.Should().BeOfType<BuildService.CreateResult.Success>("Test data setup failed.");
 
             dbContext.ClearCache();
 
-            return ((BlueprintService.CreateResult.Success)result).Blueprint;
+            return ((BuildService.CreateResult.Success)result).Build;
         }
     }
 }

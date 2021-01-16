@@ -1,11 +1,12 @@
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FactorioTech.Api.ViewModels
+#pragma warning disable 8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
+
+namespace FactorioTech.Api.ViewModels.Requests
 {
     public class CreateRequestBase : IValidatableObject
     {
@@ -24,7 +25,7 @@ namespace FactorioTech.Api.ViewModels
         [Required]
         [StringLength(100, MinimumLength = 3)]
         [DataType(DataType.Text)]
-        public string Title { get; set; } = null!;
+        public string Title { get; set; }
 
         /// <summary>
         /// The build description in Markdown.
@@ -37,83 +38,20 @@ namespace FactorioTech.Api.ViewModels
         /// The build's tags.
         /// </summary>
         [Required]
-        public IEnumerable<string> Tags { get; set; } = null!;
+        public IEnumerable<string> Tags { get; set; }
 
         /// <summary>
-        /// The build's icons.
+        /// Metadata for the version to be created.
         /// </summary>
         [Required]
-        public IEnumerable<GameIcon> Icons { get; set; } = null!;
-
-        /// <summary>
-        /// Optional metadata for the version to be created.
-        /// </summary>
-        public VersionData? Version { get; set; }
+        public VersionRequest Version { get; set; }
 
         /// <summary>
         /// The build's cover image is either a file upload or an existing blueprint rendering,
         /// along with a crop rectangle.
         /// </summary>
         [Required]
-        public ImageData Cover { get; set; } = null!;
-
-        public class ImageData
-        {
-            /// <summary>
-            /// The horizontal position of the crop rectangle.
-            /// </summary>
-            [Required]
-            [Range(0, int.MaxValue)]
-            public int X { get; set; }
-
-            /// <summary>
-            /// The vertical position of the crop rectangle.
-            /// </summary>
-            [Required]
-            [Range(0, int.MaxValue)]
-            public int Y { get; set; }
-
-            /// <summary>
-            /// The width of the crop rectangle.
-            /// </summary>
-            [Required]
-            [Range(1, int.MaxValue)]
-            public int Width { get; set; }
-
-            /// <summary>
-            /// The height of the crop rectangle.
-            /// </summary>
-            [Required]
-            [Range(1, int.MaxValue)]
-            public int Height { get; set; }
-
-            /// <summary>
-            /// The uploaded cover image.
-            /// </summary>
-            [DataType(DataType.Upload)]
-            public IFormFile? File { get; set; }
-
-            /// <summary>
-            /// The hash of an existing blueprint rendering.
-            /// </summary>
-            public Hash? Hash { get; set; }
-        }
-
-        public class VersionData
-        {
-            /// <summary>
-            /// An optional name for the version to be created.
-            /// </summary>
-            [StringLength(100, MinimumLength = 2)]
-            [DataType(DataType.Text)]
-            public string? Name { get; set; }
-
-            /// <summary>
-            /// An optional description for the version to be created.
-            /// </summary>
-            [DataType(DataType.MultilineText)]
-            public string? Description { get; set; }
-        }
+        public CoverRequest Cover { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -152,6 +90,6 @@ namespace FactorioTech.Api.ViewModels
         [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
         [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
         [Blocklist(AppConfig.Policies.Slug.Blocklist)]
-        public string Slug { get; set; } = null!;
+        public string Slug { get; set; }
     }
 }

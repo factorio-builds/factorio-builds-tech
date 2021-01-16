@@ -9,7 +9,7 @@ import { theme } from "../design/styles/theme"
 import { wrapper } from "../redux/store"
 import auth from "../utils/auth"
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
+const { publicRuntimeConfig } = getConfig()
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -73,7 +73,7 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
 export default compose(
   withApplicationInsights({
     instrumentationKey: publicRuntimeConfig.instrumentationKey,
-    isEnabled: serverRuntimeConfig.enableApplicationInsights === "true",
+    isEnabled: publicRuntimeConfig.enableApplicationInsights === "true",
   }),
   wrapper.withRedux
 )(MyApp)
