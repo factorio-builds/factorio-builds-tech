@@ -3,6 +3,7 @@ using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Configuration;
 using FactorioTech.Identity.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -122,6 +123,9 @@ namespace FactorioTech.Identity
             {
                 options.ApplicationVersion = BuildInformation.Version;
             });
+
+            services.AddSingleton<ITelemetryInitializer, CloudRoleInitializer>();
+            services.AddSingleton<ITelemetryInitializer, UserInitializer>();
 
             if (!_environment.IsProduction())
             {

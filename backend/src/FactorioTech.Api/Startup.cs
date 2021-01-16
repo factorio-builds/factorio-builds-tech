@@ -7,6 +7,7 @@ using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
 using Hellang.Middleware.ProblemDetails;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -142,6 +143,9 @@ namespace FactorioTech.Api
             {
                 options.ApplicationVersion = BuildInformation.Version;
             });
+
+            services.AddSingleton<ITelemetryInitializer, CloudRoleInitializer>();
+            services.AddSingleton<ITelemetryInitializer, UserInitializer>();
 
             if (!_environment.IsProduction())
             {
