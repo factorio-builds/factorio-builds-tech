@@ -3,7 +3,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
-import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-card.styles"
 
@@ -39,7 +38,7 @@ function BuildCard({
           />
         </SC.ImageWrapper>
         <SC.Content>
-          <SC.Title>
+          <SC.Title orientation="horizontal" gutter={8}>
             {icons.length > 0 && <BuildIcon icons={icons} />}
             <WithIcons
               input={title}
@@ -50,11 +49,11 @@ function BuildCard({
               }
             />
           </SC.Title>
-          <Stacker orientation="horizontal" gutter={8}>
+          <SC.Categories orientation="horizontal" gutter={8}>
             {categories.map((category) => {
               return <SC.Category key={category}>{category}</SC.Category>
             })}
-          </Stacker>
+          </SC.Categories>
         </SC.Content>
       </SC.BuildCardWrapper>
     </Link>

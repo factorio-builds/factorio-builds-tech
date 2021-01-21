@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import Stacker from "../Stacker"
 
 export const BuildCardWrapper = styled.div`
   position: relative;
@@ -11,12 +12,22 @@ export const BuildCardWrapper = styled.div`
   justify-content: flex-end;
   cursor: pointer;
   border-radius: 4px;
+  background: #241a34;
   overflow: hidden;
+  padding: 10px;
+
+  &:hover {
+    background: ${lighten(0.05, "#241a34")};
+  }
 `
 
 export const ImageWrapper = styled.div`
   width: 100%;
   filter: contrast(0.8);
+
+  img {
+    border-radius: 3px;
+  }
 
   ${BuildCardWrapper}:hover & {
     filter: contrast(1);
@@ -24,17 +35,15 @@ export const ImageWrapper = styled.div`
 `
 
 export const Content = styled.div`
-  padding: 16px;
-  background: #241a34;
+  padding: 10px 0 0;
   color: ${COLOR.PURPLE900};
 
   ${BuildCardWrapper}:hover & {
-    background: ${lighten(0.05, "#241a34")};
     color: #fff;
   }
 `
 
-export const Title = styled.h3`
+export const Title = styled(Stacker)`
   ${getTypo(ETypo.CARD_TITLE)};
   line-height: 1.1;
   display: flex;
@@ -44,6 +53,16 @@ export const Title = styled.h3`
 
   a {
     color: #fff;
+  }
+`
+
+export const Categories = styled(Stacker)`
+  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+
+  > * {
+    margin: 0 !important;
   }
 `
 
