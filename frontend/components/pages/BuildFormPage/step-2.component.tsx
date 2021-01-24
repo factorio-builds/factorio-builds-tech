@@ -34,6 +34,15 @@ const Step2: React.FC<IStep2Props> = (props) => {
           />
 
           <Field
+            name="slug"
+            label="Slug"
+            type="text"
+            required
+            component={Input}
+            validate={validate("slug")}
+          />
+
+          <Field
             name="description"
             label="Description"
             type="textarea"
