@@ -1,4 +1,4 @@
-using FactorioTech.Api.Extensions;
+using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SluggyUnidecode;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -32,16 +33,19 @@ namespace FactorioTech.Api.Controllers
         /// <param name="username" example='"bob"'>The username to validate</param>
         /// <response code="200" example="true">The validation result</response>
         [HttpPost("validate-username")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        public async Task<bool> ValidateUsername([FromBody]string username)
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(SlugValidationResult), StatusCodes.Status200OK)]
+        public async Task<SlugValidationResult> ValidateUsername([FromBody, Required]string username)
         {
             if (!TryValidateModel(new SlugValidationModel(username)))
-                return false;
+                return SlugValidationResult.Invalid(username);
 
             var exists = await _dbContext.Users
                 .AnyAsync(x => x.NormalizedUserName == username.ToUpperInvariant());
 
-            return !exists;
+            return exists
+                ? SlugValidationResult.Success(username)
+                : SlugValidationResult.Unavailable(username);
         }
 
         /// <summary>
@@ -52,24 +56,36 @@ namespace FactorioTech.Api.Controllers
         /// <response code="200" example="true">The validation result</response>
         [Authorize]
         [HttpPost("validate-slug")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        public async Task<bool> ValidateSlug([FromBody]string slug)
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(SlugValidationResult), StatusCodes.Status200OK)]
+        public async Task<SlugValidationResult> ValidateSlug([FromBody, Required]string slug)
         {
             if (!TryValidateModel(new SlugValidationModel(slug)))
-                return false;
+                return SlugValidationResult.Invalid(slug);
 
             var exists = await _dbContext.Blueprints
-                .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant() && x.OwnerId == User.GetUserId());
+                .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant()
+                            && x.OwnerId == User.GetUserId());
 
-            return !exists;
+            return exists
+                ? SlugValidationResult.Unavailable(slug)
+                : SlugValidationResult.Success(slug);
         }
 
         /// <summary>
-        /// The ping endpoint always returns the string `pong`.
+        /// Convert a title to a slug and verify that it is available for the authenticated user.
+        /// This operation is **safe** and **idempotent**.
         /// </summary>
-        [HttpGet("test-ping")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public string TestPing() => "pong";
+        /// <param name="title" example='"my-build"'>The title to convert and validate</param>
+        /// <response code="200">The converted title and validation result</response>
+        [Authorize]
+        [HttpPost("convert-and-validate-title")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(SlugValidationResult), StatusCodes.Status200OK)]
+        public Task<SlugValidationResult> ConvertAndValidateTitle([FromBody, Required]string title)
+        {
+            return ValidateSlug(title.ToSlug());
+        }
 
         /// <summary>
         /// Get the authenticated user's claims.

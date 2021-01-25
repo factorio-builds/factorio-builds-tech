@@ -1,10 +1,10 @@
-using FactorioTech.Api.Extensions;
 using FactorioTech.Api.Services;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using System.Threading.Tasks;
 
@@ -35,7 +35,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(BuildsModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<BuildsModel> ListBuilds(string username, [FromQuery]BuildsQueryParams query)
+        public async Task<BuildsModel> ListBuilds([Required]string username, [FromQuery, Required]BuildsQueryParams query)
         {
             var (builds, hasMore, totalCount) = await _buildService.GetBuilds(
                 (query.Page, BuildsQueryParams.PageSize),

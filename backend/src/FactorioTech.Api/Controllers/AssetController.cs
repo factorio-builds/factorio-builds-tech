@@ -1,6 +1,7 @@
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Api.Controllers
@@ -29,7 +30,10 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetGameIcon(AssetService.IconSize size, AssetService.IconType type, string key)
+        public async Task<IActionResult> GetGameIcon(
+            [Required]AssetService.IconSize size,
+            [Required]AssetService.IconType type,
+            [Required]string key)
         {
             var icon = await _assetService.GetGameIcon(size, type, key);
             if (icon == null)

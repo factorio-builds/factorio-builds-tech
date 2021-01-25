@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(BuildsModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<BuildsModel> ListBuilds([FromQuery]BuildsQueryParams query)
+        public async Task<BuildsModel> ListBuilds([FromQuery, Required]BuildsQueryParams query)
         {
             var (builds, hasMore, totalCount) = await _buildService.GetBuilds(
                 (query.Page, BuildsQueryParams.PageSize),
@@ -74,9 +75,10 @@ namespace FactorioTech.Api.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateBuild([FromForm]CreateBuildRequest request)
+        public async Task<IActionResult> CreateBuild([FromForm, Required]CreateBuildRequest request)
         {
             using var cover = await SaveTempCover(request.Cover);
+
             var result = await _buildService.CreateOrAddVersion(new BuildService.CreateRequest(
                     User.GetUserName(),
                     request.Slug,
@@ -113,7 +115,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(FullBuildModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDetails(string owner, string slug)
+        public async Task<IActionResult> GetDetails([Required]string owner, [Required]string slug)
         {
             var (build, currentUserIsFollower) = await _buildService.GetDetails(owner, slug, User);
             if (build?.LatestVersion?.Payload == null)
@@ -138,7 +140,8 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> EditDetails(string owner, string slug, [FromForm]EditBuildRequest request)
+        public async Task<IActionResult> EditDetails([Required]string owner, [Required]string slug,
+            [FromForm, Required]EditBuildRequest request)
         {
             using var cover = request.Cover != null
                 ? await SaveTempCover(request.Cover)
@@ -169,7 +172,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(UsersModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetFollowers(string owner, string slug)
+        public async Task<IActionResult> GetFollowers([Required]string owner, [Required]string slug)
         {
             var followers = await _followerService.Get(owner, slug);
             if (followers == null)
@@ -191,7 +194,7 @@ namespace FactorioTech.Api.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddFavorite(string owner, string slug)
+        public async Task<IActionResult> AddFavorite([Required]string owner, [Required]string slug)
         {
             var mutated = await _followerService.Follow(owner, slug, User);
             if (mutated == null)
@@ -213,7 +216,7 @@ namespace FactorioTech.Api.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveFavorite(string owner, string slug)
+        public async Task<IActionResult> RemoveFavorite([Required]string owner, [Required]string slug)
         {
             var mutated = await _followerService.Unfollow(owner, slug, User);
             if (mutated == null)
@@ -235,7 +238,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(VersionsModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetVersions(string owner, string slug)
+        public async Task<IActionResult> GetVersions([Required]string owner, [Required]string slug)
         {
             var versions = await _dbContext.Blueprints.AsNoTracking()
                 .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
@@ -264,7 +267,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteBuild(string owner, string slug)
+        public async Task<IActionResult> DeleteBuild([Required]string owner, [Required]string slug)
         {
             return await _buildService.Delete(owner, slug, User) switch
             {
@@ -290,7 +293,8 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(FullVersionModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddVersion(string owner, string slug, [FromForm]CreateVersionRequest request)
+        public async Task<IActionResult> AddVersion([Required]string owner, [Required]string slug,
+            [FromForm, Required]CreateVersionRequest request)
         {
             using var cover = await SaveTempCover(request.Cover);
 
@@ -331,7 +335,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ResponseCache(Duration = OneDayInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetCover(Guid buildId)
+        public async Task<IActionResult> GetCover([Required]Guid buildId)
         {
             var (file, format) = await _imageService.TryLoadCover(buildId);
             if (file == null)

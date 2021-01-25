@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SluggyUnidecode;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -60,7 +61,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(PayloadModelBase), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetDetails(Hash hash, [FromQuery(Name = "include_children")]bool includeChildren = false)
+        public async Task<IActionResult> GetDetails([Required]Hash hash, [FromQuery(Name = "include_children")]bool includeChildren = false)
         {
             var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
                 .Where(v => v.Hash == hash)
@@ -96,7 +97,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetRaw(Hash hash)
+        public async Task<IActionResult> GetRaw([Required]Hash hash)
         {
             var encoded = await _dbContext.BlueprintPayloads.AsNoTracking()
                 .Where(v => v.Hash == hash)
@@ -123,7 +124,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering(Hash hash, ImageService.RenderingType type)
+        public async Task<IActionResult> GetBlueprintRendering([Required]Hash hash, [Required]ImageService.RenderingType type)
         {
             var sw = Stopwatch.StartNew();
 
@@ -151,7 +152,7 @@ namespace FactorioTech.Api.Controllers
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(CreatePayloadResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreatePayload([FromBody]CreatePayloadRequest request)
+        public async Task<IActionResult> CreatePayload([FromBody, Required]CreatePayloadRequest request)
         {
             var envelope = await _blueprintConverter.Decode(request.Encoded);
 
@@ -176,7 +177,9 @@ namespace FactorioTech.Api.Controllers
             {
                 Hash = hash,
                 AllHashes = new HashSet<Hash>(cache.Values.Select(x => x.Hash)),
+                Icons = envelope.Icons.ToGameIcons(),
                 ExtractedTags = new HashSet<string>(GetSomeRandomTags()),
+                ExtractedSlug = await ValidateSlug(envelope.Label?.ToSlug()),
             });
         }
 
@@ -186,6 +189,20 @@ namespace FactorioTech.Api.Controllers
                 return null;
 
             return envelope.Blueprint ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
+        }
+
+        private async Task<SlugValidationResult> ValidateSlug(string? slug)
+        {
+            if (string.IsNullOrWhiteSpace(slug))
+                return SlugValidationResult.Invalid(slug ?? string.Empty);
+
+            var exists = await _dbContext.Blueprints
+                .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant()
+                            && x.OwnerId == User.GetUserId());
+
+            return exists
+                ? SlugValidationResult.Unavailable(slug)
+                : SlugValidationResult.Success(slug);
         }
 
         private static IEnumerable<string> GetSomeRandomTags()
@@ -222,6 +239,19 @@ namespace FactorioTech.Api.Controllers
             /// </summary>
             [Required]
             public IEnumerable<Hash> AllHashes { get; set; } = Enumerable.Empty<Hash>();
+
+            /// <summary>
+            /// The ordered list of 1 to 4 icons that is included in the primary blueprint.
+            /// </summary>
+            [Required]
+            public IEnumerable<GameIcon> Icons { get; set; } = Enumerable.Empty<GameIcon>();
+
+            /// <summary>
+            /// The primary blueprint's title (aka label) converted to slug,
+            /// including fields indicating whether the slug is valid and available for the authenticated user.
+            /// </summary>
+            [Required]
+            public SlugValidationResult ExtractedSlug { get; set; } = SlugValidationResult.Invalid(string.Empty);
 
             /// <summary>
             /// The tags that have been extracted for this payload.
