@@ -46,6 +46,7 @@ or using Docker
 docker build -t factorio-tech/build --target build .
 docker run --rm --network factorio-tech_default factorio-tech/build \
     ef database update --configuration Release --no-build \
+        --context AppDbContext \
         --project /app/src/FactorioTech.Core/FactorioTech.Core.csproj \
         --connection "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
 ```

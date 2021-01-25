@@ -67,9 +67,11 @@ namespace FactorioTech.Identity
             services.AddIdentityServer(options =>
                 {
                     options.UserInteraction.ErrorUrl = "/errors/500";
+                    options.KeyManagement.KeyPath = Path.Join(appConfig.ProtectedDataDir, "keys");
                 })
                 .AddAspNetIdentity<User>()
                 .AddProfileService<CustomProfileService>()
+                .AddOperationalStore<AppDbContext>()
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
                 .AddInMemoryClients(IdentityConfig.GetClients(_environment, appConfig, oAuthClientConfig.OAuthClients));
 
@@ -134,7 +136,7 @@ namespace FactorioTech.Identity
             if (!_environment.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(appConfig.ProtectedDataDir))
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "dataprotection")))
                     .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
             }
 
@@ -146,7 +148,7 @@ namespace FactorioTech.Identity
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto,
             });
 
             if (!env.IsProduction())

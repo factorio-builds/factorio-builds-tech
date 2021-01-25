@@ -27,8 +27,8 @@ namespace FactorioTech.Core
 
         public void Initialize(ITelemetry telemetry)
         {
-            var user = _httpContextAccessor.HttpContext.User;
-            if (user.Identity?.IsAuthenticated == true)
+            var user = _httpContextAccessor.HttpContext?.User;
+            if (user?.Identity?.IsAuthenticated == true)
             {
                 telemetry.Context.User.AccountId = user.GetUserId().ToString();
                 telemetry.Context.User.AuthenticatedUserId = user.GetUserName();
