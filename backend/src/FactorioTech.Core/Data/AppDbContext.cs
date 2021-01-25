@@ -1,23 +1,14 @@
 using FactorioTech.Core.Domain;
-using IdentityServer4.EntityFramework.Entities;
-using IdentityServer4.EntityFramework.Extensions;
-using IdentityServer4.EntityFramework.Interfaces;
-using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using NodaTime;
 using System;
-using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Data
 {
-    public class AppDbContext : IdentityDbContext<User, Role, Guid>, IPersistedGrantDbContext
+    public class AppDbContext : IdentityDbContext<User, Role, Guid>
     {
-        public DbSet<PersistedGrant> PersistedGrants { get; set; }
-        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
-
         public DbSet<Blueprint> Blueprints { get; set; }
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
         public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
@@ -25,21 +16,15 @@ namespace FactorioTech.Core.Data
         public DbSet<Tag> Tags { get; set; }
 
         private const string IdentitySchema = "identity";
-        private readonly IOptions<OperationalStoreOptions> _operationalStoreOptions;
 
 #pragma warning disable 8618
-        public AppDbContext(DbContextOptions<AppDbContext> options, IOptions<OperationalStoreOptions> operationalStoreOptions)
-            : base(options)
-        {
-            _operationalStoreOptions = operationalStoreOptions;
-        }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 #pragma warning restore 8618
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             CustomizeAspNetIdentity(builder);
-            CustomizeIdentityServer(builder);
 
             builder.Entity<User>(entity =>
             {
@@ -177,15 +162,5 @@ namespace FactorioTech.Core.Data
                 entity.Property(e => e.ProviderDisplayName).IsRequired();
             });
         }
-
-        private void CustomizeIdentityServer(ModelBuilder builder)
-        {
-            builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value);
-
-            builder.Entity<PersistedGrant>().ToTable(nameof(PersistedGrants), IdentitySchema);
-            builder.Entity<DeviceFlowCodes>().ToTable(nameof(DeviceFlowCodes), IdentitySchema);
-        }
-
-        public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
     }
 }

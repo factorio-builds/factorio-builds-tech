@@ -18,6 +18,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FactorioTech.Identity
 {
@@ -68,11 +69,9 @@ namespace FactorioTech.Identity
                     options.UserInteraction.ErrorUrl = "/errors/500";
                 })
                 .AddAspNetIdentity<User>()
-                .AddOperationalStore<AppDbContext>()
                 .AddProfileService<CustomProfileService>()
                 .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
-                .AddInMemoryClients(IdentityConfig.GetClients(_environment, appConfig, oAuthClientConfig.OAuthClients))
-                .AddDeveloperSigningCredential(true, Path.Join(appConfig.ProtectedDataDir, "signing_key.jwk")); // todo productionise
+                .AddInMemoryClients(IdentityConfig.GetClients(_environment, appConfig, oAuthClientConfig.OAuthClients));
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -135,7 +134,8 @@ namespace FactorioTech.Identity
             if (!_environment.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "session")));
+                    .PersistKeysToFileSystem(new DirectoryInfo(appConfig.ProtectedDataDir))
+                    .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
             }
 
             services.AddTransient<DevDataSeeder>();
