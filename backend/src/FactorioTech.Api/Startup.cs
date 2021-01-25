@@ -166,6 +166,7 @@ namespace FactorioTech.Api
             services.AddTransient<FollowerService>();
             services.AddTransient<ImageService>();
             services.AddTransient<AssetService>();
+            services.AddTransient<SlugService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

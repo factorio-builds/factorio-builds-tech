@@ -1,11 +1,9 @@
-using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
-using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
+using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SluggyUnidecode;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,11 +17,11 @@ namespace FactorioTech.Api.Controllers
     [ApiController]
     public class RpcController : ControllerBase
     {
-        private readonly AppDbContext _dbContext;
+        private readonly SlugService _slugService;
 
-        public RpcController(AppDbContext dbContext)
+        public RpcController(SlugService slugService)
         {
-            _dbContext = dbContext;
+            _slugService = slugService;
         }
 
         /// <summary>
@@ -34,19 +32,9 @@ namespace FactorioTech.Api.Controllers
         /// <response code="200" example="true">The validation result</response>
         [HttpPost("validate-username")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(SlugValidationResult), StatusCodes.Status200OK)]
-        public async Task<SlugValidationResult> ValidateUsername([FromBody, Required]string username)
-        {
-            if (!TryValidateModel(new SlugValidationModel(username)))
-                return SlugValidationResult.Invalid(username);
-
-            var exists = await _dbContext.Users
-                .AnyAsync(x => x.NormalizedUserName == username.ToUpperInvariant());
-
-            return exists
-                ? SlugValidationResult.Success(username)
-                : SlugValidationResult.Unavailable(username);
-        }
+        [ProducesResponseType(typeof(SlugService.SlugValidationResult), StatusCodes.Status200OK)]
+        public Task<SlugService.SlugValidationResult> ValidateUsername([FromBody, Required]string username) =>
+            _slugService.ValidateUsername(TryValidateModel, username);
 
         /// <summary>
         /// Verify that a slug is valid and available for the authenticated user.
@@ -57,20 +45,9 @@ namespace FactorioTech.Api.Controllers
         [Authorize]
         [HttpPost("validate-slug")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(SlugValidationResult), StatusCodes.Status200OK)]
-        public async Task<SlugValidationResult> ValidateSlug([FromBody, Required]string slug)
-        {
-            if (!TryValidateModel(new SlugValidationModel(slug)))
-                return SlugValidationResult.Invalid(slug);
-
-            var exists = await _dbContext.Blueprints
-                .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant()
-                            && x.OwnerId == User.GetUserId());
-
-            return exists
-                ? SlugValidationResult.Unavailable(slug)
-                : SlugValidationResult.Success(slug);
-        }
+        [ProducesResponseType(typeof(SlugService.SlugValidationResult), StatusCodes.Status200OK)]
+        public Task<SlugService.SlugValidationResult> ValidateSlug([FromBody, Required]string slug) =>
+            _slugService.Validate(TryValidateModel, slug, User.GetUserId());
 
         /// <summary>
         /// Convert a title to a slug and verify that it is available for the authenticated user.
@@ -81,11 +58,9 @@ namespace FactorioTech.Api.Controllers
         [Authorize]
         [HttpPost("convert-and-validate-title")]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(SlugValidationResult), StatusCodes.Status200OK)]
-        public Task<SlugValidationResult> ConvertAndValidateTitle([FromBody, Required]string title)
-        {
-            return ValidateSlug(title.ToSlug());
-        }
+        [ProducesResponseType(typeof(SlugService.SlugValidationResult), StatusCodes.Status200OK)]
+        public Task<SlugService.SlugValidationResult> ConvertAndValidateTitle([FromBody, Required]string title) =>
+            _slugService.Validate(TryValidateModel, title.ToSlug(), User.GetUserId());
 
         /// <summary>
         /// Get the authenticated user's claims.
@@ -94,7 +69,8 @@ namespace FactorioTech.Api.Controllers
         [HttpGet("test-auth")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
-        public IEnumerable<KeyValuePair<string, string>> TestAuth() =>  User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
+        public IEnumerable<KeyValuePair<string, string>> TestAuth() => 
+            User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
 
         /// <summary>
         /// Get the authenticated user's claims. Requires the `Moderator` role.
@@ -103,7 +79,8 @@ namespace FactorioTech.Api.Controllers
         [HttpGet("test-moderator")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
-        public IEnumerable<KeyValuePair<string, string>> TestModerator() => User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
+        public IEnumerable<KeyValuePair<string, string>> TestModerator() =>
+            User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
 
         /// <summary>
         /// Get the authenticated user's claims. Requires the `Administrator` role.
@@ -112,17 +89,7 @@ namespace FactorioTech.Api.Controllers
         [HttpGet("test-admin")]
         [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IDictionary<string, string>), StatusCodes.Status200OK)]
-        public IEnumerable<KeyValuePair<string, string>> TestAdmin() => User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
-
-        public class SlugValidationModel
-        {
-            [Required]
-            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
-            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
-            [Blocklist(AppConfig.Policies.Slug.Blocklist)]
-            public string? Slug { get; set; }
-
-            public SlugValidationModel(string? slug) => Slug = slug;
-        }
+        public IEnumerable<KeyValuePair<string, string>> TestAdmin() =>
+            User.Claims.Select(x => new KeyValuePair<string, string>(x.Type, x.Value));
     }
 }

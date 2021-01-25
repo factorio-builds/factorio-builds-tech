@@ -33,19 +33,22 @@ namespace FactorioTech.Api.Controllers
         private readonly ImageService _imageService;
         private readonly BuildService _buildService;
         private readonly BlueprintConverter _blueprintConverter;
+        private readonly SlugService _slugService;
 
         public PayloadController(
             ILogger<PayloadController> logger,
             AppDbContext dbContext,
             ImageService imageService,
             BuildService buildService,
-            BlueprintConverter blueprintConverter)
+            BlueprintConverter blueprintConverter,
+            SlugService slugService)
         {
             _logger = logger;
             _dbContext = dbContext;
             _imageService = imageService;
             _buildService = buildService;
             _blueprintConverter = blueprintConverter;
+            _slugService = slugService;
         }
 
         /// <summary>
@@ -179,7 +182,7 @@ namespace FactorioTech.Api.Controllers
                 AllHashes = new HashSet<Hash>(cache.Values.Select(x => x.Hash)),
                 Icons = envelope.Icons.ToGameIcons(),
                 ExtractedTags = new HashSet<string>(GetSomeRandomTags()),
-                ExtractedSlug = await ValidateSlug(envelope.Label?.ToSlug()),
+                ExtractedSlug = await _slugService.Validate(TryValidateModel, envelope.Label?.ToSlug(), User.GetUserId()),
             });
         }
 
@@ -189,20 +192,6 @@ namespace FactorioTech.Api.Controllers
                 return null;
 
             return envelope.Blueprint ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
-        }
-
-        private async Task<SlugValidationResult> ValidateSlug(string? slug)
-        {
-            if (string.IsNullOrWhiteSpace(slug))
-                return SlugValidationResult.Invalid(slug ?? string.Empty);
-
-            var exists = await _dbContext.Blueprints
-                .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant()
-                            && x.OwnerId == User.GetUserId());
-
-            return exists
-                ? SlugValidationResult.Unavailable(slug)
-                : SlugValidationResult.Success(slug);
         }
 
         private static IEnumerable<string> GetSomeRandomTags()
@@ -251,7 +240,7 @@ namespace FactorioTech.Api.Controllers
             /// including fields indicating whether the slug is valid and available for the authenticated user.
             /// </summary>
             [Required]
-            public SlugValidationResult ExtractedSlug { get; set; } = SlugValidationResult.Invalid(string.Empty);
+            public SlugService.SlugValidationResult ExtractedSlug { get; set; } = SlugService.SlugValidationResult.Invalid(string.Empty);
 
             /// <summary>
             /// The tags that have been extracted for this payload.
