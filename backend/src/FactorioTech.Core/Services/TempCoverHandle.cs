@@ -26,7 +26,7 @@ namespace FactorioTech.Core.Services
         }
 
         public void Assign(Guid buildId) =>
-            File.Move(_getCoverFqfn(TempId), _getCoverFqfn(buildId));
+            File.Move(_getCoverFqfn(TempId), _getCoverFqfn(buildId), true);
 
         public void Dispose()
         {
