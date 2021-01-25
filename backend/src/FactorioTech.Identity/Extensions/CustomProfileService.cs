@@ -1,9 +1,8 @@
+using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
 using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Configuration;
-using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Security.Claims;

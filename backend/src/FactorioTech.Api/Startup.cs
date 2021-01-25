@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Serialization;
 
 namespace FactorioTech.Api
@@ -155,7 +156,8 @@ namespace FactorioTech.Api
             if (!_environment.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "session")));
+                    .PersistKeysToFileSystem(new DirectoryInfo(appConfig.ProtectedDataDir))
+                    .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
             }
 
             services.AddTransient<FbsrClient>();

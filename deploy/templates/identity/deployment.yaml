@@ -41,6 +41,9 @@ spec:
             - name: secrets
               mountPath: /mnt/secrets
               readOnly: true
+            - name: keys
+              mountPath: /mnt/keys
+              readOnly: true
             - name: protected
               mountPath: /mnt/protected
               readOnly: false
@@ -69,6 +72,9 @@ spec:
                   items:
                     - key: instrumentation_key
                       path: ApplicationInsights__InstrumentationKey
+        - name: keys
+          secret:
+            secretName: data-protection-certificate
         - name: protected
           persistentVolumeClaim:
             claimName: {{ include "factorio-tech.fullname" . }}-identity-protected

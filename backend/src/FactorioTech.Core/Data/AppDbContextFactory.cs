@@ -1,7 +1,5 @@
-using IdentityServer4.EntityFramework.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Options;
 
 namespace FactorioTech.Core.Data
 {
@@ -14,7 +12,7 @@ namespace FactorioTech.Core.Data
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseNpgsql(connectionString, o => o.UseNodaTime());
-            return new AppDbContext(optionsBuilder.Options, Options.Create(new OperationalStoreOptions()));
+            return new AppDbContext(optionsBuilder.Options);
         }
     }
 }

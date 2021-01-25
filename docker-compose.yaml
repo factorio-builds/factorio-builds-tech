@@ -62,6 +62,7 @@ services:
       context: backend
       target: identity
     volumes:
+      - ./.local/dev-certificate.pfx:/mnt/keys/certificate.pfx:ro
       - ./.local/volumes/identity/protected:/mnt/protected
       - ./.local/secrets:/mnt/secrets:ro
       - /etc/localtime:/etc/localtime:ro
@@ -88,6 +89,7 @@ services:
       context: backend
       target: api
     volumes:
+      - ./.local/dev-certificate.pfx:/mnt/keys/certificate.pfx:ro
       - ./.local/volumes/api/data:/mnt/data
       - ./.local/volumes/api/protected:/mnt/protected
       - ./.local/volumes/factorio:/mnt/factorio:ro

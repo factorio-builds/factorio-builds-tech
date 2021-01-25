@@ -295,3 +295,13 @@ DOCKER
 
   type = "kubernetes.io/dockerconfigjson"
 }
+
+resource "kubernetes_secret" "data_protection_certificate" {
+  metadata {
+    name = "data-protection-certificate"
+  }
+
+  data = {
+    "certificate.pfx" = filebase64("certificate.pfx")
+  }
+}
