@@ -19,21 +19,27 @@ export interface paths {
       responses: {
         /** The requested game icon */
         200: {
-          "text/plain": string
-          "application/json": string
-          "text/json": string
+          content: {
+            "text/plain": string
+            "application/json": string
+            "text/json": string
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "text/plain": components["schemas"]["ProblemDetails"]
-          "application/json": components["schemas"]["ProblemDetails"]
-          "text/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
+            "text/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested icon does not exist */
         404: {
-          "text/plain": components["schemas"]["ProblemDetails"]
-          "application/json": components["schemas"]["ProblemDetails"]
-          "text/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
+            "text/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -49,80 +55,92 @@ export interface paths {
           /** The desired direction to sort the results */
           sort_direction?: "Asc" | "Desc"
           /** An optional search term to filter the results by */
-          q?: string
+          q?: string | null
           /** An optional comma-separated list of tags to filter the results by */
-          tags?: string
+          tags?: string | null
           /** An optional game version to filter the results by */
-          version?: string
+          version?: string | null
         }
       }
       responses: {
         /** The paged, filtered and ordered list of matching builds */
         200: {
-          "application/json": components["schemas"]["BuildsModel"]
+          content: {
+            "application/json": components["schemas"]["BuildsModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** Not Found */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
     post: {
-      requestBody: {
-        "multipart/form-data": {
-          /**
-           * The slug for the new build. It is used in the build's URL and must be unique per user.
-           * It can consist only of latin alphanumeric characters, underscores and hyphens.
-           */
-          Slug: string
-          /**
-           * The hash of the payload that should be used to create this build version.
-           * The payload must have been previously created.
-           */
-          Hash: string
-          /** The title or display name of the build. */
-          Title: string
-          /** The build description in Markdown. */
-          Description?: string | null
-          /** The build's tags. */
-          Tags: string[]
-          /** The icons of the version to be created. */
-          "Version.Icons": components["schemas"]["GameIcon"][]
-          /** An optional name for the version to be created. */
-          "Version.Name"?: string | null
-          /** An optional description for the version to be created. */
-          "Version.Description"?: string | null
-          /** The horizontal position of the crop rectangle. */
-          "Cover.X": number
-          /** The vertical position of the crop rectangle. */
-          "Cover.Y": number
-          /** The width of the crop rectangle. */
-          "Cover.Width": number
-          /** The height of the crop rectangle. */
-          "Cover.Height": number
-          /** The uploaded cover image. */
-          "Cover.File"?: string | null
-          /** The hash of an existing blueprint rendering. */
-          "Cover.Hash"?: components["schemas"]["Hash"] | null
-        }
-      }
       responses: {
         /** Success */
         201: {
-          "application/json": components["schemas"]["ThinBuildModel"]
+          content: {
+            "application/json": components["schemas"]["ThinBuildModel"]
+          }
         }
         /** Bad Request */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** Unauthorized */
         401: unknown
         /** Forbidden */
         403: unknown
+      }
+      requestBody: {
+        content: {
+          "multipart/form-data": {
+            /**
+             * The slug for the new build. It is used in the build's URL and must be unique per user.
+             * It can consist only of latin alphanumeric characters, underscores and hyphens.
+             */
+            Slug: string
+            /**
+             * The hash of the payload that should be used to create this build version.
+             * The payload must have been previously created.
+             */
+            Hash: string
+            /** The title or display name of the build. */
+            Title: string
+            /** The build description in Markdown. */
+            Description?: string | null
+            /** The build's tags. */
+            Tags: string[]
+            /** The icons of the version to be created. */
+            "Version.Icons": components["schemas"]["GameIcon"][]
+            /** An optional name for the version to be created. */
+            "Version.Name"?: string | null
+            /** An optional description for the version to be created. */
+            "Version.Description"?: string | null
+            /** The horizontal position of the crop rectangle. */
+            "Cover.X": number
+            /** The vertical position of the crop rectangle. */
+            "Cover.Y": number
+            /** The width of the crop rectangle. */
+            "Cover.Width": number
+            /** The height of the crop rectangle. */
+            "Cover.Height": number
+            /** The uploaded cover image. */
+            "Cover.File"?: string | null
+            /** The hash of an existing blueprint rendering. */
+            "Cover.Hash"?: components["schemas"]["Hash"] | null
+          }
+        }
       }
     }
   }
@@ -139,79 +157,21 @@ export interface paths {
       responses: {
         /** The details of the requested build */
         200: {
-          "application/json": components["schemas"]["FullBuildModel"]
+          content: {
+            "application/json": components["schemas"]["FullBuildModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-    }
-    patch: {
-      parameters: {
-        path: {
-          /** The username of the desired build's owner */
-          owner: string
-          /** The slug of the desired build */
-          slug: string
-        }
-      }
-      requestBody: {
-        "multipart/form-data": {
-          /**
-           * The title or display name of the build.
-           * If unset (`null`), the existing value will not be changed.
-           */
-          Title: string
-          /**
-           * The build description in Markdown.
-           * If unset (`null`), the existing value will not be changed.
-           */
-          Description?: string | null
-          /**
-           * The build's tags.
-           * If unset (`null`), the existing value will not be changed.
-           */
-          Tags: string[]
-          /**
-           * The build's icons.
-           * If unset (`null`), the existing value will not be changed.
-           */
-          Icons: components["schemas"]["GameIcon"][]
-          /** The horizontal position of the crop rectangle. */
-          "Cover.X": number
-          /** The vertical position of the crop rectangle. */
-          "Cover.Y": number
-          /** The width of the crop rectangle. */
-          "Cover.Width": number
-          /** The height of the crop rectangle. */
-          "Cover.Height": number
-          /** The uploaded cover image. */
-          "Cover.File"?: string | null
-          /** The hash of an existing blueprint rendering. */
-          "Cover.Hash"?: components["schemas"]["Hash"] | null
-        }
-      }
-      responses: {
-        /** The metadata to update. */
-        200: {
-          "application/json": components["schemas"]["FullBuildModel"]
-        }
-        /** The request is malformed or invalid */
-        400: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-        /** Unauthorized */
-        401: unknown
-        /** Forbidden */
-        403: unknown
-        /** The requested build does not exist */
-        404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -229,7 +189,9 @@ export interface paths {
         204: never
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** Unauthorized */
         401: unknown
@@ -237,7 +199,81 @@ export interface paths {
         403: unknown
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
+        }
+      }
+    }
+    patch: {
+      parameters: {
+        path: {
+          /** The username of the desired build's owner */
+          owner: string
+          /** The slug of the desired build */
+          slug: string
+        }
+      }
+      responses: {
+        /** The metadata to update. */
+        200: {
+          content: {
+            "application/json": components["schemas"]["ThinBuildModel"]
+          }
+        }
+        /** The request is malformed or invalid */
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
+        }
+        /** Unauthorized */
+        401: unknown
+        /** Forbidden */
+        403: unknown
+        /** The requested build does not exist */
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
+        }
+      }
+      requestBody: {
+        content: {
+          "multipart/form-data": {
+            /**
+             * The title or display name of the build.
+             * If unset (`null`), the existing value will not be changed.
+             */
+            Title: string
+            /**
+             * The build description in Markdown.
+             * If unset (`null`), the existing value will not be changed.
+             */
+            Description?: string | null
+            /**
+             * The build's tags.
+             * If unset (`null`), the existing value will not be changed.
+             */
+            Tags: string[]
+            /**
+             * The build's icons.
+             * If unset (`null`), the existing value will not be changed.
+             */
+            Icons: components["schemas"]["GameIcon"][]
+            /** The horizontal position of the crop rectangle. */
+            "Cover.X": number
+            /** The vertical position of the crop rectangle. */
+            "Cover.Y": number
+            /** The width of the crop rectangle. */
+            "Cover.Width": number
+            /** The height of the crop rectangle. */
+            "Cover.Height": number
+            /** The uploaded cover image. */
+            "Cover.File"?: string | null
+            /** The hash of an existing blueprint rendering. */
+            "Cover.Hash"?: components["schemas"]["Hash"] | null
+          }
         }
       }
     }
@@ -255,15 +291,21 @@ export interface paths {
       responses: {
         /** An ordered list of followers */
         200: {
-          "application/json": components["schemas"]["UsersModel"]
+          content: {
+            "application/json": components["schemas"]["UsersModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -287,7 +329,9 @@ export interface paths {
         403: unknown
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -311,7 +355,9 @@ export interface paths {
         403: unknown
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -329,15 +375,21 @@ export interface paths {
       responses: {
         /** An ordered list of versions */
         200: {
-          "application/json": components["schemas"]["VersionsModel"]
+          content: {
+            "application/json": components["schemas"]["VersionsModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -350,51 +402,20 @@ export interface paths {
           slug: string
         }
       }
-      requestBody: {
-        "multipart/form-data": {
-          /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
-          ExpectedPreviousVersionId: string
-          /**
-           * The hash of the payload that should be used to create this build version.
-           * The payload must have been previously created.
-           */
-          Hash: string
-          /** The title or display name of the build. */
-          Title: string
-          /** The build description in Markdown. */
-          Description?: string | null
-          /** The build's tags. */
-          Tags: string[]
-          /** The icons of the version to be created. */
-          "Version.Icons": components["schemas"]["GameIcon"][]
-          /** An optional name for the version to be created. */
-          "Version.Name"?: string | null
-          /** An optional description for the version to be created. */
-          "Version.Description"?: string | null
-          /** The horizontal position of the crop rectangle. */
-          "Cover.X": number
-          /** The vertical position of the crop rectangle. */
-          "Cover.Y": number
-          /** The width of the crop rectangle. */
-          "Cover.Width": number
-          /** The height of the crop rectangle. */
-          "Cover.Height": number
-          /** The uploaded cover image. */
-          "Cover.File"?: string | null
-          /** The hash of an existing blueprint rendering. */
-          "Cover.Hash"?: components["schemas"]["Hash"] | null
-        }
-      }
       responses: {
         /** An ordered list of versions */
         200: unknown
         /** Success */
         201: {
-          "application/json": components["schemas"]["FullVersionModel"]
+          content: {
+            "application/json": components["schemas"]["FullVersionModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** Unauthorized */
         401: unknown
@@ -402,7 +423,46 @@ export interface paths {
         403: unknown
         /** The requested build does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
+        }
+      }
+      requestBody: {
+        content: {
+          "multipart/form-data": {
+            /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
+            ExpectedPreviousVersionId: string
+            /**
+             * The hash of the payload that should be used to create this build version.
+             * The payload must have been previously created.
+             */
+            Hash: string
+            /** The title or display name of the build. */
+            Title: string
+            /** The build description in Markdown. */
+            Description?: string | null
+            /** The build's tags. */
+            Tags: string[]
+            /** The icons of the version to be created. */
+            "Version.Icons": components["schemas"]["GameIcon"][]
+            /** An optional name for the version to be created. */
+            "Version.Name"?: string | null
+            /** An optional description for the version to be created. */
+            "Version.Description"?: string | null
+            /** The horizontal position of the crop rectangle. */
+            "Cover.X": number
+            /** The vertical position of the crop rectangle. */
+            "Cover.Y": number
+            /** The width of the crop rectangle. */
+            "Cover.Width": number
+            /** The height of the crop rectangle. */
+            "Cover.Height": number
+            /** The uploaded cover image. */
+            "Cover.File"?: string | null
+            /** The hash of an existing blueprint rendering. */
+            "Cover.Hash"?: components["schemas"]["Hash"] | null
+          }
         }
       }
     }
@@ -418,21 +478,27 @@ export interface paths {
       responses: {
         /** The cover image of the requested build */
         200: {
-          "image/png": string
-          "image/jpeg": string
-          "image/gif": string
+          content: {
+            "image/png": string
+            "image/jpeg": string
+            "image/gif": string
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "image/png": components["schemas"]["ProblemDetails"]
-          "image/jpeg": components["schemas"]["ProblemDetails"]
-          "image/gif": components["schemas"]["ProblemDetails"]
+          content: {
+            "image/png": components["schemas"]["ProblemDetails"]
+            "image/jpeg": components["schemas"]["ProblemDetails"]
+            "image/gif": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested build does not exist */
         404: {
-          "image/png": components["schemas"]["ProblemDetails"]
-          "image/jpeg": components["schemas"]["ProblemDetails"]
-          "image/gif": components["schemas"]["ProblemDetails"]
+          content: {
+            "image/png": components["schemas"]["ProblemDetails"]
+            "image/jpeg": components["schemas"]["ProblemDetails"]
+            "image/gif": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -452,17 +518,23 @@ export interface paths {
       responses: {
         /** The details of the requested payload */
         200: {
-          "application/json":
-            | components["schemas"]["BlueprintPayloadModel"]
-            | components["schemas"]["BookPayloadModel"]
+          content: {
+            "application/json":
+              | components["schemas"]["BlueprintPayloadModel"]
+              | components["schemas"]["BookPayloadModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested payload does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -478,15 +550,21 @@ export interface paths {
       responses: {
         /** The raw encoded blueprint string */
         200: {
-          "text/plain": string
+          content: {
+            "text/plain": string
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "text/plain": components["schemas"]["ProblemDetails"]
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested payload does not exist */
         404: {
-          "text/plain": components["schemas"]["ProblemDetails"]
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
@@ -504,88 +582,118 @@ export interface paths {
       responses: {
         /** The rendered blueprint image */
         200: {
-          "image/png": string
+          content: {
+            "image/png": string
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "image/png": components["schemas"]["ProblemDetails"]
+          content: {
+            "image/png": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested payload does not exist */
         404: {
-          "image/png": components["schemas"]["ProblemDetails"]
+          content: {
+            "image/png": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
   }
   "/payloads": {
     put: {
-      requestBody: {
-        "application/json": components["schemas"]["CreatePayloadRequest"]
-        "text/json": components["schemas"]["CreatePayloadRequest"]
-        "application/*+json": components["schemas"]["CreatePayloadRequest"]
-      }
       responses: {
         /** Success */
         200: {
-          "application/json": components["schemas"]["CreatePayloadResult"]
+          content: {
+            "application/json": components["schemas"]["CreatePayloadResult"]
+          }
         }
         /** Bad Request */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** Unauthorized */
         401: unknown
         /** Forbidden */
         403: unknown
       }
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["CreatePayloadRequest"]
+          "text/json": components["schemas"]["CreatePayloadRequest"]
+          "application/*+json": components["schemas"]["CreatePayloadRequest"]
+        }
+      }
     }
   }
   "/rpc/validate-username": {
     post: {
-      requestBody: {
-        "application/json": string
-        "text/json": string
-        "application/*+json": string
-      }
       responses: {
         /** The validation result */
         200: {
-          "text/plain": boolean
-          "application/json": boolean
-          "text/json": boolean
+          content: {
+            "application/json": components["schemas"]["SlugValidationResult"]
+          }
+        }
+      }
+      /** The username to validate */
+      requestBody: {
+        content: {
+          "application/json": string
+          "text/json": string
+          "application/*+json": string
         }
       }
     }
   }
   "/rpc/validate-slug": {
     post: {
-      requestBody: {
-        "application/json": string
-        "text/json": string
-        "application/*+json": string
-      }
       responses: {
         /** The validation result */
         200: {
-          "text/plain": boolean
-          "application/json": boolean
-          "text/json": boolean
+          content: {
+            "application/json": components["schemas"]["SlugValidationResult"]
+          }
         }
         /** Unauthorized */
         401: unknown
         /** Forbidden */
         403: unknown
       }
-    }
-  }
-  "/rpc/test-ping": {
-    get: {
-      responses: {
-        /** Success */
-        200: {
-          "text/plain": string
+      /** The slug to validate */
+      requestBody: {
+        content: {
           "application/json": string
           "text/json": string
+          "application/*+json": string
+        }
+      }
+    }
+  }
+  "/rpc/convert-and-validate-title": {
+    post: {
+      responses: {
+        /** The converted title and validation result */
+        200: {
+          content: {
+            "application/json": components["schemas"]["SlugValidationResult"]
+          }
+        }
+        /** Unauthorized */
+        401: unknown
+        /** Forbidden */
+        403: unknown
+      }
+      /** The title to convert and validate */
+      requestBody: {
+        content: {
+          "application/json": string
+          "text/json": string
+          "application/*+json": string
         }
       }
     }
@@ -595,7 +703,9 @@ export interface paths {
       responses: {
         /** Success */
         200: {
-          "application/json": { [key: string]: string }
+          content: {
+            "application/json": { [key: string]: string }
+          }
         }
         /** Unauthorized */
         401: unknown
@@ -609,7 +719,9 @@ export interface paths {
       responses: {
         /** Success */
         200: {
-          "application/json": { [key: string]: string }
+          content: {
+            "application/json": { [key: string]: string }
+          }
         }
         /** Unauthorized */
         401: unknown
@@ -623,7 +735,9 @@ export interface paths {
       responses: {
         /** Success */
         200: {
-          "application/json": { [key: string]: string }
+          content: {
+            "application/json": { [key: string]: string }
+          }
         }
         /** Unauthorized */
         401: unknown
@@ -647,32 +761,36 @@ export interface paths {
           /** The desired direction to sort the results */
           sort_direction?: "Asc" | "Desc"
           /** An optional search term to filter the results by */
-          q?: string
+          q?: string | null
           /** An optional comma-separated list of tags to filter the results by */
-          tags?: string
+          tags?: string | null
           /** An optional game version to filter the results by */
-          version?: string
+          version?: string | null
         }
       }
       responses: {
         /** The paged, filtered and ordered list of matching builds */
         200: {
-          "application/json": components["schemas"]["BuildsModel"]
+          content: {
+            "application/json": components["schemas"]["BuildsModel"]
+          }
         }
         /** The request is malformed or invalid */
         400: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
         /** The requested user does not exist */
         404: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
+          }
         }
       }
     }
   }
 }
-
-export interface operations {}
 
 export interface components {
   schemas: {
@@ -1003,13 +1121,27 @@ export interface components {
       /** The encoded blueprint string. */
       encoded: string
     }
+    SlugValidationResult: {
+      slug: string
+      is_valid: boolean
+      is_available: boolean
+    }
     CreatePayloadResult: {
       /** The hash of the primary (or parent) payload that was created. */
       hash: string
       /** The hashes of all payloads that were created in this operation. */
       all_hashes: string[]
+      /** The ordered list of 1 to 4 icons that is included in the primary blueprint. */
+      icons: components["schemas"]["GameIcon"][]
+      /**
+       * The primary blueprint's title (aka label) converted to slug,
+       * including fields indicating whether the slug is valid and available for the authenticated user.
+       */
+      extracted_slug: components["schemas"]["SlugValidationResult"]
       /** The tags that have been extracted for this payload. */
       extracted_tags: string[]
     }
   }
 }
+
+export interface operations {}
