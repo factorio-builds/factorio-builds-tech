@@ -156,7 +156,7 @@ namespace FactorioTech.Api
             if (!_environment.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(appConfig.ProtectedDataDir))
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "dataprotection")))
                     .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
             }
 

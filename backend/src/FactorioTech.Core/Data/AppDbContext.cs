@@ -1,13 +1,13 @@
+using Duende.IdentityServer.EntityFramework.Options;
 using FactorioTech.Core.Domain;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using System;
 
 namespace FactorioTech.Core.Data
 {
-    public class AppDbContext : IdentityDbContext<User, Role, Guid>
+    public class AppDbContext : PersistedGrantIdentityContext
     {
         public DbSet<Blueprint> Blueprints { get; set; }
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
@@ -15,16 +15,18 @@ namespace FactorioTech.Core.Data
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
-        private const string IdentitySchema = "identity";
-
 #pragma warning disable 8618
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(
+            DbContextOptions<AppDbContext> options,
+            IOptions<OperationalStoreOptions> operationalStoreOptions)
+            : base(options, operationalStoreOptions)
+        {
+        }
 #pragma warning restore 8618
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            CustomizeAspNetIdentity(builder);
 
             builder.Entity<User>(entity =>
             {
@@ -113,53 +115,6 @@ namespace FactorioTech.Core.Data
             builder.Entity<Tag>(entity =>
             {
                 entity.HasKey(e => new { e.BlueprintId, e.Value });
-            });
-        }
-
-        private void CustomizeAspNetIdentity(ModelBuilder builder)
-        {
-            builder.Entity<User>().ToTable(nameof(Users), IdentitySchema);
-            builder.Entity<Role>().ToTable(nameof(Roles), IdentitySchema);
-
-            builder.Entity<IdentityRoleClaim<Guid>>().ToTable(nameof(RoleClaims), IdentitySchema);
-            builder.Entity<IdentityUserClaim<Guid>>().ToTable(nameof(UserClaims), IdentitySchema);
-            builder.Entity<IdentityUserLogin<Guid>>().ToTable(nameof(UserLogins), IdentitySchema);
-            builder.Entity<IdentityUserRole<Guid>>().ToTable(nameof(UserRoles), IdentitySchema);
-            builder.Entity<IdentityUserToken<Guid>>().ToTable(nameof(UserTokens), IdentitySchema);
-
-            builder.Entity<User>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("UserId");
-                entity.Property(e => e.UserName).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.NormalizedUserName).HasMaxLength(100).IsRequired();
-                entity.Property(e => e.Email).IsRequired();
-                entity.Property(e => e.NormalizedEmail).IsRequired();
-            });
-
-            builder.Entity<Role>(entity =>
-            {
-                entity.Property(e => e.Id).HasColumnName("RoleId");
-                entity.Property(e => e.Name).IsRequired();
-                entity.Property(e => e.NormalizedName).IsRequired();
-
-                entity.HasData(new Role
-                {
-                    Id = Guid.Parse("52a39ea9-ab54-40ab-8ee0-98c069504f69"),
-                    Name = "Moderator",
-                    NormalizedName = "MODERATOR",
-                });
-
-                entity.HasData(new Role
-                {
-                    Id = Guid.Parse("3d15ca3a-584e-4d30-94df-b43d2303a4f4"),
-                    Name = "Administrator",
-                    NormalizedName = "ADMINISTRATOR",
-                });
-            });
-
-            builder.Entity<IdentityUserLogin<Guid>>(entity =>
-            {
-                entity.Property(e => e.ProviderDisplayName).IsRequired();
             });
         }
     }
