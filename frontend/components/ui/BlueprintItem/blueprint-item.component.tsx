@@ -71,8 +71,6 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
       .join(" & ")}`
   }
 
-  console.log(props.image)
-
   return (
     <SC.BlueprintItemWrapper
       depth={props.depth}
