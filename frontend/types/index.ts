@@ -92,6 +92,14 @@ export interface IBlueprintEntity {
   }
 }
 
+export interface IBlueprintTile {
+  name: string
+  position: {
+    x: number
+    y: number
+  }
+}
+
 export interface IDecodedBlueprintData {
   blueprint: IBlueprint
 }
@@ -103,19 +111,40 @@ export interface IDecodedBlueprintBookData {
 export interface IBlueprint {
   type: "blueprint"
   icons?: Array<IBlueprintIcon>
-  entities: Array<IBlueprintEntity>
+  entities?: Array<IBlueprintEntity>
+  tiles?: Array<IBlueprintTile>
   item: string
   label: string
   description?: string
   version: number
 }
 
+interface IDeconstructionPlanner {
+  item: string
+  label: string
+  settings: {
+    entity_filters: Array<{ name: string; index: number }>
+    icons?: Array<IBlueprintIcon>
+    tile_selection_mode: number
+  }
+  version: number
+}
+
+export interface IBookItemBlueprint {
+  blueprint: IBlueprint
+  index: number
+}
+
+interface IBookItemDeconstructionPlanner {
+  deconstruction_planner: IDeconstructionPlanner
+  index: number
+}
+
+export type TBookItem = IBookItemBlueprint | IBookItemDeconstructionPlanner
+
 export interface IBlueprintBook {
   type: "blueprint-book"
-  blueprints: Array<{
-    blueprint: IBlueprint
-    index: number
-  }>
+  blueprints: TBookItem[]
   icons?: Array<IBlueprintIcon>
   label: string
   description?: string

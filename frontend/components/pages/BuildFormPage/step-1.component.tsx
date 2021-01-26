@@ -7,6 +7,7 @@ import {
 } from "../../../types"
 import {
   decodeBlueprint,
+  isBlueprintItem,
   isBook,
   isValidBlueprint,
 } from "../../../utils/blueprint"
@@ -80,9 +81,12 @@ const Step1: React.FC<IStep1Props> = (props) => {
         isBook: true,
         json,
         data: getBlueprintData(json),
-        heuristics: json.blueprint_book.blueprints.map((bp) =>
-          blueprintHeuristics(bp.blueprint)
-        ),
+        heuristics: json.blueprint_book.blueprints.map((bp) => {
+          if (!isBlueprintItem(bp)) {
+            return blueprintHeuristics()
+          }
+          return blueprintHeuristics(bp.blueprint)
+        }),
       }
     } else {
       return {
@@ -146,6 +150,12 @@ const Step1: React.FC<IStep1Props> = (props) => {
         isBook: true,
         blueprintCount: book.blueprints.length,
         entityCount: book.blueprints.reduce((acc, curr) => {
+          if (!isBlueprintItem(curr)) {
+            return acc
+          }
+          if (!curr.blueprint.entities) {
+            return acc
+          }
           return acc + curr.blueprint.entities.length
         }, 0),
       }
@@ -155,7 +165,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
         label: bp.label,
         isBook: false,
         blueprintCount: 1,
-        entityCount: bp.entities.length,
+        entityCount: bp.entities?.length || 0,
       }
     }
   }
