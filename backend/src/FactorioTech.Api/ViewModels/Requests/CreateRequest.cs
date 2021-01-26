@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Api.ViewModels.Requests
 {
-    public class CreateRequestBase : IValidatableObject
+    public class CreateRequestBase
     {
         /// <summary>
         /// The hash of the payload that should be used to create this build version.
@@ -52,22 +52,6 @@ namespace FactorioTech.Api.ViewModels.Requests
         /// </summary>
         [Required]
         public CoverRequest Cover { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (Cover.File == null && Cover.Hash == null)
-            {
-                yield return new ValidationResult(
-                    $"Either {nameof(Cover.File)} or {nameof(Cover.Hash)} must be set on {nameof(Cover)}.",
-                    new[] { nameof(Cover) });
-            }
-            else if (Cover.File != null && Cover.Hash != null)
-            {
-                yield return new ValidationResult(
-                    $"Only one of either {nameof(Cover.File)} or {nameof(Cover.Hash)} must be set on {nameof(Cover)}.",
-                    new[] { nameof(Cover) });
-            }
-        }
     }
 
     public class CreateVersionRequest : CreateRequestBase

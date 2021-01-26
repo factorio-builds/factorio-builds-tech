@@ -2,23 +2,22 @@ import { useState } from "react"
 import cx from "classnames"
 import * as SC from "./input.styles"
 
-interface ITextProps {
+interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string
   name?: string
   value: React.ReactText
   placeholder?: string
   icon?: JSX.Element
-  spellCheck?: boolean
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
-interface ITextareaProps {
+interface ITextareaProps
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   id: string
   name?: string
   value: React.ReactText
   placeholder?: string
-  spellCheck?: boolean
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
   onKeyPress?: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }

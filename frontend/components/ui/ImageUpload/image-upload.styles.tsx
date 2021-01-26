@@ -41,6 +41,7 @@ export const UploadZone = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  box-sizing: border-box;
   width: 300px;
   height: 377px;
   border: 2px solid ${COLOR.PURPLE500};

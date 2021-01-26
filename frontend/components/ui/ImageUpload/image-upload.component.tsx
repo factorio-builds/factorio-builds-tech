@@ -3,12 +3,19 @@ import { useDropzone } from "react-dropzone"
 import cx from "classnames"
 import Lamp from "../../../icons/lamp"
 import ThumbsUp from "../../../icons/thumbs-up"
+import InputWrapper from "../../form/InputWrapper"
 import * as SC from "./image-upload.styles"
+
+export interface IImageUpload {
+  file: File | null
+  width: number | null
+  height: number | null
+}
 
 interface IImageUploadProps {
   label: string
   image: string | null
-  onChange: (file: File | null) => void
+  onChange: (image: IImageUpload) => void
 }
 
 interface IImagePreview {
@@ -48,7 +55,11 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
           width: image.width,
           height: image.height,
         })
-        props.onChange(file)
+        props.onChange({
+          width: image.width,
+          height: image.height,
+          file,
+        })
       }
     }
     reader.readAsArrayBuffer(file)
@@ -66,10 +77,14 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
     return imagePreview.width / imagePreview.height > 1.5
   }, [imagePreview?.width, imagePreview?.height])
 
-  function removeImage() {
-    setImagePreview(null)
-    props.onChange(null)
-  }
+  // function removeImage() {
+  //   setImagePreview(null)
+  //   props.onChange({
+  //     width: null,
+  //     height: null,
+  //     file: null,
+  //   })
+  // }
 
   const image = imagePreview?.src || props.image
 
@@ -77,43 +92,44 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
     <SC.ImageUploadWrapper
       className={cx({ "is-active": isDragActive, "has-image": imagePreview })}
     >
-      <SC.TopRow>
-        <SC.Label>{props.label}</SC.Label>
-        {image && <SC.SwapImage onClick={removeImage}>swap image</SC.SwapImage>}
-      </SC.TopRow>
+      <InputWrapper uid="build-image" label={props.label}>
+        <SC.UploadZone {...getRootProps()}>
+          <input {...getInputProps()} />
+          {image ? (
+            <SC.ImagePreview src={image} />
+          ) : (
+            <SC.NoImageBackdrop>
+              <SC.Hint>
+                {isDragActive ? "(drop image here)" : "(click or drag image)"}
+              </SC.Hint>
+            </SC.NoImageBackdrop>
+          )}
+        </SC.UploadZone>
 
-      <SC.UploadZone {...getRootProps()}>
-        <input {...getInputProps()} />
-        {image ? (
-          <SC.ImagePreview src={image} />
-        ) : (
-          <SC.NoImageBackdrop>
-            <SC.Hint>
-              {isDragActive ? "(drop image here)" : "(click or drag image)"}
-            </SC.Hint>
-          </SC.NoImageBackdrop>
+        <SC.Recommended>
+          <SC.StyledLamp />
+          We recommended using a tall image, if possible, share the build image
+          vertically.
+        </SC.Recommended>
+
+        {image && suggestRotating && (
+          <SC.Feedback className="variant-warning">
+            <Lamp />
+            Consider rotating the image
+          </SC.Feedback>
         )}
-      </SC.UploadZone>
 
-      <SC.Recommended>
-        <SC.StyledLamp />
-        We recommended using a tall image, if possible, share the build image
-        vertically.
-      </SC.Recommended>
-
-      {image && suggestRotating && (
-        <SC.Feedback className="variant-warning">
-          <Lamp />
-          Consider rotating the image
-        </SC.Feedback>
-      )}
-
-      {image && !suggestRotating && (
-        <SC.Feedback className="variant-positive">
-          <ThumbsUp />
-          This looks perfect
-        </SC.Feedback>
-      )}
+        {image && !suggestRotating && (
+          <SC.Feedback className="variant-positive">
+            <ThumbsUp />
+            This looks perfect
+          </SC.Feedback>
+        )}
+      </InputWrapper>
+      {/* <SC.TopRow>
+        <SC.Label>{props.label}</SC.Label>
+        {/* {image && <SC.SwapImage onClick={removeImage}>swap image</SC.SwapImage>} 
+      </SC.TopRow> */}
     </SC.ImageUploadWrapper>
   )
 }

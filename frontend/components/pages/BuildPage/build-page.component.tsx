@@ -128,7 +128,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
           <Stacker orientation="vertical" gutter={16}>
             {/* {(isAdmin || ownedByMe) && ( */}
             {ownedByMe && (
-              <Link href={`/builds/${build.owner.username}/${build.slug}/edit`}>
+              <Link href={`/${build.owner.username}/${build.slug}/edit`}>
                 <SC.EditBuild>
                   {ownedByMe ? "edit build" : "edit build as admin"}
                 </SC.EditBuild>
