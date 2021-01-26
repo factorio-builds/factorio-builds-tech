@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+import { useSelector } from "react-redux"
 import { withApplicationInsights } from "next-applicationinsights"
 import type { AppContext, AppProps } from "next/app"
 import getConfig from "next/config"
@@ -6,12 +8,21 @@ import { compose } from "redux"
 import { ThemeProvider } from "styled-components"
 import { GlobalStyle } from "../design/styles/global-style"
 import { theme } from "../design/styles/theme"
-import { wrapper } from "../redux/store"
+import { IStoreState, wrapper } from "../redux/store"
 import auth from "../utils/auth"
+import { axios } from "../utils/axios"
 
 const { publicRuntimeConfig } = getConfig()
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const user = useSelector((store: IStoreState) => store.auth.user)
+
+  useEffect(() => {
+    axios.defaults.headers.common["Authorization"] = user?.accessToken
+      ? `Bearer ${user.accessToken}`
+      : ""
+  }, [user])
+
   return (
     <>
       <Head>
@@ -58,6 +69,9 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
           accessToken: session.accessToken,
         },
       })
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${session.accessToken}`
     }
   }
 
