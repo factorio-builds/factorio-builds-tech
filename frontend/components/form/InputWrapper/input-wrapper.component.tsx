@@ -7,7 +7,7 @@ interface IInputWrapper extends React.ComponentPropsWithoutRef<"div"> {
   uid: string
   label?: string
   validFeedback?: string
-  error: any
+  error?: any
 }
 
 const InputWrapper: React.FC<IInputWrapper> = (props) => {

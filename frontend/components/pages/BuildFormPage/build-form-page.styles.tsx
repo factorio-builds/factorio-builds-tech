@@ -34,3 +34,35 @@ export const SkipButton = styled.button`
     color: ${COLOR.PURPLE900};
   }
 `
+
+export const CoverWrapper = styled.div`
+  width: 300px;
+`
+
+export const PageButton = styled.div`
+  ${getTypo(ETypo.PAGE_SUBTITLE)};
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.75;
+  }
+
+  &.is-active {
+    opacity: 1;
+    pointer-events: none;
+  }
+`
+
+export const PageNumber = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid ${COLOR.PURPLE700};
+  border-radius: 50%;
+  margin-right: 8px;
+`

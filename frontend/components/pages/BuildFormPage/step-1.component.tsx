@@ -1,8 +1,5 @@
-import React, { useMemo } from "react"
-import { Field, FormikProps } from "formik"
-import deburr from "lodash/deburr"
-import flow from "lodash/flow"
-import kebabCase from "lodash/kebabCase"
+import React, { useMemo, useState } from "react"
+import { FormikProps } from "formik"
 import { useApi } from "../../../hooks/useApi"
 import {
   IDecodedBlueprintBookData,
@@ -14,11 +11,12 @@ import {
   isValidBlueprint,
 } from "../../../utils/blueprint"
 import { blueprintHeuristics } from "../../../utils/blueprint-heuristics"
-import Input from "../../form/FormikInputWrapper"
+import Input from "../../form/Input"
+import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
 import Stacker from "../../ui/Stacker"
 import WithIcons from "../../ui/WithIcons"
-import { IFormValues, validate } from "./build-form-page.component"
+import { IFormValues } from "./build-form-page.component"
 import * as SC from "./build-form-page.styles"
 
 interface IBlueprintData {
@@ -58,19 +56,15 @@ interface IStep1Props {
   goToNextStep: () => void
 }
 
-const stripNonAlpha = (str: string): string => str.replace(/[^0-9a-z\-_]/gi, "")
-const stripIcons = (str: string): string =>
-  str.replace(/[[A-z-]+=[A-z-]+\]/gi, "")
-
 const Step1: React.FC<IStep1Props> = (props) => {
+  const [encoded, setEncoded] = useState("")
   const { /*data, loading, error,*/ execute } = useApi({
     url: "/payloads",
     method: "PUT",
   })
 
   const stepState: TStepState = useMemo(() => {
-    const bpString = props.formikProps.values.encoded
-    const isValid = isValidBlueprint(bpString)
+    const isValid = isValidBlueprint(encoded)
 
     if (!isValid) {
       return {
@@ -78,7 +72,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
       }
     }
 
-    const json = decodeBlueprint(bpString)
+    const json = decodeBlueprint(encoded)
 
     if (isBook(json)) {
       return {
@@ -99,7 +93,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
         heuristics: blueprintHeuristics(json.blueprint),
       }
     }
-  }, [props.formikProps.values.encoded])
+  }, [encoded])
 
   async function preFillForm(): Promise<void> {
     if (!stepState.isValid) {
@@ -107,7 +101,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
     }
 
     const res = await execute({
-      data: JSON.stringify({ encoded: props.formikProps.values.encoded }),
+      data: JSON.stringify({ encoded }),
     }).catch((err) => {
       // TODO: handle error
       console.error(err)
@@ -121,41 +115,19 @@ const Step1: React.FC<IStep1Props> = (props) => {
       ? stepState.json.blueprint_book
       : stepState.json.blueprint
 
+    console.log(res.data)
+
     props.formikProps.setFieldValue("title", bp.label)
+    // TODO: set validity/availability of slug
+    props.formikProps.setFieldValue("slug", res.data.extracted_slug.slug)
     props.formikProps.setFieldValue("description", bp.description || "")
     props.formikProps.setFieldValue("hash", res.data.hash)
-    props.formikProps.setFieldValue(
-      "slug",
-      flow([deburr, stripIcons, kebabCase, stripNonAlpha])(bp.label)
-    )
-
-    // TODO: extract
-    // TODO: guess metadata from blueprint content
-    // if (!stepState.isBook) {
-    //   const bp = stepState.json.blueprint
-    //   const { withMarkedInputs, withBeacons } = blueprintHeuristics(bp)
-    //   props.formikProps.setFieldValue(
-    //     "withMarkedInputs",
-    //     withMarkedInputs.value
-    //   )
-    //   props.formikProps.setFieldValue("withBeacons", withBeacons.value)
-    // } else {
-    //   const blueprints = stepState.json.blueprint_book.blueprints
-    //   props.formikProps.setFieldValue(
-    //     "withMarkedInputs",
-    //     blueprints.some(({ blueprint }) => {
-    //       return blueprintHeuristics(blueprint).withMarkedInputs.value
-    //     })
-    //   )
-    //   props.formikProps.setFieldValue(
-    //     "withBeacons",
-    //     blueprints.some(({ blueprint }) => {
-    //       return blueprintHeuristics(blueprint).withBeacons.value
-    //     })
-    //   )
-    // }
 
     props.goToNextStep()
+  }
+
+  function handleOnChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
+    setEncoded(e.target.value)
   }
 
   function handleOnKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>): void {
@@ -197,19 +169,16 @@ const Step1: React.FC<IStep1Props> = (props) => {
             extract the relevant metadata as best as we can!
           </p>
 
-          <Field
-            name="encoded"
-            label="Blueprint string"
-            type="textarea"
-            rows="5"
-            required
-            spellCheck={false}
-            component={Input}
-            validate={validate("encoded")}
-            onChange={props.formikProps.handleChange}
-            onKeyPress={handleOnKeyPress}
-            validFeedback="Found a valid blueprint"
-          />
+          <InputWrapper uid="encoded">
+            <Input.Textarea
+              id="encoded"
+              value={encoded}
+              rows={5}
+              spellCheck={false}
+              onChange={handleOnChange}
+              onKeyPress={handleOnKeyPress}
+            ></Input.Textarea>
+          </InputWrapper>
 
           {stepState.isValid && (
             <>

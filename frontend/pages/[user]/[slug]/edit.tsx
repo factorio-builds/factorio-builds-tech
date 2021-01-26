@@ -1,8 +1,9 @@
-import { GetServerSideProps } from "next"
 import React from "react"
+import { GetServerSideProps } from "next"
 import BuildFormPage from "../../../components/pages/BuildFormPage"
 import Layout from "../../../components/ui/Layout"
 import { IFullBuild } from "../../../types/models"
+import { axios } from "../../../utils/axios"
 
 interface IBuildsEditPageProps {
   build?: IFullBuild
@@ -26,15 +27,15 @@ const BuildsEditPage: React.FC<IBuildsEditPageProps> = ({ build, errors }) => {
 export default BuildsEditPage
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  try {
-    const id = params?.id
-    const build = { id: id }
+  const { user, slug } = params!
 
-    // const buildRepository = await BuildRepository()
-    // const build = await buildRepository.findOne(id as string).catch((error) => {
-    //   console.error(error)
-    //   throw new Error("Cannot find build data")
-    // })
+  try {
+    const build = await axios
+      .get(`/builds/${user}/${slug}`)
+      .then((response) => response.data)
+      .catch((err) => {
+        console.error(err)
+      })
 
     if (!build) throw new Error("Build not found")
 
