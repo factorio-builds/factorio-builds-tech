@@ -10,6 +10,13 @@ type THeuristics = Record<string, IComputedHeuristic>
 // TODO: could be improved to check that the combinator is right next to a belt facing it
 // odds are 99% of cases, a combinator with an item indicates input
 export function withMarkedInputs(blueprint: IBlueprint): IComputedHeuristic {
+  if (!blueprint.entities) {
+    return {
+      value: false,
+      confidence: 1,
+    }
+  }
+
   const output = blueprint.entities.some((entity) => {
     return (
       entity.name === "constant-combinator" &&
@@ -28,6 +35,13 @@ export function withMarkedInputs(blueprint: IBlueprint): IComputedHeuristic {
 // can blindly assume that anything with some sort of train piece can be flagged as train
 // only exception are train cargos used as a box
 function isTrains(blueprint: IBlueprint): IComputedHeuristic {
+  if (!blueprint.entities) {
+    return {
+      value: false,
+      confidence: 1,
+    }
+  }
+
   const output = blueprint.entities.some((entity) => {
     return (
       entity.name === "straight-rail" ||
@@ -45,6 +59,13 @@ function isTrains(blueprint: IBlueprint): IComputedHeuristic {
 }
 
 export function withBeacons(blueprint: IBlueprint): IComputedHeuristic {
+  if (!blueprint.entities) {
+    return {
+      value: false,
+      confidence: 1,
+    }
+  }
+
   const output = blueprint.entities.some((entity) => {
     return entity.name === "beacon"
   })
@@ -56,7 +77,24 @@ export function withBeacons(blueprint: IBlueprint): IComputedHeuristic {
 }
 
 // TODO: review/observe performance over time
-export function blueprintHeuristics(blueprint: IBlueprint): THeuristics {
+export function blueprintHeuristics(blueprint?: IBlueprint): THeuristics {
+  if (!blueprint) {
+    return {
+      isTrains: {
+        value: false,
+        confidence: 1,
+      },
+      withMarkedInputs: {
+        value: false,
+        confidence: 1,
+      },
+      withBeacons: {
+        value: false,
+        confidence: 1,
+      },
+    }
+  }
+
   return {
     isTrains: isTrains(blueprint),
     withMarkedInputs: withMarkedInputs(blueprint),

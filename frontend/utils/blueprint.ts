@@ -4,6 +4,8 @@ import {
   IDecodedBlueprintData,
   IDecodedBlueprintBookData,
   IBlueprint,
+  TBookItem,
+  IBookItemBlueprint,
 } from "../types"
 
 const utf8Decoder = new TextDecoder("utf-8")
@@ -13,6 +15,15 @@ export function isBook(
 ): decodedObject is IDecodedBlueprintBookData {
   const book = decodedObject as IDecodedBlueprintBookData
   if (book.blueprint_book !== undefined) {
+    return true
+  }
+
+  return false
+}
+
+export function isBlueprintItem(item: TBookItem): item is IBookItemBlueprint {
+  const blueprintItem = item as IBookItemBlueprint
+  if (blueprintItem.blueprint !== undefined) {
     return true
   }
 
@@ -45,6 +56,10 @@ export function isValidBlueprint(blueprintString: string): boolean {
 }
 
 export function getCountPerItem(blueprint: IBlueprint): Record<string, number> {
+  if (!blueprint.entities) {
+    return {}
+  }
+
   return blueprint.entities.reduce((acc, curr) => {
     const count = acc[curr.name] || 0
     return {
