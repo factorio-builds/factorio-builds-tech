@@ -1,7 +1,7 @@
-import React from "react"
+import { NextPage } from "next"
 import BuildFormPage from "../../components/pages/BuildFormPage"
 
-const BuildsCreatePage: React.FC = () => {
+const BuildsCreatePage: NextPage = () => {
   return <BuildFormPage type="CREATE" />
 }
 

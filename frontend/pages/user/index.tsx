@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next"
+import { GetServerSideProps, NextPage } from "next"
 import Link from "next/link"
 import Layout from "../../components/ui/Layout"
 import { IThinUser } from "../../types/models"
@@ -7,7 +7,7 @@ interface IUsersIndexPage {
   users: IThinUser[]
 }
 
-const UsersIndexPage = ({ users }: IUsersIndexPage): JSX.Element => (
+const UsersIndexPage: NextPage<IUsersIndexPage> = ({ users }) => (
   <Layout title="Users">
     <h1>Users List</h1>
     <p>You are currently on: /users</p>

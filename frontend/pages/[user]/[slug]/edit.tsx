@@ -1,5 +1,4 @@
-import React from "react"
-import { GetServerSideProps } from "next"
+import { GetServerSideProps, NextPage } from "next"
 import BuildFormPage from "../../../components/pages/BuildFormPage"
 import Layout from "../../../components/ui/Layout"
 import { IFullBuild } from "../../../types/models"
@@ -10,7 +9,7 @@ interface IBuildsEditPageProps {
   errors?: string
 }
 
-const BuildsEditPage: React.FC<IBuildsEditPageProps> = ({ build, errors }) => {
+const BuildsEditPage: NextPage<IBuildsEditPageProps> = ({ build, errors }) => {
   if (errors || !build) {
     return (
       <Layout title="Error">

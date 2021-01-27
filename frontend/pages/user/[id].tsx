@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next"
+import { GetServerSideProps, NextPage } from "next"
 import Layout from "../../components/ui/Layout"
 import { IUser } from "../../types/models"
 
@@ -7,7 +7,7 @@ interface IUsersPageProps {
   errors?: string
 }
 
-const UsersPage = ({ user, errors }: IUsersPageProps): JSX.Element => {
+const UsersPage: NextPage<IUsersPageProps> = ({ user, errors }) => {
   if (errors || !user) {
     return (
       <Layout title="Error">
