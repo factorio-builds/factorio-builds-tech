@@ -1,4 +1,4 @@
-import { GetServerSideProps } from "next"
+import { GetServerSideProps, NextPage } from "next"
 import BuildPage from "../../components/pages/BuildPage"
 import Layout from "../../components/ui/Layout"
 import { IFullBuild } from "../../types/models"
@@ -9,7 +9,7 @@ interface IBuildsPageProps {
   errors?: string
 }
 
-const BuildsPage = ({ build, errors }: IBuildsPageProps) => {
+const BuildsPage: NextPage<IBuildsPageProps> = ({ build, errors }) => {
   if (errors || !build) {
     return (
       <Layout title="Error">
