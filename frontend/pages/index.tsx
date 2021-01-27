@@ -12,7 +12,12 @@ const IndexPage: NextPage = () => {
 export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
   async (ctx) => {
     const searchResults = await axios
-      .get<ApiSearchBuild>("/builds")
+      .get<ApiSearchBuild>("/builds", {
+        params: {
+          sort_field: ctx.store.getState().filters.sort.toLowerCase(),
+          sort_direction: "asc",
+        },
+      })
       .then((response) => response.data)
       .catch((err) => {
         console.error(err)
