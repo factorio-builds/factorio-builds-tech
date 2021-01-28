@@ -1,4 +1,6 @@
 import * as React from "react"
+import { useMemo } from "react"
+import { useMeasure } from "react-use"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
 import { ESortType } from "../../../types"
 import { IThinBuild } from "../../../types/models"
@@ -6,7 +8,6 @@ import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
 import BuildListSort from "../BuildListSort"
 import * as SC from "./build-card-list.styles"
-import { COLS, GUTTER } from "./design-tokens"
 
 interface IBuildCardListProps {
   items: IThinBuild[]
@@ -16,6 +17,9 @@ interface IBuildCardListProps {
   sort: ESortType
 }
 
+const CARD_WIDTH = 300
+const COL_GUTTER = 16
+
 const BuildCardList: React.FC<IBuildCardListProps> = ({
   items,
   count,
@@ -23,15 +27,29 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   lookupTime,
   sort,
 }) => {
-  const COL_COUNT = COLS
-  const COL_GUTTER = GUTTER
-  const CONTAINER_WIDTH = 1052 // needs to be dynamic on window resize
+  const [ref, { width, height }] = useMeasure<HTMLDivElement>()
+
+  const { colCount, colGutter, containerWidth } = useMemo<{
+    colCount: number
+    colGutter: number
+    containerWidth: number
+  }>(() => {
+    if (width === 0) {
+      return { colCount: 0, colGutter: COL_GUTTER, containerWidth: width }
+    }
+
+    const totalCardsWith =
+      width + COL_GUTTER - ((width + COL_GUTTER) % (CARD_WIDTH + COL_GUTTER))
+    const colCount = Math.floor(totalCardsWith / CARD_WIDTH)
+
+    return { colCount, colGutter: COL_GUTTER, containerWidth: width }
+  }, [width, height])
 
   const columns = useDistributeToColumn(
     items,
-    COL_COUNT,
-    CONTAINER_WIDTH,
-    COL_GUTTER
+    colCount,
+    containerWidth,
+    colGutter
   )
 
   return (
@@ -44,7 +62,15 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
         />
         <BuildListSort sort={sort} />
       </SC.Header>
-      <SC.Columns>
+      <SC.Columns
+        ref={ref}
+        style={
+          {
+            "--cols": colCount,
+            "--gutter": `${colGutter}px`,
+          } as React.CSSProperties
+        }
+      >
         {columns.map((items, i) => (
           <SC.Column key={i}>
             {items.map((item, i2) => (

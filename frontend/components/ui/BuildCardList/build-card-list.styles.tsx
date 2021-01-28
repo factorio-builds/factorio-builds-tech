@@ -1,5 +1,4 @@
 import styled from "styled-components"
-import { COLS, GUTTER } from "./design-tokens"
 
 export const BuildCardListWrapper = styled.div`
   //
@@ -12,8 +11,6 @@ export const Header = styled.div`
 `
 
 export const Columns = styled.div`
-  --cols: ${COLS};
-  --gutter: ${GUTTER}px;
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
