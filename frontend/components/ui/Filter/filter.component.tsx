@@ -1,22 +1,22 @@
 import React from "react"
 import { useDispatch, useSelector } from "react-redux"
+import { ITag } from "../../../redux/reducers/filters"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { IStoreState } from "../../../redux/store"
-import { ECategory, EFilterType, EState } from "../../../types"
 import Checkbox from "../../form/Checkbox"
 
 interface IFilterProps {
-  filterType: EFilterType
+  group: ITag["group"]
   icon?: JSX.Element
   text: string
-  name: EState | ECategory
+  name: ITag["name"]
 }
 
 function Filter(props: IFilterProps): JSX.Element {
-  const checked = useSelector(
-    // TODO: fix types
-    // @ts-ignore
-    (store: IStoreState) => store.filters[props.filterType][props.name]
+  const tag = useSelector((store: IStoreState) =>
+    store.filters.tags.find(
+      (tag) => tag.group === props.group && tag.name === props.name
+    )
   )
   const dispatch = useDispatch()
 
@@ -24,11 +24,16 @@ function Filter(props: IFilterProps): JSX.Element {
     dispatch({
       type: "TOGGLE_FILTER",
       payload: {
-        type: props.filterType,
+        group: props.group,
         name: props.name,
       },
     })
     dispatch(searchBuildsAsync())
+  }
+
+  // this shouldn't ever happen
+  if (!tag) {
+    throw "Tag doesn't exist"
   }
 
   return (
@@ -37,7 +42,7 @@ function Filter(props: IFilterProps): JSX.Element {
       prefix={props.icon}
       label={props.text}
       value={props.name}
-      checked={checked}
+      checked={tag.isSelected}
       onChange={toggleChecked}
       inline={false}
     />

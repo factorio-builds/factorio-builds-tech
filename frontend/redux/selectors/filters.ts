@@ -1,9 +1,4 @@
-import { EFilterType } from "../../types"
-import {
-  IStoreCategoryFilters,
-  IStoreFiltersState,
-  IStoreStateFilters,
-} from "../reducers/filters"
+import { IStoreFiltersState } from "../reducers/filters"
 import { IStoreState } from "../store"
 
 export const filtersQuerySelector = (
@@ -12,14 +7,8 @@ export const filtersQuerySelector = (
   return state.filters.query
 }
 
-export const filtersStateSelector = (
+export const filtersTagsSelector = (
   state: IStoreState
-): IStoreStateFilters => {
-  return state.filters[EFilterType.STATE]
-}
-
-export const filtersCategorySelector = (
-  state: IStoreState
-): IStoreCategoryFilters => {
-  return state.filters[EFilterType.CATEGORY]
+): IStoreFiltersState["tags"] => {
+  return state.filters.tags
 }

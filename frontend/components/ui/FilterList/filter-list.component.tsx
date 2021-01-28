@@ -1,41 +1,27 @@
 import React from "react"
-import { useCategories } from "../../../hooks/useCategories"
-import { useGameStates } from "../../../hooks/useGameStates"
-import { EFilterType } from "../../../types"
-import Filter from "../Filter"
+import tags from "../../../tags.json"
 import Stacker from "../Stacker"
+import FilterGroup from "./filter-group.component"
 import * as SC from "./filter-list.styles"
 
-function FilterList(): JSX.Element {
-  const { categories } = useCategories()
-  const { gameStates } = useGameStates()
+// TODO: typesafe the tags JSON
 
+function FilterList(): JSX.Element {
   return (
     <SC.FilterListWrapper>
       <SC.Title>Filter builds</SC.Title>
       <Stacker gutter={8}>
-        {gameStates.map((gameState) => {
+        {Object.keys(tags).map((tagCategory) => {
+          const tagGroup = tags[tagCategory as keyof typeof tags]
+
           return (
-            <Filter
-              key={gameState.value}
-              icon={gameState.icon}
-              filterType={EFilterType.STATE}
-              name={gameState.value}
-              text={gameState.name}
-            />
-          )
-        })}
-      </Stacker>
-      <SC.Separator />
-      <Stacker gutter={8}>
-        {categories.map((category) => {
-          return (
-            <Filter
-              key={category.value}
-              icon={category.icon}
-              filterType={EFilterType.CATEGORY}
-              name={category.value}
-              text={category.name}
+            <FilterGroup
+              key={tagCategory}
+              // TODO: typesafe the JSON
+              // @ts-ignore
+              name={tagCategory}
+              // @ts-ignore
+              nodes={tagGroup}
             />
           )
         })}

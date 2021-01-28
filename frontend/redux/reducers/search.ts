@@ -1,6 +1,6 @@
 import { Action } from "redux"
 import { ThunkAction } from "redux-thunk"
-import { EFilterType, SearchResponse } from "../../types"
+import { SearchResponse } from "../../types"
 import { IThinBuild } from "../../types/models"
 import { axios } from "../../utils/axios"
 import { IPayloadAction, IStoreState } from "../store"
@@ -33,20 +33,27 @@ export const searchBuildsAsync = (): ThunkAction<
   unknown,
   Action
 > => {
-  const mapFilters = (state: IStoreState, type: EFilterType): string =>
-    Object.entries(state.filters[type])
-      .filter(([_, value]) => value)
-      .map(([key]) => key)
-      .join(",")
+  const mapTagKeys = (state: IStoreState): Record<string, string> => {
+    return state.filters.tags
+      .filter((tag) => tag.isSelected)
+      .map((tag) => `/${tag.group}/${tag.name}`)
+      .reduce((acc, curr, index) => {
+        return {
+          ...acc,
+          [`tags[${index}]`]: curr,
+        }
+      }, {})
+  }
 
   return async function (dispatch, getState) {
+    const state = getState()
+
     return axios
       .get("/builds", {
         params: {
           q: getState().filters.query || undefined,
-          state: mapFilters(getState(), EFilterType.STATE) || undefined,
-          categories: mapFilters(getState(), EFilterType.CATEGORY) || undefined,
-          sort_field: getState().filters.sort.toLowerCase(),
+          ...mapTagKeys(state),
+          sort_field: state.filters.sort.toLowerCase(),
           sort_direction: "asc",
         },
       })
