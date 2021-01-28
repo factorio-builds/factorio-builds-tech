@@ -11,7 +11,6 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   background: ${COLOR.HEADER};
   height: 74px;
-  padding: 0 20px;
 
   ${Container} {
     align-items: center;
