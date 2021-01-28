@@ -10,7 +10,7 @@ namespace FactorioTech.Tests.Helpers
     {
         private Guid _userId;
 
-        public async Task<User> Save(AppDbContext dbContext)
+        public async Task<User> Save(AppDbContext dbContext, bool clearCache = true)
         {
             _userId = Guid.NewGuid();
             var user = new User
@@ -26,7 +26,12 @@ namespace FactorioTech.Tests.Helpers
 
             dbContext.Add(user);
             await dbContext.SaveChangesAsync();
-            dbContext.ClearCache();
+
+            if (clearCache)
+            {
+                dbContext.ClearCache();
+            }
+
             return user;
         }
     }

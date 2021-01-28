@@ -59,7 +59,7 @@ namespace FactorioTech.Api.Controllers
             var (builds, hasMore, totalCount) = await _buildService.GetBuilds(
                 (query.Page, BuildsQueryParams.PageSize),
                 (query.SortField, query.SortDirection),
-                query.TagsCsv?.Split(',') ?? Array.Empty<string>(),
+                query.Tags ?? Array.Empty<string>(),
                 query.Search,
                 query.Version,
                 null);

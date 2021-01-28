@@ -131,20 +131,19 @@ namespace FactorioTech.Core.Services
         public async Task<(IReadOnlyCollection<Blueprint> Blueprints, bool HasMore, int TotalCount)> GetBuilds(
             (int Current, int Size) page,
             (SortField Field, SortDirection Direction) sort,
-            IReadOnlyCollection<string> tags,
+            string[] tags,
             string? search,
             string? version,
             string? owner)
         {
-            var query = !tags.Any()
-                ? _dbContext.Blueprints.AsNoTracking()
-                : _dbContext.Tags.AsNoTracking()
-                    .Where(t => tags.Contains(t.Value))
-                    .Join(_dbContext.Blueprints.AsNoTracking(),
-                        t => t.BlueprintId,
-                        bp => bp.BlueprintId,
-                        (t, bp) => bp)
-                    .Distinct();
+            var query = _dbContext.Blueprints.AsNoTracking();
+
+            if (tags.Any())
+            {
+                // note: do not convert the Contains call to method group! the lambda is required for EF translation
+                // ReSharper disable once ConvertClosureToMethodGroup
+                query = query.Where(x => x.Tags.Any(t => tags.Contains(t)));
+            }
 
             if (!string.IsNullOrEmpty(version))
             {
@@ -175,13 +174,12 @@ namespace FactorioTech.Core.Services
             };
 
             var results = await query
-                .Include(bp => bp.Tags)
                 .Skip(Math.Max(page.Current - 1, 0) * page.Size).Take(page.Size + 1)
                 .ToListAsync();
 
             var totalCount = await _dbContext.Blueprints.CountAsync();
 
-            return (results, results.Count > page.Size, totalCount);
+            return (results.Take(page.Size).ToArray(), results.Count > page.Size, totalCount);
         }
 
         public async Task<(Blueprint? Build, bool IsFollower)> GetDetails(string owner, string slug, ClaimsPrincipal principal)
@@ -189,9 +187,8 @@ namespace FactorioTech.Core.Services
             var build = await _dbContext.Blueprints.AsNoTracking()
                 .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
                          && b.NormalizedSlug == slug.ToUpperInvariant())
-                .Include(bp => bp.Owner)
-                .Include(bp => bp.Tags)
-                .Include(bp => bp.LatestVersion!).ThenInclude(v => v.Payload)
+                .Include(b => b.Owner)
+                .Include(b => b.LatestVersion!).ThenInclude(v => v.Payload)
                 .FirstOrDefaultAsync();
 
             if (build?.LatestVersion?.Payload == null)
@@ -207,14 +204,14 @@ namespace FactorioTech.Core.Services
         public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, ITempCoverHandle cover, ClaimsPrincipal principal)
         {
             var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
-                .Where(x => x.Hash == request.Version.Hash)
-                .Select(x => new
+                .Where(v => v.Hash == request.Version.Hash)
+                .Select(v => new
                 {
-                    x.VersionId,
-                    x.BlueprintId,
-                    x.Blueprint!.Slug,
-                    x.Blueprint!.OwnerId,
-                    x.Blueprint!.OwnerSlug,
+                    v.VersionId,
+                    v.BlueprintId,
+                    v.Blueprint!.Slug,
+                    v.Blueprint!.OwnerId,
+                    v.Blueprint!.OwnerSlug,
                 })
                 .FirstOrDefaultAsync();
 
@@ -237,7 +234,6 @@ namespace FactorioTech.Core.Services
             var existing = await _dbContext.Blueprints
                 .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
                             && b.NormalizedSlug == request.Slug.ToUpperInvariant())
-                .Include(b => b.Tags)
                 .FirstOrDefaultAsync();
 
             var result = request.ExpectedVersionId.HasValue
@@ -278,7 +274,6 @@ namespace FactorioTech.Core.Services
             var build = await _dbContext.Blueprints
                 .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
                          && b.NormalizedSlug == request.Slug.ToUpperInvariant())
-                .Include(b => b.Tags)
                 .FirstOrDefaultAsync();
 
             if (build == null)
@@ -289,9 +284,9 @@ namespace FactorioTech.Core.Services
 
             build.UpdateDetails(
                 SystemClock.Instance.GetCurrentInstant(),
-                request.Title?.Trim(),
-                request.Description?.Trim(),
-                request.Tags?.Select(Tag.FromString).ToHashSet());
+                request.Title,
+                request.Description,
+                request.Tags?.Where(Tags.All.Contains));
 
             await _dbContext.SaveChangesAsync();
 
@@ -305,7 +300,6 @@ namespace FactorioTech.Core.Services
             var build = await _dbContext.Blueprints
                 .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
                          && b.NormalizedSlug == slug.ToUpperInvariant())
-                .Include(b => b.Tags)
                 .FirstOrDefaultAsync();
 
             if (build == null)
@@ -374,9 +368,9 @@ namespace FactorioTech.Core.Services
 
             existing.UpdateDetails(
                 SystemClock.Instance.GetCurrentInstant(),
-                request.Title.Trim(),
-                request.Description?.Trim(),
-                request.Tags.Where(Tags.All.Contains).Select(Tag.FromString).ToHashSet());
+                request.Title,
+                request.Description,
+                request.Tags.Where(Tags.All.Contains));
 
             return new CreateResult.Success(existing);
         }
@@ -397,7 +391,7 @@ namespace FactorioTech.Core.Services
                 currentInstant,
                 currentInstant,
                 request.Slug,
-                request.Tags.Where(Tags.All.Contains).Select(Tag.FromString),
+                request.Tags.Where(Tags.All.Contains).ToHashSet(),
                 request.Title.Trim(),
                 request.Description?.Trim());
 

@@ -49,7 +49,7 @@ namespace FactorioTech.Api.Services
                 Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
+                Tags = blueprint.Tags ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
             };
 
         public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, bool currentUserIsFollower) =>
@@ -66,7 +66,7 @@ namespace FactorioTech.Api.Services
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
                 LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(blueprint.LatestVersion)),
                 Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(blueprint.Owner)),
-                Tags = blueprint.Tags?.Select(t => t.Value) ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
+                Tags = blueprint.Tags ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
             };
 
         public static VersionsModel ToViewModel(this IReadOnlyCollection<BlueprintVersion> versions, IUrlHelper urlHelper) =>

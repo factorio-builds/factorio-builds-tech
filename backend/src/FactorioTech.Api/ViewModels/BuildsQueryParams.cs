@@ -32,10 +32,10 @@ namespace FactorioTech.Api.ViewModels
         public string? Search { get; set; }
 
         /// <summary>
-        /// An optional comma-separated list of tags to filter the results by
+        /// An optional list of tags to filter the results by
         /// </summary>
         [FromQuery(Name = "tags")]
-        public string? TagsCsv { get; set; }
+        public string[]? Tags { get; set; }
 
         /// <summary>
         /// An optional game version to filter the results by
@@ -49,7 +49,7 @@ namespace FactorioTech.Api.ViewModels
             sort_field = SortField.ToString().ToLowerInvariant(),
             sort_direction = SortDirection.ToString().ToLowerInvariant(),
             q = Search,
-            tags = TagsCsv,
+            tags = Tags,
             version = Version,
         };
     }

@@ -8,6 +8,7 @@ namespace FactorioTech.Tests.Helpers
     public class PayloadBuilder
     {
         private string _encoded = TestData.SimpleBlueprintEncoded;
+        private Hash? _hash;
 
         public PayloadBuilder WithEncoded(string encoded)
         {
@@ -15,13 +16,28 @@ namespace FactorioTech.Tests.Helpers
             return this;
         }
 
-        public async Task<BlueprintPayload> Save(AppDbContext dbContext)
+        public PayloadBuilder WithRandomHash()
         {
-            var payload = new BlueprintPayload(Hash.Compute(_encoded), BlueprintType.Book, Version.Parse("1.0.0.0"), _encoded);
+            _hash = Hash.Compute(Guid.NewGuid().ToString());
+            return this;
+        }
+
+        public async Task<BlueprintPayload> Save(AppDbContext dbContext, bool clearCache = true)
+        {
+            var payload = new BlueprintPayload(
+                _hash ?? Hash.Compute(_encoded),
+                BlueprintType.Book,
+                Version.Parse("1.0.0.0"),
+                _encoded);
 
             dbContext.Add(payload);
             await dbContext.SaveChangesAsync();
-            dbContext.ClearCache();
+
+            if (clearCache)
+            {
+                dbContext.ClearCache();
+            }
+
             return payload;
         }
     }
