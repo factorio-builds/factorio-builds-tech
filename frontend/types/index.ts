@@ -1,10 +1,5 @@
 import { IThinBuild } from "./models"
 
-export enum EFilterType {
-  "STATE",
-  "CATEGORY",
-}
-
 export enum ESortType {
   "RELEVANCY" = "RELEVANCY",
   "TITLE" = "TITLE",
