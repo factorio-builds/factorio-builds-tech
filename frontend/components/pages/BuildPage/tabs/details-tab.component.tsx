@@ -1,6 +1,5 @@
 import React from "react"
 import ReactMarkdown from "react-markdown"
-import { CopyStringToClipboard } from "../../../ui/ButtonClipboard/button-clipboard.component"
 // import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
@@ -22,10 +21,6 @@ import Tab from "./tab.component"
 const DetailsTab: TTabComponent = (props) => {
   return (
     <Tab {...props}>
-      <CopyStringToClipboard
-        toCopy={props.build.latest_version.payload.encoded}
-      />
-
       {/* <h3>Quick info</h3>
       <Stacker orientation="vertical" gutter={4}>
         <QuickInfo

@@ -1,17 +1,12 @@
 import React from "react"
 import { isBook } from "../../../../utils/build"
 import BlueprintItem from "../../../ui/BlueprintItem"
-import { CopyStringToClipboard } from "../../../ui/ButtonClipboard/button-clipboard.component"
 import { TTabComponent } from "../build-page.component"
 import Tab from "./tab.component"
 
 const BlueprintsTab: TTabComponent = (props) => {
-  const encoded = props.build.latest_version.payload.encoded
-
   return (
     <Tab {...props}>
-      <CopyStringToClipboard toCopy={encoded} />
-
       {props.payload.loading && "loading..."}
       {props.payload.error && "error?"}
 

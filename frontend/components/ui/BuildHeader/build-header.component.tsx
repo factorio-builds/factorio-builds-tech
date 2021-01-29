@@ -6,6 +6,7 @@ import { IFullBuild } from "../../../types/models"
 import { formatDate, formatSince } from "../../../utils/date"
 import BuildIcon from "../BuildIcon"
 import Button from "../Button"
+import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.component"
 import FavoriteButton from "../FavoriteButton"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
@@ -70,9 +71,11 @@ function Buildheader(props: IBuildheader): JSX.Element {
           <Button variant="default" size="small">
             View in editor
           </Button>
-          <Button variant="default" size="small">
-            Copy to clipboard
-          </Button>
+          <CopyStringToClipboard
+            toCopy={props.build.latest_version.payload.encoded}
+            variant="default"
+            size="small"
+          />
         </Stacker>
       </Stacker>
     </SC.BuildHeaderWrapper>
