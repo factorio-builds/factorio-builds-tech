@@ -36,7 +36,7 @@ namespace FactorioTech.Tests
             _dbContext = AppDbContextFactory.CreateDbContext(_postgresContainer.ConnectionString);
             await _dbContext.Database.MigrateAsync();
 
-            _service = new BuildService(new NullLogger<BuildService>(), _dbContext);
+            _service = new BuildService(new NullLogger<BuildService>(), _dbContext, TestUtils.Tags.Value);
         }
 
         public async Task DisposeAsync()
@@ -51,9 +51,10 @@ namespace FactorioTech.Tests
         [Trait("Type", "Slow")]
         public async Task GetBlueprints_ShouldReturnSingleBlueprint()
         {
-            var owner = await new UserBuilder().Save(_dbContext);
-            var payload = await new PayloadBuilder().WithEncoded(TestData.SimpleBlueprintEncoded).Save(_dbContext);
-            await new BlueprintBuilder().WithPayload(payload).WithOwner(owner).Save(_dbContext);
+            await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
 
             var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
                 (1, 100),
@@ -71,6 +72,123 @@ namespace FactorioTech.Tests
 
         [Fact]
         [Trait("Type", "Slow")]
+        public async Task GetBlueprints_ShouldReturnMatchingTags()
+        {
+            var match1 = await new BlueprintBuilder()
+                .WithOwner()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithTags("/state/early game", "/power/steam", "/belt/balancer")
+                .Save(_dbContext);
+
+            var match2 = await new BlueprintBuilder()
+                .WithOwner()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithTags("/state/mid game", "/power/nuclear", "/belt/balancer")
+                .Save(_dbContext);
+
+            await new BlueprintBuilder()
+                .WithOwner()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithTags("/state/late game (megabase)", "/power/solar")
+                .Save(_dbContext);
+
+            var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
+                (1, 100),
+                (BuildService.SortField.Created, BuildService.SortDirection.Asc),
+                new[] { "/state/early game", "/power/steam", "/belt/balancer" },
+                null, null, null);
+
+            blueprints.Should().HaveCount(2);
+            hasMore.Should().BeFalse();
+            totalCount.Should().Be(3);
+
+            blueprints.ElementAt(0).BlueprintId.Should().Be(match1.BlueprintId);
+            blueprints.ElementAt(1).BlueprintId.Should().Be(match2.BlueprintId);
+        }
+
+        [Fact]
+        [Trait("Type", "Slow")]
+        public async Task GetBlueprints_ShouldReturnFirstPageWithMore()
+        {
+            var match1 = await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            var match2 = await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
+                (1, 2),
+                (BuildService.SortField.Created, BuildService.SortDirection.Asc),
+                Array.Empty<string>(),
+                null, null, null);
+
+            blueprints.Should().HaveCount(2);
+            hasMore.Should().BeTrue();
+            totalCount.Should().Be(5);
+
+            blueprints.ElementAt(0).BlueprintId.Should().Be(match1.BlueprintId);
+            blueprints.ElementAt(1).BlueprintId.Should().Be(match2.BlueprintId);
+        }
+
+        [Fact]
+        [Trait("Type", "Slow")]
+        public async Task GetBlueprints_ShouldReturnSecondPage()
+        {
+            await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            var match1 = await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            var match2 = await new BlueprintBuilder()
+                .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
+                .WithOwner()
+                .Save(_dbContext);
+
+            var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
+                (2, 2),
+                (BuildService.SortField.Created, BuildService.SortDirection.Asc),
+                Array.Empty<string>(),
+                null, null, null);
+
+            blueprints.Should().HaveCount(2);
+            hasMore.Should().BeFalse();
+            totalCount.Should().Be(4);
+
+            blueprints.ElementAt(0).BlueprintId.Should().Be(match1.BlueprintId);
+            blueprints.ElementAt(1).BlueprintId.Should().Be(match2.BlueprintId);
+        }
+
+        [Fact]
+        [Trait("Type", "Slow")]
         public async Task CreateOrAddVersion_ShouldSaveBlueprintGraph_WhenAddingANewBlueprint()
         {
             var owner = await new UserBuilder().Save(_dbContext);
@@ -80,7 +198,7 @@ namespace FactorioTech.Tests
                 "test-1",
                 "test blueprint 1",
                 "the description",
-                new[] { "/belt/balancer", "/general/early game" },
+                new[] { "/belt/balancer", "/state/early game" },
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 null);
 
@@ -98,9 +216,7 @@ namespace FactorioTech.Tests
             blueprint.Description.Should().Be("the description");
             blueprint.CreatedAt.ToDateTimeUtc().Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
             blueprint.UpdatedAt.Should().Be(blueprint.CreatedAt);
-            blueprint.Tags!.Should().BeEquivalentTo(
-                new Tag("/belt/balancer") { BlueprintId = blueprint.BlueprintId },
-                new Tag("/general/early game") { BlueprintId = blueprint.BlueprintId });
+            blueprint.Tags!.Should().BeEquivalentTo("/belt/balancer", "/state/early game");
         }
 
         [Fact]
@@ -117,7 +233,7 @@ namespace FactorioTech.Tests
                 existing.Slug,
                 "different title",
                 "different description",
-                new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
+                new[] { "/belt/balancer", "/state/mid game", "/production/smelting" },
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 existing.LatestVersionId);
 
@@ -133,10 +249,7 @@ namespace FactorioTech.Tests
             blueprint.Title.Should().Be("different title");
             blueprint.Description.Should().Be("different description");
             blueprint.UpdatedAt.ToDateTimeUtc().Should().BeAfter(existing.UpdatedAt.ToDateTimeUtc());
-            blueprint.Tags!.Should().BeEquivalentTo(
-                new Tag("/belt/balancer") { BlueprintId = blueprint.BlueprintId },
-                new Tag("/general/mid game") { BlueprintId = blueprint.BlueprintId },
-                new Tag("/mods/vanilla") { BlueprintId = blueprint.BlueprintId });
+            blueprint.Tags!.Should().BeEquivalentTo("/belt/balancer", "/state/mid game", "/production/smelting");
         }
     }
 }

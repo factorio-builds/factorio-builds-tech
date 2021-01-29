@@ -181,7 +181,6 @@ namespace FactorioTech.Api.Controllers
                 Hash = hash,
                 AllHashes = new HashSet<Hash>(cache.Values.Select(x => x.Hash)),
                 Icons = envelope.Icons.ToGameIcons(),
-                ExtractedTags = new HashSet<string>(GetSomeRandomTags()),
                 ExtractedSlug = await _slugService.Validate(TryValidateModel, envelope.Label?.ToSlug(), User.GetUserId()),
             });
         }
@@ -192,15 +191,6 @@ namespace FactorioTech.Api.Controllers
                 return null;
 
             return envelope.Blueprint ?? FirstBlueprintOrDefault(envelope.BlueprintBook?.Blueprints?.FirstOrDefault());
-        }
-
-        private static IEnumerable<string> GetSomeRandomTags()
-        {
-            // todo: implement @veksen's heuristics
-            var count = Tags.All.Count();
-            var rnd = new Random();
-            return Enumerable.Range(0, rnd.Next(2, 5))
-                .Select(_ => Tags.All.ElementAt(rnd.Next(0, count - 1)));
         }
 
         public class CreatePayloadRequest
@@ -241,12 +231,6 @@ namespace FactorioTech.Api.Controllers
             /// </summary>
             [Required]
             public SlugService.SlugValidationResult ExtractedSlug { get; set; } = SlugService.SlugValidationResult.Invalid(string.Empty);
-
-            /// <summary>
-            /// The tags that have been extracted for this payload.
-            /// </summary>
-            [Required]
-            public IEnumerable<string> ExtractedTags { get; set; } = Enumerable.Empty<string>();
         }
     }
 }

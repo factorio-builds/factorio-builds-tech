@@ -5,7 +5,6 @@ using System.Reflection;
 
 namespace FactorioTech.Core
 {
-
     public class AppConfig
     {
         public static class Cover

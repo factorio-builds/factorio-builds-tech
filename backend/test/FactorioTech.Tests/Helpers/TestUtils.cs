@@ -1,11 +1,14 @@
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Security.Claims;
 
 namespace FactorioTech.Tests.Helpers
 {
     public static class TestUtils
     {
+        public static Lazy<BuildTags> Tags = new(BuildTags.Load);
+
         public static DbContext ClearCache(this DbContext db)
         {
             foreach (var entry in db.ChangeTracker.Entries())

@@ -55,9 +55,11 @@ namespace FactorioTech.Core.Domain
         [Required]
         public IEnumerable<GameIcon> Icons { get; private set; }
 
+        [Required]
+        public string[] Tags { get; private set; }
+
         // navigation properties -> will be null if not included explicitly
 
-        public ICollection<Tag>? Tags { get; init; }
         public BlueprintVersion? LatestVersion { get; private set; }
         public Guid? LatestVersionId { get; private set; }
         public User? Owner { get; init; }
@@ -73,7 +75,7 @@ namespace FactorioTech.Core.Domain
             User owner,
             Instant createdAt, Instant updatedAt,
             string slug,
-            IEnumerable<Tag> tags,
+            IEnumerable<string> tags,
             string title,
             string? description)
         {
@@ -90,13 +92,7 @@ namespace FactorioTech.Core.Domain
             LatestGameVersion = "0.0.0.0";
             LatestType = BlueprintType.Blueprint;
             Icons = Array.Empty<GameIcon>();
-
-            Tags = new HashSet<Tag>();
-            foreach (var tag in tags)
-            {
-                tag.BlueprintId = BlueprintId;
-                Tags.Add(tag);
-            }
+            Tags = tags.Distinct().ToArray();
         }
 
 #pragma warning disable 8618 // required for EF
@@ -113,37 +109,21 @@ namespace FactorioTech.Core.Domain
             Icons = version.Icons;
         }
 
-        public void UpdateDetails(Instant now, string? title, string? description, IReadOnlySet<Tag>? tags)
+        public void UpdateDetails(Instant now, string? title, string? description, IEnumerable<string>? tags)
         {
             if (title != null)
             {
-                Title = title;
+                Title = title.Trim();
             }
 
             if (description != null)
             {
-                Description = string.IsNullOrWhiteSpace(description) ? null : description;
+                Description = string.IsNullOrWhiteSpace(description) ? null : description.Trim();
             }
 
             if (tags != null)
             {
-                if (Tags == null)
-                    throw new Exception("Must load tags before updating details!");
-
-                foreach (var tag in tags)
-                {
-                    tag.BlueprintId = BlueprintId;
-                }
-
-                foreach (var tag in Tags.Except(tags))
-                {
-                    Tags.Remove(tag);
-                }
-
-                foreach (var tag in tags.Except(Tags))
-                {
-                    Tags.Add(tag);
-                }
+                Tags = tags.Distinct().ToArray();
             }
 
             UpdatedAt = now;

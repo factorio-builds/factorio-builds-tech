@@ -13,7 +13,6 @@ namespace FactorioTech.Core.Data
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
         public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
-        public DbSet<Tag> Tags { get; set; }
 
 #pragma warning disable 8618
         public AppDbContext(
@@ -58,10 +57,6 @@ namespace FactorioTech.Core.Data
                 entity.HasOne(e => e.LatestVersion!).WithMany()
                     .HasForeignKey(e => e.LatestVersionId)
                     .HasPrincipalKey(e => e.VersionId);
-
-                entity.HasMany(e => e.Tags).WithOne()
-                    .HasForeignKey(e => e.BlueprintId)
-                    .HasPrincipalKey(e => e.BlueprintId);
 
                 entity.Property(e => e.Icons)
                     .HasColumnType("jsonb");
@@ -110,11 +105,6 @@ namespace FactorioTech.Core.Data
 
                 entity.Property(e => e.GameVersion)
                     .HasConversion(p => p.ToString(4), p => Version.Parse(p));
-            });
-
-            builder.Entity<Tag>(entity =>
-            {
-                entity.HasKey(e => new { e.BlueprintId, e.Value });
             });
         }
     }
