@@ -31,8 +31,8 @@ namespace FactorioTech.Api.Services
             new()
             {
                 Links = urlHelper.BuildLinks(blueprints, query, hasMore),
-                Builds = blueprints.Take(BuildsQueryParams.PageSize).Select(b => b.ToThinViewModel(urlHelper)),
-                CurrentCount = Math.Min(blueprints.Count, BuildsQueryParams.PageSize),
+                Builds = blueprints.Select(b => b.ToThinViewModel(urlHelper)),
+                CurrentCount = blueprints.Count,
                 TotalCount = totalCount,
             };
 
@@ -49,7 +49,7 @@ namespace FactorioTech.Api.Services
                 Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                Tags = blueprint.Tags ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
+                Tags = blueprint.Tags,
             };
 
         public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, bool currentUserIsFollower) =>
@@ -65,8 +65,8 @@ namespace FactorioTech.Api.Services
                 LatestType = blueprint.LatestType,
                 LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
                 LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(blueprint.LatestVersion)),
+                Tags = blueprint.Tags,
                 Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(blueprint.Owner)),
-                Tags = blueprint.Tags ?? throw new ArgumentNullException(nameof(blueprint.Tags)),
             };
 
         public static VersionsModel ToViewModel(this IReadOnlyCollection<BlueprintVersion> versions, IUrlHelper urlHelper) =>

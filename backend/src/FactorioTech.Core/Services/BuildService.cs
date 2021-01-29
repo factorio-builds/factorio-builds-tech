@@ -180,9 +180,10 @@ namespace FactorioTech.Core.Services
                 .Skip(Math.Max(page.Current - 1, 0) * page.Size).Take(page.Size + 1)
                 .ToListAsync();
 
+            var blueprints = results.GetRange(0, Math.Min(results.Count, page.Size));
             var totalCount = await _dbContext.Blueprints.CountAsync();
 
-            return (results.Take(page.Size).ToArray(), results.Count > page.Size, totalCount);
+            return (blueprints, results.Count > page.Size, totalCount);
         }
 
         public async Task<(Blueprint? Build, bool IsFollower)> GetDetails(string owner, string slug, ClaimsPrincipal principal)
