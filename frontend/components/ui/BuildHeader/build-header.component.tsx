@@ -18,7 +18,6 @@ interface IBuildheader {
 }
 
 function Buildheader(props: IBuildheader): JSX.Element {
-  console.log(props)
   // const { getCategory } = useCategories()
   // const { getGameState } = useGameStates()
 

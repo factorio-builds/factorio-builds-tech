@@ -119,8 +119,6 @@ const Step1: React.FC<IStep1Props> = (props) => {
       ? stepState.json.blueprint_book
       : stepState.json.blueprint
 
-    console.log(res.data)
-
     props.formikProps.setFieldValue("title", bp.label)
     // TODO: set validity/availability of slug
     props.formikProps.setFieldValue("slug", res.data.extracted_slug.slug)
