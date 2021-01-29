@@ -2,7 +2,6 @@ import React from "react"
 import { useCallback } from "react"
 import Copy from "../../../icons/copy"
 import Button from "../../ui/Button"
-import * as SC from "./build-page.styles"
 
 const CopyToClipboard: React.FC<{ toCopy: string }> = (props) => {
   const copyToClipboard = useCallback(() => {
@@ -10,11 +9,9 @@ const CopyToClipboard: React.FC<{ toCopy: string }> = (props) => {
   }, [props.toCopy])
 
   return (
-    <SC.CopyClipboardWrapper>
-      <Button variant="alt" onClick={copyToClipboard}>
-        <Copy /> {props.children}
-      </Button>
-    </SC.CopyClipboardWrapper>
+    <Button variant="alt" onClick={copyToClipboard}>
+      <Copy /> {props.children}
+    </Button>
   )
 }
 

@@ -4,14 +4,17 @@ import cx from "classnames"
 import { useApi } from "../../../hooks/useApi"
 import { IStoreState } from "../../../redux/store"
 import { IFullBuild } from "../../../types/models"
+import { IButtonProps } from "../Button/button.component"
 import * as SC from "./favorite-button.styles"
 
-interface IFavoriteButtonProps
-  extends React.ComponentPropsWithoutRef<"button"> {
+interface IFavoriteButtonProps extends IButtonProps {
   build: IFullBuild
 }
 
-const FavoriteButton: React.FC<IFavoriteButtonProps> = ({ build }) => {
+const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
+  build,
+  ...restProps
+}) => {
   const links = build._links
 
   const authUser = useSelector((state: IStoreState) => state.auth?.user)
@@ -39,8 +42,10 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({ build }) => {
         "is-error": error,
         "is-clickable": authUser,
       })}
+      counter={count}
+      {...restProps}
     >
-      {isFavorite ? "unfavorite" : "favorite"} {count}
+      {isFavorite ? "Unfavorite" : "Favorite"}
       {loading && "..."}
     </SC.FavoriteButtonWrapper>
   )

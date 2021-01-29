@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import { ButtonWrapper } from "../../ui/Button/button.styles"
 import ItemIcon from "../../ui/ItemIcon"
 import Stacker from "../../ui/Stacker"
 
@@ -97,6 +98,12 @@ export const Tab = styled.button`
 
 export const TabWrapper = styled.div`
   display: none;
+
+  // TODO: remove, temporary
+  & ${ButtonWrapper} {
+    align-self: flex-start;
+    margin-bottom: 16px;
+  }
 
   &.is-active {
     display: flex;

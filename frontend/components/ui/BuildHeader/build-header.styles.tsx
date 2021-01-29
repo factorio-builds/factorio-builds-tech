@@ -6,8 +6,8 @@ import { ETypo } from "../../../design/tokens/typo"
 export const BuildHeaderWrapper = styled.header`
   margin-bottom: 16px;
   padding-bottom: 16px;
-  border-bottom: 2px solid ${COLOR.PURPLE500};
   color: ${COLOR.PURPLE700};
+  background: #0a090c;
 `
 
 export const BuildTitle = styled.h2`

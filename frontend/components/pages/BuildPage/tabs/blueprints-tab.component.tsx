@@ -1,8 +1,8 @@
 import React from "react"
 import { isBook } from "../../../../utils/build"
 import BlueprintItem from "../../../ui/BlueprintItem"
+import { CopyStringToClipboard } from "../../../ui/ButtonClipboard/button-clipboard.component"
 import { TTabComponent } from "../build-page.component"
-import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const BlueprintsTab: TTabComponent = (props) => {

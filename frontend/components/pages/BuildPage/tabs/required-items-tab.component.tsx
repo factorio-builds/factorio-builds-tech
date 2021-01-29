@@ -1,9 +1,9 @@
 import React, { useMemo } from "react"
 import { isBook } from "../../../../utils/build"
+import { CopyStringToClipboard } from "../../../ui/ButtonClipboard/button-clipboard.component"
 import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
-import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {

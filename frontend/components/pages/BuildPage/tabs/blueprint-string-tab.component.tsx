@@ -1,7 +1,7 @@
 import React from "react"
+import { CopyStringToClipboard } from "../../../ui/ButtonClipboard/button-clipboard.component"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
-import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const BlueprintStringTab: TTabComponent = (props) => {

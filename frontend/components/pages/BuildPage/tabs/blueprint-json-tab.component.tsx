@@ -1,12 +1,12 @@
 import React from "react"
 import { decodeBlueprint } from "../../../../utils/blueprint"
-import Stacker from "../../../ui/Stacker"
-import { TTabComponent } from "../build-page.component"
-import * as SC from "../build-page.styles"
 import {
   CopyJsonToClipboard,
   CopyStringToClipboard,
-} from "../clipboard-button.component"
+} from "../../../ui/ButtonClipboard/button-clipboard.component"
+import Stacker from "../../../ui/Stacker"
+import { TTabComponent } from "../build-page.component"
+import * as SC from "../build-page.styles"
 import Tab from "./tab.component"
 
 const BlueprintJsonTab: TTabComponent = (props) => {

@@ -5,6 +5,7 @@ import Link from "next/link"
 import { IFullBuild } from "../../../types/models"
 import { formatDate, formatSince } from "../../../utils/date"
 import BuildIcon from "../BuildIcon"
+import Button from "../Button"
 import FavoriteButton from "../FavoriteButton"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
@@ -60,7 +61,18 @@ function Buildheader(props: IBuildheader): JSX.Element {
           <span>
               updated at <b>{formatDate(props.build.updated_at)}</b> ({formatSince(props.build.updated_at)})
             </span>
-          <FavoriteButton build={props.build} />
+        </Stacker>
+        <Stacker orientation="horizontal" gutter={8}>
+          <FavoriteButton build={props.build} size="small" />
+          <Button variant="default" size="small">
+            Raw
+          </Button>
+          <Button variant="default" size="small">
+            View in editor
+          </Button>
+          <Button variant="default" size="small">
+            Copy to clipboard
+          </Button>
         </Stacker>
       </Stacker>
     </SC.BuildHeaderWrapper>
