@@ -5,8 +5,7 @@ import { ETypo } from "../../../design/tokens/typo"
 export const ButtonWrapper = styled.button`
   ${getTypo(ETypo.BUTTON)};
   display: flex;
-  align-items: center;
-  padding: 9px 13px;
+  padding: 0;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -41,5 +40,51 @@ export const ButtonWrapper = styled.button`
 
   &.variant-alt:hover {
     background: linear-gradient(#25879d, #1f5d6a);
+  }
+
+  &.variant-default {
+    background: #4c5164;
+  }
+
+  &.variant-default:hover {
+    background: #393c47;
+  }
+
+  &.size-small {
+    font-size: 13px;
+    line-height: 22px;
+  }
+`
+
+export const ButtonInner = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ${ButtonWrapper}.size-medium & {
+    padding: 9px 13px;
+  }
+
+  ${ButtonWrapper}.size-small & {
+    padding: 2px 9px;
+  }
+`
+
+export const Counter = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-left: 1px solid #323540;
+
+  ${ButtonWrapper}.size-medium & {
+    padding: 9px 13px;
+  }
+
+  ${ButtonWrapper}.size-small & {
+    padding: 2px 9px;
+  }
+
+  ${ButtonWrapper}:hover & {
+    border-color: #151619;
   }
 `

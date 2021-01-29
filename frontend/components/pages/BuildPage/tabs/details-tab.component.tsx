@@ -3,7 +3,6 @@ import ReactMarkdown from "react-markdown"
 // import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
-import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 // interface IQuickInfoProps {
@@ -22,10 +21,6 @@ import Tab from "./tab.component"
 const DetailsTab: TTabComponent = (props) => {
   return (
     <Tab {...props}>
-      <CopyStringToClipboard
-        toCopy={props.build.latest_version.payload.encoded}
-      />
-
       {/* <h3>Quick info</h3>
       <Stacker orientation="vertical" gutter={4}>
         <QuickInfo

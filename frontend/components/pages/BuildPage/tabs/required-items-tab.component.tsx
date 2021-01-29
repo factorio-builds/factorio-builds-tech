@@ -3,7 +3,6 @@ import { isBook } from "../../../../utils/build"
 import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
-import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
@@ -17,8 +16,6 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
 }
 
 const RequiredItemsTab: TTabComponent = (props) => {
-  const encoded = props.build.latest_version.payload.encoded
-
   const sortedRequiredItems = useMemo(() => {
     // shouldn't ever happen, this component is not rendered for books
     if (!props.payload.data || isBook(props.payload.data)) {
@@ -43,8 +40,6 @@ const RequiredItemsTab: TTabComponent = (props) => {
 
   return (
     <Tab {...props}>
-      <CopyStringToClipboard toCopy={encoded} />
-
       {!isBook(props.build.latest_version.payload) && (
         <Stacker gutter={8}>
           {sortedRequiredItems.map((item) => {

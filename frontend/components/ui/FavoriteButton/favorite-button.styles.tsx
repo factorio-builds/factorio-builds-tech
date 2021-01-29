@@ -1,8 +1,9 @@
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { ETypo } from "../../../design/tokens/typo"
+import Button from "../Button"
 
-export const FavoriteButtonWrapper = styled.button`
+export const FavoriteButtonWrapper = styled(Button)`
   ${getTypo(ETypo.BUTTON)};
   pointer-events: none;
 

@@ -1,16 +1,11 @@
 import React from "react"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
-import { CopyStringToClipboard } from "../clipboard-button.component"
 import Tab from "./tab.component"
 
 const BlueprintStringTab: TTabComponent = (props) => {
   return (
     <Tab {...props}>
-      <CopyStringToClipboard
-        toCopy={props.build.latest_version.payload.encoded}
-      />
-
       <SC.BlueprintData
         value={props.build.latest_version.payload.encoded}
         readOnly
