@@ -119,13 +119,16 @@ namespace FactorioTech.Core.Services
 
         private readonly ILogger<BuildService> _logger;
         private readonly AppDbContext _dbContext;
+        private readonly BuildTags _buildTags;
 
         public BuildService(
             ILogger<BuildService> logger,
-            AppDbContext dbContext)
+            AppDbContext dbContext,
+            BuildTags buildTags)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _buildTags = buildTags;
         }
 
         public async Task<(IReadOnlyCollection<Blueprint> Blueprints, bool HasMore, int TotalCount)> GetBuilds(
@@ -286,7 +289,7 @@ namespace FactorioTech.Core.Services
                 SystemClock.Instance.GetCurrentInstant(),
                 request.Title,
                 request.Description,
-                request.Tags?.Where(Tags.All.Contains));
+                request.Tags?.Where(_buildTags.Contains));
 
             await _dbContext.SaveChangesAsync();
 
@@ -370,7 +373,7 @@ namespace FactorioTech.Core.Services
                 SystemClock.Instance.GetCurrentInstant(),
                 request.Title,
                 request.Description,
-                request.Tags.Where(Tags.All.Contains));
+                request.Tags.Where(_buildTags.Contains));
 
             return new CreateResult.Success(existing);
         }
@@ -391,7 +394,7 @@ namespace FactorioTech.Core.Services
                 currentInstant,
                 currentInstant,
                 request.Slug,
-                request.Tags.Where(Tags.All.Contains).ToHashSet(),
+                request.Tags.Where(_buildTags.Contains),
                 request.Title.Trim(),
                 request.Description?.Trim());
 

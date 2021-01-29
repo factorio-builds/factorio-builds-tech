@@ -1,3 +1,4 @@
+using FactorioTech.Api.Extensions;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
 using System;
@@ -38,6 +39,7 @@ namespace FactorioTech.Api.ViewModels.Requests
         /// The build's tags.
         /// </summary>
         [Required]
+        [ValidateTag]
         public IEnumerable<string> Tags { get; set; }
 
         /// <summary>

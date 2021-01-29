@@ -92,7 +92,7 @@ namespace FactorioTech.Core.Domain
             LatestGameVersion = "0.0.0.0";
             LatestType = BlueprintType.Blueprint;
             Icons = Array.Empty<GameIcon>();
-            Tags = tags.ToArray();
+            Tags = tags.Distinct().ToArray();
         }
 
 #pragma warning disable 8618 // required for EF
@@ -123,7 +123,7 @@ namespace FactorioTech.Core.Domain
 
             if (tags != null)
             {
-                Tags = tags.ToArray();
+                Tags = tags.Distinct().ToArray();
             }
 
             UpdatedAt = now;

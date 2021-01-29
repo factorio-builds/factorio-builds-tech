@@ -36,7 +36,7 @@ namespace FactorioTech.Tests
             _dbContext = AppDbContextFactory.CreateDbContext(_postgresContainer.ConnectionString);
             await _dbContext.Database.MigrateAsync();
 
-            _service = new BuildService(new NullLogger<BuildService>(), _dbContext);
+            _service = new BuildService(new NullLogger<BuildService>(), _dbContext, TestUtils.Tags.Value);
         }
 
         public async Task DisposeAsync()
@@ -77,25 +77,25 @@ namespace FactorioTech.Tests
             var match1 = await new BlueprintBuilder()
                 .WithOwner()
                 .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
-                .WithTags("/general/early game", "/power/steam", "/belt/balancer")
+                .WithTags("/state/early game", "/power/steam", "/belt/balancer")
                 .Save(_dbContext);
 
             var match2 = await new BlueprintBuilder()
                 .WithOwner()
                 .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
-                .WithTags("/general/mid game", "/power/nuclear", "/belt/balancer")
+                .WithTags("/state/mid game", "/power/nuclear", "/belt/balancer")
                 .Save(_dbContext);
 
             await new BlueprintBuilder()
                 .WithOwner()
                 .WithPayload(b => b.WithEncoded(TestData.SimpleBlueprintEncoded).WithRandomHash())
-                .WithTags("/general/late game (megabase)", "/power/solar")
+                .WithTags("/state/late game (megabase)", "/power/solar")
                 .Save(_dbContext);
 
             var (blueprints, hasMore, totalCount) = await _service.GetBuilds(
                 (1, 100),
                 (BuildService.SortField.Created, BuildService.SortDirection.Asc),
-                new[] { "/general/early game", "/power/steam", "/belt/balancer" },
+                new[] { "/state/early game", "/power/steam", "/belt/balancer" },
                 null, null, null);
 
             blueprints.Should().HaveCount(2);
@@ -198,7 +198,7 @@ namespace FactorioTech.Tests
                 "test-1",
                 "test blueprint 1",
                 "the description",
-                new[] { "/belt/balancer", "/general/early game" },
+                new[] { "/belt/balancer", "/state/early game" },
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 null);
 
@@ -216,7 +216,7 @@ namespace FactorioTech.Tests
             blueprint.Description.Should().Be("the description");
             blueprint.CreatedAt.ToDateTimeUtc().Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
             blueprint.UpdatedAt.Should().Be(blueprint.CreatedAt);
-            blueprint.Tags!.Should().BeEquivalentTo("/belt/balancer", "/general/early game");
+            blueprint.Tags!.Should().BeEquivalentTo("/belt/balancer", "/state/early game");
         }
 
         [Fact]
@@ -233,7 +233,7 @@ namespace FactorioTech.Tests
                 existing.Slug,
                 "different title",
                 "different description",
-                new[] { "/belt/balancer", "/general/mid game", "/mods/vanilla" },
+                new[] { "/belt/balancer", "/state/mid game", "/production/smelting" },
                 (payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 existing.LatestVersionId);
 
@@ -249,7 +249,7 @@ namespace FactorioTech.Tests
             blueprint.Title.Should().Be("different title");
             blueprint.Description.Should().Be("different description");
             blueprint.UpdatedAt.ToDateTimeUtc().Should().BeAfter(existing.UpdatedAt.ToDateTimeUtc());
-            blueprint.Tags!.Should().BeEquivalentTo("/belt/balancer", "/general/mid game", "/mods/vanilla");
+            blueprint.Tags!.Should().BeEquivalentTo("/belt/balancer", "/state/mid game", "/production/smelting");
         }
     }
 }

@@ -1,3 +1,4 @@
+using FactorioTech.Api.Extensions;
 using FactorioTech.Core.Domain;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +28,7 @@ namespace FactorioTech.Api.ViewModels.Requests
         /// The build's tags.
         /// If unset (`null`), the existing value will not be changed.
         /// </summary>
+        [ValidateTag]
         public IEnumerable<string>? Tags { get; set; }
 
         /// <summary>

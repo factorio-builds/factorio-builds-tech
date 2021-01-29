@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FactorioTech.Core.Data.Migrations
@@ -7,15 +7,21 @@ namespace FactorioTech.Core.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Tags");
-
             migrationBuilder.AddColumn<string[]>(
                 name: "Tags",
                 table: "Blueprints",
                 type: "text[]",
                 nullable: false,
                 defaultValue: new string[0]);
+
+            migrationBuilder.Sql(@"
+                UPDATE ""Blueprints"" b
+                SET ""Tags"" = ARRAY(
+                    SELECT t.""Value"" FROM ""Tags"" t WHERE t.""BlueprintId"" = b.""BlueprintId"");
+            ");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.UpdateData(
                 schema: "identity",

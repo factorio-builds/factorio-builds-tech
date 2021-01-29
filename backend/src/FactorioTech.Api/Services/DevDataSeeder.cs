@@ -51,6 +51,7 @@ namespace FactorioTech.Api.Services
         private readonly BuildService _buildService;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly ImageService _imageService;
+        private readonly BuildTags _buildTags;
 
         public DevDataSeeder(
             ILogger<DevDataSeeder> logger,
@@ -59,7 +60,8 @@ namespace FactorioTech.Api.Services
             HttpClient httpClient,
             BuildService buildService,
             BlueprintConverter blueprintConverter,
-            ImageService imageService)
+            ImageService imageService,
+            BuildTags buildTags)
         {
             _logger = logger;
             _appConfig = appConfig.Value;
@@ -68,6 +70,7 @@ namespace FactorioTech.Api.Services
             _buildService = buildService;
             _blueprintConverter = blueprintConverter;
             _imageService = imageService;
+            _buildTags = buildTags;
         }
 
         public async Task Run()
@@ -161,12 +164,17 @@ namespace FactorioTech.Api.Services
                 await cache.EnsureInitializedGraph(envelope);
                 await _buildService.SavePayloadGraph(payload.Hash, cache.Values);
 
+                var tags = blueprint.Tags
+                    .Select(t => t.TrimEnd('/'))
+                    .Where(_buildTags.Contains)
+                    .ToArray();
+
                 var request = new BuildService.CreateRequest(
                     username,
                     slug,
                     blueprint.Title,
                     blueprint.Description,
-                    blueprint.Tags.Select(t => t.TrimEnd('/')),
+                    tags.Any() ? tags : GetSomeRandomTags(),
                     (payload.Hash, null, null, envelope.Icons.ToGameIcons()),
                     null);
 
@@ -196,5 +204,11 @@ namespace FactorioTech.Api.Services
             _logger.LogInformation("Done seeding {TotalCount} blueprints: created {CreatedCount}, skipped {SkippedCount}, {ErrorCount} errors",
                 blueprints.Count, createdCount, skippedCount, errorCount);
         }
+
+        private IEnumerable<string> GetSomeRandomTags() =>
+            new Random().Let(rnd =>
+                Enumerable.Range(0, rnd.Next(2, 5)).Select(_ =>
+                    _buildTags.ElementAt(
+                        rnd.Next(0, _buildTags.Count - 1))));
     }
 }

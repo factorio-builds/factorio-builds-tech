@@ -16,7 +16,7 @@ namespace FactorioTech.Tests.Helpers
         private UserBuilder? _ownerBuilder;
         private BlueprintPayload? _payload;
         private PayloadBuilder? _payloadBuilder;
-        private IEnumerable<string> _tags = new[] { "/belt/balancer", "/general/early game" };
+        private IEnumerable<string> _tags = new[] { "/belt/balancer", "/state/early game" };
 
         public BlueprintBuilder WithOwner(User user)
         {
@@ -73,7 +73,7 @@ namespace FactorioTech.Tests.Helpers
                 (_payload.Hash, null, null, Enumerable.Empty<GameIcon>()),
                 null);
 
-            var service = new BuildService(new NullLogger<BuildService>(), dbContext);
+            var service = new BuildService(new NullLogger<BuildService>(), dbContext, TestUtils.Tags.Value);
             var result = await service.CreateOrAddVersion(request, new NullTempCoverHandle(), _owner.ToClaimsPrincipal());
             result.Should().BeOfType<BuildService.CreateResult.Success>();
 

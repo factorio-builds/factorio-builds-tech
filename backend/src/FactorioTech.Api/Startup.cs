@@ -167,6 +167,8 @@ namespace FactorioTech.Api
             services.AddTransient<ImageService>();
             services.AddTransient<AssetService>();
             services.AddTransient<SlugService>();
+
+            services.AddSingleton(BuildTags.Load());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

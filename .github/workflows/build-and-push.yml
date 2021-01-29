@@ -46,6 +46,9 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
+      - name: Ensure tags are in sync
+        run: diff frontend/tags.json backend/tags.json
+
       - name: Build backend base image
         uses: docker/build-push-action@v2
         with:

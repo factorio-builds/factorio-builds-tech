@@ -56,8 +56,8 @@ export interface paths {
           sort_direction?: "Asc" | "Desc"
           /** An optional search term to filter the results by */
           q?: string | null
-          /** An optional comma-separated list of tags to filter the results by */
-          tags?: string | null
+          /** An optional list of tags to filter the results by */
+          tags?: string[] | null
           /** An optional game version to filter the results by */
           version?: string | null
         }
@@ -245,7 +245,7 @@ export interface paths {
              * The title or display name of the build.
              * If unset (`null`), the existing value will not be changed.
              */
-            Title: string
+            Title?: string | null
             /**
              * The build description in Markdown.
              * If unset (`null`), the existing value will not be changed.
@@ -255,12 +255,12 @@ export interface paths {
              * The build's tags.
              * If unset (`null`), the existing value will not be changed.
              */
-            Tags: string[]
+            Tags?: string[] | null
             /**
              * The build's icons.
              * If unset (`null`), the existing value will not be changed.
              */
-            Icons: components["schemas"]["GameIcon"][]
+            Icons?: components["schemas"]["GameIcon"][] | null
             /** The horizontal position of the crop rectangle. */
             "Cover.X": number
             /** The vertical position of the crop rectangle. */
@@ -762,8 +762,8 @@ export interface paths {
           sort_direction?: "Asc" | "Desc"
           /** An optional search term to filter the results by */
           q?: string | null
-          /** An optional comma-separated list of tags to filter the results by */
-          tags?: string | null
+          /** An optional list of tags to filter the results by */
+          tags?: string[] | null
           /** An optional game version to filter the results by */
           version?: string | null
         }
@@ -1138,8 +1138,6 @@ export interface components {
        * including fields indicating whether the slug is valid and available for the authenticated user.
        */
       extracted_slug: components["schemas"]["SlugValidationResult"]
-      /** The tags that have been extracted for this payload. */
-      extracted_tags: string[]
     }
   }
 }
