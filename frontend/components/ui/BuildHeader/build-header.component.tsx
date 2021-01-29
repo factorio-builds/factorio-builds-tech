@@ -9,6 +9,7 @@ import Button from "../Button"
 import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.component"
 import FavoriteButton from "../FavoriteButton"
 import Stacker from "../Stacker"
+import Tooltip from "../Tooltip"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-header.styles"
 
@@ -54,14 +55,18 @@ function Buildheader(props: IBuildheader): JSX.Element {
               <SC.StyledLink>{props.build.owner.display_name}</SC.StyledLink>
             </Link>
           </span>
-          {/* prettier-ignore */}
           <span>
-              created <b>{formatDate(props.build.created_at)}</b> ({formatSince(props.build.created_at)})
-            </span>
-          {/* prettier-ignore */}
+            created{" "}
+            <Tooltip content={`(${formatSince(props.build.created_at)})`}>
+              <b>{formatDate(props.build.created_at)}</b>
+            </Tooltip>
+          </span>
           <span>
-              updated at <b>{formatDate(props.build.updated_at)}</b> ({formatSince(props.build.updated_at)})
-            </span>
+            updated at{" "}
+            <Tooltip content={`(${formatSince(props.build.updated_at)})`}>
+              <b>{formatDate(props.build.updated_at)}</b>
+            </Tooltip>
+          </span>
         </Stacker>
         <Stacker orientation="horizontal" gutter={8}>
           <FavoriteButton build={props.build} size="small" />
