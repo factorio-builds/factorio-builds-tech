@@ -54,8 +54,8 @@ namespace FactorioTech.Api
             {
                 options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
                 options.JsonSerializerOptions.Converters.Add(new PolymorphicJsonConverter<PayloadModelBase>());
-                options.JsonSerializerOptions.Converters.Add(new CustomJsonStringEnumConverter());
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.Converters.Add(new CustomJsonStringEnumConverter(new SnakeCaseNamingPolicy()));
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(new SnakeCaseNamingPolicy()));
                 options.JsonSerializerOptions.Converters.Add(new VersionJsonConverter());
                 options.JsonSerializerOptions.Converters.Add(new HashJsonConverter());
                 options.JsonSerializerOptions.IgnoreNullValues = true;

@@ -1,3 +1,4 @@
+import qs from "qs"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { withApplicationInsights } from "next-applicationinsights"
@@ -18,6 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const user = useSelector((store: IStoreState) => store.auth.user)
 
   useEffect(() => {
+    axios.defaults.paramsSerializer = params => qs.stringify(params, {arrayFormat: 'repeat'})
     axios.defaults.headers.common["Authorization"] = user?.accessToken
       ? `Bearer ${user.accessToken}`
       : ""
