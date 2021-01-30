@@ -33,18 +33,6 @@ export const searchBuildsAsync = (): ThunkAction<
   unknown,
   Action
 > => {
-  const mapTagKeys = (state: IStoreState): Record<string, string> => {
-    return state.filters.tags
-      .filter((tag) => tag.isSelected)
-      .map((tag) => `/${tag.group}/${tag.name}`)
-      .reduce((acc, curr, index) => {
-        return {
-          ...acc,
-          [`tags[${index}]`]: curr,
-        }
-      }, {})
-  }
-
   return async function (dispatch, getState) {
     const state = getState()
 
@@ -52,7 +40,9 @@ export const searchBuildsAsync = (): ThunkAction<
       .get("/builds", {
         params: {
           q: getState().filters.query || undefined,
-          ...mapTagKeys(state),
+          tags: state.filters.tags
+            .filter((tag) => tag.isSelected)
+            .map((tag) => `/${tag.group}/${tag.name}`),
           sort_field: state.filters.sort.toLowerCase(),
           sort_direction: "asc",
         },
@@ -72,7 +62,7 @@ export const searchBuildsAsync = (): ThunkAction<
   }
 }
 
-const searchBuildsSucess = (
+const searchBuildsSuccess = (
   state: IStoreSearchState,
   payload: TSearchBuildsSuccessAction["payload"]
 ) => {
@@ -91,7 +81,7 @@ export const searchReducer = (
 ): IStoreSearchState => {
   switch (action.type) {
     case "SEARCH_BUILDS_SUCCESS":
-      return searchBuildsSucess(state, action.payload)
+      return searchBuildsSuccess(state, action.payload)
     default:
       return state
   }

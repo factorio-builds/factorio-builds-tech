@@ -11,7 +11,7 @@ export interface paths {
           /** The desired size. Valid values are `64`, `32`, `16` and `8` */
           size: number
           /** The icon type */
-          type: "Item" | "Virtual"
+          type: "item" | "virtual"
           /** The item's or signal's name */
           key: string
         }
@@ -51,9 +51,9 @@ export interface paths {
           /** The desired page */
           page?: number
           /** The desired field to sort the results */
-          sort_field?: "Title" | "Created" | "Updated" | "Favorites"
+          sort_field?: "title" | "created" | "updated" | "favorites"
           /** The desired direction to sort the results */
-          sort_direction?: "Asc" | "Desc"
+          sort_direction?: "asc" | "desc"
           /** An optional search term to filter the results by */
           q?: string | null
           /** An optional list of tags to filter the results by */
@@ -576,7 +576,7 @@ export interface paths {
           /** The hash of the desired payload */
           hash: string
           /** The desired type */
-          type: "Full" | "Thumb"
+          type: "full" | "thumb"
         }
       }
       responses: {
@@ -757,9 +757,9 @@ export interface paths {
           /** The desired page */
           page?: number
           /** The desired field to sort the results */
-          sort_field?: "Title" | "Created" | "Updated" | "Favorites"
+          sort_field?: "title" | "created" | "updated" | "favorites"
           /** The desired direction to sort the results */
-          sort_direction?: "Asc" | "Desc"
+          sort_direction?: "asc" | "desc"
           /** An optional search term to filter the results by */
           q?: string | null
           /** An optional list of tags to filter the results by */
