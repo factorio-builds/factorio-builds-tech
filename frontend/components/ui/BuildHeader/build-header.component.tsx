@@ -56,13 +56,13 @@ function Buildheader(props: IBuildheader): JSX.Element {
           </span>
           <span>
             created{" "}
-            <Tooltip content={`(${formatSince(props.build.created_at)})`}>
+            <Tooltip content={formatSince(props.build.created_at)}>
               <b>{formatDate(props.build.created_at)}</b>
             </Tooltip>
           </span>
           <span>
             updated at{" "}
-            <Tooltip content={`(${formatSince(props.build.updated_at)})`}>
+            <Tooltip content={formatSince(props.build.updated_at)}>
               <b>{formatDate(props.build.updated_at)}</b>
             </Tooltip>
           </span>
