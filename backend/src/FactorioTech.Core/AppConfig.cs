@@ -9,8 +9,8 @@ namespace FactorioTech.Core
     {
         public static class Cover
         {
-            public const int Width = 480;
-            public const int Height = 480;
+            public const int Width = 800;
+            public const int Height = 800;
         }
 
         public static class Rendering

@@ -58,6 +58,9 @@ namespace FactorioTech.Core.Domain
         [Required]
         public string[] Tags { get; private set; }
 
+        [Required]
+        public ImageMeta CoverMeta { get; private set; }
+
         // navigation properties -> will be null if not included explicitly
 
         public BlueprintVersion? LatestVersion { get; private set; }
@@ -77,7 +80,8 @@ namespace FactorioTech.Core.Domain
             string slug,
             IEnumerable<string> tags,
             string title,
-            string? description)
+            string? description,
+            ImageMeta coverMeta)
         {
             BlueprintId = blueprintId;
             OwnerId = owner.Id;
@@ -93,6 +97,7 @@ namespace FactorioTech.Core.Domain
             LatestType = BlueprintType.Blueprint;
             Icons = Array.Empty<GameIcon>();
             Tags = tags.Distinct().ToArray();
+            CoverMeta = coverMeta;
         }
 
 #pragma warning disable 8618 // required for EF
@@ -109,7 +114,7 @@ namespace FactorioTech.Core.Domain
             Icons = version.Icons;
         }
 
-        public void UpdateDetails(Instant now, string? title, string? description, IEnumerable<string>? tags)
+        public void UpdateDetails(Instant now, string? title, string? description, IEnumerable<string>? tags, ImageMeta? coverMeta)
         {
             if (title != null)
             {
@@ -124,6 +129,11 @@ namespace FactorioTech.Core.Domain
             if (tags != null)
             {
                 Tags = tags.Distinct().ToArray();
+            }
+
+            if (coverMeta != null)
+            {
+                CoverMeta = coverMeta;
             }
 
             UpdatedAt = now;

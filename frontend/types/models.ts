@@ -11,6 +11,10 @@ export type IBookPayload = components["schemas"]["BookPayloadModel"]
 export type IFullPayload = IBlueprintPayload | IBookPayload
 export type IIcon = components["schemas"]["GameIcon"]
 
+export type ICreateBuildRequest = components["schemas"]["CreateBuildRequest"]
+export type ICreateVersionRequest = components["schemas"]["CreateVersionRequest"]
+export type IEditBuildRequest = components["schemas"]["EditBuildRequest"]
+
 export interface IStoreUser {
   id: string
   username: string

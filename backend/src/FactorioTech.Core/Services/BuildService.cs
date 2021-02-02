@@ -114,6 +114,11 @@ namespace FactorioTech.Core.Services
                     Hash Hash)
                 : CreateResult { }
 
+            public sealed record InvalidCover(
+                    string Owner,
+                    string Slug)
+                : CreateResult { }
+
             private CreateResult() { }
         }
 
@@ -241,8 +246,8 @@ namespace FactorioTech.Core.Services
                 .FirstOrDefaultAsync();
 
             var result = request.ExpectedVersionId.HasValue
-                ? TryUpdate(request, principal, existing)
-                : await TryCreate(request, principal, existing);
+                ? TryUpdate(request, cover.Meta, principal, existing)
+                : await TryCreate(request, cover.Meta, principal, existing);
 
             var success = result as CreateResult.Success;
             if (success == null)
@@ -290,7 +295,8 @@ namespace FactorioTech.Core.Services
                 SystemClock.Instance.GetCurrentInstant(),
                 request.Title,
                 request.Description,
-                request.Tags?.Where(_buildTags.Contains));
+                request.Tags?.Where(_buildTags.Contains),
+                cover.Meta);
 
             await _dbContext.SaveChangesAsync();
 
@@ -346,7 +352,7 @@ namespace FactorioTech.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private CreateResult TryUpdate(CreateRequest request, ClaimsPrincipal principal, Blueprint? existing)
+        private CreateResult TryUpdate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Blueprint? existing)
         {
             if (existing == null)
             {
@@ -374,17 +380,24 @@ namespace FactorioTech.Core.Services
                 SystemClock.Instance.GetCurrentInstant(),
                 request.Title,
                 request.Description,
-                request.Tags.Where(_buildTags.Contains));
+                request.Tags.Where(_buildTags.Contains),
+                coverMeta);
 
             return new CreateResult.Success(existing);
         }
 
-        private async Task<CreateResult> TryCreate(CreateRequest request, ClaimsPrincipal principal, Blueprint? existing)
+        private async Task<CreateResult> TryCreate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Blueprint? existing)
         {
             if (existing != null)
             {
                 _logger.LogWarning("Attempted to save blueprint with existing slug {Slug}", request.Slug);
                 return new CreateResult.DuplicateSlug(request.Owner, request.Slug);
+            }
+
+            if (coverMeta == null)
+            {
+                _logger.LogWarning("Attempted to save blueprint without cover metadata");
+                return new CreateResult.InvalidCover(request.Owner, request.Slug);
             }
 
             var owner = await _dbContext.Users.FindAsync(principal.GetUserId());
@@ -397,7 +410,8 @@ namespace FactorioTech.Core.Services
                 request.Slug,
                 request.Tags.Where(_buildTags.Contains),
                 request.Title.Trim(),
-                request.Description?.Trim());
+                request.Description?.Trim(),
+                coverMeta);
 
             _dbContext.Add(build);
 

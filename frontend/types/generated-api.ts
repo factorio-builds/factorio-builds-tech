@@ -104,42 +104,9 @@ export interface paths {
       }
       requestBody: {
         content: {
-          "multipart/form-data": {
-            /**
-             * The slug for the new build. It is used in the build's URL and must be unique per user.
-             * It can consist only of latin alphanumeric characters, underscores and hyphens.
-             */
-            Slug: string
-            /**
-             * The hash of the payload that should be used to create this build version.
-             * The payload must have been previously created.
-             */
-            Hash: string
-            /** The title or display name of the build. */
-            Title: string
-            /** The build description in Markdown. */
-            Description?: string | null
-            /** The build's tags. */
-            Tags: string[]
-            /** The icons of the version to be created. */
-            "Version.Icons": components["schemas"]["GameIcon"][]
-            /** An optional name for the version to be created. */
-            "Version.Name"?: string | null
-            /** An optional description for the version to be created. */
-            "Version.Description"?: string | null
-            /** The horizontal position of the crop rectangle. */
-            "Cover.X": number
-            /** The vertical position of the crop rectangle. */
-            "Cover.Y": number
-            /** The width of the crop rectangle. */
-            "Cover.Width": number
-            /** The height of the crop rectangle. */
-            "Cover.Height": number
-            /** The uploaded cover image. */
-            "Cover.File"?: string | null
-            /** The hash of an existing blueprint rendering. */
-            "Cover.Hash"?: components["schemas"]["Hash"] | null
-          }
+          "application/json": components["schemas"]["CreateBuildRequest"]
+          "text/json": components["schemas"]["CreateBuildRequest"]
+          "application/*+json": components["schemas"]["CreateBuildRequest"]
         }
       }
     }
@@ -238,42 +205,12 @@ export interface paths {
           }
         }
       }
+      /** The request parameters */
       requestBody: {
         content: {
-          "multipart/form-data": {
-            /**
-             * The title or display name of the build.
-             * If unset (`null`), the existing value will not be changed.
-             */
-            Title?: string | null
-            /**
-             * The build description in Markdown.
-             * If unset (`null`), the existing value will not be changed.
-             */
-            Description?: string | null
-            /**
-             * The build's tags.
-             * If unset (`null`), the existing value will not be changed.
-             */
-            Tags?: string[] | null
-            /**
-             * The build's icons.
-             * If unset (`null`), the existing value will not be changed.
-             */
-            Icons?: components["schemas"]["GameIcon"][] | null
-            /** The horizontal position of the crop rectangle. */
-            "Cover.X": number
-            /** The vertical position of the crop rectangle. */
-            "Cover.Y": number
-            /** The width of the crop rectangle. */
-            "Cover.Width": number
-            /** The height of the crop rectangle. */
-            "Cover.Height": number
-            /** The uploaded cover image. */
-            "Cover.File"?: string | null
-            /** The hash of an existing blueprint rendering. */
-            "Cover.Hash"?: components["schemas"]["Hash"] | null
-          }
+          "application/json": components["schemas"]["EditBuildRequest"]
+          "text/json": components["schemas"]["EditBuildRequest"]
+          "application/*+json": components["schemas"]["EditBuildRequest"]
         }
       }
     }
@@ -428,41 +365,12 @@ export interface paths {
           }
         }
       }
+      /** The request parameters */
       requestBody: {
         content: {
-          "multipart/form-data": {
-            /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
-            ExpectedPreviousVersionId: string
-            /**
-             * The hash of the payload that should be used to create this build version.
-             * The payload must have been previously created.
-             */
-            Hash: string
-            /** The title or display name of the build. */
-            Title: string
-            /** The build description in Markdown. */
-            Description?: string | null
-            /** The build's tags. */
-            Tags: string[]
-            /** The icons of the version to be created. */
-            "Version.Icons": components["schemas"]["GameIcon"][]
-            /** An optional name for the version to be created. */
-            "Version.Name"?: string | null
-            /** An optional description for the version to be created. */
-            "Version.Description"?: string | null
-            /** The horizontal position of the crop rectangle. */
-            "Cover.X": number
-            /** The vertical position of the crop rectangle. */
-            "Cover.Y": number
-            /** The width of the crop rectangle. */
-            "Cover.Width": number
-            /** The height of the crop rectangle. */
-            "Cover.Height": number
-            /** The uploaded cover image. */
-            "Cover.File"?: string | null
-            /** The hash of an existing blueprint rendering. */
-            "Cover.Hash"?: components["schemas"]["Hash"] | null
-          }
+          "application/json": components["schemas"]["CreateVersionRequest"]
+          "text/json": components["schemas"]["CreateVersionRequest"]
+          "application/*+json": components["schemas"]["CreateVersionRequest"]
         }
       }
     }
@@ -844,6 +752,10 @@ export interface components {
       width: number
       /** The height of the linked image. */
       height: number
+      /** The size in bytes of the linked image. */
+      size: number
+      /** The format of the linked image. */
+      format: string
     }
     CollectionLinkModel: {
       /** The absolute URL of the linked resource. */
@@ -885,7 +797,7 @@ export interface components {
       delete?: components["schemas"]["LinkModel"] | null
     }
     GameIcon: {
-      type: string
+      type: "virtual" | "item"
       name: string
     }
     ThinUserModel: {
@@ -933,7 +845,53 @@ export interface components {
       /** The paged, filtered and ordered list of matching builds. */
       builds: components["schemas"]["ThinBuildModel"][]
     }
-    Hash: { [key: string]: any }
+    VersionRequest: {
+      /** The icons of the version to be created. */
+      icons: components["schemas"]["GameIcon"][]
+      /** An optional name for the version to be created. */
+      name?: string | null
+      /** An optional description for the version to be created. */
+      description?: string | null
+    }
+    CoverRequest: {
+      /** The horizontal position of the crop rectangle. */
+      x: number
+      /** The vertical position of the crop rectangle. */
+      y: number
+      /** The width of the crop rectangle. */
+      width: number
+      /** The height of the crop rectangle. */
+      height: number
+      /** The uploaded cover image. */
+      file?: File | null
+      /** The hash of an existing blueprint rendering. */
+      hash?: string | null
+    }
+    CreateBuildRequest: {
+      /**
+       * The hash of the payload that should be used to create this build version.
+       * The payload must have been previously created.
+       */
+      hash: string
+      /** The title or display name of the build. */
+      title: string
+      /** The build description in Markdown. */
+      description?: string | null
+      /** The build's tags. */
+      tags: string[]
+      /** Metadata for the version to be created. */
+      version: components["schemas"]["VersionRequest"]
+      /**
+       * The build's cover image is either a file upload or an existing blueprint rendering,
+       * along with a crop rectangle.
+       */
+      cover: components["schemas"]["CoverRequest"]
+      /**
+       * The slug for the new build. It is used in the build's URL and must be unique per user.
+       * It can consist only of latin alphanumeric characters, underscores and hyphens.
+       */
+      slug: string
+    }
     FullBuildLinks: {
       /** The absolute URL of this build's full details. */
       self: components["schemas"]["LinkModel"]
@@ -1092,6 +1050,34 @@ export interface components {
       /** The build's most recently added version. */
       latest_version: components["schemas"]["FullVersionModel"]
     }
+    EditBuildRequest: {
+      /**
+       * The title or display name of the build.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      title?: string | null
+      /**
+       * The build description in Markdown.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      description?: string | null
+      /**
+       * The build's tags.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      tags?: string[] | null
+      /**
+       * The build's icons.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      icons?: components["schemas"]["GameIcon"][] | null
+      /**
+       * The build's cover image is either a file upload or an existing blueprint rendering,
+       * along with a crop rectangle.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      cover?: components["schemas"]["CoverRequest"] | null
+    }
     UsersModel: {
       /** The number of results on the current page. */
       count: number
@@ -1116,6 +1102,28 @@ export interface components {
       count: number
       /** The paged, filtered and ordered list of matching versions. */
       versions: components["schemas"]["ThinVersionModel"][]
+    }
+    CreateVersionRequest: {
+      /**
+       * The hash of the payload that should be used to create this build version.
+       * The payload must have been previously created.
+       */
+      hash: string
+      /** The title or display name of the build. */
+      title: string
+      /** The build description in Markdown. */
+      description?: string | null
+      /** The build's tags. */
+      tags: string[]
+      /** Metadata for the version to be created. */
+      version: components["schemas"]["VersionRequest"]
+      /**
+       * The build's cover image is either a file upload or an existing blueprint rendering,
+       * along with a crop rectangle.
+       */
+      cover: components["schemas"]["CoverRequest"]
+      /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
+      expected_previous_version_id: string
     }
     CreatePayloadRequest: {
       /** The encoded blueprint string. */
