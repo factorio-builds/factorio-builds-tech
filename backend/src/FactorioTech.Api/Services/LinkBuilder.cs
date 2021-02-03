@@ -46,7 +46,8 @@ namespace FactorioTech.Api.Services
             return new()
             {
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
-                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues), AppConfig.Cover.Width, AppConfig.Cover.Height),
+                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues),
+                    blueprint.CoverMeta.Width, blueprint.CoverMeta.Height, blueprint.CoverMeta.Size, blueprint.CoverMeta.Format),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
 
@@ -80,7 +81,8 @@ namespace FactorioTech.Api.Services
             return new()
             {
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
-                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues), AppConfig.Cover.Width, AppConfig.Cover.Height),
+                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues),
+                    blueprint.CoverMeta.Width, blueprint.CoverMeta.Height, blueprint.CoverMeta.Size, blueprint.CoverMeta.Format),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
 

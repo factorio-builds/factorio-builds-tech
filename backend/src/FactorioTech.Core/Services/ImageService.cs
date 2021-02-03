@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
@@ -200,14 +201,20 @@ namespace FactorioTech.Core.Services
         {
             var (image, format) = await Image.LoadWithFormatAsync(stream);
 
-            image.Mutate(x => x
-                .Crop(rectangle.HasValue
-                    ? new Rectangle(rectangle.Value.X, rectangle.Value.Y, rectangle.Value.Width, rectangle.Value.Height)
-                    : new Rectangle(0, 0, Math.Min(image.Height, image.Width), Math.Min(image.Height, image.Width)))
-                .Resize(AppConfig.Cover.Width, AppConfig.Cover.Width));
+            var crop = rectangle.HasValue
+                ? new Rectangle(rectangle.Value.X, rectangle.Value.Y, rectangle.Value.Width, rectangle.Value.Height)
+                : new Rectangle(0, 0, Math.Min(image.Height, image.Width), Math.Min(image.Height, image.Width));
 
-            var handle = new TempCoverHandle(_logger, GetCoverFqfn);
-            var imageFqfn = GetCoverFqfn(handle.TempId);
+            var resize = new ResizeOptions
+            {
+                Size = new Size(AppConfig.Cover.Width, AppConfig.Cover.Width),
+                Mode = ResizeMode.Max,
+            };
+
+            image.Mutate(x => x.AutoOrient().Crop(crop).Resize(resize));
+
+            var tempId = Guid.NewGuid();
+            var imageFqfn = GetCoverFqfn(tempId);
             var baseDir = Path.GetDirectoryName(imageFqfn);
             if (baseDir != null && !Directory.Exists(baseDir))
             {
@@ -217,7 +224,15 @@ namespace FactorioTech.Core.Services
             await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
             await image.SaveAsync(outFile, format);
 
-            return handle;
+            var meta = new ImageMeta
+            {
+                Width = image.Width,
+                Height = image.Height,
+                Size = outFile.Length,
+                Format = format.Name,
+            };
+
+            return new TempCoverHandle(_logger, GetCoverFqfn, tempId, meta);
         }
 
         private string GetRenderingFqfn(Hash hash, RenderingType type) =>

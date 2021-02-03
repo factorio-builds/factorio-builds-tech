@@ -38,17 +38,31 @@ namespace FactorioTech.Api.ViewModels
         /// </summary>
         [Required]
         public int Width { get; init; }
-        
+
         /// <summary>
         /// The height of the linked image.
         /// </summary>
         [Required]
         public int Height { get; init; }
 
-        public ImageLinkModel(string href, int width, int height) : base(href)
+        /// <summary>
+        /// The size in bytes of the linked image.
+        /// </summary>
+        [Required]
+        public long Size { get; init; }
+
+        /// <summary>
+        /// The format of the linked image.
+        /// </summary>
+        [Required]
+        public string Format { get; init; }
+
+        public ImageLinkModel(string href, int width, int height, long size, string format) : base(href)
         {
             Width = width;
             Height = height;
+            Size = size;
+            Format = format;
         }
     }
 

@@ -1,10 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react"
-import { useSelector } from "react-redux"
 import cx from "classnames"
 import Image from "next/image"
 import Link from "next/link"
-import { IStoreState } from "../../../redux/store"
-// import { ERole } from "../../../types"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
@@ -84,11 +81,7 @@ const Tabs = (props: ITabs): JSX.Element => {
 }
 
 function BuildPage({ build }: IBuildPageProps): JSX.Element {
-  const user = useSelector((state: IStoreState) => state.auth.user)
   const payload = usePayload(build)
-
-  // const isAdmin = user?.roleName === ERole.ADMIN
-  const ownedByMe = build.owner.username === user?.username
 
   const tabs = useMemo(() => {
     if (isBook(build.latest_version.payload)) {
@@ -126,11 +119,10 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
         payload={payload}
         aside={
           <Stacker orientation="vertical" gutter={16}>
-            {/* {(isAdmin || ownedByMe) && ( */}
-            {ownedByMe && (
+            {build._links.edit && (
               <Link href={`/${build.owner.username}/${build.slug}/edit`}>
                 <SC.EditBuild>
-                  {ownedByMe ? "edit build" : "edit build as admin"}
+                  { "edit build" }
                 </SC.EditBuild>
               </Link>
             )}

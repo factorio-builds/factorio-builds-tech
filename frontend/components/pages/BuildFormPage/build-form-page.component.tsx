@@ -1,10 +1,11 @@
+import asFormData from "json-form-data"
 import React, { useCallback, useState } from "react"
 import { Form, Formik } from "formik"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
 import { useApi } from "../../../hooks/useApi"
 import { ECategory, EState } from "../../../types"
-import { IFullBuild } from "../../../types/models"
+import { ICreateBuildRequest, ICreateVersionRequest, IEditBuildRequest, IFullBuild } from "../../../types/models"
 import Layout from "../../ui/Layout"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
@@ -41,10 +42,10 @@ interface IValidFormValues {
   withBeacons: boolean
   categories: ECategory[]
   cover: {
-    x: number | null
-    y: number | null
-    width: number | null
-    height: number | null
+    x: number
+    y: number
+    width: number
+    height: number
     file: File | null
     url: string | null
     hash: string | null
@@ -160,64 +161,65 @@ export const validate = (fieldName: keyof IFormValues) => async (
   }
 }
 
-const toFormData = (formValues: IValidFormValues) => {
-  const formData = new FormData()
+const toFormDataInner = (request: ICreateBuildRequest | ICreateVersionRequest | IEditBuildRequest) => {
+  // todo: not sure about the `ValidJSON` type. seems wrong to me...
+  // `any` cast fixes the type error
+  let formData = asFormData(request as any)
 
-  formData.append("slug", formValues.slug)
-
-  formData.append("hash", formValues.hash)
-  formData.append("title", formValues.title)
-  formData.append("description", formValues.description) // optional
-
-  const tags = ["/production/rocket parts", "/train/rails"]
-  tags.forEach((tag, index) => {
-    formData.append(`tags[${index}]`, tag)
-  })
-
-  formData.append("version.name", "1.0.0") // optional
-  formData.append("version.description", "Initial version") // optional
-
-  if (formValues.cover.file) {
-    formData.append("cover.file", formValues.cover.file)
-    formData.append("cover.x", "0") // optional
-    formData.append("cover.y", "0") // optional
-    formData.append("cover.width", String(formValues.cover.width))
-    formData.append("cover.height", String(formValues.cover.height))
-  } else {
-    // formData.append("cover.hash", "8a617f78-c14a-46a1-87ef-adb25f256f6a")
+  // todo: not sure why the backend doesn't pick up the [file]
+  // it works with all other fields. maybe a dotnet bug?
+  if (formData.get("cover[file]")) {
+    formData.append("cover.file", formData.get("cover[file]") as any)
+    formData.delete("cover[file]")
   }
 
   return formData
 }
 
-const toPatchFormData = (formValues: IValidFormValues) => {
-  const formData = new FormData()
-
-  formData.append("slug", formValues.slug)
-
-  formData.append("hash", formValues.hash)
-  formData.append("title", formValues.title)
-  formData.append("description", formValues.description) // optional
-
-  const tags = ["/production/rocket parts", "/train/rails"]
-  tags.forEach((tag, index) => {
-    formData.append(`tags[${index}]`, tag)
-  })
-
-  // formData.append("version.name", "hello there") // optional
-  // formData.append("version.description", "lorem ipsum") // optional
-
-  if (formValues.cover.file) {
-    formData.append("cover.file", formValues.cover.file)
-    formData.append("cover.x", "0") // optional
-    formData.append("cover.y", "0") // optional
-    formData.append("cover.width", String(formValues.cover.width))
-    formData.append("cover.height", String(formValues.cover.height))
-  } else {
-    // formData.append("cover.hash", "8a617f78-c14a-46a1-87ef-adb25f256f6a")
+const toFormData = (formValues: IValidFormValues) => {
+  let request: ICreateBuildRequest = {
+    slug: formValues.slug,
+    hash: formValues.hash,
+    title: formValues.title,
+    description: formValues.description,
+    tags: ["/production/rocket parts", "/train/track"],
+    cover: {
+      x: formValues.cover.x,
+      y: formValues.cover.y,
+      width: formValues.cover.width,
+      height: formValues.cover.height,
+      file: formValues.cover.file,
+      hash: formValues.cover.hash,
+    },
+    version: {
+      icons: [
+        {
+          name: "solar-panel",
+          type: "item"
+        }
+      ]
+    }
   }
 
-  return formData
+  return toFormDataInner(request)
+}
+
+const toPatchFormData = (formValues: IValidFormValues) => {
+  let request: IEditBuildRequest = {
+    title: formValues.title,
+    description: formValues.description,
+    tags: ["/production/rocket parts", "/train/track"],
+    cover: {
+      x: formValues.cover.x,
+      y: formValues.cover.y,
+      width: formValues.cover.width,
+      height: formValues.cover.height,
+      file: formValues.cover.file,
+      hash: formValues.cover.hash,
+    }
+  }
+
+  return toFormDataInner(request)
 }
 
 interface IBuildFormPageCreating {

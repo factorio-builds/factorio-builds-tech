@@ -4,11 +4,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace FactorioTech.Core.Data
 {
     public class AppDbContext : PersistedGrantIdentityContext
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new ()
+        {
+            IgnoreNullValues = true,
+            PropertyNamingPolicy = new SnakeCaseNamingPolicy(),
+            Converters = { new JsonStringEnumConverter(new SnakeCaseNamingPolicy()) },
+        };
+
         public DbSet<Blueprint> Blueprints { get; set; }
         public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
         public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
@@ -59,6 +70,10 @@ namespace FactorioTech.Core.Data
                     .HasPrincipalKey(e => e.VersionId);
 
                 entity.Property(e => e.Icons)
+                    .HasConversion(
+                        x => JsonSerializer.Serialize(x, JsonSerializerOptions),
+                        x => JsonSerializer.Deserialize<IEnumerable<GameIcon>>(x, JsonSerializerOptions)
+                             ?? Enumerable.Empty<GameIcon>())
                     .HasColumnType("jsonb");
 
                 if (Database.IsNpgsql())
@@ -95,6 +110,10 @@ namespace FactorioTech.Core.Data
                     .HasPrincipalKey(e => e.Hash);
 
                 entity.Property(e => e.Icons)
+                    .HasConversion(
+                        x => JsonSerializer.Serialize(x, JsonSerializerOptions),
+                        x => JsonSerializer.Deserialize<IEnumerable<GameIcon>>(x, JsonSerializerOptions)
+                             ?? Enumerable.Empty<GameIcon>())
                     .HasColumnType("jsonb");
             });
 
