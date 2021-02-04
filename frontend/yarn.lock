@@ -53,15 +53,15 @@
   dependencies:
     cross-fetch "3.0.6"
 
-"@auth0/nextjs-auth0@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@auth0/nextjs-auth0/-/nextjs-auth0-0.16.0.tgz#551acb2d7f0054229996ec7c96e7bbb286a867b4"
-  integrity sha512-LVkVtjzH6HoZawqz+9+poXfPi8J57sE1ksE5j1EvkFeVKDk5ZEu0w9tqQAuAxLFyHlCI7Q1rRlJXpV7O8uGGyg==
+"@auth0/nextjs-auth0@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@auth0/nextjs-auth0/-/nextjs-auth0-0.16.1.tgz#b3cb9d016d4fb0a7482d6ce469fdac8d9ad48b4d"
+  integrity sha512-jiMADPsW9Uys4YfangtDwX/Oy1oChn6s9vQQAH4La95hnNvDmhGJ879L9qf5et6+zJYCEcfJIbsbPDx+AI9xLg==
   dependencies:
     "@hapi/iron" "^5.1.4"
     base64url "^3.0.1"
     cookie "^0.4.1"
-    openid-client "^3.15.0"
+    openid-client "^3.15.10"
 
 "@babel/code-frame@7.12.11", "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.12.11":
   version "7.12.11"
@@ -6145,7 +6145,7 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-openid-client@^3.15.0:
+openid-client@^3.15.10:
   version "3.15.10"
   resolved "https://registry.yarnpkg.com/openid-client/-/openid-client-3.15.10.tgz#35978f629bb95fdeeb0ab7365aa4800ca0b6558e"
   integrity sha512-C9r6/iVzNQ7aGp0krS5mFIY5nY8AH6ajYCH0Njns6AXy2fM3Khw/dY97QlaFJWW2QLhec6xfEk23LZw9EeX66Q==
