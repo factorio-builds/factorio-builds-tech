@@ -18,14 +18,6 @@ export const Label = styled.label`
   margin-bottom: 6px;
 `
 
-export const ErrorMessage = styled.div`
-  ${getTypo(ETypo.FORM_INPUT)};
-  display: flex;
-  align-items: center;
-  color: ${COLOR.DANGER};
-  margin-top: 4px;
-`
-
 export const ValidMessage = styled.div`
   ${getTypo(ETypo.FORM_INPUT)};
   display: flex;
