@@ -248,6 +248,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   return (
     <Formik<IFormValues>
       initialValues={initialValues}
+      validationSchema={Yup.object(validation)}
       onSubmit={(values) => {
         setSubmit({
           loading: true,
