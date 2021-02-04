@@ -1,4 +1,4 @@
-import * as React from "react"
+import { useMemo } from "react"
 import ReactSelect, { Props as ReactSelectProps } from "react-select"
 import { FieldProps } from "formik"
 import { COLOR } from "../../../design/tokens/color"
@@ -12,21 +12,24 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
   const isTouched = form.touched[field.name]
   const error = isTouched && form.errors[field.name]
 
+  const value = useMemo(() => {
+    if (!field.value || !props.options) {
+      return null
+    }
+
+    return props.options.find((option) => option.value === field.value)
+  }, [field.value])
+
   return (
-    <ReactSelect<{ value: string; label: string }>
+    <ReactSelect
       placeholder={props.placeholder}
       options={props.options}
       menuPlacement="auto"
       onChange={(fieldValue) => {
-        // @ts-ignore
-        form.setFieldValue(field.name, fieldValue.value)
+        const value = fieldValue ? fieldValue.value : null
+        form.setFieldValue(field.name, value)
       }}
-      value={
-        field.value
-          ? // @ts-ignore
-            props.options.find((option) => option.value === field.value)
-          : null
-      }
+      value={value}
       styles={{
         control: (provided, state) => {
           const focusedShadow = `0 0 0 3px ${COLOR.FOCUSED}`
