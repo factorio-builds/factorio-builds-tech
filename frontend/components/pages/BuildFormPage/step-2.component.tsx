@@ -18,11 +18,32 @@ interface IStep2Props {
 const Step2: React.FC<IStep2Props> = (props) => {
   const [page, setPage] = useState<TPage>("data")
 
+  const fieldsAreValid = (fields: (keyof IFormValues)[]): boolean => {
+    const errors = props.formikProps.errors
+    return fields.every((fieldName) => {
+      return !errors[fieldName]
+    })
+  }
+
   return (
     <SC.Row>
       <SC.Content>
         <Stacker>
-          <Pager currentPage={page} goToPage={setPage} />
+          <Pager
+            currentPage={page}
+            pagesState={{
+              data: {
+                isValid: fieldsAreValid([
+                  "title",
+                  "slug",
+                  "description",
+                  "tags",
+                ]),
+              },
+              cover: { isValid: fieldsAreValid(["cover"]) },
+            }}
+            goToPage={setPage}
+          />
 
           {page === "data" && <Step2Data formikProps={props.formikProps} />}
           {page === "cover" && <Step2Cover formikProps={props.formikProps} />}

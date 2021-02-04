@@ -39,7 +39,7 @@ export const CoverWrapper = styled.div`
   width: 300px;
 `
 
-export const PageButton = styled.div`
+export const PageButton = styled(Stacker)`
   ${getTypo(ETypo.PAGE_SUBTITLE)};
   display: flex;
   align-items: center;
@@ -65,4 +65,27 @@ export const PageNumber = styled.div`
   border: 2px solid ${COLOR.PURPLE700};
   border-radius: 50%;
   margin-right: 8px;
+`
+
+export const PageBody = styled(Stacker)``
+
+export const PageFeedback = styled(Stacker)`
+  color: ${COLOR.DANGER};
+  align-items: center;
+
+  svg {
+    width: 20px;
+  }
+
+  svg path {
+    fill: ${COLOR.DANGER};
+  }
+
+  &.is-valid {
+    color: ${COLOR.SUCCESS};
+  }
+
+  &.is-valid svg path {
+    fill: ${COLOR.SUCCESS};
+  }
 `
