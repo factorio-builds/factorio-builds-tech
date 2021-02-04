@@ -58,7 +58,7 @@
     "@types/react": "^17.0.1",
     "@types/react-dom": "^17.0.0",
     "@types/react-redux": "^7.1.16",
-    "@types/react-select": "^4.0.2",
+    "@types/react-select": "^4.0.12",
     "@types/styled-components": "^5.1.7",
     "@types/text-encoding": "^0.0.35",
     "@types/validator": "^13.1.3",
