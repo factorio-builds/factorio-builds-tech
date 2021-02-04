@@ -78,7 +78,7 @@ const createInitialValues = (build?: IFullBuild): IFormValues => {
     title: build.title,
     slug: build.slug,
     description: build.description || "",
-    tags: [],
+    tags: build.tags,
     cover: {
       x: null,
       y: null,
