@@ -1,5 +1,6 @@
 import React from "react"
 import { FormikProps } from "formik"
+import ErrorMessage from "../../form/ErrorMessage"
 import ImageUpload from "../../ui/ImageUpload"
 import { IImageUpload } from "../../ui/ImageUpload/image-upload.component"
 import { IFormValues } from "./build-form-page.component"
@@ -23,6 +24,9 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
         image={props.formikProps.values.cover.url || null}
         onChange={onChangeImage}
       />
+      {props.formikProps.touched && props.formikProps.errors.cover?.file && (
+        <ErrorMessage>{props.formikProps.errors.cover.file}</ErrorMessage>
+      )}
     </SC.CoverWrapper>
   )
 }
