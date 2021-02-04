@@ -1,11 +1,15 @@
-import asFormData from "json-form-data"
 import React, { useCallback, useState } from "react"
 import { Form, Formik } from "formik"
+import asFormData from "json-form-data"
 import { useRouter } from "next/router"
 import * as Yup from "yup"
 import { useApi } from "../../../hooks/useApi"
-import { ECategory, EState } from "../../../types"
-import { ICreateBuildRequest, ICreateVersionRequest, IEditBuildRequest, IFullBuild } from "../../../types/models"
+import {
+  ICreateBuildRequest,
+  ICreateVersionRequest,
+  IEditBuildRequest,
+  IFullBuild,
+} from "../../../types/models"
 import Layout from "../../ui/Layout"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
@@ -15,11 +19,7 @@ export interface IFormValues {
   title: string
   slug: string
   description: string
-  state: EState[]
-  tileable: boolean
-  withMarkedInputs: boolean
-  withBeacons: boolean
-  categories: ECategory[]
+  tags: string[]
   cover: {
     x: number | null
     y: number | null
@@ -36,11 +36,7 @@ interface IValidFormValues {
   title: string
   slug: string
   description: string
-  state: EState[]
-  tileable: boolean
-  withMarkedInputs: boolean
-  withBeacons: boolean
-  categories: ECategory[]
+  tags: string[]
   cover: {
     x: number
     y: number
@@ -60,11 +56,7 @@ const baseInitialValues: IFormValues = {
   title: "",
   slug: "",
   description: "",
-  state: [],
-  tileable: false,
-  withMarkedInputs: false,
-  withBeacons: false,
-  categories: [],
+  tags: [],
   cover: {
     x: null,
     y: null,
@@ -86,11 +78,7 @@ const createInitialValues = (build?: IFullBuild): IFormValues => {
     title: build.title,
     slug: build.slug,
     description: build.description || "",
-    state: [],
-    tileable: false,
-    withMarkedInputs: false,
-    withBeacons: false,
-    categories: [],
+    tags: [],
     cover: {
       x: null,
       y: null,
@@ -121,11 +109,7 @@ const validation = {
       "A slug cannot use a reserved keyword"
     ),
   description: Yup.string(),
-  state: Yup.array().required(),
-  tileable: Yup.boolean(),
-  withMarkedInputs: Yup.boolean(),
-  withBeacons: Yup.boolean(),
-  categories: Yup.array(),
+  tags: Yup.array(Yup.string()),
   cover: Yup.object()
     .required()
     .shape({
@@ -161,10 +145,12 @@ export const validate = (fieldName: keyof IFormValues) => async (
   }
 }
 
-const toFormDataInner = (request: ICreateBuildRequest | ICreateVersionRequest | IEditBuildRequest) => {
+const toFormDataInner = (
+  request: ICreateBuildRequest | ICreateVersionRequest | IEditBuildRequest
+) => {
   // todo: not sure about the `ValidJSON` type. seems wrong to me...
   // `any` cast fixes the type error
-  let formData = asFormData(request as any)
+  const formData = asFormData(request as any)
 
   // todo: not sure why the backend doesn't pick up the [file]
   // it works with all other fields. maybe a dotnet bug?
@@ -177,12 +163,12 @@ const toFormDataInner = (request: ICreateBuildRequest | ICreateVersionRequest | 
 }
 
 const toFormData = (formValues: IValidFormValues) => {
-  let request: ICreateBuildRequest = {
+  const request: ICreateBuildRequest = {
     slug: formValues.slug,
     hash: formValues.hash,
     title: formValues.title,
     description: formValues.description,
-    tags: ["/production/rocket parts", "/train/track"],
+    tags: formValues.tags,
     cover: {
       x: formValues.cover.x,
       y: formValues.cover.y,
@@ -195,20 +181,20 @@ const toFormData = (formValues: IValidFormValues) => {
       icons: [
         {
           name: "solar-panel",
-          type: "item"
-        }
-      ]
-    }
+          type: "item",
+        },
+      ],
+    },
   }
 
   return toFormDataInner(request)
 }
 
 const toPatchFormData = (formValues: IValidFormValues) => {
-  let request: IEditBuildRequest = {
+  const request: IEditBuildRequest = {
     title: formValues.title,
     description: formValues.description,
-    tags: ["/production/rocket parts", "/train/track"],
+    tags: formValues.tags,
     cover: {
       x: formValues.cover.x,
       y: formValues.cover.y,
@@ -216,7 +202,7 @@ const toPatchFormData = (formValues: IValidFormValues) => {
       height: formValues.cover.height,
       file: formValues.cover.file,
       hash: formValues.cover.hash,
-    }
+    },
   }
 
   return toFormDataInner(request)

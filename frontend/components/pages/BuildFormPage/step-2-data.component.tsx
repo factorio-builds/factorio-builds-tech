@@ -1,7 +1,6 @@
 import React from "react"
 import { Field, FormikProps } from "formik"
-import { useCategories } from "../../../hooks/useCategories"
-import { useGameStates } from "../../../hooks/useGameStates"
+import tags from "../../../tags.json"
 import Input from "../../form/FormikInputWrapper"
 import InputGroup from "../../form/InputGroup"
 import Stacker from "../../ui/Stacker"
@@ -11,10 +10,7 @@ interface IStep2DataProps {
   formikProps: FormikProps<IFormValues>
 }
 
-const Step2Data: React.FC<IStep2DataProps> = (props) => {
-  const { categories } = useCategories()
-  const { gameStates } = useGameStates()
-
+const Step2Data: React.FC<IStep2DataProps> = () => {
   return (
     <>
       <Field
@@ -45,71 +41,29 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
       />
 
       <Stacker gutter={8}>
-        <Field
-          name="tileable"
-          label="Tileable"
-          type="checkbox"
-          component={Input}
-          validate={validate("tileable")}
-        />
+        {Object.keys(tags).map((tagCategory) => {
+          const tagGroup = tags[tagCategory as keyof typeof tags]
 
-        <Field
-          name="withMarkedInputs"
-          label="Inputs are marked"
-          type="checkbox"
-          component={Input}
-          validate={validate("withMarkedInputs")}
-        />
-
-        <Field
-          name="withBeacons"
-          label="With beacons"
-          type="checkbox"
-          component={Input}
-          validate={validate("withBeacons")}
-        />
+          return (
+            <InputGroup key={tagCategory} legend={tagCategory}>
+              <Stacker gutter={4}>
+                {tagGroup.map((tag) => {
+                  return (
+                    <Field
+                      key={tag}
+                      name="tags"
+                      label={tag}
+                      type="checkbox"
+                      value={`/${tagCategory}/${tag}`}
+                      component={Input}
+                    />
+                  )
+                })}
+              </Stacker>
+            </InputGroup>
+          )
+        })}
       </Stacker>
-
-      <InputGroup legend="Game states" error={props.formikProps.errors.state}>
-        <Stacker gutter={8}>
-          {gameStates.map((gameState) => {
-            return (
-              <Field
-                key={gameState.value}
-                name="state"
-                label={gameState.name}
-                prefix={gameState.icon}
-                type="checkbox"
-                value={gameState.value}
-                component={Input}
-                validate={validate("state")}
-              />
-            )
-          })}
-        </Stacker>
-      </InputGroup>
-
-      <InputGroup
-        legend="Categories"
-        error={props.formikProps.errors.categories}
-      >
-        <Stacker gutter={8}>
-          {categories.map((category) => {
-            return (
-              <Field
-                key={category.value}
-                name="categories"
-                label={category.name}
-                prefix={category.icon}
-                type="checkbox"
-                value={category.value}
-                component={Input}
-                validate={validate("categories")}
-              />
-            )
-          })}
-        </Stacker>
-      </InputGroup>
     </>
   )
 }
