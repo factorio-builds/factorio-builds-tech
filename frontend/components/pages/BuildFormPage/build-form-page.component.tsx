@@ -114,23 +114,53 @@ const validation = {
   cover: Yup.object()
     .required()
     .shape({
-      x: Yup.number(),
-      y: Yup.number(),
-      width: Yup.number(),
-      height: Yup.number(),
+      x: Yup.number()
+        .nullable()
+        .when("cover.file", {
+          is: Boolean,
+          then: Yup.number().required("cover.x is required"),
+        }),
+      y: Yup.number()
+        .nullable()
+        .when("cover.file", {
+          is: Boolean,
+          then: Yup.number().required("cover.y is required"),
+        }),
+      width: Yup.number()
+        .nullable()
+        .when("cover.file", {
+          is: Boolean,
+          then: Yup.number().required("cover.width is required"),
+        }),
+      height: Yup.number()
+        .nullable()
+        .when("cover.file", {
+          is: Boolean,
+          then: Yup.number().required("cover.height is required"),
+        }),
       file: Yup.mixed()
-        .required("A file is required")
-        .test(
-          "fileSize",
-          "File too large",
-          (value) => value && value.size <= FILE_SIZE
-        )
-        .test(
-          "fileFormat",
-          "Unsupported Format",
-          (value) => value && SUPPORTED_FORMATS.includes(value.type)
-        ),
-      hash: Yup.string(),
+        .nullable()
+        .when("cover.hash", {
+          is: null,
+          then: Yup.mixed()
+            .required("A file is required")
+            .test(
+              "fileSize",
+              "File too large",
+              (value) => value && value.size <= FILE_SIZE
+            )
+            .test(
+              "fileFormat",
+              "Unsupported Format",
+              (value) => value && SUPPORTED_FORMATS.includes(value.type)
+            ),
+        }),
+      hash: Yup.string()
+        .nullable()
+        .when("cover.file", {
+          is: null,
+          then: Yup.string().required("A hash is required"),
+        }),
     }),
 }
 
