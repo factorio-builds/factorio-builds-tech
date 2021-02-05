@@ -48,7 +48,7 @@ interface IValidFormValues {
   }
 }
 
-const FILE_SIZE = 160 * 1024
+const FILE_SIZE = 10 * 1000 * 1024 // 10MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
 
 const baseInitialValues: IFormValues = {
