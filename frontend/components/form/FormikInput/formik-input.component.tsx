@@ -1,11 +1,10 @@
 import React from "react"
-import { FieldProps, FormikHandlers, useField } from "formik"
+import { FieldProps, useField } from "formik"
 import Input from "../Input"
 
 interface IFormikInputProps extends FieldProps {
   id: string
   type: "text" | "textarea"
-  onChange?: FormikHandlers["handleChange"]
   spellCheck?: boolean
   onKeyPress?: (
     e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,7 +23,10 @@ const FormikInput: React.FC<IFormikInputProps> = ({
       <Input.Textarea
         id={id}
         name={field.name}
-        onChange={field.onChange}
+        onChange={(e) => {
+          field.onChange(e)
+          restProps.form.setFieldTouched(field.name)
+        }}
         onKeyPress={restProps.onKeyPress}
         value={field.value}
         spellCheck={restProps.spellCheck}
@@ -36,7 +38,10 @@ const FormikInput: React.FC<IFormikInputProps> = ({
     <Input.Text
       id={id}
       name={field.name}
-      onChange={field.onChange}
+      onChange={(e) => {
+        field.onChange(e)
+        restProps.form.setFieldTouched(field.name)
+      }}
       onKeyPress={restProps.onKeyPress}
       value={field.value}
       spellCheck={restProps.spellCheck}

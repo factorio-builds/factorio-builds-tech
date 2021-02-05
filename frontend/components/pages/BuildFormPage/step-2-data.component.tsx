@@ -4,7 +4,7 @@ import tags from "../../../tags.json"
 import Input from "../../form/FormikInputWrapper"
 import InputGroup from "../../form/InputGroup"
 import Stacker from "../../ui/Stacker"
-import { IFormValues, validate } from "./build-form-page.component"
+import { IFormValues } from "./build-form-page.component"
 
 interface IStep2DataProps {
   formikProps: FormikProps<IFormValues>
@@ -19,17 +19,9 @@ const Step2Data: React.FC<IStep2DataProps> = () => {
         type="text"
         required
         component={Input}
-        validate={validate("title")}
       />
 
-      <Field
-        name="slug"
-        label="Slug"
-        type="text"
-        required
-        component={Input}
-        validate={validate("slug")}
-      />
+      <Field name="slug" label="Slug" type="text" required component={Input} />
 
       <Field
         name="description"
@@ -37,7 +29,6 @@ const Step2Data: React.FC<IStep2DataProps> = () => {
         type="textarea"
         rows="5"
         component={Input}
-        validate={validate("description")}
       />
 
       <Stacker gutter={8}>

@@ -98,6 +98,7 @@ const validation = {
     .max(128, "Too Long!")
     .required("Required"),
   slug: Yup.string()
+    .required("A slug is required")
     .min(3, "Too Short!")
     .max(100, "Too Long!")
     .matches(
@@ -248,6 +249,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   return (
     <Formik<IFormValues>
       initialValues={initialValues}
+      validationSchema={Yup.object(validation)}
       onSubmit={(values) => {
         setSubmit({
           loading: true,

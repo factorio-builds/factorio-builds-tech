@@ -3,13 +3,10 @@ import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
 
-export const StyledInputGroup = styled.div`
+export const ErrorMessageWrapper = styled.div`
+  ${getTypo(ETypo.FORM_INPUT)};
   display: flex;
-  flex-direction: column;
-`
-
-export const Legend = styled.div`
-  ${getTypo(ETypo.FORM_LABEL)};
-  color: ${COLOR.PURPLE900};
-  margin-bottom: 6px;
+  align-items: center;
+  color: ${COLOR.DANGER};
+  margin-top: 4px;
 `
