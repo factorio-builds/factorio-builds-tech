@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useDropzone } from "react-dropzone"
 import cx from "classnames"
 import Lamp from "../../../icons/lamp"
@@ -14,7 +14,8 @@ export interface IImageUpload {
 
 interface IImageUploadProps {
   label: string
-  image: string | null
+  imageFile: File | null
+  imageUrl: string | null
   onChange: (image: IImageUpload) => void
 }
 
@@ -31,12 +32,16 @@ function toImage(buffer: ArrayBuffer) {
   return urlCreator.createObjectURL(blob)
 }
 
-function ImageUpload(props: IImageUploadProps): JSX.Element {
+function ImageUpload(props: IImageUploadProps): JSX.Element | null {
   const [imagePreview, setImagePreview] = useState<IImagePreview | null>(null)
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const [file] = acceptedFiles
+  useEffect(() => {
+    if (props.imageFile) {
+      readFile(props.imageFile)
+    }
+  }, [])
 
+  const readFile = useCallback((file: File) => {
     const reader = new FileReader()
 
     reader.onabort = () => {
@@ -65,6 +70,12 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
     reader.readAsArrayBuffer(file)
   }, [])
 
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const [file] = acceptedFiles
+
+    readFile(file)
+  }, [])
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: false,
@@ -86,7 +97,11 @@ function ImageUpload(props: IImageUploadProps): JSX.Element {
   //   })
   // }
 
-  const image = imagePreview?.src || props.image
+  const image = imagePreview?.src || props.imageUrl
+
+  if (!image && props.imageFile) {
+    return null
+  }
 
   return (
     <SC.ImageUploadWrapper
