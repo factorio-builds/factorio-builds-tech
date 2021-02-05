@@ -27,9 +27,9 @@ const PageButton = (props: IPageButton): JSX.Element => {
       className={cx({ "is-active": props.isActive })}
       onClick={props.onClick}
     >
-      <SC.PageNumber>1</SC.PageNumber>
+      <SC.PageNumber>{props.number}</SC.PageNumber>
       <SC.PageBody orientation="vertical" gutter={4}>
-        <span>Data</span>
+        <span>{props.title}</span>
         <SC.PageFeedback
           orientation="horizontal"
           gutter={8}
@@ -40,7 +40,7 @@ const PageButton = (props: IPageButton): JSX.Element => {
               <ThumbsUp /> <span>Valid</span>
             </>
           ) : (
-            "Invalid"
+            "Incomplete"
           )}
         </SC.PageFeedback>
       </SC.PageBody>
