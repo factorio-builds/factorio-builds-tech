@@ -48,7 +48,7 @@ interface IValidFormValues {
   }
 }
 
-const FILE_SIZE = 160 * 1024
+const FILE_SIZE = 10 * 1000 * 1024 // 10MB
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
 
 const baseInitialValues: IFormValues = {
@@ -98,9 +98,9 @@ const validation = {
     .max(128, "Too Long!")
     .required("Required"),
   slug: Yup.string()
-    .required("A slug is required")
     .min(3, "Too Short!")
     .max(100, "Too Long!")
+    .required("A slug is required")
     .matches(
       /[a-zA-Z0-9_-]+/,
       "A slug can only contain alphanumerical characters, plus _ and -"
@@ -116,51 +116,71 @@ const validation = {
     .shape({
       x: Yup.number()
         .nullable()
-        .when("cover.file", {
-          is: Boolean,
-          then: Yup.number().required("cover.x is required"),
+        .test({
+          name: "x",
+          message: "cover.x is required",
+          test: function (value) {
+            if (this.parent.file === null) {
+              return true
+            }
+            return Number.isInteger(value)
+          },
         }),
       y: Yup.number()
         .nullable()
-        .when("cover.file", {
-          is: Boolean,
-          then: Yup.number().required("cover.y is required"),
+        .test({
+          name: "y",
+          message: "cover.y is required",
+          test: function (value) {
+            if (this.parent.file === null) {
+              return true
+            }
+            return Number.isInteger(value)
+          },
         }),
       width: Yup.number()
         .nullable()
-        .when("cover.file", {
-          is: Boolean,
-          then: Yup.number().required("cover.width is required"),
+        .test({
+          name: "width",
+          message: "cover.width is required",
+          test: function (value) {
+            if (this.parent.file === null) {
+              return true
+            }
+            return Number.isInteger(value)
+          },
         }),
       height: Yup.number()
         .nullable()
-        .when("cover.file", {
-          is: Boolean,
-          then: Yup.number().required("cover.height is required"),
+        .test({
+          name: "height",
+          message: "cover.height is required",
+          test: function (value) {
+            if (this.parent.file === null) {
+              return true
+            }
+            return Number.isInteger(value)
+          },
         }),
       file: Yup.mixed()
         .nullable()
-        .when("cover.hash", {
-          is: null,
-          then: Yup.mixed()
-            .required("A file is required")
-            .test(
-              "fileSize",
-              "File too large",
-              (value) => value && value.size <= FILE_SIZE
-            )
-            .test(
-              "fileFormat",
-              "Unsupported Format",
-              (value) => value && SUPPORTED_FORMATS.includes(value.type)
-            ),
-        }),
-      hash: Yup.string()
-        .nullable()
-        .when("cover.file", {
-          is: null,
-          then: Yup.string().required("A hash is required"),
-        }),
+        .required("A file is required")
+        .test(
+          "fileSize",
+          "File too large",
+          (value) => value && value.size <= FILE_SIZE
+        )
+        .test(
+          "fileFormat",
+          "Unsupported Format",
+          (value) => value && SUPPORTED_FORMATS.includes(value.type)
+        ),
+      // hash: Yup.string()
+      //   .nullable()
+      //   .when("file", {
+      //     is: null,
+      //     then: Yup.string().required("A hash is required"),
+      //   }),
     }),
 }
 
@@ -280,6 +300,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     <Formik<IFormValues>
       initialValues={initialValues}
       validationSchema={Yup.object(validation)}
+      validateOnMount={true}
       onSubmit={(values) => {
         setSubmit({
           loading: true,
