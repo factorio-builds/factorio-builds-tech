@@ -107,7 +107,7 @@ export const NoImageBackdrop = styled.div`
 export const Recommended = styled.div`
   display: flex;
   align-items: center;
-  background: #877599;
+  background: #758099;
   color: ${COLOR.FADEDBLUE700};
   padding: 14px 14px;
   font-size: 12px;

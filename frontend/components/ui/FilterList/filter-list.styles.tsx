@@ -38,6 +38,10 @@ export const GroupName = styled.button`
   font-weight: 700;
   width: 100%;
   cursor: pointer;
+
+  svg path {
+    fill: #82d2a5;
+  }
 `
 
 export const GroupFilters = styled(Stacker)`
