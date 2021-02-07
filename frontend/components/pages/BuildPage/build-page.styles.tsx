@@ -4,7 +4,6 @@ import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
 import { ButtonWrapper } from "../../ui/Button/button.styles"
-import ItemIcon from "../../ui/ItemIcon"
 import Stacker from "../../ui/Stacker"
 
 export const BuildImage = styled.div`
@@ -19,15 +18,6 @@ export const BuildImage = styled.div`
 
 export const CopyClipboardWrapper = styled.div`
   margin-bottom: 16px;
-`
-
-export const WithRequiredItem = styled(Stacker)`
-  ${getTypo(ETypo.METADATA)};
-  align-items: center;
-`
-
-export const IconImg = styled(ItemIcon)`
-  width: 20px;
 `
 
 export const EditBuild = styled.span`

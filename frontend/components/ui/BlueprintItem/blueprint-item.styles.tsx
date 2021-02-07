@@ -88,3 +88,12 @@ export const Description = styled.p`
     margin: 16px 0 0 0;
   }
 `
+
+export const RequiredItems = styled.div`
+  //
+`
+
+export const Subtitle = styled.h3`
+  ${getTypo(ETypo.METADATA_TITLE)};
+  font-size: 16px;
+`
