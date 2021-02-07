@@ -21,7 +21,7 @@ export const ButtonsStack = styled(Stacker)`
   margin-top: 16px;
 `
 
-export const SkipButton = styled.button`
+export const TextButton = styled.button`
   ${getTypo(ETypo.BUTTON)};
   background: none;
   border: none;
