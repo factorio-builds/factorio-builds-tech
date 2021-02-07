@@ -42,6 +42,14 @@ export const ButtonWrapper = styled.button`
     background: linear-gradient(#25879d, #1f5d6a);
   }
 
+  &.variant-cta {
+    background: linear-gradient(#6b5bcd, #4e87cb);
+  }
+
+  &.variant-cta:hover {
+    background: linear-gradient(#5544c5, #3978c6);
+  }
+
   &.variant-default {
     background: #4c5164;
   }
@@ -53,6 +61,7 @@ export const ButtonWrapper = styled.button`
   &.size-small {
     font-size: 13px;
     line-height: 22px;
+    border-radius: 3px;
   }
 `
 

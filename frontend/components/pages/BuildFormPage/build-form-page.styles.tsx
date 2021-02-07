@@ -26,12 +26,12 @@ export const TextButton = styled.button`
   background: none;
   border: none;
   padding: 0;
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
   text-decoration: underline;
   cursor: pointer;
 
   &:hover {
-    color: ${COLOR.PURPLE900};
+    color: ${COLOR.FADEDBLUE900};
   }
 `
 
@@ -62,7 +62,7 @@ export const PageNumber = styled.div`
   align-items: center;
   width: 30px;
   height: 30px;
-  border: 2px solid ${COLOR.PURPLE700};
+  border: 2px solid ${COLOR.FADEDBLUE700};
   border-radius: 50%;
   margin-right: 8px;
 `

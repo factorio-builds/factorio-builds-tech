@@ -9,7 +9,7 @@ export const Square = styled.div`
   background: ${COLOR.INPUT};
   width: 34px;
   height: 34px;
-  border: 2px solid ${COLOR.PURPLE500};
+  border: 2px solid ${COLOR.FADEDBLUE500};
 
   &::after {
     content: "";
@@ -45,7 +45,7 @@ export const CheckboxWrapper = styled.div`
   }
 
   &:hover ${Square}::after {
-    background: ${COLOR.PURPLE500};
+    background: ${COLOR.FADEDBLUE500};
   }
 
   &:focus-within ${Square} {

@@ -9,9 +9,9 @@ export const BuildListLookupStatWrapper = styled.div`
 `
 
 export const LookupTime = styled.div`
-  color: ${COLOR.PURPLE500};
+  color: ${COLOR.FADEDBLUE500};
 `
 
 export const Count = styled.div`
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
 `

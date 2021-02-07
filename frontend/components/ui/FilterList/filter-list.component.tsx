@@ -10,7 +10,7 @@ function FilterList(): JSX.Element {
   return (
     <SC.FilterListWrapper>
       <SC.Title>Filter builds</SC.Title>
-      <Stacker gutter={8}>
+      <Stacker gutter={0}>
         {Object.keys(tags).map((tagCategory) => {
           const tagGroup = tags[tagCategory as keyof typeof tags]
 

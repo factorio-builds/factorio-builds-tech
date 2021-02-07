@@ -23,13 +23,13 @@ export const ImageWrapper = styled.div`
 
 export const Content = styled.div`
   padding: 16px;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   margin: 4px 0;
-  background: #241a34;
+  background: ${COLOR.CARD};
   border-radius: 5px;
 
   ${BlueprintItemInner}:hover & {
-    background: ${lighten(0.05, "#241a34")};
+    background: ${lighten(0.05, COLOR.CARD)};
     color: #fff;
   }
 `
@@ -38,7 +38,7 @@ export const Info = styled.div`
   display: flex;
   gap: 16px;
   margin-top: 16px;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
 `
 
 export const Title = styled(Stacker)`
@@ -54,7 +54,7 @@ export const Title = styled(Stacker)`
 `
 
 export const Meta = styled.small`
-  color: ${COLOR.PURPLE500};
+  color: ${COLOR.FADEDBLUE500};
   font-weight: 400;
 `
 

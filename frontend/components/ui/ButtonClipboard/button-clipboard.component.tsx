@@ -18,7 +18,7 @@ const CopyToClipboard = ({
   }, [toCopy])
 
   return (
-    <Button variant="alt" onClick={copyToClipboard} {...restProps}>
+    <Button onClick={copyToClipboard} {...restProps}>
       <Copy /> {children}
     </Button>
   )

@@ -77,7 +77,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
           </Button>
           <CopyStringToClipboard
             toCopy={props.build.latest_version.payload.encoded}
-            variant="default"
+            variant="cta"
             size="small"
           />
         </Stacker>

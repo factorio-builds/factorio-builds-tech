@@ -5,7 +5,7 @@ import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildListSortWrapper = styled.div`
   ${getTypo(ETypo.BODY)};
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
   margin-bottom: 20px;
   text-align: right;
 `
@@ -14,7 +14,7 @@ export const Option = styled.div`
   cursor: pointer;
 
   &:hover {
-    color: ${COLOR.PURPLE900};
+    color: ${COLOR.FADEDBLUE900};
   }
 
   &.is-active {

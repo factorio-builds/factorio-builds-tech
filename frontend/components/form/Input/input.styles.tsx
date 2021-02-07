@@ -6,8 +6,8 @@ import { ETypo } from "../../../design/tokens/typo"
 const BaseInput = css`
   padding: 5px 14px;
   background: ${COLOR.INPUT};
-  border: 2px solid ${COLOR.PURPLE500};
-  color: ${COLOR.PURPLE700};
+  border: 2px solid ${COLOR.FADEDBLUE500};
+  color: ${COLOR.FADEDBLUE700};
 
   &:hover {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
@@ -34,7 +34,7 @@ export const StyledInput = styled.input`
   line-height: 1.8;
   border: 0;
   background: transparent;
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
   flex: 1 0 auto;
 
   &:focus {
@@ -42,7 +42,7 @@ export const StyledInput = styled.input`
   }
 
   &::placeholder {
-    color: ${COLOR.PURPLE500};
+    color: ${COLOR.FADEDBLUE500};
   }
 `
 
@@ -54,6 +54,6 @@ export const StyledTextarea = styled.textarea`
   min-height: 200px;
 
   &::placeholder {
-    color: ${COLOR.PURPLE500};
+    color: ${COLOR.FADEDBLUE500};
   }
 `

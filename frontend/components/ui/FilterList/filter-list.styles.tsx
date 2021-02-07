@@ -18,7 +18,13 @@ export const Separator = styled.div`
   background: #402e5b;
 `
 
-export const FilterGroup = styled.div``
+export const FilterGroup = styled.div`
+  padding: 4px 0;
+
+  & + & {
+    border-top: 1px solid ${COLOR.FADEDBLUE300};
+  }
+`
 
 export const GroupName = styled.button`
   display: flex;
@@ -28,10 +34,14 @@ export const GroupName = styled.button`
   font-size: 18px;
   border: none;
   padding: 4px 0;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   font-weight: 700;
   width: 100%;
   cursor: pointer;
+
+  svg path {
+    fill: #82d2a5;
+  }
 `
 
 export const GroupFilters = styled(Stacker)`
