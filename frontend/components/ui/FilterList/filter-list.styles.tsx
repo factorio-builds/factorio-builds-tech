@@ -18,7 +18,13 @@ export const Separator = styled.div`
   background: #402e5b;
 `
 
-export const FilterGroup = styled.div``
+export const FilterGroup = styled.div`
+  padding: 4px 0;
+
+  & + & {
+    border-top: 1px solid ${COLOR.FADEDBLUE300};
+  }
+`
 
 export const GroupName = styled.button`
   display: flex;

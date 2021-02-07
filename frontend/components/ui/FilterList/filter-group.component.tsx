@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import startCase from "lodash/startCase"
 import Caret from "../../../icons/caret"
 import { ITag } from "../../../redux/reducers/filters"
 import Filter from "../Filter"
@@ -19,7 +20,7 @@ function FilterGroup(props: IFilterGroupProps): JSX.Element {
   return (
     <SC.FilterGroup>
       <SC.GroupName onClick={toggle}>
-        {props.name} <Caret inverted={expanded} />
+        {startCase(props.name)} <Caret inverted={expanded} />
       </SC.GroupName>
 
       {expanded && (
