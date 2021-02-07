@@ -211,11 +211,6 @@ const Step1: React.FC<IStep1Props> = (props) => {
             >
               Continue
             </Button>
-            {!stepState.isValid && (
-              <SC.SkipButton onClick={props.goToNextStep}>
-                or skip
-              </SC.SkipButton>
-            )}
           </SC.ButtonsStack>
         </Stacker>
       </SC.Content>
