@@ -3,6 +3,7 @@ import cx from "classnames"
 import Caret from "../../../icons/caret"
 import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { countEntities, isBook } from "../../../utils/build"
+import BlueprintRequiredItems from "../BlueprintRequiredItems"
 import BuildIcon from "../BuildIcon"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
@@ -101,16 +102,24 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   <img src={props.image.href} alt="" width={200} />
                 </SC.ImageWrapper>
               )}
-              {props.description && (
-                <SC.Description>
-                  {props.description.split("\n").map((text) => (
-                    <>
-                      {text}
-                      <br />
-                    </>
-                  ))}
-                </SC.Description>
-              )}
+              <Stacker orientation="vertical" gutter={8}>
+                {props.description && (
+                  <SC.Description>
+                    {props.description.split("\n").map((text) => (
+                      <>
+                        {text}
+                        <br />
+                      </>
+                    ))}
+                  </SC.Description>
+                )}
+                {!props.isBook && props.entities && (
+                  <SC.RequiredItems>
+                    <SC.Subtitle>Required items</SC.Subtitle>
+                    <BlueprintRequiredItems entities={props.entities} />
+                  </SC.RequiredItems>
+                )}
+              </Stacker>
             </SC.Info>
           )}
         </SC.Content>

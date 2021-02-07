@@ -14,14 +14,14 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
 }
 
 interface IBlueprintRequiredItemsProps {
-  blueprintPayload: IBlueprintPayload
+  entities: IBlueprintPayload["entities"]
 }
 
 function BlueprintRequiredItems(
   props: IBlueprintRequiredItemsProps
 ): JSX.Element {
   const sortedRequiredItems = useMemo(() => {
-    const entities = props.blueprintPayload.entities
+    const entities = props.entities
 
     return Object.keys(entities)
       .map((itemName) => {
@@ -35,7 +35,7 @@ function BlueprintRequiredItems(
 
         return a.count < b.count ? 1 : -1
       })
-  }, [props.blueprintPayload.hash])
+  }, [props.entities])
 
   return (
     <Stacker gutter={8}>

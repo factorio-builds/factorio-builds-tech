@@ -9,7 +9,7 @@ const RequiredItemsTab: TTabComponent = (props) => {
     <Tab {...props}>
       {!isBook(props.build.latest_version.payload) && (
         <BlueprintRequiredItems
-          blueprintPayload={props.build.latest_version.payload}
+          entities={props.build.latest_version.payload.entities}
         />
       )}
     </Tab>
