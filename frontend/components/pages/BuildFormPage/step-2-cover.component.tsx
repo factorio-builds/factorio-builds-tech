@@ -24,7 +24,8 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
     <SC.CoverWrapper>
       <ImageUpload
         label="Build image"
-        image={props.formikProps.values.cover.url || null}
+        imageFile={props.formikProps.values.cover.file || null}
+        imageUrl={props.formikProps.values.cover.url || null}
         onChange={onChangeImage}
       />
       {props.formikProps.touched.cover?.file &&
