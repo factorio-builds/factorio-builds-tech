@@ -70,9 +70,9 @@ const Step2: React.FC<IStep2Props> = (props) => {
               </Stacker>
             </Button>
             {page === "data" && (
-              <SC.SkipButton onClick={() => setPage("cover")}>
+              <SC.TextButton onClick={() => setPage("cover")}>
                 pick cover image
-              </SC.SkipButton>
+              </SC.TextButton>
             )}
           </SC.ButtonsStack>
         </Stacker>
