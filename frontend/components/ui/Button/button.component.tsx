@@ -2,7 +2,7 @@ import React from "react"
 import * as SC from "./button.styles"
 
 export interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
-  variant?: "success" | "alt" | "default"
+  variant?: "success" | "alt" | "cta" | "default"
   size?: "medium" | "small"
   counter?: React.ReactText
 }

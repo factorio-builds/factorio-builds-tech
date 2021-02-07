@@ -28,7 +28,7 @@ export const StyledLogo = styled(Logo)`
 
 export const CreateBuildButton = styled.button`
   ${getTypo(ETypo.BUTTON)};
-  background: linear-gradient(180deg, #7950b9 0%, #543b7a 100%);
+  background: linear-gradient(180deg, #50b97f 0%, #3b7a58 100%);
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -37,7 +37,7 @@ export const CreateBuildButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background: linear-gradient(180deg, #613d99 0%, #3d2b59 100%);
+    background: linear-gradient(180deg, #40a06b 0%, #2e6046 100%);
   }
 `
 
@@ -48,11 +48,11 @@ export const StyledStacker = styled(Stacker)`
 
 export const InnerLink = styled.span`
   ${getTypo(ETypo.BUTTON)};
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
   text-transform: uppercase;
   cursor: pointer;
 
   &:hover {
-    color: ${COLOR.PURPLE900};
+    color: ${COLOR.FADEDBLUE900};
   }
 `

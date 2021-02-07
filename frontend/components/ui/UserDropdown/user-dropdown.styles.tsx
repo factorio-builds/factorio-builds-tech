@@ -19,7 +19,7 @@ export const Dropdown = styled.div`
   padding: 10px 17px;
 
   .is-open & {
-    border-color: ${COLOR.PURPLE500};
+    border-color: ${COLOR.FADEDBLUE500};
   }
 `
 
@@ -33,7 +33,7 @@ export const User = styled(StyledStacker)`
   cursor: pointer;
 
   svg path {
-    fill: ${COLOR.PURPLE500};
+    fill: ${COLOR.FADEDBLUE500};
   }
 `
 
@@ -63,7 +63,7 @@ export const DropdownContent = styled.div`
 
 export const Spacer = styled.div`
   width: 100%;
-  border-top: 1px solid ${COLOR.PURPLE300};
+  border-top: 1px solid ${COLOR.FADEDBLUE300};
   margin: 8px 0;
 `
 

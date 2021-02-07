@@ -28,7 +28,7 @@ export const GroupName = styled.button`
   font-size: 18px;
   border: none;
   padding: 4px 0;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   font-weight: 700;
   width: 100%;
   cursor: pointer;

@@ -5,20 +5,21 @@ import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildHeaderWrapper = styled.header`
   margin-bottom: 16px;
-  padding-bottom: 16px;
-  color: ${COLOR.PURPLE700};
-  background: #0a090c;
+  padding: 10px;
+  border-radius: 7px;
+  color: ${COLOR.FADEDBLUE700};
+  background: ${COLOR.SUBHEADER};
 `
 
 export const BuildTitle = styled.h2`
   ${getTypo(ETypo.PAGE_HEADER)};
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   margin: 0;
 `
 
 export const StyledLink = styled.a`
   font-weight: 700;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   text-decoration: none;
 
   &:hover {

@@ -8,7 +8,7 @@ import ItemIcon from "../../ui/ItemIcon"
 import Stacker from "../../ui/Stacker"
 
 export const BuildImage = styled.div`
-  border: 4px solid ${COLOR.PURPLE300};
+  border: 4px solid ${COLOR.FADEDBLUE300};
   border-radius: 4px;
 
   img {
@@ -50,7 +50,7 @@ export const BlueprintData = styled.textarea`
   overflow-y: scroll;
   margin-top: 12px;
   background: transparent;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   border: none;
   width: 100%;
 `
@@ -82,17 +82,17 @@ export const Tab = styled.button`
   background: none;
   border: none;
   padding: 0;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   border-bottom: 2px solid transparent;
   cursor: pointer;
 
   &:hover {
-    border-color: ${COLOR.PURPLE900};
+    border-color: ${COLOR.FADEDBLUE900};
   }
 
   &.is-active {
     font-weight: 700;
-    border-color: ${COLOR.PURPLE900};
+    border-color: ${COLOR.FADEDBLUE900};
   }
 `
 

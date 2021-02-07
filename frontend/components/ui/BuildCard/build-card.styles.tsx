@@ -12,12 +12,13 @@ export const BuildCardWrapper = styled.div`
   justify-content: flex-end;
   cursor: pointer;
   border-radius: 4px;
-  background: #241a34;
+  background: ${COLOR.CARD};
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   padding: 10px;
 
   &:hover {
-    background: ${lighten(0.05, "#241a34")};
+    background: ${lighten(0.05, COLOR.CARD)};
   }
 `
 
@@ -36,7 +37,7 @@ export const ImageWrapper = styled.div`
 
 export const Content = styled.div`
   padding: 10px 0 0;
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
 
   ${BuildCardWrapper}:hover & {
     color: #fff;
@@ -68,10 +69,10 @@ export const Categories = styled(Stacker)`
 
 export const Category = styled.div`
   ${getTypo(ETypo.METADATA)};
-  color: #a392b5;
+  color: #9ca4c3;
   text-transform: lowercase;
 
   ${BuildCardWrapper}:hover & {
-    color: ${lighten(0.05, "#a392b5")};
+    color: ${lighten(0.05, "#9CA4C3")};
   }
 `

@@ -10,6 +10,6 @@ export const StyledInputGroup = styled.div`
 
 export const Legend = styled.div`
   ${getTypo(ETypo.FORM_LABEL)};
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
   margin-bottom: 6px;
 `

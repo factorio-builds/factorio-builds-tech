@@ -41,7 +41,9 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             padding: "1px 13px",
             background: COLOR.INPUT,
             border: "2px solid",
-            borderColor: `${error ? COLOR.DANGER : COLOR.PURPLE500} !important`,
+            borderColor: `${
+              error ? COLOR.DANGER : COLOR.FADEDBLUE500
+            } !important`,
             borderRadius: 0,
             boxShadow: state.isFocused ? focusedShadow : "none",
             transition: "none",
@@ -56,7 +58,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
           ...provided,
           display: "flex",
           alignItems: "center",
-          color: COLOR.PURPLE700,
+          color: COLOR.FADEDBLUE700,
           "& img": {
             width: "20px",
             marginRight: "8px",
@@ -68,7 +70,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         }),
         placeholder: (provided) => ({
           ...provided,
-          color: COLOR.PURPLE500,
+          color: COLOR.FADEDBLUE500,
           margin: 0,
         }),
         menu: (provided) => ({
@@ -76,8 +78,8 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
           marginTop: "-2px",
           border: "2px solid",
           background: COLOR.INPUT,
-          borderColor: COLOR.PURPLE500,
-          boxShadow: `inset 0 1px 0 0 ${COLOR.PURPLE300}`,
+          borderColor: COLOR.FADEDBLUE500,
+          boxShadow: `inset 0 1px 0 0 ${COLOR.FADEDBLUE300}`,
           borderTop: "none",
           borderRadius: 0,
           padding: "6px",
@@ -87,7 +89,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
         }),
         dropdownIndicator: (provided) => ({
           ...provided,
-          color: COLOR.PURPLE500,
+          color: COLOR.FADEDBLUE500,
           paddingRight: 0,
         }),
         input: (provided) => ({
@@ -116,7 +118,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
           color:
             state.isSelected || state.isFocused
               ? "#241A34 !important"
-              : COLOR.PURPLE700,
+              : COLOR.FADEDBLUE700,
           "&:hover": {
             background: COLOR.FOCUSED,
             color: "#241A34 !important",

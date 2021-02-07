@@ -17,7 +17,7 @@ export const TopRow = styled.div`
 // TODO: extract
 export const Label = styled.label`
   ${getTypo(ETypo.FORM_LABEL)};
-  color: ${COLOR.PURPLE900};
+  color: ${COLOR.FADEDBLUE900};
 `
 
 export const SwapImage = styled.button`
@@ -44,7 +44,7 @@ export const UploadZone = styled.div`
   box-sizing: border-box;
   width: 300px;
   height: 377px;
-  border: 2px solid ${COLOR.PURPLE500};
+  border: 2px solid ${COLOR.FADEDBLUE500};
   overflow-y: hidden;
   overflow-y: hidden;
   margin: 0 auto;
@@ -86,7 +86,7 @@ export const Hint = styled.div`
   ${getTypo(ETypo.FORM_INPUT)};
   position: relative;
   z-index: 1;
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
   letter-spacing: 0.05em;
 `
 
@@ -108,7 +108,7 @@ export const Recommended = styled.div`
   display: flex;
   align-items: center;
   background: #877599;
-  color: ${COLOR.PURPLE700};
+  color: ${COLOR.FADEDBLUE700};
   padding: 14px 14px;
   font-size: 12px;
   margin-top: 7px;
