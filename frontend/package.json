@@ -18,7 +18,7 @@
     "axios": "^0.21.1",
     "axios-hooks": "^2.3.0",
     "classnames": "^2.2.6",
-    "date-fns": "^2.16.1",
+    "date-fns": "^2.17.0",
     "dotenv": "^8.2.0",
     "formik": "^2.2.6",
     "json-form-data": "^1.7.2",
