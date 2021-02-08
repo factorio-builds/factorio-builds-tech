@@ -1,9 +1,38 @@
 {
   "presets": ["next/babel"],
   "plugins": [
-    ["styled-components", { "ssr": true }],
+    [
+      "styled-components",
+      { "ssr": true, "displayName": true, "preprocess": false }
+    ],
     ["babel-plugin-transform-typescript-metadata"],
     ["@babel/plugin-transform-runtime"],
     ["@babel/plugin-proposal-decorators", { "legacy": true }]
-  ]
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        [
+          "styled-components",
+          { "ssr": true, "displayName": true, "preprocess": false }
+        ],
+        ["babel-plugin-transform-typescript-metadata"],
+        ["@babel/plugin-transform-runtime"],
+        ["@babel/plugin-proposal-decorators", { "legacy": true }]
+      ],
+      "presets": ["next/babel"]
+    },
+    "production": {
+      "plugins": [
+        [
+          "styled-components",
+          { "ssr": true, "displayName": true, "preprocess": false }
+        ],
+        ["babel-plugin-transform-typescript-metadata"],
+        ["@babel/plugin-transform-runtime"],
+        ["@babel/plugin-proposal-decorators", { "legacy": true }]
+      ],
+      "presets": ["next/babel"]
+    }
+  }
 }
