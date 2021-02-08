@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useMemo } from "react"
 import cx from "classnames"
 import Image from "next/image"
 import Link from "next/link"
+import { NextRouter } from "next/router"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
@@ -17,6 +18,7 @@ import usePayload, { TPayload } from "./usePayload"
 
 interface IBuildPageProps {
   build: IFullBuild
+  router: NextRouter
 }
 
 export type ITabComponentProps = {
@@ -28,40 +30,52 @@ export type ITabComponentProps = {
 export type TTabComponent = (props: ITabComponentProps) => JSX.Element
 
 interface ITab {
+  key: string
   label: string
   tab: TTabComponent
 }
 
 interface ITabs {
   build: IFullBuild
+  current?: string
   tabs: ITab[]
   payload: TPayload
   aside: React.ReactElement
 }
 
 const Tabs = (props: ITabs): JSX.Element => {
-  const [currentTab, setCurrentTab] = useState(0)
+  const isCurrentTab = useCallback(
+    (tab: ITab) => {
+      if (!props.current && tab.key === "details") {
+        return true
+      }
 
-  useEffect(() => {
-    setCurrentTab(0)
-  }, [props.build.latest_version.hash])
+      return tab.key === props.current
+    },
+    [props.current]
+  )
 
   return (
     <SC.TabsWrapper>
       <Stacker orientation="horizontal" gutter={16}>
-        {props.tabs.map((tab, index) => (
-          <SC.Tab
+        {props.tabs.map((tab) => (
+          <Link
             key={tab.label}
-            onClick={() => setCurrentTab(index)}
-            className={cx({ "is-active": currentTab === index })}
+            href={{
+              pathname: `/${props.build.owner.username}/${props.build.slug}`,
+              query: { tab: tab.key },
+            }}
+            passHref
           >
-            {tab.label}
-          </SC.Tab>
+            <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
+              {tab.label}
+            </SC.Tab>
+          </Link>
         ))}
       </Stacker>
       <SC.TabsContent orientation="horizontal" gutter={16}>
         <SC.TabsContentInner>
-          {props.tabs.map((tab, index) => {
+          {props.tabs.map((tab) => {
             const { tab: Tab } = tab
 
             return (
@@ -69,7 +83,7 @@ const Tabs = (props: ITabs): JSX.Element => {
                 key={tab.label}
                 build={props.build}
                 payload={props.payload}
-                isActive={currentTab === index}
+                isActive={isCurrentTab(tab)}
               />
             )
           })}
@@ -80,7 +94,7 @@ const Tabs = (props: ITabs): JSX.Element => {
   )
 }
 
-function BuildPage({ build }: IBuildPageProps): JSX.Element {
+function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
   const payload = usePayload(build)
 
   const tabs = useMemo(() => {
@@ -91,20 +105,41 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
           : "..."
 
       return [
-        { label: "details", tab: DetailsTab },
+        { key: "details", label: "details", tab: DetailsTab },
         {
+          key: "blueprints",
           label: `blueprints (${childrenLength})`,
           tab: BlueprintsTab,
         },
-        { label: "blueprint string", tab: BlueprintStringTab },
-        { label: "blueprint json", tab: BlueprintJsonTab },
+        {
+          key: "blueprint-string",
+          label: "blueprint string",
+          tab: BlueprintStringTab,
+        },
+        {
+          key: "blueprint-json",
+          label: "blueprint json",
+          tab: BlueprintJsonTab,
+        },
       ]
     } else {
       return [
-        { label: "details", tab: DetailsTab },
-        { label: "required items", tab: RequiredItemsTab },
-        { label: "blueprint string", tab: BlueprintStringTab },
-        { label: "blueprint json", tab: BlueprintJsonTab },
+        { key: "details", label: "details", tab: DetailsTab },
+        {
+          key: "required-items",
+          label: "required items",
+          tab: RequiredItemsTab,
+        },
+        {
+          key: "blueprint-string",
+          label: "blueprint string",
+          tab: BlueprintStringTab,
+        },
+        {
+          key: "blueprint-json",
+          label: "blueprint json",
+          tab: BlueprintJsonTab,
+        },
       ]
     }
   }, [build.latest_version.hash, payload.data])
@@ -115,6 +150,7 @@ function BuildPage({ build }: IBuildPageProps): JSX.Element {
 
       <Tabs
         build={build}
+        current={router.query.tab as string | undefined}
         tabs={tabs}
         payload={payload}
         aside={
