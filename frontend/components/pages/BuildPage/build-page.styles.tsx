@@ -67,8 +67,9 @@ export const TabsAside = styled.aside`
   width: 400px;
 `
 
-export const Tab = styled.button`
+export const Tab = styled.a`
   ${getTypo(ETypo.BUTTON)};
+  text-decoration: none;
   background: none;
   border: none;
   padding: 0;

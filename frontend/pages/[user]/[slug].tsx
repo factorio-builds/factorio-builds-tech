@@ -1,15 +1,17 @@
 import { GetServerSideProps, NextPage } from "next"
+import { WithRouterProps } from "next/dist/client/with-router"
+import { withRouter } from "next/router"
 import BuildPage from "../../components/pages/BuildPage"
 import Layout from "../../components/ui/Layout"
 import { IFullBuild } from "../../types/models"
 import { axios } from "../../utils/axios"
 
-interface IBuildsPageProps {
+interface IBuildsPageProps extends WithRouterProps {
   build?: IFullBuild
   errors?: string
 }
 
-const BuildsPage: NextPage<IBuildsPageProps> = ({ build, errors }) => {
+const BuildsPage: NextPage<IBuildsPageProps> = ({ build, errors, router }) => {
   if (errors || !build) {
     return (
       <Layout title="Error">
@@ -20,10 +22,10 @@ const BuildsPage: NextPage<IBuildsPageProps> = ({ build, errors }) => {
     )
   }
 
-  return <BuildPage build={build} />
+  return <BuildPage build={build} router={router} />
 }
 
-export default BuildsPage
+export default withRouter(BuildsPage)
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { user, slug } = params!
