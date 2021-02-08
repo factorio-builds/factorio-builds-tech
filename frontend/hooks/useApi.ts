@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux"
 import { AxiosRequestConfig } from "axios"
 import useAxios, { Options } from "axios-hooks"
-import { IStoreState } from "../redux/store"
 import getConfig from "next/config"
+import { IStoreState } from "../redux/store"
 
 const { publicRuntimeConfig } = getConfig()
 
