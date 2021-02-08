@@ -157,9 +157,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           <Stacker orientation="vertical" gutter={16}>
             {build._links.edit && (
               <Link href={`/${build.owner.username}/${build.slug}/edit`}>
-                <SC.EditBuild>
-                  { "edit build" }
-                </SC.EditBuild>
+                <SC.EditBuild>{"edit build"}</SC.EditBuild>
               </Link>
             )}
             <SC.BuildImage>

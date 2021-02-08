@@ -1,10 +1,10 @@
-import qs from "qs"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { withApplicationInsights } from "next-applicationinsights"
 import type { AppContext, AppProps } from "next/app"
 import getConfig from "next/config"
 import Head from "next/head"
+import qs from "qs"
 import { compose } from "redux"
 import { ThemeProvider } from "styled-components"
 import { GlobalStyle } from "../design/styles/global-style"
@@ -19,7 +19,8 @@ function MyApp({ Component, pageProps }: AppProps) {
   const user = useSelector((store: IStoreState) => store.auth.user)
 
   useEffect(() => {
-    axios.defaults.paramsSerializer = params => qs.stringify(params, {arrayFormat: 'repeat'})
+    axios.defaults.paramsSerializer = (params) =>
+      qs.stringify(params, { arrayFormat: "repeat" })
     axios.defaults.headers.common["Authorization"] = user?.accessToken
       ? `Bearer ${user.accessToken}`
       : ""
