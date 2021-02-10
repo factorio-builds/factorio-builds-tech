@@ -1,7 +1,5 @@
 import styled from "styled-components"
-import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
-import { ETypo } from "../../../design/tokens/typo"
 import Stacker from "../Stacker"
 
 export const DropdownWrapper = styled.div`
@@ -35,18 +33,6 @@ export const User = styled(StyledStacker)`
   svg path {
     fill: ${COLOR.FADEDBLUE500};
   }
-`
-
-export const Avatar = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 22px;
-  height: 22px;
-  background: linear-gradient(153.43deg, #37d291 0%, #225594 106.06%);
-  border-radius: 5px;
-  ${getTypo(ETypo.BODY)}
-  font-size: 13px;
 `
 
 export const DropdownContent = styled.div`

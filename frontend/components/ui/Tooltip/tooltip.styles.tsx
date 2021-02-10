@@ -5,6 +5,7 @@ export const TooltipWrapper = styled.div`
   position: relative;
   cursor: help;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
 `
 
 export const TooltipContent = styled.div`

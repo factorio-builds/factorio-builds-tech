@@ -22,6 +22,7 @@ export const COLOR = {
   SIDEBAR: "#282A33",
   BACKGROUND: "#282A33",
   LINK: "#28D8FF",
+  SUB: "#1a1c23",
   CODE: "#1a1c23",
   INPUT: "#1a1c23",
   CARD: "#111216",

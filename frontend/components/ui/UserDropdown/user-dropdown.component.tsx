@@ -3,6 +3,7 @@ import cx from "classnames"
 import Link from "next/link"
 import Caret from "../../../icons/caret"
 import { IStoreUser } from "../../../types/models"
+import Avatar from "../Avatar"
 import * as SC from "./user-dropdown.styles"
 
 interface IUserDropdownProps {
@@ -16,7 +17,7 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
     <SC.DropdownWrapper className={cx({ "is-open": open })}>
       <SC.Dropdown>
         <SC.User onClick={() => setOpen((prev) => !prev)}>
-          <SC.Avatar>{props.user.username[0]}</SC.Avatar>
+          <Avatar username={props.user.username} size="medium" />
           <span>{props.user.username}</span>
           <Caret />
         </SC.User>
