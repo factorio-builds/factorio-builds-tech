@@ -48,33 +48,35 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
-              <tr key={item.slug}>
-                <td style={{ width: "1px" }}>
-                  <Image
-                    src={item._links.cover.href}
-                    width={64}
-                    height={64}
-                    layout="fixed"
-                  />
-                </td>
-                <td>
-                  <a href={`/${router.query.user}/${item.slug}`}>
-                    {item.title}
-                  </a>
-                </td>
-                <td style={{ width: "1px" }}>
-                  <Tooltip content={formatSince(item.created_at)}>
-                    <b>{formatDate(item.created_at)}</b>
-                  </Tooltip>
-                </td>
-                <td style={{ width: "1px" }}>
-                  <Tooltip content={formatSince(item.updated_at)}>
-                    <b>{formatDate(item.updated_at)}</b>
-                  </Tooltip>
-                </td>
-              </tr>
-            ))}
+            {items
+              .sort((a, b) => a.title.localeCompare(b.title))
+              .map((item) => (
+                <tr key={item.slug}>
+                  <td style={{ width: "1px" }}>
+                    <Image
+                      src={item._links.cover.href}
+                      width={64}
+                      height={64}
+                      layout="fixed"
+                    />
+                  </td>
+                  <td>
+                    <a href={`/${router.query.user}/${item.slug}`}>
+                      {item.title}
+                    </a>
+                  </td>
+                  <td style={{ width: "1px" }}>
+                    <Tooltip content={formatSince(item.created_at)}>
+                      <b>{formatDate(item.created_at)}</b>
+                    </Tooltip>
+                  </td>
+                  <td style={{ width: "1px" }}>
+                    <Tooltip content={formatSince(item.updated_at)}>
+                      <b>{formatDate(item.updated_at)}</b>
+                    </Tooltip>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </SC.Table>
       ) : (
