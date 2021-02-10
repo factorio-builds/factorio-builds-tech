@@ -37,7 +37,7 @@ export const User = styled(StyledStacker)`
 
 export const DropdownContent = styled.div`
   display: none;
-  margin: 4px 0;
+  margin: 8px 0 4px;
   flex-direction: column;
   text-align: right;
   align-items: flex-end;
@@ -56,9 +56,12 @@ export const Spacer = styled.div`
 export const InnerLink = styled.a`
   display: inline-block;
   cursor: pointer;
-  color: ${COLOR.DANGER};
+  color: ${COLOR.FADEDBLUE900};
 
   &:hover {
     text-decoration: underline;
   }
+`
+export const InnerLinkLogOff = styled(InnerLink)`
+  color: ${COLOR.DANGER};
 `
