@@ -17,6 +17,13 @@ export const Subtitle = styled.div`
   font-weight: 400;
 `
 
+export const Sort = styled.button`
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #fff;
+`
+
 export const Table = styled.table`
   width: 100%;
   text-align: left;
