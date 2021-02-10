@@ -22,9 +22,12 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
           <Caret />
         </SC.User>
         <SC.DropdownContent>
+          <Link href={`${props.user.username}/builds`}>
+            <SC.InnerLink>my builds</SC.InnerLink>
+          </Link>
           <SC.Spacer />
           <Link href="/api/logout">
-            <SC.InnerLink>log off</SC.InnerLink>
+            <SC.InnerLinkLogOff>log off</SC.InnerLinkLogOff>
           </Link>
         </SC.DropdownContent>
       </SC.Dropdown>
