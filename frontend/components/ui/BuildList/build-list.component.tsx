@@ -1,8 +1,13 @@
 import * as React from "react"
 // import { useState } from "react"
 import Image from "next/image"
+import { useRouter } from "next/router"
+import Caret from "../../../icons/caret"
 import { IThinBuild } from "../../../types/models"
-import { formatDateHuman } from "../../../utils/date"
+import { formatDate, formatSince } from "../../../utils/date"
+import Avatar from "../Avatar"
+import Stacker from "../Stacker"
+import Tooltip from "../Tooltip"
 import * as SC from "./build-list.styles"
 
 interface IBuildListProps {
@@ -10,40 +15,68 @@ interface IBuildListProps {
 }
 
 const BuildList: React.FC<IBuildListProps> = ({ items }) => {
+  const router = useRouter()
+
   // const [sortBy, setSortBy] = useState<"title" | "created_at" | "updated_at">(
   //   "title"
   // )
 
   return (
     <SC.BuildListWrapper>
-      <h2>User builds</h2>
+      <Stacker gutter={4}>
+        <SC.Title orientation="horizontal" gutter={8}>
+          <span>Builds by </span>
+          <Avatar username={router.query.user as string} size="large" />
+          <b>{router.query.user}</b>
+        </SC.Title>
+
+        <SC.Subtitle>
+          <b>{items.length}</b> builds
+        </SC.Subtitle>
+      </Stacker>
 
       {items.length ? (
         <SC.Table>
           <thead>
             <tr>
               <th></th>
-              <th>name</th>
-              <th>created at</th>
-              <th>updated at</th>
+              <th>
+                <Caret /> Build title
+              </th>
+              <th>Created at</th>
+              <th>Updated at</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
-              <tr key={item.slug}>
-                <td style={{ width: "1px" }}>
-                  <Image
-                    src={item._links.cover.href}
-                    width={64}
-                    height={64}
-                    layout="fixed"
-                  />
-                </td>
-                <td>{item.title}</td>
-                <td>{formatDateHuman(item.created_at)}</td>
-                <td>{formatDateHuman(item.updated_at)}</td>
-              </tr>
-            ))}
+            {items
+              .sort((a, b) => a.title.localeCompare(b.title))
+              .map((item) => (
+                <tr key={item.slug}>
+                  <td style={{ width: "1px" }}>
+                    <Image
+                      src={item._links.cover.href}
+                      width={64}
+                      height={64}
+                      layout="fixed"
+                    />
+                  </td>
+                  <td>
+                    <a href={`/${router.query.user}/${item.slug}`}>
+                      {item.title}
+                    </a>
+                  </td>
+                  <td style={{ width: "1px" }}>
+                    <Tooltip content={formatSince(item.created_at)}>
+                      <b>{formatDate(item.created_at)}</b>
+                    </Tooltip>
+                  </td>
+                  <td style={{ width: "1px" }}>
+                    <Tooltip content={formatSince(item.updated_at)}>
+                      <b>{formatDate(item.updated_at)}</b>
+                    </Tooltip>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </SC.Table>
       ) : (
