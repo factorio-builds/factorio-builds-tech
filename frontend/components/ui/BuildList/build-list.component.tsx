@@ -1,5 +1,5 @@
 import * as React from "react"
-// import { useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import Caret from "../../../icons/caret"
@@ -14,12 +14,32 @@ interface IBuildListProps {
   items: IThinBuild[]
 }
 
+type TSortKey = "title" | "created_at" | "updated_at"
+type TSortDirection = "asc" | "desc"
+
 const BuildList: React.FC<IBuildListProps> = ({ items }) => {
   const router = useRouter()
 
-  // const [sortBy, setSortBy] = useState<"title" | "created_at" | "updated_at">(
-  //   "title"
-  // )
+  const [sortBy, setSortBy] = useState<{
+    key: TSortKey
+    direction: TSortDirection
+  }>({ key: "title", direction: "desc" })
+
+  const toggleSort = (key: TSortKey) => {
+    setSortBy((prevSort) => {
+      if (prevSort.key === key) {
+        return {
+          key,
+          direction: prevSort.direction === "asc" ? "desc" : "asc",
+        }
+      }
+
+      return {
+        key,
+        direction: "desc",
+      }
+    })
+  }
 
   return (
     <SC.BuildListWrapper>
@@ -41,15 +61,39 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
             <tr>
               <th></th>
               <th>
-                <Caret /> Build title
+                <SC.Sort onClick={() => toggleSort("title")}>
+                  {sortBy.key === "title" && (
+                    <Caret inverted={sortBy.direction === "asc"} />
+                  )}
+                  Build title
+                </SC.Sort>
               </th>
-              <th>Created at</th>
-              <th>Updated at</th>
+              <th>
+                <SC.Sort onClick={() => toggleSort("created_at")}>
+                  {sortBy.key === "created_at" && (
+                    <Caret inverted={sortBy.direction === "asc"} />
+                  )}
+                  Created at
+                </SC.Sort>
+              </th>
+              <th>
+                <SC.Sort onClick={() => toggleSort("updated_at")}>
+                  {sortBy.key === "updated_at" && (
+                    <Caret inverted={sortBy.direction === "asc"} />
+                  )}
+                  Updated at
+                </SC.Sort>
+              </th>
             </tr>
           </thead>
           <tbody>
             {items
-              .sort((a, b) => a.title.localeCompare(b.title))
+              .sort((a, b) => {
+                if (sortBy.direction === "desc") {
+                  return a[sortBy.key].localeCompare(b[sortBy.key])
+                }
+                return b[sortBy.key].localeCompare(a[sortBy.key])
+              })
               .map((item) => (
                 <tr key={item.slug}>
                   <td style={{ width: "1px" }}>
