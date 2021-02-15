@@ -123,7 +123,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
     // TODO: set validity/availability of slug
     props.formikProps.setFieldValue("slug", res.data.extracted_slug.slug)
     props.formikProps.setFieldValue("description", bp.description || "")
-    props.formikProps.setFieldValue("hash", res.data.hash)
+    props.formikProps.setFieldValue("hash", res.data.payload.hash)
 
     props.goToNextStep()
   }
