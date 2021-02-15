@@ -702,21 +702,27 @@ export interface paths {
 
 export interface components {
   schemas: {
-    ProblemDetails: {
-      type?: string | null
-      title?: string | null
-      status?: number | null
-      detail?: string | null
-      instance?: string | null
-    } & { [key: string]: { [key: string]: any } }
-    LinkModel: {
-      /** The absolute URL of the linked resource. */
-      href: string
+    BlueprintPayloadModel: components["schemas"]["PayloadModelBase"] & {
       /**
-       * The HTTP method to request the linked resource.
-       * Defaults to `GET` if unset (`null`).
+       * A map of item `name` to `count` of all **entities** in this payload's blueprint.
+       * Only items with a count greater than 0 are included.
        */
-      method?: string | null
+      entities: { [key: string]: number }
+      /**
+       * A map of item `name` to `count` of all **tiles** in this payload's blueprint.
+       * Only items with a count greater than 0 are included.
+       */
+      tiles: { [key: string]: number }
+    }
+    BookPayloadModel: components["schemas"]["PayloadModelBase"] & {
+      /**
+       * All payloads that are included in this blueprint book.
+       * Only set when the `include_children` query parameter is `true`.
+       */
+      children: (
+        | components["schemas"]["BlueprintPayloadModel"]
+        | components["schemas"]["BookPayloadModel"]
+      )[]
     }
     BuildsLinks: {
       /**
@@ -740,99 +746,6 @@ export interface components {
        */
       next?: components["schemas"]["LinkModel"] | null
     }
-    ImageLinkModel: {
-      /** The absolute URL of the linked resource. */
-      href: string
-      /**
-       * The HTTP method to request the linked resource.
-       * Defaults to `GET` if unset (`null`).
-       */
-      method?: string | null
-      /** The width of the linked image. */
-      width: number
-      /** The height of the linked image. */
-      height: number
-      /** The size in bytes of the linked image. */
-      size: number
-      /** The format of the linked image. */
-      format: string
-    }
-    CollectionLinkModel: {
-      /** The absolute URL of the linked resource. */
-      href: string
-      /**
-       * The HTTP method to request the linked resource.
-       * Defaults to `GET` if unset (`null`).
-       */
-      method?: string | null
-      /** The number of items in the linked collection. */
-      count: number
-    }
-    ThinBuildLinks: {
-      /** The absolute URL of this build's full details. */
-      self: components["schemas"]["LinkModel"]
-      /** The absolute URL of this build's cover image. */
-      cover: components["schemas"]["ImageLinkModel"]
-      /** The absolute URL of the list of this build's versions. */
-      versions: components["schemas"]["LinkModel"]
-      /** The absolute URL of the list of this build's followers. */
-      followers: components["schemas"]["CollectionLinkModel"]
-      /**
-       * The absolute URL of the API endpoint to add a version to this build.
-       * Only available if the call has been made with an authenticated user token
-       * and the authenticated user is the owner of the build.
-       */
-      add_version?: components["schemas"]["LinkModel"] | null
-      /**
-       * The absolute URL of the API endpoint to edit this build.
-       * Only available if the call has been made with an authenticated user token
-       * and the authenticated user has the required permissions.
-       */
-      edit?: components["schemas"]["LinkModel"] | null
-      /**
-       * The absolute URL of the API endpoint to delete this build.
-       * Only available if the call has been made with an authenticated user token
-       * and the authenticated user has the required permissions.
-       */
-      delete?: components["schemas"]["LinkModel"] | null
-    }
-    GameIcon: {
-      type: "virtual" | "item"
-      name: string
-    }
-    ThinUserModel: {
-      /**
-       * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
-       * It is used in URLs like the user's profile or build pages.
-       */
-      username: string
-    }
-    ThinBuildModel: {
-      _links: components["schemas"]["ThinBuildLinks"]
-      /**
-       * The slug is used in the build's URL and must be unique per user.
-       * It can consist only of latin alphanumeric characters, underscores and hyphens.
-       */
-      slug: string
-      /** The timestamp in UTC of when the first version of the build was created. */
-      created_at: string
-      /** The timestamp in UTC of when the build was last updated. */
-      updated_at: string
-      /** The build's icons. */
-      icons: components["schemas"]["GameIcon"][]
-      /** The title or display name of the build. */
-      title: string
-      /** The build's description in Markdown. */
-      description?: string | null
-      /** The user who created the build. */
-      owner: components["schemas"]["ThinUserModel"]
-      /** The game version that was used to create the the most recently added version of this build. */
-      latest_game_version: string
-      /** The build's latest version's blueprint type. */
-      latest_type: "blueprint" | "blueprint-book"
-      /** The build's tags. */
-      tags: string[]
-    }
     BuildsModel: {
       _links: components["schemas"]["BuildsLinks"]
       /** The number of results on the current page. */
@@ -845,13 +758,16 @@ export interface components {
       /** The paged, filtered and ordered list of matching builds. */
       builds: components["schemas"]["ThinBuildModel"][]
     }
-    VersionRequest: {
-      /** The icons of the version to be created. */
-      icons: components["schemas"]["GameIcon"][]
-      /** An optional name for the version to be created. */
-      name?: string | null
-      /** An optional description for the version to be created. */
-      description?: string | null
+    CollectionLinkModel: {
+      /** The absolute URL of the linked resource. */
+      href: string
+      /**
+       * The HTTP method to request the linked resource.
+       * Defaults to `GET` if unset (`null`).
+       */
+      method?: string | null
+      /** The number of items in the linked collection. */
+      count: number
     }
     CoverRequest: {
       /** The horizontal position of the crop rectangle. */
@@ -891,6 +807,71 @@ export interface components {
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
        */
       slug: string
+    }
+    CreatePayloadRequest: {
+      /** The encoded blueprint string. */
+      encoded: string
+    }
+    CreatePayloadResult: {
+      /** The full payload graph that was created in this operation. */
+      payload:
+        | components["schemas"]["BlueprintPayloadModel"]
+        | components["schemas"]["BookPayloadModel"]
+      /**
+       * The primary blueprint's title (aka label) converted to slug,
+       * including fields indicating whether the slug is valid and available for the authenticated user.
+       */
+      extracted_slug: components["schemas"]["SlugValidationResult"]
+    }
+    CreateVersionRequest: {
+      /**
+       * The hash of the payload that should be used to create this build version.
+       * The payload must have been previously created.
+       */
+      hash: string
+      /** The title or display name of the build. */
+      title: string
+      /** The build description in Markdown. */
+      description?: string | null
+      /** The build's tags. */
+      tags: string[]
+      /** Metadata for the version to be created. */
+      version: components["schemas"]["VersionRequest"]
+      /**
+       * The build's cover image is either a file upload or an existing blueprint rendering,
+       * along with a crop rectangle.
+       */
+      cover: components["schemas"]["CoverRequest"]
+      /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
+      expected_previous_version_id: string
+    }
+    EditBuildRequest: {
+      /**
+       * The title or display name of the build.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      title?: string | null
+      /**
+       * The build description in Markdown.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      description?: string | null
+      /**
+       * The build's tags.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      tags?: string[] | null
+      /**
+       * The build's icons.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      icons?: components["schemas"]["GameIcon"][] | null
+      /**
+       * The build's cover image is either a file upload or an existing blueprint rendering,
+       * along with a crop rectangle.
+       * If unset (`null`), the existing value will not be changed.
+       */
+      cover?: components["schemas"]["CoverRequest"] | null
     }
     FullBuildLinks: {
       /** The absolute URL of this build's full details. */
@@ -932,6 +913,34 @@ export interface components {
        */
       remove_favorite?: components["schemas"]["LinkModel"] | null
     }
+    FullBuildModel: {
+      _links: components["schemas"]["FullBuildLinks"]
+      /**
+       * The slug is used in the build's URL and must be unique per user.
+       * It can consist only of latin alphanumeric characters, underscores and hyphens.
+       */
+      slug: string
+      /** The timestamp in UTC of when the first version of the build was created. */
+      created_at: string
+      /** The timestamp in UTC of when the build was last updated. */
+      updated_at: string
+      /** The build's icons. */
+      icons: components["schemas"]["GameIcon"][]
+      /** The title or display name of the build. */
+      title: string
+      /** The build's description in Markdown. */
+      description?: string | null
+      /** The user who created the build. */
+      owner: components["schemas"]["FullUserModel"]
+      /** The game version that was used to create the the most recently added version of this build. */
+      latest_game_version: string
+      /** The build's latest version's blueprint type. */
+      latest_type: "blueprint" | "blueprint-book"
+      /** The build's tags. */
+      tags: string[]
+      /** The build's most recently added version. */
+      latest_version: components["schemas"]["FullVersionModel"]
+    }
     FullUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -946,19 +955,52 @@ export interface components {
       /** The user's registration timestamp in UTC. */
       registered_at: string
     }
-    VersionLinks: {
-      /** The absolute URL of this version's full payload. */
-      payload: components["schemas"]["LinkModel"]
-    }
-    BookPayloadModel: components["schemas"]["PayloadModelBase"] & {
-      /**
-       * All payloads that are included in this blueprint book.
-       * Only set when the `include_children` query parameter is `true`.
-       */
-      children: (
+    FullVersionModel: {
+      _links: components["schemas"]["VersionLinks"]
+      /** The version's payload hash. */
+      hash: string
+      /** The version's blueprint type. */
+      type: "blueprint" | "blueprint-book"
+      /** The timestamp in UTC at which the version was created. */
+      created_at: string
+      /** An optional name assigned to the version. */
+      name?: string | null
+      /** An optional description for the version. */
+      description?: string | null
+      /** The payload attached to the version. */
+      payload:
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
-      )[]
+    }
+    GameIcon: {
+      type: "virtual" | "item"
+      name: string
+    }
+    ImageLinkModel: {
+      /** The absolute URL of the linked resource. */
+      href: string
+      /**
+       * The HTTP method to request the linked resource.
+       * Defaults to `GET` if unset (`null`).
+       */
+      method?: string | null
+      /** The width of the linked image. */
+      width: number
+      /** The height of the linked image. */
+      height: number
+      /** The size in bytes of the linked image. */
+      size: number
+      /** The format of the linked image. */
+      format: string
+    }
+    LinkModel: {
+      /** The absolute URL of the linked resource. */
+      href: string
+      /**
+       * The HTTP method to request the linked resource.
+       * Defaults to `GET` if unset (`null`).
+       */
+      method?: string | null
     }
     PayloadLinks: {
       /** The absolute URL of this payload's full details. */
@@ -993,37 +1035,48 @@ export interface components {
       /** An optional description that is included in the ingame blueprint payload. */
       description?: string | null
     }
-    BlueprintPayloadModel: components["schemas"]["PayloadModelBase"] & {
-      /**
-       * A map of item `name` to `count` of all **entities** in this payload's blueprint.
-       * Only items with a count greater than 0 are included.
-       */
-      entities: { [key: string]: number }
-      /**
-       * A map of item `name` to `count` of all **tiles** in this payload's blueprint.
-       * Only items with a count greater than 0 are included.
-       */
-      tiles: { [key: string]: number }
+    ProblemDetails: {
+      type?: string | null
+      title?: string | null
+      status?: number | null
+      detail?: string | null
+      instance?: string | null
+    } & { [key: string]: { [key: string]: any } }
+    SlugValidationResult: {
+      slug: string
+      is_valid: boolean
+      is_available: boolean
     }
-    FullVersionModel: {
-      _links: components["schemas"]["VersionLinks"]
-      /** The version's payload hash. */
-      hash: string
-      /** The version's blueprint type. */
-      type: "blueprint" | "blueprint-book"
-      /** The timestamp in UTC at which the version was created. */
-      created_at: string
-      /** An optional name assigned to the version. */
-      name?: string | null
-      /** An optional description for the version. */
-      description?: string | null
-      /** The payload attached to the version. */
-      payload:
-        | components["schemas"]["BlueprintPayloadModel"]
-        | components["schemas"]["BookPayloadModel"]
+    ThinBuildLinks: {
+      /** The absolute URL of this build's full details. */
+      self: components["schemas"]["LinkModel"]
+      /** The absolute URL of this build's cover image. */
+      cover: components["schemas"]["ImageLinkModel"]
+      /** The absolute URL of the list of this build's versions. */
+      versions: components["schemas"]["LinkModel"]
+      /** The absolute URL of the list of this build's followers. */
+      followers: components["schemas"]["CollectionLinkModel"]
+      /**
+       * The absolute URL of the API endpoint to add a version to this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user is the owner of the build.
+       */
+      add_version?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL of the API endpoint to edit this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user has the required permissions.
+       */
+      edit?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL of the API endpoint to delete this build.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user has the required permissions.
+       */
+      delete?: components["schemas"]["LinkModel"] | null
     }
-    FullBuildModel: {
-      _links: components["schemas"]["FullBuildLinks"]
+    ThinBuildModel: {
+      _links: components["schemas"]["ThinBuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -1040,49 +1093,20 @@ export interface components {
       /** The build's description in Markdown. */
       description?: string | null
       /** The user who created the build. */
-      owner: components["schemas"]["FullUserModel"]
+      owner: components["schemas"]["ThinUserModel"]
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
       /** The build's latest version's blueprint type. */
       latest_type: "blueprint" | "blueprint-book"
       /** The build's tags. */
       tags: string[]
-      /** The build's most recently added version. */
-      latest_version: components["schemas"]["FullVersionModel"]
     }
-    EditBuildRequest: {
+    ThinUserModel: {
       /**
-       * The title or display name of the build.
-       * If unset (`null`), the existing value will not be changed.
+       * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
+       * It is used in URLs like the user's profile or build pages.
        */
-      title?: string | null
-      /**
-       * The build description in Markdown.
-       * If unset (`null`), the existing value will not be changed.
-       */
-      description?: string | null
-      /**
-       * The build's tags.
-       * If unset (`null`), the existing value will not be changed.
-       */
-      tags?: string[] | null
-      /**
-       * The build's icons.
-       * If unset (`null`), the existing value will not be changed.
-       */
-      icons?: components["schemas"]["GameIcon"][] | null
-      /**
-       * The build's cover image is either a file upload or an existing blueprint rendering,
-       * along with a crop rectangle.
-       * If unset (`null`), the existing value will not be changed.
-       */
-      cover?: components["schemas"]["CoverRequest"] | null
-    }
-    UsersModel: {
-      /** The number of results on the current page. */
-      count: number
-      /** The paged, filtered and ordered list of matching users. */
-      users: components["schemas"]["FullUserModel"][]
+      username: string
     }
     ThinVersionModel: {
       _links: components["schemas"]["VersionLinks"]
@@ -1097,55 +1121,29 @@ export interface components {
       /** An optional description for the version. */
       description?: string | null
     }
+    UsersModel: {
+      /** The number of results on the current page. */
+      count: number
+      /** The paged, filtered and ordered list of matching users. */
+      users: components["schemas"]["FullUserModel"][]
+    }
+    VersionLinks: {
+      /** The absolute URL of this version's full payload. */
+      payload: components["schemas"]["LinkModel"]
+    }
+    VersionRequest: {
+      /** The icons of the version to be created. */
+      icons: components["schemas"]["GameIcon"][]
+      /** An optional name for the version to be created. */
+      name?: string | null
+      /** An optional description for the version to be created. */
+      description?: string | null
+    }
     VersionsModel: {
       /** The number of results on the current page. */
       count: number
       /** The paged, filtered and ordered list of matching versions. */
       versions: components["schemas"]["ThinVersionModel"][]
-    }
-    CreateVersionRequest: {
-      /**
-       * The hash of the payload that should be used to create this build version.
-       * The payload must have been previously created.
-       */
-      hash: string
-      /** The title or display name of the build. */
-      title: string
-      /** The build description in Markdown. */
-      description?: string | null
-      /** The build's tags. */
-      tags: string[]
-      /** Metadata for the version to be created. */
-      version: components["schemas"]["VersionRequest"]
-      /**
-       * The build's cover image is either a file upload or an existing blueprint rendering,
-       * along with a crop rectangle.
-       */
-      cover: components["schemas"]["CoverRequest"]
-      /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
-      expected_previous_version_id: string
-    }
-    CreatePayloadRequest: {
-      /** The encoded blueprint string. */
-      encoded: string
-    }
-    SlugValidationResult: {
-      slug: string
-      is_valid: boolean
-      is_available: boolean
-    }
-    CreatePayloadResult: {
-      /** The hash of the primary (or parent) payload that was created. */
-      hash: string
-      /** The hashes of all payloads that were created in this operation. */
-      all_hashes: string[]
-      /** The ordered list of 1 to 4 icons that is included in the primary blueprint. */
-      icons: components["schemas"]["GameIcon"][]
-      /**
-       * The primary blueprint's title (aka label) converted to slug,
-       * including fields indicating whether the slug is valid and available for the authenticated user.
-       */
-      extracted_slug: components["schemas"]["SlugValidationResult"]
     }
   }
 }

@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SluggyUnidecode;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
@@ -178,9 +177,7 @@ namespace FactorioTech.Api.Controllers
 
             return Ok(new CreatePayloadResult
             {
-                Hash = hash,
-                AllHashes = new HashSet<Hash>(cache.Values.Select(x => x.Hash)),
-                Icons = envelope.Icons.ToGameIcons(),
+                Payload = payload.ToViewModel(Url, envelope, cache),
                 ExtractedSlug = await _slugService.Validate(TryValidateModel, envelope.Label?.ToSlug(), User.GetUserId()),
             });
         }
@@ -207,23 +204,10 @@ namespace FactorioTech.Api.Controllers
         public class CreatePayloadResult
         {
             /// <summary>
-            /// The hash of the primary (or parent) payload that was created.
-            /// </summary>
-            /// <example>f8283ab0085a7e31c0ad3c43db36ae87</example>
-            [Required]
-            public Hash Hash { get; set; }
-
-            /// <summary>
-            /// The hashes of all payloads that were created in this operation.
+            /// The full payload graph that was created in this operation.
             /// </summary>
             [Required]
-            public IEnumerable<Hash> AllHashes { get; set; } = Enumerable.Empty<Hash>();
-
-            /// <summary>
-            /// The ordered list of 1 to 4 icons that is included in the primary blueprint.
-            /// </summary>
-            [Required]
-            public IEnumerable<GameIcon> Icons { get; set; } = Enumerable.Empty<GameIcon>();
+            public PayloadModelBase Payload { get; set; } = null!;
 
             /// <summary>
             /// The primary blueprint's title (aka label) converted to slug,
