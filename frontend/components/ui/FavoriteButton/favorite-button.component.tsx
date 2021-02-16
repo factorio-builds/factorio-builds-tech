@@ -18,7 +18,7 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
   const links = build._links
 
   const authUser = useSelector((state: IStoreState) => state.auth?.user)
-  const { loading, error, execute } = useApi(
+  const [{ loading, error }, execute] = useApi(
     { url: links.followers.href },
     { manual: true }
   )

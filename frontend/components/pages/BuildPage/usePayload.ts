@@ -33,7 +33,7 @@ export type TPayload =
   | IPayloadStateLoading
 
 function usePayload(build: IFullBuild): TPayload {
-  const { execute } = useApi(
+  const [, execute] = useApi<IFullPayload>(
     {
       url: `/payloads/${build.latest_version.hash}`,
       params: { include_children: true },

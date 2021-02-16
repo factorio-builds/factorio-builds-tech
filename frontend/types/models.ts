@@ -15,6 +15,9 @@ export type ICreateBuildRequest = components["schemas"]["CreateBuildRequest"]
 export type ICreateVersionRequest = components["schemas"]["CreateVersionRequest"]
 export type IEditBuildRequest = components["schemas"]["EditBuildRequest"]
 
+export type ICreatePayloadResult = components["schemas"]["CreatePayloadResult"]
+export type IProblemDetails = components["schemas"]["ProblemDetails"]
+
 export interface IStoreUser {
   id: string
   username: string

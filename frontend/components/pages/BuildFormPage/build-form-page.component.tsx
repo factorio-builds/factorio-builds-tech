@@ -9,6 +9,7 @@ import {
   ICreateVersionRequest,
   IEditBuildRequest,
   IFullBuild,
+  IThinBuild,
 } from "../../../types/models"
 import Layout from "../../ui/Layout"
 import Step1 from "./step-1.component"
@@ -279,7 +280,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     error: false,
   })
 
-  const { /*data, loading, error, */ execute } = useApi(
+  const [, execute] = useApi<IThinBuild>(
     {
       headers: {
         "Content-Type": "multipart/form-data",
