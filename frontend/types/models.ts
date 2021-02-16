@@ -6,17 +6,17 @@ export type IThinBuild = schemas["ThinBuildModel"]
 export type IFullBuild = schemas["FullBuildModel"]
 export type IThinUser = schemas["ThinUserModel"]
 export type IUser = schemas["FullUserModel"]
-export type IBlueprintPayload = components["schemas"]["BlueprintPayloadModel"]
-export type IBookPayload = components["schemas"]["BookPayloadModel"]
+export type IBlueprintPayload = schemas["BlueprintPayloadModel"]
+export type IBookPayload = schemas["BookPayloadModel"]
 export type IFullPayload = IBlueprintPayload | IBookPayload
-export type IIcon = components["schemas"]["GameIcon"]
+export type IIcon = schemas["GameIcon"]
 
-export type ICreateBuildRequest = components["schemas"]["CreateBuildRequest"]
-export type ICreateVersionRequest = components["schemas"]["CreateVersionRequest"]
-export type IEditBuildRequest = components["schemas"]["EditBuildRequest"]
+export type ICreateBuildRequest = schemas["CreateBuildRequest"]
+export type ICreateVersionRequest = schemas["CreateVersionRequest"]
+export type IEditBuildRequest = schemas["EditBuildRequest"]
 
-export type ICreatePayloadResult = components["schemas"]["CreatePayloadResult"]
-export type IProblemDetails = components["schemas"]["ProblemDetails"]
+export type ICreatePayloadResult = schemas["CreatePayloadResult"]
+export type IProblemDetails = schemas["ProblemDetails"]
 
 export interface IStoreUser {
   id: string
