@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Services
@@ -165,7 +166,7 @@ namespace FactorioTech.Core.Services
 
             if (!string.IsNullOrEmpty(search))
             {
-                query = query.Where(x => x.SearchVector!.Matches(EF.Functions.WebSearchToTsQuery("english", search)));
+                query = query.Where(x => x.SearchVector!.Matches(EF.Functions.ToTsQuery("english", BuildSearchQuery(search))));
             }
 
             query = sort switch
@@ -189,6 +190,18 @@ namespace FactorioTech.Core.Services
             var totalCount = await _dbContext.Blueprints.CountAsync();
 
             return (blueprints, results.Count > page.Size, totalCount);
+        }
+
+        private static string BuildSearchQuery(string input)
+        {
+            // note: we're not using `websearch_to_tsquery` (or similar)
+            // because we want to get prefix matching.
+            var words = Regex.Replace(input, "[:|&+!*<>'\\-\"\\.]", string.Empty)
+                .Split(" ")
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => $"{x}:*");
+
+            return string.Join(" | ", words);
         }
 
         public async Task<(Blueprint? Build, bool IsFollower)> GetDetails(string owner, string slug, ClaimsPrincipal principal)
