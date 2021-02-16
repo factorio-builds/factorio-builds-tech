@@ -5,6 +5,7 @@ import {
   IDecodedBlueprintBookData,
   IDecodedBlueprintData,
 } from "../../../types"
+import { ICreatePayloadResult } from "../../../types/models"
 import {
   decodeBlueprint,
   isBlueprintItem,
@@ -59,7 +60,7 @@ interface IStep1Props {
 
 const Step1: React.FC<IStep1Props> = (props) => {
   const [encoded, setEncoded] = useState("")
-  const { /*data, loading, error,*/ execute } = useApi({
+  const [, execute] = useApi<ICreatePayloadResult>({
     url: "/payloads",
     method: "PUT",
   })

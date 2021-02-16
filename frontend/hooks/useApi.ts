@@ -3,6 +3,7 @@ import { AxiosRequestConfig } from "axios"
 import useAxios, { Options } from "axios-hooks"
 import getConfig from "next/config"
 import { IStoreState } from "../redux/store"
+import { IProblemDetails } from "../types/models"
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -18,12 +19,12 @@ const isManual = (config: AxiosRequestConfig, options?: Options) => {
   return true
 }
 
-export function useApi(config: AxiosRequestConfig, options?: Options) {
+export function useApi<T = any>(config: AxiosRequestConfig, options?: Options) {
   const accessToken = useSelector(
     (store: IStoreState) => store.auth?.user?.accessToken
   )
 
-  const [{ data, loading, error }, execute] = useAxios(
+  return useAxios<T, IProblemDetails>(
     {
       ...config,
       baseURL: publicRuntimeConfig.apiUrl,
@@ -37,6 +38,4 @@ export function useApi(config: AxiosRequestConfig, options?: Options) {
       manual: isManual(config, options),
     }
   )
-
-  return { data, loading, error, execute }
 }
