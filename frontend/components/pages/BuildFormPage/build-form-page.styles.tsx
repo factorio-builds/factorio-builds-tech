@@ -85,7 +85,33 @@ export const PageFeedback = styled(Stacker)`
     color: ${COLOR.SUCCESS};
   }
 
+  &.is-optional {
+    color: ${COLOR.FADEDBLUE500};
+  }
+
   &.is-valid svg path {
     fill: ${COLOR.SUCCESS};
+  }
+`
+
+export const RenderedCovers = styled.div``
+
+export const RenderedCoversTitle = styled.h3`
+  ${getTypo(ETypo.FORM_LABEL)};
+  margin: 0 0 6px;
+`
+
+export const Rendered = styled.button`
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+
+  img {
+    display: block;
+  }
+
+  &.is-selected {
+    border: 2px solid ${COLOR.SELECTED};
   }
 `

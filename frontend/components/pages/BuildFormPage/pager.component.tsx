@@ -1,13 +1,14 @@
-import React from "react"
+import React, { useMemo } from "react"
 import cx from "classnames"
 import ThumbsUp from "../../../icons/thumbs-up"
 import Stacker from "../../ui/Stacker"
 import * as SC from "./build-form-page.styles"
 
-export type TPage = "data" | "cover"
+export type TPage = "data" | "cover" | "image"
 
 interface IPageState {
   isValid: boolean
+  optional?: boolean
 }
 
 interface IPageButton {
@@ -16,10 +17,27 @@ interface IPageButton {
   title: string
   isActive: boolean
   isValid: boolean
+  isOptional?: boolean
   onClick: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
 const PageButton = (props: IPageButton): JSX.Element => {
+  const status = useMemo(() => {
+    if (props.isOptional) {
+      return "Optional"
+    }
+
+    if (props.isValid) {
+      return (
+        <>
+          <ThumbsUp /> <span>Valid</span>
+        </>
+      )
+    }
+
+    return "Incomplete"
+  }, [props.isValid, props.isOptional])
+
   return (
     <SC.PageButton
       orientation="horizontal"
@@ -33,15 +51,12 @@ const PageButton = (props: IPageButton): JSX.Element => {
         <SC.PageFeedback
           orientation="horizontal"
           gutter={8}
-          className={cx({ "is-valid": props.isValid })}
+          className={cx({
+            "is-valid": props.isValid,
+            "is-optional": props.isOptional,
+          })}
         >
-          {props.isValid ? (
-            <>
-              <ThumbsUp /> <span>Valid</span>
-            </>
-          ) : (
-            "Incomplete"
-          )}
+          {status}
         </SC.PageFeedback>
       </SC.PageBody>
     </SC.PageButton>
@@ -64,6 +79,7 @@ const Pager: React.FC<IPagerProps> = (props) => {
           title="Data"
           isActive={props.currentPage === "data"}
           isValid={props.pagesState.data.isValid}
+          isOptional={props.pagesState.data.optional}
           onClick={() => props.goToPage("data")}
         />
         <PageButton
@@ -72,7 +88,17 @@ const Pager: React.FC<IPagerProps> = (props) => {
           title="Cover"
           isActive={props.currentPage === "cover"}
           isValid={props.pagesState.cover.isValid}
+          isOptional={props.pagesState.cover.optional}
           onClick={() => props.goToPage("cover")}
+        />
+        <PageButton
+          stateKey="image"
+          number={3}
+          title="Custom image"
+          isActive={props.currentPage === "image"}
+          isValid={props.pagesState.image.isValid}
+          isOptional={props.pagesState.image.optional}
+          onClick={() => props.goToPage("image")}
         />
       </Stacker>
     </SC.Row>
