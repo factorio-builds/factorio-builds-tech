@@ -14,4 +14,8 @@ export const ContainerWrapper = styled.div`
   &.dir-column {
     flex-direction: column;
   }
+
+  &.size-medium {
+    width: calc(1366px - 20px * 2);
+  }
 `
