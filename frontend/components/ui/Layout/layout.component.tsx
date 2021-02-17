@@ -10,6 +10,7 @@ interface ILayoutProps {
   sidebar?: ReactNode
   title?: string
   subheader?: ReactNode
+  size?: "medium" | "large"
 }
 
 const Layout: React.FC<ILayoutProps> = ({
@@ -17,6 +18,7 @@ const Layout: React.FC<ILayoutProps> = ({
   sidebar,
   title,
   subheader,
+  size = "large",
 }) => (
   <>
     <Head>
@@ -26,7 +28,7 @@ const Layout: React.FC<ILayoutProps> = ({
     </Head>
     <Header />
     {subheader}
-    <Container>
+    <Container size={size}>
       <SC.BodyWrapper orientation="horizontal" gutter={20}>
         {sidebar && <Sidebar>{sidebar}</Sidebar>}
         <SC.Content>{children}</SC.Content>
