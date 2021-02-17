@@ -35,6 +35,14 @@ export const TextButton = styled.button`
   }
 `
 
+export const GroupTitle = styled.div`
+  cursor: pointer;
+
+  svg {
+    margin-right: 8px;
+  }
+`
+
 export const CoverWrapper = styled.div`
   width: 300px;
 `

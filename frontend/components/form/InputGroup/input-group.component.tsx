@@ -3,7 +3,7 @@ import cx from "classnames"
 import * as SC from "./input-group.styles"
 
 interface IInputGroup {
-  legend: string
+  legend: string | JSX.Element
   error?: any
 }
 
