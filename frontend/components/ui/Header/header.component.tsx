@@ -13,7 +13,9 @@ function Header(): JSX.Element {
     <SC.HeaderWrapper>
       <Container>
         <Link href="/">
-          <SC.StyledLogo />
+          <a>
+            <SC.StyledLogo />
+          </a>
         </Link>
 
         <SC.StyledStacker orientation="horizontal" gutter={18}>
