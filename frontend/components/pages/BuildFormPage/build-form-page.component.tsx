@@ -9,6 +9,7 @@ import {
   ICreateVersionRequest,
   IEditBuildRequest,
   IFullBuild,
+  IFullPayload,
   IThinBuild,
 } from "../../../types/models"
 import Layout from "../../ui/Layout"
@@ -16,6 +17,7 @@ import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
 
 export interface IFormValues {
+  isBook: boolean | undefined
   hash: string
   title: string
   slug: string
@@ -33,6 +35,7 @@ export interface IFormValues {
 }
 
 interface IValidFormValues {
+  isBook: boolean
   hash: string
   title: string
   slug: string
@@ -50,9 +53,15 @@ interface IValidFormValues {
 }
 
 const FILE_SIZE = 10 * 1000 * 1024 // 10MB
-const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"]
+const SUPPORTED_FORMATS = [
+  "image/jpg",
+  "image/jpeg",
+  "image/gif",
+  "image/png",
+] as const
 
 const baseInitialValues: IFormValues = {
+  isBook: undefined,
   hash: "",
   title: "",
   slug: "",
@@ -75,6 +84,7 @@ const createInitialValues = (build?: IFullBuild): IFormValues => {
   }
 
   return {
+    isBook: build.latest_version.type === "blueprint-book",
     hash: build.latest_version.hash,
     title: build.title,
     slug: build.slug,
@@ -93,6 +103,7 @@ const createInitialValues = (build?: IFullBuild): IFormValues => {
 }
 
 const validation = {
+  isBook: Yup.boolean(),
   hash: Yup.string(),
   title: Yup.string()
     .min(2, "Too Short!")
@@ -115,73 +126,48 @@ const validation = {
   cover: Yup.object()
     .required()
     .shape({
-      x: Yup.number()
-        .nullable()
-        .test({
-          name: "x",
-          message: "cover.x is required",
-          test: function (value) {
-            if (this.parent.file === null) {
-              return true
-            }
-            return Number.isInteger(value)
-          },
-        }),
-      y: Yup.number()
-        .nullable()
-        .test({
-          name: "y",
-          message: "cover.y is required",
-          test: function (value) {
-            if (this.parent.file === null) {
-              return true
-            }
-            return Number.isInteger(value)
-          },
-        }),
-      width: Yup.number()
-        .nullable()
-        .test({
-          name: "width",
-          message: "cover.width is required",
-          test: function (value) {
-            if (this.parent.file === null) {
-              return true
-            }
-            return Number.isInteger(value)
-          },
-        }),
-      height: Yup.number()
-        .nullable()
-        .test({
-          name: "height",
-          message: "cover.height is required",
-          test: function (value) {
-            if (this.parent.file === null) {
-              return true
-            }
-            return Number.isInteger(value)
-          },
-        }),
+      x: Yup.number().nullable(),
+      y: Yup.number().nullable(),
+      width: Yup.number().nullable(),
+      height: Yup.number().nullable(),
       file: Yup.mixed()
         .nullable()
-        .required("A file is required")
-        .test(
-          "fileSize",
-          "File too large",
-          (value) => value && value.size <= FILE_SIZE
-        )
-        .test(
-          "fileFormat",
-          "Unsupported Format",
-          (value) => value && SUPPORTED_FORMATS.includes(value.type)
-        ),
-      // hash: Yup.string()
-      //   .nullable()
-      //   .when("file", {
-      //     is: null,
-      //     then: Yup.string().required("A hash is required"),
-      //   }),
+        .test({
+          name: "file",
+          message: "cover.file is required",
+          test: function (value) {
+            if (value) return true
+            // optional if it's a single blueprint
+            // @ts-ignore
+            if (!this.options.from[1].value.isBook) return true
+            // otherwise, is required if no hash is provided
+            if (!this.parent.hash) return false
+            return true
+          },
+        })
+        .test("fileSize", "File too large", function (value) {
+          if (value && value.size >= FILE_SIZE) return false
+          return true
+        })
+        .test("fileFormat", "Unsupported Format", function (value) {
+          if (value && !SUPPORTED_FORMATS.includes(value.type)) return false
+          return true
+        }),
+      hash: Yup.mixed()
+        .nullable()
+        .test({
+          name: "hash",
+          message: "cover.hash is required",
+          test: function (value) {
+            if (value) return true
+            // optional if it's a single blueprint
+            // @ts-ignore
+            if (!this.options.from[1].value.isBook) return true
+            // is required if no file is provided
+            if (!this.parent.file) return false
+            return true
+          },
+        }),
     }),
 }
 
@@ -275,6 +261,7 @@ type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing
 const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const router = useRouter()
   const [step, setStep] = useState<1 | 2>(1)
+  const [payloadData, setPayloadData] = useState<IFullPayload>()
   const [submit, setSubmit] = useState({
     loading: false,
     error: false,
@@ -291,8 +278,9 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
 
   const initialValues = createInitialValues(props.build)
 
-  const goToNextStep = useCallback(() => {
+  const goToNextStep = useCallback((fullPayload: IFullPayload) => {
     setStep(2)
+    setPayloadData(fullPayload)
   }, [])
 
   const title = props.type === "CREATE" ? "Create a build" : "Edit build"
@@ -340,8 +328,12 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                 <Step1 formikProps={formikProps} goToNextStep={goToNextStep} />
               )}
 
-              {(step === 2 || props.type === "EDIT") && (
-                <Step2 formikProps={formikProps} submitStatus={submit} />
+              {(step === 2 || props.type === "EDIT") && payloadData && (
+                <Step2
+                  formikProps={formikProps}
+                  payloadData={payloadData}
+                  submitStatus={submit}
+                />
               )}
             </Form>
           </Layout>

@@ -5,7 +5,7 @@ import {
   IDecodedBlueprintBookData,
   IDecodedBlueprintData,
 } from "../../../types"
-import { ICreatePayloadResult } from "../../../types/models"
+import { ICreatePayloadResult, IFullPayload } from "../../../types/models"
 import {
   decodeBlueprint,
   isBlueprintItem,
@@ -55,7 +55,7 @@ type TStepState =
 
 interface IStep1Props {
   formikProps: FormikProps<IFormValues>
-  goToNextStep: () => void
+  goToNextStep: (payload: IFullPayload) => void
 }
 
 const Step1: React.FC<IStep1Props> = (props) => {
@@ -120,13 +120,14 @@ const Step1: React.FC<IStep1Props> = (props) => {
       ? stepState.json.blueprint_book
       : stepState.json.blueprint
 
+    props.formikProps.setFieldValue("isBook", stepState.isBook)
     props.formikProps.setFieldValue("title", bp.label)
     // TODO: set validity/availability of slug
     props.formikProps.setFieldValue("slug", res.data.extracted_slug.slug)
     props.formikProps.setFieldValue("description", bp.description || "")
     props.formikProps.setFieldValue("hash", res.data.payload.hash)
 
-    props.goToNextStep()
+    props.goToNextStep(res.data.payload)
   }
 
   function handleOnChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {
