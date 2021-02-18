@@ -9,13 +9,7 @@ export const Row = styled.div`
   gap: 50px;
 `
 
-export const Content = styled.div`
-  flex: 0 1 calc(100% - 300px);
-`
-
-export const Sidebar = styled.div`
-  flex: 0 0 300px;
-`
+export const Content = styled.div``
 
 export const ButtonsStack = styled(Stacker)`
   margin-top: 16px;

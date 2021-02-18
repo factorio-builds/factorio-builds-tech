@@ -17,5 +17,6 @@ export const ContainerWrapper = styled.div`
 
   &.size-medium {
     width: calc(1366px - 20px * 2);
+    max-width: calc(100% - 20px * 2);
   }
 `
