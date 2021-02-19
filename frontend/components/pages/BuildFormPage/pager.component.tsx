@@ -4,7 +4,7 @@ import ThumbsUp from "../../../icons/thumbs-up"
 import Stacker from "../../ui/Stacker"
 import * as SC from "./build-form-page.styles"
 
-export type TPage = "data" | "cover" | "image"
+export type TPage = "data" | "cover"
 
 interface IPageState {
   isValid: boolean
@@ -90,15 +90,6 @@ const Pager: React.FC<IPagerProps> = (props) => {
           isValid={props.pagesState.cover.isValid}
           isOptional={props.pagesState.cover.optional}
           onClick={() => props.goToPage("cover")}
-        />
-        <PageButton
-          stateKey="image"
-          number={3}
-          title="Custom image"
-          isActive={props.currentPage === "image"}
-          isValid={props.pagesState.image.isValid}
-          isOptional={props.pagesState.image.optional}
-          onClick={() => props.goToPage("image")}
         />
       </Stacker>
     </SC.Row>

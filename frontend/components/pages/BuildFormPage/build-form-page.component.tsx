@@ -24,6 +24,7 @@ export interface IFormValues {
   description: string
   tags: string[]
   cover: {
+    type: "file" | "hash"
     x: number | null
     y: number | null
     width: number | null
@@ -42,6 +43,7 @@ interface IValidFormValues {
   description: string
   tags: string[]
   cover: {
+    type: "file" | "hash"
     x: number
     y: number
     width: number
@@ -68,6 +70,7 @@ const baseInitialValues: IFormValues = {
   description: "",
   tags: [],
   cover: {
+    type: "file",
     x: null,
     y: null,
     width: null,
@@ -91,13 +94,17 @@ const createInitialValues = (build?: IFullBuild): IFormValues => {
     description: build.description || "",
     tags: build.tags,
     cover: {
+      type: build.latest_version.type === "blueprint" ? "hash" : "file",
       x: null,
       y: null,
       width: null,
       height: null,
       file: null,
       url: build._links.cover?.href || null,
-      hash: null,
+      hash:
+        build.latest_version.type === "blueprint"
+          ? build.latest_version.hash
+          : null,
     },
   }
 }
