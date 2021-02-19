@@ -10,7 +10,6 @@ import Pager from "./pager.component"
 import { TPage } from "./pager.component"
 import Step2Cover from "./step-2-cover.component"
 import Step2Data from "./step-2-data.component"
-import Step2Image from "./step-2-image.component"
 
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
@@ -52,10 +51,9 @@ const Step2: React.FC<IStep2Props> = (props) => {
                   "tags",
                 ]).isValid,
               },
-              cover: { isValid: validateFields(["cover"]).isValid },
-              image: {
+              cover: {
                 isValid: validateFields(["cover"]).isValid,
-                optional: true,
+                optional: props.payloadData.type === "blueprint",
               },
             }}
             goToPage={setPage}
@@ -68,7 +66,6 @@ const Step2: React.FC<IStep2Props> = (props) => {
               payloadData={props.payloadData}
             />
           )}
-          {page === "image" && <Step2Image formikProps={props.formikProps} />}
 
           <SC.ButtonsStack gutter={24} orientation="horizontal">
             <Button

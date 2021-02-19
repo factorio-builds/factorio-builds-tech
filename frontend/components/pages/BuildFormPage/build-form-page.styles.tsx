@@ -98,11 +98,6 @@ export const PageFeedback = styled(Stacker)`
 
 export const RenderedCovers = styled.div``
 
-export const RenderedCoversTitle = styled.h3`
-  ${getTypo(ETypo.FORM_LABEL)};
-  margin: 0 0 6px;
-`
-
 export const Rendered = styled.button`
   padding: 0;
   border: 0;
