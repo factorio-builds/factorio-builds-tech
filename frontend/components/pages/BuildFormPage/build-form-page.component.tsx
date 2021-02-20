@@ -25,13 +25,15 @@ export interface IFormValues {
   tags: string[]
   cover: {
     type: "file" | "hash"
-    x: number | null
-    y: number | null
-    width: number | null
-    height: number | null
     file: File | null
     url: string | null
     hash: string | null
+    crop: {
+      x: number
+      y: number
+      width: number
+      height: number
+    } | null
   }
 }
 
@@ -44,13 +46,15 @@ interface IValidFormValues {
   tags: string[]
   cover: {
     type: "file" | "hash"
-    x: number
-    y: number
-    width: number
-    height: number
     file: File | null
     url: string | null
     hash: string | null
+    crop: {
+      x: number
+      y: number
+      width: number
+      height: number
+    } | null
   }
 }
 
@@ -71,13 +75,10 @@ const baseInitialValues: IFormValues = {
   tags: [],
   cover: {
     type: "file",
-    x: null,
-    y: null,
-    width: null,
-    height: null,
     file: null,
     url: null,
     hash: null,
+    crop: null,
   },
 }
 
@@ -95,10 +96,7 @@ const createInitialValues = (build?: IFullBuild): IFormValues => {
     tags: build.tags,
     cover: {
       type: build.latest_version.type === "blueprint" ? "hash" : "file",
-      x: null,
-      y: null,
-      width: null,
-      height: null,
+      crop: null,
       file: null,
       url: build._links.cover?.href || null,
       hash:
@@ -133,10 +131,14 @@ const validation = {
   cover: Yup.object()
     .required()
     .shape({
-      x: Yup.number().nullable(),
-      y: Yup.number().nullable(),
-      width: Yup.number().nullable(),
-      height: Yup.number().nullable(),
+      crop: Yup.object()
+        .nullable()
+        .shape({
+          x: Yup.number().nullable(),
+          y: Yup.number().nullable(),
+          width: Yup.number().nullable(),
+          height: Yup.number().nullable(),
+        }),
       file: Yup.mixed()
         .nullable()
         .test({
@@ -215,12 +217,9 @@ const toFormData = (formValues: IValidFormValues) => {
     description: formValues.description,
     tags: formValues.tags,
     cover: {
-      x: formValues.cover.x,
-      y: formValues.cover.y,
-      width: formValues.cover.width,
-      height: formValues.cover.height,
       file: formValues.cover.file,
       hash: formValues.cover.hash,
+      crop: formValues.cover.crop,
     },
     version: {
       icons: [
@@ -241,12 +240,9 @@ const toPatchFormData = (formValues: IValidFormValues) => {
     description: formValues.description,
     tags: formValues.tags,
     cover: {
-      x: formValues.cover.x,
-      y: formValues.cover.y,
-      width: formValues.cover.width,
-      height: formValues.cover.height,
       file: formValues.cover.file,
       hash: formValues.cover.hash,
+      crop: formValues.cover.crop,
     },
   }
 

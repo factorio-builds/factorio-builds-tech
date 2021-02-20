@@ -55,11 +55,11 @@ export interface paths {
           /** The desired direction to sort the results */
           sort_direction?: "asc" | "desc"
           /** An optional search term to filter the results by */
-          q?: string | null
+          q?: string
           /** An optional list of tags to filter the results by */
-          tags?: string[] | null
+          tags?: string[]
           /** An optional game version to filter the results by */
-          version?: string | null
+          version?: string
         }
       }
       responses: {
@@ -669,11 +669,11 @@ export interface paths {
           /** The desired direction to sort the results */
           sort_direction?: "asc" | "desc"
           /** An optional search term to filter the results by */
-          q?: string | null
+          q?: string
           /** An optional list of tags to filter the results by */
-          tags?: string[] | null
+          tags?: string[]
           /** An optional game version to filter the results by */
-          version?: string | null
+          version?: string
         }
       }
       responses: {
@@ -770,18 +770,15 @@ export interface components {
       count: number
     }
     CoverRequest: {
-      /** The horizontal position of the crop rectangle. */
-      x: number
-      /** The vertical position of the crop rectangle. */
-      y: number
-      /** The width of the crop rectangle. */
-      width: number
-      /** The height of the crop rectangle. */
-      height: number
       /** The uploaded cover image. */
       file?: File | null
       /** The hash of an existing blueprint rendering. */
       hash?: string | null
+      /**
+       * An optional rectangle to specify how the image should be cropped before it is resized.
+       * If unspecified, the image will not be cropped and only resized to fit the cover limits.
+       */
+      crop?: components["schemas"]["CropRectangle"] | null
     }
     CreateBuildRequest: {
       /**
@@ -844,6 +841,12 @@ export interface components {
       cover: components["schemas"]["CoverRequest"]
       /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
       expected_previous_version_id: string
+    }
+    CropRectangle: {
+      x: number
+      y: number
+      width: number
+      height: number
     }
     EditBuildRequest: {
       /**

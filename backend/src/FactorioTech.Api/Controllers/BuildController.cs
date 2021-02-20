@@ -351,15 +351,13 @@ namespace FactorioTech.Api.Controllers
                 if (cover.File != null)
                 {
                     return await _imageService.SaveCroppedCover(
-                        cover.File.OpenReadStream(),
-                        (cover.X, cover.Y, cover.Width, cover.Height));
+                        cover.File.OpenReadStream(), cover.Crop);
                 }
 
                 if (cover.Hash != null)
                 {
                     return await _imageService.SaveCroppedCover(
-                        cover.Hash.Value,
-                        (cover.X, cover.Y, cover.Width, cover.Height));
+                        cover.Hash.Value, cover.Crop);
                 }
 
                 throw new Exception($"Either {nameof(cover.File)} or {nameof(cover.Hash)} must be set.");

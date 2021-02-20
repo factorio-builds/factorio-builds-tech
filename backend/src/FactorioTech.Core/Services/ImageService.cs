@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Metadata;
 using SixLabors.ImageSharp.Processing;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -19,6 +19,25 @@ namespace FactorioTech.Core.Services
         {
             Full,
             Thumb,
+        }
+
+        public sealed class CropRectangle
+        {
+            [Required]
+            [Range(0, int.MaxValue)]
+            public int X { get; set; }
+
+            [Required]
+            [Range(0, int.MaxValue)]
+            public int Y { get; set; }
+
+            [Required]
+            [Range(1, int.MaxValue)]
+            public int Width { get; set; }
+
+            [Required]
+            [Range(1, int.MaxValue)]
+            public int Height { get; set; }
         }
 
         private readonly ILogger<ImageService> _logger;
@@ -184,7 +203,7 @@ namespace FactorioTech.Core.Services
             }
         }
 
-        public async Task<ITempCoverHandle> SaveCroppedCover(Hash hash, (int X, int Y, int Width, int Height)? rectangle = null)
+        public async Task<ITempCoverHandle> SaveCroppedCover(Hash hash, CropRectangle? crop = null)
         {
             var rendering = await TryLoadRendering(hash, RenderingType.Full);
             if (rendering == null)
@@ -193,16 +212,16 @@ namespace FactorioTech.Core.Services
             }
             else
             {
-                return await SaveCroppedCover(rendering, rectangle);
+                return await SaveCroppedCover(rendering, crop);
             }
         }
 
-        public async Task<ITempCoverHandle> SaveCroppedCover(Stream stream, (int X, int Y, int Width, int Height)? rectangle = null)
+        public async Task<ITempCoverHandle> SaveCroppedCover(Stream stream, CropRectangle? crop = null)
         {
             var (image, format) = await Image.LoadWithFormatAsync(stream);
 
-            var crop = rectangle.HasValue
-                ? new Rectangle(rectangle.Value.X, rectangle.Value.Y, rectangle.Value.Width, rectangle.Value.Height)
+            var rectangle = crop != null
+                ? new Rectangle(crop.X, crop.Y, crop.Width, crop.Height)
                 : new Rectangle(0, 0, Math.Min(image.Height, image.Width), Math.Min(image.Height, image.Width));
 
             var resize = new ResizeOptions
@@ -211,7 +230,7 @@ namespace FactorioTech.Core.Services
                 Mode = ResizeMode.Max,
             };
 
-            image.Mutate(x => x.AutoOrient().Crop(crop).Resize(resize));
+            image.Mutate(x => x.AutoOrient().Crop(rectangle).Resize(resize));
 
             var tempId = Guid.NewGuid();
             var imageFqfn = GetCoverFqfn(tempId);
