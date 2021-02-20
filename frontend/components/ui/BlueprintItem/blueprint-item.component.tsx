@@ -21,12 +21,15 @@ interface IBaseBlueprintItemProps {
 interface IBlueprintItemPropsBook extends IBaseBlueprintItemProps {
   isBook: true
   nodes: IFullPayload[]
+  children?: React.ReactNode
 }
 
 interface IBlueprintItemPropsBlueprint extends IBaseBlueprintItemProps {
   isBook: false
   entities: IBlueprintPayload["entities"]
   tiles: IBlueprintPayload["tiles"]
+  children?: React.ReactNode
+  highlighted?: boolean
 }
 
 type IBlueprintItemProps =
@@ -75,9 +78,12 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
   return (
     <SC.BlueprintItemWrapper
       depth={props.depth}
-      className={cx({ "is-expanded": expanded })}
+      className={cx({
+        "is-expanded": expanded,
+        "is-highlighted": !props.isBook && props.highlighted,
+      })}
     >
-      <SC.BlueprintItemInner onClick={expand}>
+      <SC.BlueprintItemInner>
         <SC.Content>
           <SC.Title orientation="horizontal" gutter={8}>
             {props.icons.length > 0 && <BuildIcon icons={props.icons} />}
@@ -90,7 +96,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
               )}
             </Stacker>
             {isExpandable && (
-              <SC.Expand>
+              <SC.Expand onClick={expand}>
                 expand <Caret inverted={expanded} />
               </SC.Expand>
             )}
@@ -102,7 +108,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   <img src={props.image.href} alt="" width={200} />
                 </SC.ImageWrapper>
               )}
-              <Stacker orientation="vertical" gutter={8}>
+              <SC.InnerContent orientation="vertical" gutter={16}>
                 {props.description && (
                   <SC.Description>
                     {props.description.split("\n").map((text) => (
@@ -119,7 +125,8 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                     <BlueprintRequiredItems entities={props.entities} />
                   </SC.RequiredItems>
                 )}
-              </Stacker>
+                {props.children}
+              </SC.InnerContent>
             </SC.Info>
           )}
         </SC.Content>
