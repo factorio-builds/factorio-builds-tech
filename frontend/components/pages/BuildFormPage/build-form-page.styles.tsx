@@ -1,3 +1,4 @@
+import { lighten } from "polished"
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
@@ -44,17 +45,25 @@ export const CoverWrapper = styled.div`
 
 export const PageButton = styled(Stacker)`
   ${getTypo(ETypo.PAGE_SUBTITLE)};
+  font-size: 18px;
   display: flex;
   align-items: center;
-  opacity: 0.5;
   cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  background: ${COLOR.CARD};
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  border: 2px solid ${COLOR.CARD};
 
   &:hover {
-    opacity: 0.75;
+    background: ${lighten(0.05, COLOR.CARD)};
+    border-color: ${lighten(0.05, COLOR.CARD)};
   }
 
   &.is-active {
-    opacity: 1;
+    background: ${lighten(0.05, COLOR.CARD)};
+    border-color: ${COLOR.FADEDBLUE500};
     pointer-events: none;
   }
 `
@@ -66,8 +75,13 @@ export const PageNumber = styled.div`
   width: 30px;
   height: 30px;
   border: 2px solid ${COLOR.FADEDBLUE700};
-  border-radius: 50%;
+  border-radius: 5px;
   margin-right: 8px;
+
+  .is-active & {
+    background: ${COLOR.FADEDBLUE700};
+    color: ${COLOR.BACKGROUND};
+  }
 `
 
 export const PageBody = styled(Stacker)``

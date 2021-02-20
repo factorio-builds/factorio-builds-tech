@@ -41,7 +41,7 @@ const PageButton = (props: IPageButton): JSX.Element => {
   return (
     <SC.PageButton
       orientation="horizontal"
-      gutter={4}
+      gutter={8}
       className={cx({ "is-active": props.isActive })}
       onClick={props.onClick}
     >
@@ -72,7 +72,7 @@ interface IPagerProps {
 const Pager: React.FC<IPagerProps> = (props) => {
   return (
     <SC.Row>
-      <Stacker orientation="horizontal" gutter={24}>
+      <Stacker orientation="horizontal" gutter={16}>
         <PageButton
           stateKey="data"
           number={1}
