@@ -10,7 +10,6 @@ export const BlueprintItemWrapper = styled.div<{ depth: number }>`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  cursor: pointer;
   overflow: hidden;
   margin-left: ${(props) => props.depth * 40}px;
 `
@@ -21,16 +20,20 @@ export const ImageWrapper = styled.div`
   width: 200px;
 `
 
+export const InnerContent = styled(Stacker)`
+  flex-grow: 1;
+`
+
 export const Content = styled.div`
   padding: 16px;
   color: ${COLOR.FADEDBLUE900};
   margin: 4px 0;
   background: ${COLOR.CARD};
   border-radius: 5px;
+  border: 2px solid ${COLOR.CARD};
 
-  ${BlueprintItemInner}:hover & {
-    background: ${lighten(0.05, COLOR.CARD)};
-    color: #fff;
+  .is-highlighted & {
+    border: 2px solid ${COLOR.SELECTED} !important;
   }
 `
 
@@ -66,6 +69,10 @@ export const Expand = styled.button`
   color: ${COLOR.LINK};
   margin-left: auto !important;
   cursor: pointer;
+
+  &:hover {
+    color: ${lighten(0.05, COLOR.LINK)};
+  }
 `
 
 export const Category = styled.div`
@@ -96,4 +103,5 @@ export const RequiredItems = styled.div`
 export const Subtitle = styled.h3`
   ${getTypo(ETypo.METADATA_TITLE)};
   font-size: 16px;
+  margin-top: 0;
 `
