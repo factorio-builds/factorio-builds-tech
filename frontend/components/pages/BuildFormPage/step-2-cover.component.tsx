@@ -19,10 +19,11 @@ interface IStep2CoverProps {
 
 const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
   function onChangeImage(image: IImageUpload) {
-    props.formikProps.setFieldValue("cover.x", 0)
-    props.formikProps.setFieldValue("cover.y", 0)
-    props.formikProps.setFieldValue("cover.width", image.width)
-    props.formikProps.setFieldValue("cover.height", image.height)
+    // these are optional
+    // props.formikProps.setFieldValue("cover.crop.x", 0)
+    // props.formikProps.setFieldValue("cover.crop.y", 0)
+    // props.formikProps.setFieldValue("cover.crop.width", image.width)
+    // props.formikProps.setFieldValue("cover.crop.height", image.height)
     props.formikProps.setFieldValue("cover.file", image.file)
     props.formikProps.setFieldTouched("cover.file")
   }
