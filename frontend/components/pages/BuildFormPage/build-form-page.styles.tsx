@@ -6,11 +6,6 @@ import { ETypo } from "../../../design/tokens/typo"
 import Button from "../../ui/Button"
 import Stacker from "../../ui/Stacker"
 
-export const Row = styled.div`
-  display: flex;
-  gap: 50px;
-`
-
 export const Content = styled.div``
 
 export const ButtonsStack = styled(Stacker)`
@@ -40,7 +35,7 @@ export const GroupTitle = styled.div`
 `
 
 export const CoverWrapper = styled.div`
-  width: 300px;
+  width: 716px;
 `
 
 export const PageButton = styled(Stacker)`
@@ -118,17 +113,12 @@ export const SelectRenderButton = styled(Button)`
   align-self: flex-end;
 `
 
-export const Rendered = styled.button`
-  padding: 0;
-  border: 0;
+export const Rendered = styled.div`
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 
   img {
     display: block;
-  }
-
-  &.is-selected {
-    border: 2px solid ${COLOR.SELECTED};
+    max-height: calc(100vh - 40px);
   }
 `

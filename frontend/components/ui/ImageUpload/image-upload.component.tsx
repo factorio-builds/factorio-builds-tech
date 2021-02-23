@@ -13,7 +13,7 @@ export interface IImageUpload {
 }
 
 interface IImageUploadProps {
-  label: string
+  label?: string
   imageFile: File | null
   imageUrl: string | null
   onChange: (image: IImageUpload) => void

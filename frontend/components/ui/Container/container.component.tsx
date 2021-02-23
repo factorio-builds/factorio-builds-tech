@@ -5,7 +5,7 @@ import * as SC from "./container.styles"
 interface IContainerProps {
   children: React.ReactNode
   direction?: "row" | "column"
-  size?: "medium" | "large"
+  size?: "small" | "medium" | "large"
 }
 
 function Container({
@@ -18,6 +18,7 @@ function Container({
       className={cx({
         "dir-row": direction === "row",
         "dir-column": direction !== "row",
+        "size-small": size === "small",
         "size-medium": size === "medium",
         "size-large": size === "large",
       })}

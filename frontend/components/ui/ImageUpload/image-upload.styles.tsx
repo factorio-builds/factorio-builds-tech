@@ -42,9 +42,9 @@ export const UploadZone = styled.div`
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-  width: 300px;
-  height: 377px;
-  border: 2px solid ${COLOR.FADEDBLUE500};
+  width: 716px;
+  height: 373px;
+  border: 2px dashed ${COLOR.FADEDBLUE300};
   overflow-y: hidden;
   overflow-y: hidden;
   margin: 0 auto;
@@ -107,7 +107,7 @@ export const NoImageBackdrop = styled.div`
 export const Recommended = styled.div`
   display: flex;
   align-items: center;
-  background: #758099;
+  background: ${COLOR.FADEDBLUE300};
   color: ${COLOR.FADEDBLUE700};
   padding: 14px 14px;
   font-size: 12px;
