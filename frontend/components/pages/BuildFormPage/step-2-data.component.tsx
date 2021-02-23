@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo, useState } from "react"
+import { useSelector } from "react-redux"
 import { Field, FormikProps } from "formik"
 import startCase from "lodash/startCase"
 import Caret from "../../../icons/caret"
+import { IStoreState } from "../../../redux/store"
 import tags from "../../../tags.json"
 import Input from "../../form/FormikInputWrapper"
 import InputGroup from "../../form/InputGroup"
@@ -65,6 +67,7 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
 }
 
 const Step2Data: React.FC<IStep2DataProps> = (props) => {
+  const user = useSelector((state: IStoreState) => state.auth.user)
   const isCollapsable = useCallback(
     (tags: string[]) => {
       return !tags.some((tag) => props.formikProps.values.tags.includes(tag))
@@ -82,7 +85,14 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
         component={Input}
       />
 
-      <Field name="slug" label="Slug" type="text" required component={Input} />
+      <Field
+        name="slug"
+        label="Slug"
+        type="text"
+        required
+        component={Input}
+        prefix={<>{user?.username} /</>}
+      />
 
       <Field
         name="description"

@@ -57,3 +57,9 @@ export const StyledTextarea = styled.textarea`
     color: ${COLOR.FADEDBLUE500};
   }
 `
+
+export const Prefix = styled.div`
+  pointer-events: none;
+  color: ${COLOR.FADEDBLUE500};
+  padding-right: 4px;
+`
