@@ -35,7 +35,7 @@ export const GroupTitle = styled.div`
 `
 
 export const CoverWrapper = styled.div`
-  width: 300px;
+  width: 716px;
 `
 
 export const PageButton = styled(Stacker)`
