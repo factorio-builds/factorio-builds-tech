@@ -5,6 +5,7 @@ import startCase from "lodash/startCase"
 import Caret from "../../../icons/caret"
 import { IStoreState } from "../../../redux/store"
 import tags from "../../../tags.json"
+import ErrorMessage from "../../form/ErrorMessage"
 import Input from "../../form/FormikInputWrapper"
 import InputGroup from "../../form/InputGroup"
 import Stacker from "../../ui/Stacker"
@@ -122,6 +123,10 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
               />
             )
           })}
+
+          {props.formikProps.touched.tags && props.formikProps.errors.tags && (
+            <ErrorMessage>{props.formikProps.errors.tags}</ErrorMessage>
+          )}
         </Stacker>
       </InputGroup>
     </>

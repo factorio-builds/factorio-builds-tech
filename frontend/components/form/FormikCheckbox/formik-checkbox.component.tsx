@@ -1,5 +1,5 @@
 import React from "react"
-import { FieldProps, useFormikContext } from "formik"
+import { FieldProps, useField, useFormikContext } from "formik"
 import Checkbox from "../Checkbox/checkbox.component"
 
 interface IFormikCheckboxProps extends FieldProps {
@@ -11,6 +11,7 @@ interface IFormikCheckboxProps extends FieldProps {
 
 const FormikCheckbox: React.FC<IFormikCheckboxProps> = (props) => {
   const context = useFormikContext()
+  const [field] = useField(props.field.name)
   const name = props.field.name
   const value = props.field.value
   // @ts-ignore
@@ -22,6 +23,7 @@ const FormikCheckbox: React.FC<IFormikCheckboxProps> = (props) => {
     } else {
       handleChangeSingle(e)
     }
+    props.form.setFieldTouched(field.name)
   }
 
   const handleChangeSingle = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -50,7 +50,7 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
           </>
         ) : undefined
       }
-      error={error}
+      error={type !== "checkbox" && error}
       validFeedback={isTouched && !error ? props.validFeedback : undefined}
       uid={uid}
     >

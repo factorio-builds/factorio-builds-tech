@@ -129,7 +129,13 @@ const validation = {
       "A slug cannot use a reserved keyword"
     ),
   description: Yup.string(),
-  tags: Yup.array(Yup.string()),
+  tags: Yup.array(Yup.string()).test({
+    name: "tags-required",
+    message: "At least one tag must be selected",
+    test: function (value) {
+      return Array.isArray(value) && value.length !== 0
+    },
+  }),
   cover: Yup.object()
     .required()
     .shape({
