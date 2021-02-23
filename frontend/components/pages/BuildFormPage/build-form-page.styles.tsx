@@ -121,6 +121,7 @@ export const Rendered = styled.button`
 
   img {
     display: block;
+    max-height: calc(100vh - 40px);
   }
 
   &.is-selected {
