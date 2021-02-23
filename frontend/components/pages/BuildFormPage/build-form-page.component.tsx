@@ -324,7 +324,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     >
       {(formikProps) => {
         return (
-          <Layout title={title} size="medium">
+          <Layout title={title} size="small">
             <h2>{title}</h2>
             <Form>
               {step === 1 && props.type === "CREATE" && (

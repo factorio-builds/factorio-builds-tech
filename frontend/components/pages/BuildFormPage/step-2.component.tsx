@@ -37,57 +37,49 @@ const Step2: React.FC<IStep2Props> = (props) => {
   }
 
   return (
-    <SC.Row>
-      <SC.Content>
-        <Stacker>
-          <Pager
-            currentPage={page}
-            pagesState={{
-              data: {
-                isValid: validateFields([
-                  "title",
-                  "slug",
-                  "description",
-                  "tags",
-                ]).isValid,
-              },
-              cover: {
-                isValid: validateFields(["cover"]).isValid,
-                optional: props.payloadData.type === "blueprint",
-              },
-            }}
-            goToPage={setPage}
+    <SC.Content>
+      <Stacker>
+        <Pager
+          currentPage={page}
+          pagesState={{
+            data: {
+              isValid: validateFields(["title", "slug", "description", "tags"])
+                .isValid,
+            },
+            cover: {
+              isValid: validateFields(["cover"]).isValid,
+              optional: props.payloadData.type === "blueprint",
+            },
+          }}
+          goToPage={setPage}
+        />
+
+        {page === "data" && <Step2Data formikProps={props.formikProps} />}
+        {page === "cover" && (
+          <Step2Cover
+            formikProps={props.formikProps}
+            payloadData={props.payloadData}
           />
+        )}
 
-          {page === "data" && <Step2Data formikProps={props.formikProps} />}
-          {page === "cover" && (
-            <Step2Cover
-              formikProps={props.formikProps}
-              payloadData={props.payloadData}
-            />
+        <SC.ButtonsStack gutter={24} orientation="horizontal">
+          <Button
+            variant="success"
+            disabled={props.submitStatus.loading || !props.formikProps.isValid}
+          >
+            <Stacker gutter={10} orientation="horizontal">
+              <span>Save build</span>
+              {props.submitStatus.loading && <Spinner />}
+            </Stacker>
+          </Button>
+          {page === "data" && (
+            <SC.TextButton onClick={() => setPage("cover")}>
+              pick cover image
+            </SC.TextButton>
           )}
-
-          <SC.ButtonsStack gutter={24} orientation="horizontal">
-            <Button
-              variant="success"
-              disabled={
-                props.submitStatus.loading || !props.formikProps.isValid
-              }
-            >
-              <Stacker gutter={10} orientation="horizontal">
-                <span>Save build</span>
-                {props.submitStatus.loading && <Spinner />}
-              </Stacker>
-            </Button>
-            {page === "data" && (
-              <SC.TextButton onClick={() => setPage("cover")}>
-                pick cover image
-              </SC.TextButton>
-            )}
-          </SC.ButtonsStack>
-        </Stacker>
-      </SC.Content>
-    </SC.Row>
+        </SC.ButtonsStack>
+      </Stacker>
+    </SC.Content>
   )
 }
 

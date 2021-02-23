@@ -71,28 +71,26 @@ interface IPagerProps {
 
 const Pager: React.FC<IPagerProps> = (props) => {
   return (
-    <SC.Row>
-      <Stacker orientation="horizontal" gutter={16}>
-        <PageButton
-          stateKey="data"
-          number={1}
-          title="Data"
-          isActive={props.currentPage === "data"}
-          isValid={props.pagesState.data.isValid}
-          isOptional={props.pagesState.data.optional}
-          onClick={() => props.goToPage("data")}
-        />
-        <PageButton
-          stateKey="cover"
-          number={2}
-          title="Cover"
-          isActive={props.currentPage === "cover"}
-          isValid={props.pagesState.cover.isValid}
-          isOptional={props.pagesState.cover.optional}
-          onClick={() => props.goToPage("cover")}
-        />
-      </Stacker>
-    </SC.Row>
+    <Stacker orientation="horizontal" gutter={16}>
+      <PageButton
+        stateKey="data"
+        number={1}
+        title="Data"
+        isActive={props.currentPage === "data"}
+        isValid={props.pagesState.data.isValid}
+        isOptional={props.pagesState.data.optional}
+        onClick={() => props.goToPage("data")}
+      />
+      <PageButton
+        stateKey="cover"
+        number={2}
+        title="Cover"
+        isActive={props.currentPage === "cover"}
+        isValid={props.pagesState.cover.isValid}
+        isOptional={props.pagesState.cover.optional}
+        onClick={() => props.goToPage("cover")}
+      />
+    </Stacker>
   )
 }
 

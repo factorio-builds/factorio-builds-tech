@@ -6,11 +6,6 @@ import { ETypo } from "../../../design/tokens/typo"
 import Button from "../../ui/Button"
 import Stacker from "../../ui/Stacker"
 
-export const Row = styled.div`
-  display: flex;
-  gap: 50px;
-`
-
 export const Content = styled.div``
 
 export const ButtonsStack = styled(Stacker)`

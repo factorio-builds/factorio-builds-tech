@@ -171,52 +171,50 @@ const Step1: React.FC<IStep1Props> = (props) => {
   }
 
   return (
-    <SC.Row>
-      <SC.Content>
-        <Stacker>
-          <p>
-            Get started with a blueprint string, we will parse your blueprint to
-            extract the relevant metadata as best as we can!
-          </p>
+    <SC.Content>
+      <Stacker>
+        <p>
+          Get started with a blueprint string, we will parse your blueprint to
+          extract the relevant metadata as best as we can!
+        </p>
 
-          <InputWrapper uid="encoded">
-            <Input.Textarea
-              id="encoded"
-              value={encoded}
-              rows={5}
-              spellCheck={false}
-              onChange={handleOnChange}
-              onKeyPress={handleOnKeyPress}
-            ></Input.Textarea>
-          </InputWrapper>
+        <InputWrapper uid="encoded">
+          <Input.Textarea
+            id="encoded"
+            value={encoded}
+            rows={5}
+            spellCheck={false}
+            onChange={handleOnChange}
+            onKeyPress={handleOnKeyPress}
+          ></Input.Textarea>
+        </InputWrapper>
 
-          {stepState.isValid && (
-            <>
-              {/* prettier-ignore */}
-              <p>
-                Blueprint with a name of <b><WithIcons input={stepState.data.label} /></b>, totalling <b>{stepState.data.entityCount}</b> entities.<br />
-                {stepState.data.isBook && <>Found a <b>blueprint book</b>, with <b>{stepState.data.blueprintCount}</b> blueprints.</>}
-                {!stepState.data.isBook && <>Found a <b>single blueprint</b>.</>}
-                {/*Assuming category of ABC, game state of DEF with ZZ% confidence.*/}
-              </p>
+        {stepState.isValid && (
+          <>
+            {/* prettier-ignore */}
+            <p>
+              Blueprint with a name of <b><WithIcons input={stepState.data.label} /></b>, totalling <b>{stepState.data.entityCount}</b> entities.<br />
+              {stepState.data.isBook && <>Found a <b>blueprint book</b>, with <b>{stepState.data.blueprintCount}</b> blueprints.</>}
+              {!stepState.data.isBook && <>Found a <b>single blueprint</b>.</>}
+              {/*Assuming category of ABC, game state of DEF with ZZ% confidence.*/}
+            </p>
 
-              <p>You’ll get to adjust everything on the next screen.</p>
-            </>
-          )}
+            <p>You’ll get to adjust everything on the next screen.</p>
+          </>
+        )}
 
-          <SC.ButtonsStack gutter={24} orientation="horizontal">
-            <Button
-              variant="success"
-              type="button"
-              disabled={!stepState.isValid}
-              onClick={preFillForm}
-            >
-              Continue
-            </Button>
-          </SC.ButtonsStack>
-        </Stacker>
-      </SC.Content>
-    </SC.Row>
+        <SC.ButtonsStack gutter={24} orientation="horizontal">
+          <Button
+            variant="success"
+            type="button"
+            disabled={!stepState.isValid}
+            onClick={preFillForm}
+          >
+            Continue
+          </Button>
+        </SC.ButtonsStack>
+      </Stacker>
+    </SC.Content>
   )
 }
 

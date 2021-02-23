@@ -10,7 +10,7 @@ interface ILayoutProps {
   sidebar?: ReactNode
   title?: string
   subheader?: ReactNode
-  size?: "medium" | "large"
+  size?: "small" | "medium" | "large"
 }
 
 const Layout: React.FC<ILayoutProps> = ({
