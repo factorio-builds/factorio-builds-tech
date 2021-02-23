@@ -1,5 +1,6 @@
 import React from "react"
 import cx from "classnames"
+import Stacker from "../../ui/Stacker"
 import * as SC from "./input-group.styles"
 
 interface IInputGroup {
@@ -14,8 +15,10 @@ const InputGroup: React.FC<IInputGroup> = (props) => {
 
   return (
     <SC.StyledInputGroup className={classNames}>
-      <SC.Legend>{props.legend}</SC.Legend>
-      {props.children}
+      <Stacker orientation="vertical" gutter={6}>
+        <SC.Legend>{props.legend}</SC.Legend>
+        {props.children}
+      </Stacker>
     </SC.StyledInputGroup>
   )
 }

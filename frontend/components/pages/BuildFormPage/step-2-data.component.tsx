@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react"
 import { Field, FormikProps } from "formik"
+import startCase from "lodash/startCase"
 import Caret from "../../../icons/caret"
 import tags from "../../../tags.json"
 import Input from "../../form/FormikInputWrapper"
@@ -39,7 +40,7 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
       legend={
         <SC.GroupTitle onClick={expand}>
           <Caret inverted={collapsed} />
-          {props.group}
+          {startCase(props.group)}
         </SC.GroupTitle>
       }
     >
@@ -91,7 +92,13 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
         component={Input}
       />
 
-      <InputGroup legend="Tags">
+      <InputGroup
+        legend={
+          <>
+            Tags <span>(minimum one required)</span>
+          </>
+        }
+      >
         <Stacker gutter={8}>
           {Object.keys(tags).map((tagCategory) => {
             const tagGroup = tags[tagCategory as keyof typeof tags]

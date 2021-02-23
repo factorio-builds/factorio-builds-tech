@@ -43,10 +43,12 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
       {...props}
       className={`size-${size}`}
       label={
-        !props.inline && type !== "checkbox"
-          ? // todo: extract/cleanup logic
-            `${props.label} ${!props.required ? "(optional)" : ""}`.trim()
-          : undefined
+        // TODO: clean up logic
+        !props.inline && type !== "checkbox" ? (
+          <>
+            {props.label} {!props.required && <span>(optional)</span>}
+          </>
+        ) : undefined
       }
       error={error}
       validFeedback={isTouched && !error ? props.validFeedback : undefined}

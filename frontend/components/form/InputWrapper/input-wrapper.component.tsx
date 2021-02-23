@@ -6,7 +6,7 @@ import * as SC from "./input-wrapper.styles"
 
 interface IInputWrapper extends React.ComponentPropsWithoutRef<"div"> {
   uid: string
-  label?: string
+  label?: string | React.ReactElement
   validFeedback?: string
   error?: any
 }
