@@ -7,6 +7,7 @@ interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name?: string
   value: React.ReactText
   placeholder?: string
+  customPrefix?: JSX.Element
   icon?: JSX.Element
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void
@@ -27,6 +28,7 @@ const Text: React.FC<ITextProps> = ({
   name,
   value,
   placeholder,
+  customPrefix,
   icon,
   spellCheck,
   onChange,
@@ -44,6 +46,7 @@ const Text: React.FC<ITextProps> = ({
 
   return (
     <SC.StyledInputWrapper className={cx({ "is-focused": focused })}>
+      {customPrefix && <SC.Prefix>{customPrefix}</SC.Prefix>}
       {icon}
       <SC.StyledInput
         id={id}

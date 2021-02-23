@@ -58,6 +58,7 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
         <FormikInput
           {...props}
           {...formikProps}
+          prefix={prefix}
           onKeyPress={onKeyPress}
           type={type}
           id={uid}
