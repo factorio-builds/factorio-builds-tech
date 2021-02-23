@@ -16,6 +16,10 @@ export const Label = styled.label`
   ${getTypo(ETypo.FORM_LABEL)};
   color: ${COLOR.FADEDBLUE900};
   margin-bottom: 6px;
+
+  span {
+    font-weight: 400;
+  }
 `
 
 export const ValidMessage = styled.div`

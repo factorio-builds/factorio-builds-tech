@@ -28,9 +28,12 @@ export const TextButton = styled.button`
 
 export const GroupTitle = styled.div`
   cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
 
   svg {
-    margin-right: 8px;
+    margin-right: 12px;
   }
 `
 
