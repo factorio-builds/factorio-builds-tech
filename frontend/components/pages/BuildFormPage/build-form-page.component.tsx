@@ -35,6 +35,7 @@ export interface IFormValues {
       height: number
     } | null
   }
+  version?: ICreateBuildRequest["version"]
 }
 
 interface IValidFormValues {
@@ -56,6 +57,7 @@ interface IValidFormValues {
       height: number
     } | null
   }
+  version?: ICreateBuildRequest["version"]
 }
 
 const FILE_SIZE = 10 * 1000 * 1024 // 10MB
@@ -178,6 +180,7 @@ const validation = {
           },
         }),
     }),
+  version: Yup.mixed().nullable(),
 }
 
 // TODO: validate image
@@ -222,12 +225,7 @@ const toFormData = (formValues: IValidFormValues) => {
       crop: formValues.cover.crop,
     },
     version: {
-      icons: [
-        {
-          name: "solar-panel",
-          type: "item",
-        },
-      ],
+      icons: formValues.version?.icons || [],
     },
   }
 
