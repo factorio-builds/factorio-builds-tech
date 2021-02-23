@@ -78,7 +78,11 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
 
         <Radio
           id="cover-hash"
-          label="Pick a rendered image"
+          label={
+            isBook(props.payloadData)
+              ? "Pick a rendered image"
+              : "Use the rendered image"
+          }
           value="hash"
           onChange={() => props.formikProps.setFieldValue("cover.type", "hash")}
           checked={props.formikProps.values.cover.type === "hash"}
