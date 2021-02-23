@@ -1,5 +1,4 @@
 import React, { useCallback } from "react"
-// import cx from "classnames"
 import { FormikProps } from "formik"
 import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { isBook } from "../../../utils/build"
@@ -135,19 +134,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
                 })}
               </div>
             ) : (
-              <SC.Rendered
-                // className={cx({
-                //   "is-selected": coverIsSelected(props.payloadData.hash),
-                // })}
-                type="button"
-                // onClick={() =>
-                //   selectRenderedCover({
-                //     href: props.payloadData._links.rendering_thumb
-                //       ?.href as string,
-                //     hash: props.payloadData.hash,
-                //   })
-                // }
-              >
+              <SC.Rendered>
                 <img
                   src={props.payloadData._links.rendering_thumb?.href}
                   alt=""

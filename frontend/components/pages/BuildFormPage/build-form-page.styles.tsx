@@ -113,18 +113,12 @@ export const SelectRenderButton = styled(Button)`
   align-self: flex-end;
 `
 
-export const Rendered = styled.button`
-  padding: 0;
-  border: 0;
+export const Rendered = styled.div`
   border-radius: 4px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 
   img {
     display: block;
     max-height: calc(100vh - 40px);
-  }
-
-  &.is-selected {
-    border: 2px solid ${COLOR.SELECTED};
   }
 `
