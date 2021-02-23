@@ -129,6 +129,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
     props.formikProps.setFieldValue("version.icons", res.data.payload.icons)
 
     if (!stepState.isBook) {
+      props.formikProps.setFieldValue("cover.type", "hash")
       props.formikProps.setFieldValue("cover.hash", res.data.payload.hash)
     }
 
