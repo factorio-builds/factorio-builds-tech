@@ -133,14 +133,12 @@ const validation = {
   cover: Yup.object()
     .required()
     .shape({
-      crop: Yup.object()
-        .nullable()
-        .shape({
-          x: Yup.number().nullable(),
-          y: Yup.number().nullable(),
-          width: Yup.number().nullable(),
-          height: Yup.number().nullable(),
-        }),
+      crop: Yup.object().nullable().shape({
+        x: Yup.number().nullable(),
+        y: Yup.number().nullable(),
+        width: Yup.number().nullable(),
+        height: Yup.number().nullable(),
+      }),
       file: Yup.mixed()
         .nullable()
         .test({
