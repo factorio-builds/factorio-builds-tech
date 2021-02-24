@@ -44,6 +44,13 @@ export const StyledInput = styled.input`
   &::placeholder {
     color: ${COLOR.FADEDBLUE500};
   }
+
+  // fix for chrome autocomplete
+  &:-webkit-autofill,
+  &:-internal-autofill-selected {
+    box-shadow: 0 0 0 50px ${COLOR.INPUT} inset;
+    -webkit-text-fill-color: ${COLOR.FADEDBLUE700};
+  }
 `
 
 export const StyledTextarea = styled.textarea`
