@@ -26,7 +26,13 @@ export const TextButton = styled.button`
   }
 `
 
-export const GroupTitle = styled.div`
+export const GroupTitle = styled.button`
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
   cursor: pointer;
   position: relative;
   display: flex;

@@ -17,7 +17,8 @@ const BaseInput = css`
     border-color: ${COLOR.DANGER} !important;
   }
 
-  &:focus {
+  &:focus,
+  &:focus-within {
     box-shadow: 0 0 0 3px #aad1ff;
     outline: none;
   }

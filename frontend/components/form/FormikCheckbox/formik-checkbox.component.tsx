@@ -17,23 +17,22 @@ const FormikCheckbox: React.FC<IFormikCheckboxProps> = (props) => {
   // @ts-ignore
   const isArray = Array.isArray(context.initialValues[name])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (isChecked: boolean) => {
     if (isArray) {
-      handleChangeMulti(e)
+      handleChangeMulti(isChecked)
     } else {
-      handleChangeSingle(e)
+      handleChangeSingle(isChecked)
     }
     props.form.setFieldTouched(field.name)
   }
 
-  const handleChangeSingle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    context.setFieldValue(name, e.target.checked)
+  const handleChangeSingle = (isChecked: boolean) => {
+    context.setFieldValue(name, isChecked)
   }
 
-  const handleChangeMulti = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeMulti = (isChecked: boolean) => {
     // @ts-ignore
     const formValues = context.values[name] as string[]
-    const isChecked = e.target.checked
 
     if (isChecked) {
       context.setFieldValue(name, [...formValues, value])

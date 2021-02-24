@@ -40,6 +40,8 @@ const PageButton = (props: IPageButton): JSX.Element => {
 
   return (
     <SC.PageButton
+      role="button"
+      tabIndex={0}
       orientation="horizontal"
       gutter={8}
       className={cx({ "is-active": props.isActive })}

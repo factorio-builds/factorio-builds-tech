@@ -41,7 +41,7 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
     <InputGroup
       key={props.group}
       legend={
-        <SC.GroupTitle onClick={expand}>
+        <SC.GroupTitle type="button" onClick={expand}>
           <Caret inverted={collapsed} />
           {startCase(props.group)}
         </SC.GroupTitle>

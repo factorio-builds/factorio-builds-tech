@@ -22,10 +22,6 @@ export const Square = styled.div`
   }
 `
 
-export const HiddenCheckbox = styled.input`
-  display: none;
-`
-
 export const Label = styled.label`
   ${getTypo(ETypo.FORM_LABEL)};
   display: flex;
