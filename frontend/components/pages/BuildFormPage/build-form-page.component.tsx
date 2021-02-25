@@ -213,6 +213,14 @@ const toFormDataInner = (
     formData.delete("cover[file]")
   }
 
+  // this is necessary for the version field to not get stripped with an empty array
+  if (
+    !formData.get("version[icons][0][type]") ||
+    !formData.get("version[icons][0][name]")
+  ) {
+    formData.append("version[icons]", JSON.stringify([]))
+  }
+
   return formData
 }
 
