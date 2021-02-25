@@ -1,4 +1,4 @@
-import { ESortType } from "../../types"
+import { ESortDirection, ESortType } from "../../types"
 import { IPayloadAction } from "../store"
 
 interface IBeltGroup {
@@ -99,13 +99,19 @@ export type ITag =
 
 export interface IStoreFiltersState {
   query: string
-  sort: ESortType
+  sort: {
+    type: ESortType
+    direction: ESortDirection
+  }
   tags: ITag[]
 }
 
 const initialFiltersState: IStoreFiltersState = {
   query: "",
-  sort: ESortType.TITLE,
+  sort: {
+    type: ESortType.TITLE,
+    direction: ESortDirection.ASC,
+  },
   // prettier-ignore
   tags: [
     { group: "belt", name: "balancer", isSelected: false },
@@ -168,9 +174,13 @@ const initialFiltersState: IStoreFiltersState = {
 }
 
 type TFilterPayload = Omit<ITag, "isSelected">
+type TSortPayload = {
+  type: ESortType
+  direction: ESortDirection
+}
 
 type TSetQueryAction = IPayloadAction<"SET_QUERY", string>
-type TSetSortAction = IPayloadAction<"SET_SORT", ESortType>
+type TSetSortAction = IPayloadAction<"SET_SORT", TSortPayload>
 type TToggleFilterAction = IPayloadAction<"TOGGLE_FILTER", TFilterPayload>
 
 export type TFiltersAction =
@@ -194,7 +204,10 @@ const setSort = (
 ): IStoreFiltersState => {
   return {
     ...state,
-    sort: payload,
+    sort: {
+      type: payload.type,
+      direction: payload.direction,
+    },
   }
 }
 

@@ -43,8 +43,8 @@ export const searchBuildsAsync = (): ThunkAction<
           tags: state.filters.tags
             .filter((tag) => tag.isSelected)
             .map((tag) => `/${tag.group}/${tag.name}`),
-          sort_field: state.filters.sort.toLowerCase(),
-          sort_direction: "asc",
+          sort_field: state.filters.sort.type.toLowerCase(),
+          sort_direction: state.filters.sort.direction.toLowerCase(),
         },
       })
       .then((response) => response.data)

@@ -2,7 +2,7 @@ import * as React from "react"
 import { useMemo } from "react"
 import { useMeasure } from "react-use"
 import { useDistributeToColumn } from "../../../hooks/useDistributeToColumn"
-import { ESortType } from "../../../types"
+import { ESortDirection, ESortType } from "../../../types"
 import { IThinBuild } from "../../../types/models"
 import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
@@ -14,7 +14,10 @@ interface IBuildCardListProps {
   count: number
   totalCount: number
   lookupTime: number
-  sort: ESortType
+  sort: {
+    type: ESortType
+    direction: ESortDirection
+  }
 }
 
 const CARD_WIDTH = 300
