@@ -51,7 +51,7 @@
     "@types/jest": "^26.0.20",
     "@types/json-form-data": "^1.7.0",
     "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.25",
+    "@types/node": "^14.14.31",
     "@types/pako": "^1.0.1",
     "@types/qs": "^6.9.5",
     "@types/react": "^17.0.1",
