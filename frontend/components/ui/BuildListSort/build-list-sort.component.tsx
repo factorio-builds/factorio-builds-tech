@@ -1,5 +1,6 @@
 import * as React from "react"
 import { useDispatch } from "react-redux"
+import { usePress } from "@react-aria/interactions"
 import cx from "classnames"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { ESortDirection, ESortType } from "../../../types"
@@ -11,6 +12,28 @@ interface IBuildListSortProps {
     type: ESortType
     direction: ESortDirection
   }
+}
+
+interface IOptionProps {
+  isActive: boolean
+  handlePress: () => void
+}
+
+const Option: React.FC<IOptionProps> = (props) => {
+  const { pressProps } = usePress({
+    onPress: props.handlePress,
+  })
+
+  return (
+    <SC.Option
+      {...pressProps}
+      role="button"
+      tabIndex={0}
+      className={cx({ "is-active": props.isActive })}
+    >
+      {props.children}
+    </SC.Option>
+  )
 }
 
 const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
@@ -37,30 +60,30 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
         >
           relevance
         </SC.Option> */}
-        <SC.Option
-          className={cx({ "is-active": sort.type === ESortType.TITLE })}
-          onClick={() => set(ESortType.TITLE, ESortDirection.ASC)}
+        <Option
+          isActive={sort.type === ESortType.TITLE}
+          handlePress={() => set(ESortType.TITLE, ESortDirection.ASC)}
         >
           title
-        </SC.Option>
-        <SC.Option
-          className={cx({ "is-active": sort.type === ESortType.CREATED })}
-          onClick={() => set(ESortType.CREATED, ESortDirection.ASC)}
+        </Option>
+        <Option
+          isActive={sort.type === ESortType.CREATED}
+          handlePress={() => set(ESortType.CREATED, ESortDirection.ASC)}
         >
           created
-        </SC.Option>
-        <SC.Option
-          className={cx({ "is-active": sort.type === ESortType.UPDATED })}
-          onClick={() => set(ESortType.UPDATED, ESortDirection.ASC)}
+        </Option>
+        <Option
+          isActive={sort.type === ESortType.UPDATED}
+          handlePress={() => set(ESortType.UPDATED, ESortDirection.ASC)}
         >
           updated
-        </SC.Option>
-        <SC.Option
-          className={cx({ "is-active": sort.type === ESortType.FAVORITES })}
-          onClick={() => set(ESortType.FAVORITES, ESortDirection.DESC)}
+        </Option>
+        <Option
+          isActive={sort.type === ESortType.FAVORITES}
+          handlePress={() => set(ESortType.FAVORITES, ESortDirection.DESC)}
         >
           favorites
-        </SC.Option>
+        </Option>
       </Stacker>
     </SC.BuildListSortWrapper>
   )
