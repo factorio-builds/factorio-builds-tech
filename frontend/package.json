@@ -42,7 +42,7 @@
     "redux-thunk": "^2.3.0",
     "styled-components": "4.4.1",
     "text-encoding": "^0.7.0",
-    "yup": "^0.32.8"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.12.13",
