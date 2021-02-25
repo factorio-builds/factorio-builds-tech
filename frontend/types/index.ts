@@ -8,6 +8,11 @@ export enum ESortType {
   "FAVORITES" = "FAVORITES",
 }
 
+export enum ESortDirection {
+  "ASC" = "ASC",
+  "DESC" = "DESC",
+}
+
 export enum EState {
   "EARLY_GAME" = "EARLY_GAME",
   "MID_GAME" = "MID_GAME",

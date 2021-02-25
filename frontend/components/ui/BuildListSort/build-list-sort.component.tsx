@@ -2,21 +2,27 @@ import * as React from "react"
 import { useDispatch } from "react-redux"
 import cx from "classnames"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
-import { ESortType } from "../../../types"
+import { ESortDirection, ESortType } from "../../../types"
 import Stacker from "../Stacker"
 import * as SC from "./build-list-sort.styles"
 
 interface IBuildListSortProps {
-  sort: ESortType
+  sort: {
+    type: ESortType
+    direction: ESortDirection
+  }
 }
 
 const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
   const dispatch = useDispatch()
 
-  function set(sortType: ESortType) {
+  function set(sortType: ESortType, sortDirection: ESortDirection) {
     dispatch({
       type: "SET_SORT",
-      payload: sortType,
+      payload: {
+        type: sortType,
+        direction: sortDirection,
+      },
     })
     dispatch(searchBuildsAsync())
   }
@@ -32,26 +38,26 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
           relevance
         </SC.Option> */}
         <SC.Option
-          className={cx({ "is-active": sort === ESortType.TITLE })}
-          onClick={() => set(ESortType.TITLE)}
+          className={cx({ "is-active": sort.type === ESortType.TITLE })}
+          onClick={() => set(ESortType.TITLE, ESortDirection.ASC)}
         >
           title
         </SC.Option>
         <SC.Option
-          className={cx({ "is-active": sort === ESortType.CREATED })}
-          onClick={() => set(ESortType.CREATED)}
+          className={cx({ "is-active": sort.type === ESortType.CREATED })}
+          onClick={() => set(ESortType.CREATED, ESortDirection.ASC)}
         >
           created
         </SC.Option>
         <SC.Option
-          className={cx({ "is-active": sort === ESortType.UPDATED })}
-          onClick={() => set(ESortType.UPDATED)}
+          className={cx({ "is-active": sort.type === ESortType.UPDATED })}
+          onClick={() => set(ESortType.UPDATED, ESortDirection.ASC)}
         >
           updated
         </SC.Option>
         <SC.Option
-          className={cx({ "is-active": sort === ESortType.FAVORITES })}
-          onClick={() => set(ESortType.FAVORITES)}
+          className={cx({ "is-active": sort.type === ESortType.FAVORITES })}
+          onClick={() => set(ESortType.FAVORITES, ESortDirection.DESC)}
         >
           favorites
         </SC.Option>
