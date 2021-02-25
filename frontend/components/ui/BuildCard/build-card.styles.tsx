@@ -1,4 +1,4 @@
-import { lighten } from "polished"
+import { darken, lighten } from "polished"
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
@@ -16,9 +16,15 @@ export const BuildCardWrapper = styled.div`
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   padding: 10px;
+  transition: box-shadow 0.3s, background 0.3s;
 
   &:hover {
-    background: ${lighten(0.05, COLOR.CARD)};
+    background: ${darken(0.075, COLOR.CARD)};
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  &.is-pressed {
+    transform: scale(1.02);
   }
 `
 

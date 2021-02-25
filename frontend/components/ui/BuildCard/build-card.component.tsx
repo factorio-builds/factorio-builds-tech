@@ -1,6 +1,9 @@
 import React from "react"
+import { usePress } from "@react-aria/interactions"
+import cx from "classnames"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
 import WithIcons from "../WithIcons"
@@ -25,9 +28,22 @@ function BuildCard({
   image,
   link,
 }: IBuildCardProps): JSX.Element {
+  const router = useRouter()
+  const { pressProps, isPressed } = usePress({
+    onPress: () => {
+      router.prefetch(link)
+      router.push(link)
+    },
+  })
+
   return (
     <Link href={link}>
-      <SC.BuildCardWrapper>
+      <SC.BuildCardWrapper
+        {...pressProps}
+        role="button"
+        tabIndex={0}
+        className={cx({ "is-pressed": isPressed })}
+      >
         <SC.ImageWrapper>
           <Image
             src={image.href}
