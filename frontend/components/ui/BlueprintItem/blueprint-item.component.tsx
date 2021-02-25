@@ -96,7 +96,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
               )}
             </Stacker>
             {isExpandable && (
-              <SC.Expand onClick={expand}>
+              <SC.Expand type="button" onClick={expand}>
                 expand <Caret inverted={expanded} />
               </SC.Expand>
             )}
