@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { Form, Formik } from "formik"
 import asFormData from "json-form-data"
 import { useRouter } from "next/router"
@@ -266,14 +266,17 @@ type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing
 const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const router = useRouter()
   const [step, setStep] = useState<1 | 2>(1)
+  const [build, setBuild] = useState<IFullBuild | undefined>(props.build)
   const [payloadData, setPayloadData] = useState<IFullPayload>()
   const [submit, setSubmit] = useState({
     loading: false,
     error: false,
   })
 
-  const [, execute] = useApi<IThinBuild>(
+  const [, executePostPatch] = useApi<IThinBuild>(
     {
+      url: props.type === "CREATE" ? "/builds" : props.build._links.self.href,
+      method: props.type === "CREATE" ? "POST" : "PATCH",
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -281,7 +284,39 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     { manual: true }
   )
 
-  const initialValues = createInitialValues(props.build)
+  const [, executeGetBuild] = useApi<IFullBuild>(
+    {
+      url: `/builds/${router.query.user}/${router.query.slug}`,
+    },
+    { manual: true }
+  )
+
+  const [, executeGetPayload] = useApi<IFullPayload>(
+    {
+      url: `/payloads/${build?.latest_version.hash}`,
+    },
+    { manual: true }
+  )
+
+  useEffect(() => {
+    if (props.type === "EDIT" && !build) {
+      executeGetBuild().then((res) => {
+        setBuild(res.data)
+      })
+    }
+  }, [props.type, build])
+
+  useEffect(() => {
+    if (props.type === "EDIT" && !payloadData) {
+      executeGetPayload().then((res) => {
+        setPayloadData(res.data)
+      })
+    }
+  }, [props.type, payloadData])
+
+  const initialValues = useMemo(() => {
+    return createInitialValues(props.build || build)
+  }, [props.build, build])
 
   const goToNextStep = useCallback((fullPayload: IFullPayload) => {
     setStep(2)
@@ -300,10 +335,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
           loading: true,
           error: false,
         })
-        execute({
-          url:
-            props.type === "CREATE" ? "/builds" : props.build._links.self.href,
-          method: props.type === "CREATE" ? "POST" : "PATCH",
+        executePostPatch({
           data:
             props.type === "CREATE"
               ? toFormData(values as IValidFormValues)
