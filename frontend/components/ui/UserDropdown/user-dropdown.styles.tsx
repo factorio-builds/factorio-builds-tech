@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { COLOR } from "../../../design/tokens/color"
-import Stacker from "../Stacker"
+// import Stacker from "../Stacker"
 
 export const DropdownWrapper = styled.div`
   height: 38px;
@@ -21,11 +21,7 @@ export const Dropdown = styled.div`
   }
 `
 
-const StyledStacker = (props: any) => (
-  <Stacker {...props} orientation="horizontal" gutter={10} />
-)
-
-export const User = styled(StyledStacker)`
+export const User = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
