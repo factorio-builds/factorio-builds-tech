@@ -47,7 +47,7 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
         </SC.GroupTitle>
       }
     >
-      {!collapsed && (
+      {!(collapsed && isCollapsable) && (
         <Stacker gutter={4}>
           {props.groupTags.map((tag) => {
             return (
