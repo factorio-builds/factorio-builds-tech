@@ -12,7 +12,10 @@ import {
   isBook,
   isValidBlueprint,
 } from "../../../utils/blueprint"
-import { blueprintHeuristics } from "../../../utils/blueprint-heuristics"
+import {
+  blueprintHeuristics,
+  tagsFromHeuristics,
+} from "../../../utils/blueprint-heuristics"
 import Input from "../../form/Input"
 import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
@@ -33,6 +36,7 @@ interface IStepStateValidSingle {
   isBook: false
   data: IBlueprintData
   json: IDecodedBlueprintData
+  tags: string[]
   heuristics: ReturnType<typeof blueprintHeuristics>
 }
 
@@ -40,6 +44,7 @@ interface IStepStateValidBook {
   isValid: true
   isBook: true
   data: IBlueprintData
+  tags: string[]
   json: IDecodedBlueprintBookData
   heuristics: Array<ReturnType<typeof blueprintHeuristics>>
 }
@@ -82,6 +87,14 @@ const Step1: React.FC<IStep1Props> = (props) => {
         isBook: true,
         json,
         data: getBlueprintData(json),
+        tags: json.blueprint_book.blueprints
+          .map((bp) => {
+            if (!isBlueprintItem(bp)) {
+              return []
+            }
+            return tagsFromHeuristics(bp.blueprint)
+          })
+          .reduce((acc, curr) => [...acc, ...curr], []),
         heuristics: json.blueprint_book.blueprints.map((bp) => {
           if (!isBlueprintItem(bp)) {
             return blueprintHeuristics()
@@ -95,6 +108,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
         isBook: false,
         json,
         data: getBlueprintData(json),
+        tags: tagsFromHeuristics(json.blueprint),
         heuristics: blueprintHeuristics(json.blueprint),
       }
     }
@@ -126,6 +140,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
     props.formikProps.setFieldValue("slug", res.data.extracted_slug.slug)
     props.formikProps.setFieldValue("description", bp.description || "")
     props.formikProps.setFieldValue("hash", res.data.payload.hash)
+    props.formikProps.setFieldValue("tags", stepState.tags)
     props.formikProps.setFieldValue("version.icons", res.data.payload.icons)
 
     if (!stepState.isBook) {
