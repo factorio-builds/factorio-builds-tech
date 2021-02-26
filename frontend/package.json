@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next",
-    "format": "prettier --write {.github,components,db,design,hooks,icons,pages,redux,types,utils}/{**,**/**}/*.{yml,json,js,ts,tsx}",
+    "format": "prettier --write {components,design,hooks,icons,pages,redux,types,utils}/{**,**/**}/*.{yml,json,js,ts,tsx}",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "yarn lint --fix",
     "start": "next start",
