@@ -26,7 +26,7 @@ function Header(): JSX.Element {
           )}
 
           {!user && (
-            <Link href="/api/login">
+            <Link href="/api/login" passHref>
               <SC.InnerLink>Login</SC.InnerLink>
             </Link>
           )}
