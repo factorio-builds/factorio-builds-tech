@@ -46,11 +46,12 @@ export const StyledStacker = styled(Stacker)`
   margin-left: auto;
 `
 
-export const InnerLink = styled.span`
+export const InnerLink = styled.a`
   ${getTypo(ETypo.BUTTON)};
   color: ${COLOR.FADEDBLUE700};
   text-transform: uppercase;
   cursor: pointer;
+  text-decoration: none;
 
   &:hover {
     color: ${COLOR.FADEDBLUE900};
