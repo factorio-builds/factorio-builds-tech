@@ -13,7 +13,6 @@ interface IBuildCardProps {
   title: IThinBuild["title"]
   icons: IThinBuild["icons"]
   isBook: boolean
-  // TODO: probably switch to IMetadata["categories"] later
   categories: IThinBuild["tags"]
   image: IThinBuild["_links"]["cover"]
   // TODO: switch to IThinBuild["_links"]["self"]
