@@ -13,41 +13,9 @@ export enum ESortDirection {
   "DESC" = "DESC",
 }
 
-export enum EState {
-  "EARLY_GAME" = "EARLY_GAME",
-  "MID_GAME" = "MID_GAME",
-  "LATE_GAME" = "LATE_GAME",
-}
-
-export enum ECategory {
-  "BALANCER" = "BALANCER",
-  "SMELTING" = "SMELTING",
-  "REFINERY" = "REFINERY",
-  "TRAINS" = "TRAINS",
-  "PRODUCTION" = "PRODUCTION",
-  "ENERGY" = "ENERGY",
-}
-
 export enum ERole {
   "ADMIN" = "ADMIN",
   "USER" = "USER",
-}
-
-export interface IMetadata {
-  tileable: boolean
-  area: number
-  state: EState[]
-  categories: ECategory[]
-  withMarkedInputs: boolean
-  withBeacons: boolean
-  isBook: boolean
-  icons: IBlueprintIcon[]
-}
-
-export interface IImage {
-  src: string
-  width: number
-  height: number
 }
 
 // Blueprint data types from https://github.com/BlooperDB/factorio-render

@@ -12,10 +12,7 @@ import {
   isBook,
   isValidBlueprint,
 } from "../../../utils/blueprint"
-import {
-  blueprintHeuristics,
-  tagsFromHeuristics,
-} from "../../../utils/blueprint-heuristics"
+import { tagsFromHeuristics } from "../../../utils/blueprint-heuristics"
 import Input from "../../form/Input"
 import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
@@ -37,7 +34,6 @@ interface IStepStateValidSingle {
   data: IBlueprintData
   json: IDecodedBlueprintData
   tags: string[]
-  heuristics: ReturnType<typeof blueprintHeuristics>
 }
 
 interface IStepStateValidBook {
@@ -46,7 +42,6 @@ interface IStepStateValidBook {
   data: IBlueprintData
   tags: string[]
   json: IDecodedBlueprintBookData
-  heuristics: Array<ReturnType<typeof blueprintHeuristics>>
 }
 
 interface IStepStateInvalid {
@@ -95,12 +90,6 @@ const Step1: React.FC<IStep1Props> = (props) => {
             return tagsFromHeuristics(bp.blueprint)
           })
           .reduce((acc, curr) => [...acc, ...curr], []),
-        heuristics: json.blueprint_book.blueprints.map((bp) => {
-          if (!isBlueprintItem(bp)) {
-            return blueprintHeuristics()
-          }
-          return blueprintHeuristics(bp.blueprint)
-        }),
       }
     } else {
       return {
@@ -109,7 +98,6 @@ const Step1: React.FC<IStep1Props> = (props) => {
         json,
         data: getBlueprintData(json),
         tags: tagsFromHeuristics(json.blueprint),
-        heuristics: blueprintHeuristics(json.blueprint),
       }
     }
   }, [encoded])
