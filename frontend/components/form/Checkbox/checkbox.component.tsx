@@ -16,7 +16,7 @@ interface ICheckboxProps {
 }
 
 const Checkbox: React.FC<ICheckboxProps> = (props) => {
-  const state = useToggleState(props)
+  const state = useToggleState({ ...props, isSelected: props.checked })
   const ref = useRef<HTMLInputElement>(null)
   const { inputProps } = useCheckbox(props, state, ref)
 
