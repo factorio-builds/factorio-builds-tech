@@ -47,7 +47,7 @@ namespace FactorioTech.Core.Services
         public record EditResult
         {
             public sealed record Success(
-                    Blueprint Build)
+                    Build Build)
                 : EditResult { }
 
             public sealed record BuildNotFound(
@@ -82,7 +82,7 @@ namespace FactorioTech.Core.Services
         public record CreateResult
         {
             public sealed record Success(
-                    Blueprint Build)
+                    Build Build)
                 : CreateResult { }
 
             public sealed record BuildNotFound(
@@ -137,7 +137,7 @@ namespace FactorioTech.Core.Services
             _buildTags = buildTags;
         }
 
-        public async Task<(IReadOnlyCollection<Blueprint> Blueprints, bool HasMore, int TotalCount)> GetBuilds(
+        public async Task<(IReadOnlyCollection<Build> Builds, bool HasMore, int TotalCount)> GetBuilds(
             (int Current, int Size) page,
             (SortField Field, SortDirection Direction) sort,
             string[] tags,
@@ -145,7 +145,7 @@ namespace FactorioTech.Core.Services
             string? version,
             string? owner)
         {
-            var query = _dbContext.Blueprints.AsNoTracking();
+            var query = _dbContext.Builds.AsNoTracking();
 
             if (tags.Any())
             {
@@ -187,7 +187,7 @@ namespace FactorioTech.Core.Services
                 .ToListAsync();
 
             var blueprints = results.GetRange(0, Math.Min(results.Count, page.Size));
-            var totalCount = await _dbContext.Blueprints.CountAsync();
+            var totalCount = await _dbContext.Builds.CountAsync();
 
             return (blueprints, results.Count > page.Size, totalCount);
         }
@@ -204,9 +204,9 @@ namespace FactorioTech.Core.Services
             return string.Join(" | ", words);
         }
 
-        public async Task<(Blueprint? Build, bool IsFollower)> GetDetails(string owner, string slug, ClaimsPrincipal principal)
+        public async Task<(Build? Build, bool IsFollower)> GetDetails(string owner, string slug, ClaimsPrincipal principal)
         {
-            var build = await _dbContext.Blueprints.AsNoTracking()
+            var build = await _dbContext.Builds.AsNoTracking()
                 .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
                          && b.NormalizedSlug == slug.ToUpperInvariant())
                 .Include(b => b.Owner)
@@ -218,22 +218,22 @@ namespace FactorioTech.Core.Services
 
             var currentUserId = principal.TryGetUserId();
             var currentUserIsFollower = currentUserId != null && await _dbContext.Favorites.AsNoTracking()
-                .AnyAsync(f => f.BlueprintId == build.BlueprintId && f.UserId == currentUserId);
+                .AnyAsync(f => f.BuildId == build.BuildId && f.UserId == currentUserId);
 
             return (build, currentUserIsFollower);
         }
 
         public async Task<CreateResult> CreateOrAddVersion(CreateRequest request, ITempCoverHandle cover, ClaimsPrincipal principal)
         {
-            var dupe = await _dbContext.BlueprintVersions.AsNoTracking()
+            var dupe = await _dbContext.Versions.AsNoTracking()
                 .Where(v => v.Hash == request.Version.Hash)
                 .Select(v => new
                 {
                     v.VersionId,
-                    v.BlueprintId,
-                    v.Blueprint!.Slug,
-                    v.Blueprint!.OwnerId,
-                    v.Blueprint!.OwnerSlug,
+                    BlueprintId = v.BuildId,
+                    v.Build!.Slug,
+                    v.Build!.OwnerId,
+                    v.Build!.OwnerSlug,
                 })
                 .FirstOrDefaultAsync();
 
@@ -244,7 +244,7 @@ namespace FactorioTech.Core.Services
                 return new CreateResult.DuplicateHash(dupe.VersionId, dupe.BlueprintId, dupe.Slug, dupe.OwnerId, dupe.OwnerSlug);
             }
 
-            var payload = await _dbContext.BlueprintPayloads.FirstOrDefaultAsync(x => x.Hash == request.Version.Hash);
+            var payload = await _dbContext.Payloads.FirstOrDefaultAsync(x => x.Hash == request.Version.Hash);
             if (payload == null)
             {
                 _logger.LogWarning("Attempted to save blueprint version with unknown payload: {Hash}", request.Version.Hash);
@@ -253,7 +253,7 @@ namespace FactorioTech.Core.Services
 
             await using var tx = await _dbContext.Database.BeginTransactionAsync();
 
-            var existing = await _dbContext.Blueprints
+            var existing = await _dbContext.Builds
                 .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
                             && b.NormalizedSlug == request.Slug.ToUpperInvariant())
                 .FirstOrDefaultAsync();
@@ -266,9 +266,9 @@ namespace FactorioTech.Core.Services
             if (success == null)
                 return result;
 
-            var version = new BlueprintVersion(
+            var version = new BuildVersion(
                 Guid.NewGuid(),
-                success.Build.BlueprintId,
+                success.Build.BuildId,
                 success.Build.UpdatedAt,
                 payload.Hash,
                 payload.Type,
@@ -286,14 +286,14 @@ namespace FactorioTech.Core.Services
             await _dbContext.SaveChangesAsync();
             await tx.CommitAsync();
 
-            cover.Assign(success.Build.BlueprintId);
+            cover.Assign(success.Build.BuildId);
 
             return result;
         }
 
         public async Task<EditResult> Edit(EditRequest request, ITempCoverHandle cover, ClaimsPrincipal principal)
         {
-            var build = await _dbContext.Blueprints
+            var build = await _dbContext.Builds
                 .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
                          && b.NormalizedSlug == request.Slug.ToUpperInvariant())
                 .FirstOrDefaultAsync();
@@ -313,14 +313,14 @@ namespace FactorioTech.Core.Services
 
             await _dbContext.SaveChangesAsync();
 
-            cover.Assign(build.BlueprintId);
+            cover.Assign(build.BuildId);
 
             return new EditResult.Success(build);
         }
 
         public async Task<DeleteResult> Delete(string owner, string slug, ClaimsPrincipal principal)
         {
-            var build = await _dbContext.Blueprints
+            var build = await _dbContext.Builds
                 .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
                          && b.NormalizedSlug == slug.ToUpperInvariant())
                 .FirstOrDefaultAsync();
@@ -331,8 +331,8 @@ namespace FactorioTech.Core.Services
             if (!principal.CanDelete(build))
                 return new DeleteResult.NotAuthorized(principal.GetUserId());
 
-            var versions = await _dbContext.BlueprintVersions
-                .Where(v => v.BlueprintId == build.BlueprintId)
+            var versions = await _dbContext.Versions
+                .Where(v => v.BuildId == build.BuildId)
                 .ToListAsync();
 
             _dbContext.Remove(build);
@@ -343,15 +343,15 @@ namespace FactorioTech.Core.Services
             return new DeleteResult.Success();
         }
 
-        public async Task SavePayloadGraph(Hash parentHash, IReadOnlyCollection<BlueprintPayload> payloads)
+        public async Task SavePayloadGraph(Hash parentHash, IReadOnlyCollection<Payload> payloads)
         {
             var newHashes = payloads.Select(p => p.Hash);
-            var existingHashes = await _dbContext.BlueprintPayloads.AsNoTracking()
+            var existingHashes = await _dbContext.Payloads.AsNoTracking()
                 .Where(x => newHashes.Contains(x.Hash))
                 .Select(x => x.Hash)
                 .ToListAsync();
 
-            var newPayloads = payloads.Where(p => !existingHashes.Contains(p.Hash)).Distinct(BlueprintPayload.EqualityComparer).ToList();
+            var newPayloads = payloads.Where(p => !existingHashes.Contains(p.Hash)).Distinct(Payload.EqualityComparer).ToList();
 
             _logger.LogInformation("Persisting the full payload graph for blueprint {Hash}: {Total} total, {Existing} existing, {Added} to be added",
                 parentHash, payloads.Count, existingHashes.Count, newPayloads.Count);
@@ -365,7 +365,7 @@ namespace FactorioTech.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private CreateResult TryUpdate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Blueprint? existing)
+        private CreateResult TryUpdate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Build? existing)
         {
             if (existing == null)
             {
@@ -382,9 +382,9 @@ namespace FactorioTech.Core.Services
             if (existing.LatestVersionId != request.ExpectedVersionId)
             {
                 _logger.LogWarning("Attempted to add version to blueprint {BlueprintId} but expected latest version id {ExpectedVersionId} does not match actual {LatestVersionId}",
-                    existing.BlueprintId, request.ExpectedVersionId, existing.LatestVersionId);
+                    existing.BuildId, request.ExpectedVersionId, existing.LatestVersionId);
                 return new CreateResult.UnexpectedParentVersion(
-                    existing.BlueprintId,
+                    existing.BuildId,
                     request.ExpectedVersionId.GetValueOrDefault(),
                     existing.LatestVersionId.GetValueOrDefault());
             }
@@ -399,7 +399,7 @@ namespace FactorioTech.Core.Services
             return new CreateResult.Success(existing);
         }
 
-        private async Task<CreateResult> TryCreate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Blueprint? existing)
+        private async Task<CreateResult> TryCreate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Build? existing)
         {
             if (existing != null)
             {
@@ -415,7 +415,7 @@ namespace FactorioTech.Core.Services
 
             var owner = await _dbContext.Users.FindAsync(principal.GetUserId());
             var currentInstant = SystemClock.Instance.GetCurrentInstant();
-            var build = new Blueprint(
+            var build = new Build(
                 Guid.NewGuid(),
                 owner,
                 currentInstant,

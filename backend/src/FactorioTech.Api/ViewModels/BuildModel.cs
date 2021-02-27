@@ -141,10 +141,10 @@ namespace FactorioTech.Api.ViewModels
         public Version LatestGameVersion { get; set; }
 
         /// <summary>
-        /// The build's latest version's blueprint type.
+        /// The build's latest version's payload type.
         /// </summary>
         [Required]
-        public BlueprintType LatestType { get; set; }
+        public PayloadType LatestType { get; set; }
 
         /// <summary>
         /// The build's tags.

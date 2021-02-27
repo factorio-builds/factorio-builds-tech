@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace FactorioTech.Core.Domain
 {
-    public enum BlueprintType
+    public enum PayloadType
     {
         [EnumMember(Value = "blueprint")]
         Blueprint,

@@ -26,57 +26,58 @@ namespace FactorioTech.Api.Services
                 RegisteredAt = user.RegisteredAt,
             };
 
-        public static BuildsModel ToViewModel(this IReadOnlyCollection<Blueprint> blueprints,
+        public static BuildsModel ToViewModel(this IReadOnlyCollection<Build> builds,
             IUrlHelper urlHelper, BuildsQueryParams query, bool hasMore, int totalCount) =>
             new()
             {
-                Links = urlHelper.BuildLinks(blueprints, query, hasMore),
-                Builds = blueprints.Select(b => b.ToThinViewModel(urlHelper)),
-                CurrentCount = blueprints.Count,
+                Links = urlHelper.BuildLinks(builds, query, hasMore),
+                Builds = builds.Select(b => b.ToThinViewModel(urlHelper)),
+                CurrentCount = builds.Count,
                 TotalCount = totalCount,
             };
 
-        public static ThinBuildModel ToThinViewModel(this Blueprint blueprint, IUrlHelper urlHelper) =>
+        public static ThinBuildModel ToThinViewModel(this Build build, IUrlHelper urlHelper) =>
             new()
             {
-                Links = urlHelper.BuildThinLinks(blueprint),
-                Slug = blueprint.Slug,
-                CreatedAt = blueprint.CreatedAt,
-                UpdatedAt = blueprint.UpdatedAt,
-                Icons = blueprint.Icons,
-                Title = blueprint.Title,
-                Description = blueprint.Description,
-                Owner = blueprint.Owner?.ToViewModel() ?? new ThinUserModel { Username = blueprint.OwnerSlug },
-                LatestType = blueprint.LatestType,
-                LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                Tags = blueprint.Tags,
+                Links = urlHelper.BuildThinLinks(build),
+                Slug = build.Slug,
+                CreatedAt = build.CreatedAt,
+                UpdatedAt = build.UpdatedAt,
+                Icons = build.Icons,
+                Title = build.Title,
+                Description = build.Description,
+                Owner = build.Owner?.ToViewModel() ?? new ThinUserModel { Username = build.OwnerSlug },
+                LatestType = build.LatestType,
+                LatestGameVersion = Version.Parse(build.LatestGameVersion),
+                Tags = build.Tags,
             };
 
-        public static FullBuildModel ToFullViewModel(this Blueprint blueprint, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, bool currentUserIsFollower) =>
+        public static FullBuildModel ToFullViewModel(this Build build, IUrlHelper urlHelper,
+            FactorioApi.BlueprintEnvelope envelope, bool currentUserIsFollower) =>
             new()
             {
-                Links = urlHelper.BuildFullLinks(blueprint, currentUserIsFollower),
-                Slug = blueprint.Slug,
-                CreatedAt = blueprint.CreatedAt,
-                UpdatedAt = blueprint.UpdatedAt,
-                Icons = blueprint.Icons,
-                Title = blueprint.Title,
-                Description = blueprint.Description,
-                LatestType = blueprint.LatestType,
-                LatestGameVersion = Version.Parse(blueprint.LatestGameVersion),
-                LatestVersion = blueprint.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(blueprint.LatestVersion)),
-                Tags = blueprint.Tags,
-                Owner = blueprint.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(blueprint.Owner)),
+                Links = urlHelper.BuildFullLinks(build, currentUserIsFollower),
+                Slug = build.Slug,
+                CreatedAt = build.CreatedAt,
+                UpdatedAt = build.UpdatedAt,
+                Icons = build.Icons,
+                Title = build.Title,
+                Description = build.Description,
+                LatestType = build.LatestType,
+                LatestGameVersion = Version.Parse(build.LatestGameVersion),
+                LatestVersion = build.LatestVersion?.ToFullViewModel(urlHelper, envelope) ?? throw new ArgumentNullException(nameof(build.LatestVersion)),
+                Tags = build.Tags,
+                Owner = build.Owner?.ToViewModel() ?? throw new ArgumentNullException(nameof(build.Owner)),
             };
 
-        public static VersionsModel ToViewModel(this IReadOnlyCollection<BlueprintVersion> versions, IUrlHelper urlHelper) =>
+        public static VersionsModel ToViewModel(this IReadOnlyCollection<BuildVersion> versions, IUrlHelper urlHelper) =>
             new()
             {
                 Count = versions.Count,
                 Versions = versions.Select(v => v.ToThinViewModel(urlHelper)),
             };
 
-        public static ThinVersionModel ToThinViewModel(this BlueprintVersion version, IUrlHelper urlHelper) =>
+        public static ThinVersionModel ToThinViewModel(this BuildVersion version, IUrlHelper urlHelper) =>
             new()
             {
                 Links = urlHelper.BuildLinks(version),
@@ -87,7 +88,8 @@ namespace FactorioTech.Api.Services
                 Description = version.Description,
             };
 
-        public static FullVersionModel ToFullViewModel(this BlueprintVersion version, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+        public static FullVersionModel ToFullViewModel(this BuildVersion version, IUrlHelper urlHelper,
+            FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
                 Links = urlHelper.BuildLinks(version),
@@ -100,15 +102,17 @@ namespace FactorioTech.Api.Services
                           ?? throw new ArgumentNullException(nameof(version.Payload)),
             };
 
-        public static PayloadModelBase ToViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph = null) =>
+        public static PayloadModelBase ToViewModel(this Payload payload, IUrlHelper urlHelper,
+            FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph = null) =>
             payload.Type switch
             {
-                BlueprintType.Blueprint => payload.ToBlueprintViewModel(urlHelper, envelope),
-                BlueprintType.Book => payload.ToBookViewModel(urlHelper, envelope, payloadGraph),
+                PayloadType.Blueprint => payload.ToBlueprintViewModel(urlHelper, envelope),
+                PayloadType.Book => payload.ToBookViewModel(urlHelper, envelope, payloadGraph),
                 _ => throw new ArgumentOutOfRangeException(nameof(payload.Type)),
             };
 
-        public static BlueprintPayloadModel ToBlueprintViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope) =>
+        public static BlueprintPayloadModel ToBlueprintViewModel(this Payload payload, IUrlHelper urlHelper,
+            FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
                 Links = urlHelper.BuildLinks(payload, envelope),
@@ -123,7 +127,8 @@ namespace FactorioTech.Api.Services
                 Tiles = envelope.Blueprint?.Tiles.ToItemStats() ?? throw new ArgumentNullException(nameof(envelope.Blueprint)),
             };
 
-        public static BookPayloadModel ToBookViewModel(this BlueprintPayload payload, IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph) =>
+        public static BookPayloadModel ToBookViewModel(this Payload payload, IUrlHelper urlHelper,
+            FactorioApi.BlueprintEnvelope envelope, PayloadCache? payloadGraph) =>
             new()
             {
                 Links = urlHelper.BuildLinks(payload, envelope),
@@ -148,7 +153,8 @@ namespace FactorioTech.Api.Services
                 },
             };
 
-        private static IEnumerable<PayloadModelBase> MapChildren(IUrlHelper urlHelper, FactorioApi.BlueprintEnvelope envelope, PayloadCache payloadGraph) =>
+        private static IEnumerable<PayloadModelBase> MapChildren(IUrlHelper urlHelper,
+            FactorioApi.BlueprintEnvelope envelope, PayloadCache payloadGraph) =>
             envelope.BlueprintBook?.Blueprints?
                 .Where(e => e.Blueprint != null || e.BlueprintBook != null)
                 .Select(e => payloadGraph[e].ToViewModel(urlHelper, e, payloadGraph))

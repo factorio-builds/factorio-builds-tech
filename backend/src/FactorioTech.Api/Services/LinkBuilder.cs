@@ -10,7 +10,7 @@ namespace FactorioTech.Api.Services
 {
     public static class LinkBuilder
     {
-        public static BuildsLinks BuildLinks(this IUrlHelper urlHelper, IEnumerable<Blueprint> blueprints, BuildsQueryParams query, bool hasMore) =>
+        public static BuildsLinks BuildLinks(this IUrlHelper urlHelper, IEnumerable<Build> builds, BuildsQueryParams query, bool hasMore) =>
             new()
             {
                 CreateBuild = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
@@ -30,61 +30,61 @@ namespace FactorioTech.Api.Services
                     : null,
             };
 
-        public static ThinBuildLinks BuildThinLinks(this IUrlHelper urlHelper, Blueprint blueprint)
+        public static ThinBuildLinks BuildThinLinks(this IUrlHelper urlHelper, Build build)
         {
             var buildIdValues = new
             {
-                buildId = blueprint.BlueprintId,
+                buildId = build.BuildId,
             };
 
             var buildValues = new
             {
-                owner = blueprint.OwnerSlug,
-                slug = blueprint.Slug,
+                owner = build.OwnerSlug,
+                slug = build.Slug,
             };
 
             return new()
             {
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
                 Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues),
-                    blueprint.CoverMeta.Width, blueprint.CoverMeta.Height, blueprint.CoverMeta.Size, blueprint.CoverMeta.Format),
+                    build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size, build.CoverMeta.Format),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
-                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
+                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
 
-                AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(blueprint)
+                AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
                     : null,
 
-                Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(blueprint)
+                Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
                     : null,
 
-                Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(blueprint)
+                Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
             };
         }
 
-        public static FullBuildLinks BuildFullLinks(this IUrlHelper urlHelper, Blueprint blueprint, bool currentUserIsFollower)
+        public static FullBuildLinks BuildFullLinks(this IUrlHelper urlHelper, Build build, bool currentUserIsFollower)
         {
             var buildIdValues = new
             {
-                buildId = blueprint.BlueprintId,
+                buildId = build.BuildId,
             };
 
             var buildValues = new
             {
-                owner = blueprint.OwnerSlug,
-                slug = blueprint.Slug,
+                owner = build.OwnerSlug,
+                slug = build.Slug,
             };
 
             return new()
             {
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
                 Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues),
-                    blueprint.CoverMeta.Width, blueprint.CoverMeta.Height, blueprint.CoverMeta.Size, blueprint.CoverMeta.Format),
+                    build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size, build.CoverMeta.Format),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
-                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), blueprint.FollowerCount),
+                Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
 
                 AddFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower == false
                     ? new(urlHelper.ActionLink(nameof(BuildController.AddFavorite), "Build", buildValues), "put")
@@ -94,21 +94,21 @@ namespace FactorioTech.Api.Services
                     ? new(urlHelper.ActionLink(nameof(BuildController.RemoveFavorite), "Build", buildValues), "delete")
                     : null,
 
-                AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(blueprint)
+                AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
                     : null,
 
-                Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(blueprint)
+                Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
                     : null,
 
-                Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(blueprint)
+                Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
                     : null,
             };
         }
 
-        public static VersionLinks BuildLinks(this IUrlHelper urlHelper, BlueprintVersion version) =>
+        public static VersionLinks BuildLinks(this IUrlHelper urlHelper, BuildVersion version) =>
             new()
             {
                 Payload = new(urlHelper.ActionLink(nameof(PayloadController.GetDetails), "Payload", new
@@ -118,7 +118,7 @@ namespace FactorioTech.Api.Services
                 })),
             };
 
-        public static PayloadLinks BuildLinks(this IUrlHelper urlHelper, BlueprintPayload payload, FactorioApi.BlueprintEnvelope envelope) =>
+        public static PayloadLinks BuildLinks(this IUrlHelper urlHelper, Payload payload, FactorioApi.BlueprintEnvelope envelope) =>
             new()
             {
                 Self = new(urlHelper.ActionLink(nameof(PayloadController.GetDetails), "Payload", new
@@ -133,7 +133,7 @@ namespace FactorioTech.Api.Services
                 })),
 
                 RenderingFull = envelope.Blueprint != null
-                    ? new(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
+                    ? new(urlHelper.ActionLink(nameof(PayloadController.GetRendering), "Payload", new
                     {
                         hash = payload.Hash,
                         type = ImageService.RenderingType.Full.ToString().ToLowerInvariant(),
@@ -141,7 +141,7 @@ namespace FactorioTech.Api.Services
                     : null,
 
                 RenderingThumb = envelope.Blueprint != null
-                    ? new(urlHelper.ActionLink(nameof(PayloadController.GetBlueprintRendering), "Payload", new
+                    ? new(urlHelper.ActionLink(nameof(PayloadController.GetRendering), "Payload", new
                     {
                         hash = payload.Hash,
                         type = ImageService.RenderingType.Thumb.ToString().ToLowerInvariant(),

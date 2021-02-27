@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace FactorioTech.Core.Domain
 {
-    public class Blueprint
+    public class Build
     {
         [Key]
-        public Guid BlueprintId { get; init; }
+        public Guid BuildId { get; init; }
 
         [Required]
         public Guid OwnerId { get; init; }
@@ -50,7 +50,7 @@ namespace FactorioTech.Core.Domain
         public string LatestGameVersion { get; private set; }
 
         [Required]
-        public BlueprintType LatestType { get; private set; }
+        public PayloadType LatestType { get; private set; }
 
         [Required]
         public IEnumerable<GameIcon> Icons { get; private set; }
@@ -63,7 +63,7 @@ namespace FactorioTech.Core.Domain
 
         // navigation properties -> will be null if not included explicitly
 
-        public BlueprintVersion? LatestVersion { get; private set; }
+        public BuildVersion? LatestVersion { get; private set; }
         public Guid? LatestVersionId { get; private set; }
         public User? Owner { get; init; }
         public IEnumerable<User>? Followers { get; init; }
@@ -73,8 +73,8 @@ namespace FactorioTech.Core.Domain
 
         public int FollowerCount { get; init; }
 
-        public Blueprint(
-            Guid blueprintId,
+        public Build(
+            Guid buildId,
             User owner,
             Instant createdAt, Instant updatedAt,
             string slug,
@@ -83,7 +83,7 @@ namespace FactorioTech.Core.Domain
             string? description,
             ImageMeta coverMeta)
         {
-            BlueprintId = blueprintId;
+            BuildId = buildId;
             OwnerId = owner.Id;
             OwnerSlug = owner.UserName;
             NormalizedOwnerSlug = owner.NormalizedUserName;
@@ -94,17 +94,17 @@ namespace FactorioTech.Core.Domain
             Title = title;
             Description = description;
             LatestGameVersion = "0.0.0.0";
-            LatestType = BlueprintType.Blueprint;
+            LatestType = PayloadType.Blueprint;
             Icons = Array.Empty<GameIcon>();
             Tags = tags.Distinct().ToArray();
             CoverMeta = coverMeta;
         }
 
 #pragma warning disable 8618 // required for EF
-        private Blueprint() { }
+        private Build() { }
 #pragma warning restore 8618
 
-        public void UpdateLatestVersion(BlueprintVersion version)
+        public void UpdateLatestVersion(BuildVersion version)
         {
             UpdatedAt = version.CreatedAt;
             LatestVersion = version;

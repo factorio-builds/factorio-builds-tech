@@ -11,7 +11,6 @@ namespace FactorioTech.Core.Services
 {
     public class AssetService
     {
-
         public enum IconType
         {
             Item,

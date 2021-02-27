@@ -24,8 +24,8 @@ namespace FactorioTech.Api.Controllers
     public class PayloadController : ControllerBase
     {
         private const int OneMonthInSeconds = 2629800;
-        private static readonly TimeSpan NewBlueprintRenderingLoadInterval = TimeSpan.FromSeconds(2);
-        private static readonly TimeSpan NewBlueprintRenderingLoadTimeout = TimeSpan.FromSeconds(30);
+        private static readonly TimeSpan NewRenderingLoadInterval = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan NewRenderingLoadTimeout = TimeSpan.FromSeconds(30);
 
         private readonly ILogger<PayloadController> _logger;
         private readonly AppDbContext _dbContext;
@@ -65,7 +65,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetDetails([Required]Hash hash, [FromQuery(Name = "include_children")]bool includeChildren = false)
         {
-            var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
+            var payload = await _dbContext.Payloads.AsNoTracking()
                 .Where(v => v.Hash == hash)
                 .FirstOrDefaultAsync();
 
@@ -101,7 +101,7 @@ namespace FactorioTech.Api.Controllers
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetRaw([Required]Hash hash)
         {
-            var encoded = await _dbContext.BlueprintPayloads.AsNoTracking()
+            var encoded = await _dbContext.Payloads.AsNoTracking()
                 .Where(v => v.Hash == hash)
                 .Select(v => v.Encoded)
                 .FirstOrDefaultAsync();
@@ -126,7 +126,7 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetBlueprintRendering([Required]Hash hash, [Required]ImageService.RenderingType type)
+        public async Task<IActionResult> GetRendering([Required]Hash hash, [Required]ImageService.RenderingType type)
         {
             var sw = Stopwatch.StartNew();
 
@@ -136,12 +136,12 @@ namespace FactorioTech.Api.Controllers
                 if (file != null)
                     return File(file, "image/png");
 
-                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry in {Interval}", type, hash, NewBlueprintRenderingLoadInterval);
-                await Task.Delay(NewBlueprintRenderingLoadInterval);
+                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry in {Interval}", type, hash, NewRenderingLoadInterval);
+                await Task.Delay(NewRenderingLoadInterval);
             }
-            while (sw.Elapsed < NewBlueprintRenderingLoadTimeout);
+            while (sw.Elapsed < NewRenderingLoadTimeout);
 
-            _logger.LogWarning("Rendering {Type} for {Hash} not found after {Timeout}; giving up", type, hash, NewBlueprintRenderingLoadTimeout);
+            _logger.LogWarning("Rendering {Type} for {Hash} not found after {Timeout}; giving up", type, hash, NewRenderingLoadTimeout);
             return NotFound();
         }
 
@@ -163,7 +163,7 @@ namespace FactorioTech.Api.Controllers
                 return BadRequest("A blueprint book must contain at least one blueprint");
 
             var hash = Hash.Compute(request.Encoded);
-            var payload = new BlueprintPayload(
+            var payload = new Payload(
                 hash,
                 _blueprintConverter.ParseType(envelope.Item),
                 _blueprintConverter.DecodeGameVersion(envelope.Version),

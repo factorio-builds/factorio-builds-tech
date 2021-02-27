@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 
 namespace FactorioTech.Tests.Helpers
 {
-    public class BlueprintBuilder
+    public class BuildBuilder
     {
         private User? _owner;
         private UserBuilder? _ownerBuilder;
-        private BlueprintPayload? _payload;
+        private Payload? _payload;
         private PayloadBuilder? _payloadBuilder;
         private IEnumerable<string> _tags = new[] { "/belt/balancer", "/state/early game" };
 
-        public BlueprintBuilder WithOwner(User user)
+        public BuildBuilder WithOwner(User user)
         {
             _ownerBuilder = null;
             _owner = user;
             return this;
         }
 
-        public BlueprintBuilder WithOwner(Action<UserBuilder>? configure = null)
+        public BuildBuilder WithOwner(Action<UserBuilder>? configure = null)
         {
             _owner = null;
             _ownerBuilder = new UserBuilder();
@@ -33,14 +33,14 @@ namespace FactorioTech.Tests.Helpers
             return this;
         }
 
-        public BlueprintBuilder WithPayload(BlueprintPayload payload)
+        public BuildBuilder WithPayload(Payload payload)
         {
             _payloadBuilder = null;
             _payload = payload;
             return this;
         }
 
-        public BlueprintBuilder WithPayload(Action<PayloadBuilder> configure)
+        public BuildBuilder WithPayload(Action<PayloadBuilder> configure)
         {
             _payload = null;
             _payloadBuilder = new PayloadBuilder();
@@ -48,13 +48,13 @@ namespace FactorioTech.Tests.Helpers
             return this;
         }
         
-        public BlueprintBuilder WithTags(params string[] tags)
+        public BuildBuilder WithTags(params string[] tags)
         {
             _tags = tags;
             return this;
         }
 
-        public async Task<Blueprint> Save(AppDbContext dbContext, bool clearCache = true)
+        public async Task<Build> Save(AppDbContext dbContext, bool clearCache = true)
         {
             if (_owner == null && _ownerBuilder == null)
                 throw new Exception("Must set owner.");

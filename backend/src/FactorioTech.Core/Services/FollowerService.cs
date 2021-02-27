@@ -32,7 +32,7 @@ namespace FactorioTech.Core.Services
                 return null;
 
             return await _dbContext.Favorites.AsNoTracking()
-                .Where(f => f.BlueprintId == buildId)
+                .Where(f => f.BuildId == buildId)
                 .OrderByDescending(f => f.CreatedAt)
                 .Select(f => f.User!)
                 .Distinct()
@@ -52,7 +52,7 @@ namespace FactorioTech.Core.Services
             // ef core doesn't currently support that and I'm too lazy to write proper raw sql.
 
             var existing = await _dbContext.Favorites.AsNoTracking()
-                .FirstOrDefaultAsync(f => f.BlueprintId == buildId && f.UserId == userId);
+                .FirstOrDefaultAsync(f => f.BuildId == buildId && f.UserId == userId);
 
             if (existing != null)
                 return false;
@@ -61,7 +61,7 @@ namespace FactorioTech.Core.Services
             {
                 _dbContext.Add(new Favorite
                 {
-                    BlueprintId = buildId,
+                    BuildId = buildId,
                     UserId = userId,
                     CreatedAt = SystemClock.Instance.GetCurrentInstant(),
                 });
@@ -89,7 +89,7 @@ namespace FactorioTech.Core.Services
             // todo: this is obviously a race condition!
 
             var existing = await _dbContext.Favorites
-                .FirstOrDefaultAsync(f => f.BlueprintId == buildId && f.UserId == userId);
+                .FirstOrDefaultAsync(f => f.BuildId == buildId && f.UserId == userId);
 
             if (existing == null)
                 return false;
@@ -110,10 +110,10 @@ namespace FactorioTech.Core.Services
         }
 
         private async Task<Guid> TryFindBuildId(string owner, string slug) =>
-            await _dbContext.Blueprints.AsNoTracking()
+            await _dbContext.Builds.AsNoTracking()
                 .Where(b => b.NormalizedOwnerSlug == owner.ToUpperInvariant()
                          && b.NormalizedSlug == slug.ToUpperInvariant())
-                .Select(b => b.BlueprintId)
+                .Select(b => b.BuildId)
                 .FirstOrDefaultAsync();
     }
 }
