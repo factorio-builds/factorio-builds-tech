@@ -84,6 +84,24 @@ export function withMarkedInputs(blueprint: IBlueprint): IComputedHeuristic {
   }
 }
 
+const EARLY_GAME_ENTITIES = [
+  "assembling-machine-1",
+  "steam-engine",
+  "transport-belt",
+]
+const MID_GAME_ENTITIES = [
+  "assembling-machine-2",
+  "fast-transport-belt",
+  "pumpjack",
+]
+const LATE_GAME_ENTITIES = [
+  "assembling-machine-3",
+  "nuclear-reactor",
+  "beacon",
+  "express-transport-belt",
+]
+const END_GAME_ENTITIES = ["rocket-silo"]
+
 export function tagsFromHeuristics(blueprint: IBlueprint): string[] {
   const tags: string[] = []
 
@@ -100,7 +118,34 @@ export function tagsFromHeuristics(blueprint: IBlueprint): string[] {
     tags.push("/belt/express transport belt (blue)")
   }
 
-  // TODO: State tags
+  if (
+    hasEntities(blueprint, EARLY_GAME_ENTITIES) &&
+    !hasEntities(blueprint, [
+      ...MID_GAME_ENTITIES,
+      ...LATE_GAME_ENTITIES,
+      ...END_GAME_ENTITIES,
+    ])
+  ) {
+    tags.push("/state/early game")
+  }
+
+  if (
+    hasEntities(blueprint, MID_GAME_ENTITIES) &&
+    !hasEntities(blueprint, [...LATE_GAME_ENTITIES, ...END_GAME_ENTITIES])
+  ) {
+    tags.push("/state/mid game")
+  }
+
+  if (
+    hasEntities(blueprint, LATE_GAME_ENTITIES) &&
+    !hasEntities(blueprint, END_GAME_ENTITIES)
+  ) {
+    tags.push("/state/late game")
+  }
+
+  if (hasEntities(blueprint, END_GAME_ENTITIES)) {
+    tags.push("/state/end game (megabase)")
+  }
 
   // Meta tags
   if (hasEntity(blueprint, "beacon")) {
