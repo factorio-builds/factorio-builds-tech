@@ -52,7 +52,7 @@ namespace FactorioTech.Api.ViewModels
         /// The payload's blueprint type.
         /// </summary>
         [Required]
-        public BlueprintType Type { get; set; }
+        public PayloadType Type { get; set; }
 
         /// <summary>
         /// The game version that was used to create the blueprint.

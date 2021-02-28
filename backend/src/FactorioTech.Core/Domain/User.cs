@@ -20,8 +20,8 @@ namespace FactorioTech.Core.Domain
 
         // navigation properties -> will be null if not included explicitly
 
-        public IEnumerable<Blueprint>? Blueprints { get; set; }
+        public IEnumerable<Build>? Builds { get; set; }
 
-        public IEnumerable<Blueprint>? Favorites { get; set; }
+        public IEnumerable<Build>? Favorites { get; set; }
     }
 }

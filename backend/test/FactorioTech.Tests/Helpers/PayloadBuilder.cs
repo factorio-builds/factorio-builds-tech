@@ -22,11 +22,11 @@ namespace FactorioTech.Tests.Helpers
             return this;
         }
 
-        public async Task<BlueprintPayload> Save(AppDbContext dbContext, bool clearCache = true)
+        public async Task<Payload> Save(AppDbContext dbContext, bool clearCache = true)
         {
-            var payload = new BlueprintPayload(
+            var payload = new Payload(
                 _hash ?? Hash.Compute(_encoded),
-                BlueprintType.Book,
+                PayloadType.Book,
                 Version.Parse("1.0.0.0"),
                 _encoded);
 

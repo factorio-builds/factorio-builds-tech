@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace FactorioTech.Core
 {
-    public sealed class PayloadCache : Dictionary<FactorioApi.IBlueprint, BlueprintPayload>
+    public sealed class PayloadCache : Dictionary<FactorioApi.IBlueprint, Payload>
     {
-        public async Task<BlueprintPayload> EnsureInitialized(FactorioApi.IBlueprint blueprint)
+        public async Task<Payload> EnsureInitialized(FactorioApi.IBlueprint blueprint)
         {
             if (TryGetValue(blueprint, out var payload))
             {
@@ -18,7 +18,7 @@ namespace FactorioTech.Core
             var converter = new BlueprintConverter();
             var encoded = await converter.Encode(blueprint);
 
-            payload = new BlueprintPayload(
+            payload = new Payload(
                 Hash.Compute(encoded),
                 converter.ParseType(blueprint.Item),
                 converter.DecodeGameVersion(blueprint.Version),
@@ -42,7 +42,7 @@ namespace FactorioTech.Core
             }
         }
 
-        private bool TryAddFirstChild(FactorioApi.BlueprintEnvelope? envelope, BlueprintPayload payload)
+        private bool TryAddFirstChild(FactorioApi.BlueprintEnvelope? envelope, Payload payload)
         {
             if (envelope?.Blueprint != null)
             {

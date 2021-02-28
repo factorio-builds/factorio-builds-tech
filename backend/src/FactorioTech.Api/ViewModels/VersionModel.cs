@@ -27,7 +27,7 @@ namespace FactorioTech.Api.ViewModels
         /// The version's blueprint type.
         /// </summary>
         [Required]
-        public BlueprintType Type { get; set; }
+        public PayloadType Type { get; set; }
 
         /// <summary>
         /// The timestamp in UTC at which the version was created.

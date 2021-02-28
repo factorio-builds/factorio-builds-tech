@@ -41,12 +41,12 @@ namespace FactorioTech.Core.Services
                 BitConverter.ToUInt16(bytes[0..2]));
         }
 
-        public BlueprintType ParseType(string item) =>
+        public PayloadType ParseType(string item) =>
             item switch
             {
-                "" => BlueprintType.Blueprint, // todo: this seems fishy?
-                "blueprint" => BlueprintType.Blueprint,
-                "blueprint-book" => BlueprintType.Book,
+                "" => PayloadType.Blueprint, // todo: this seems fishy?
+                "blueprint" => PayloadType.Blueprint,
+                "blueprint-book" => PayloadType.Book,
                 _ => throw new ArgumentException($"Invalid blueprint type: {item}", nameof(item)),
             };
 

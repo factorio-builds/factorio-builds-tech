@@ -57,9 +57,9 @@ namespace FactorioTech.Core.Services
             _fbsrClient = fbsrClient;
         }
 
-        public async Task<(Stream? File, string? MimeType)> TryLoadCover(Guid blueprintId)
+        public async Task<(Stream? File, string? MimeType)> TryLoadCover(Guid buildId)
         {
-            var imageFqfn = GetCoverFqfn(blueprintId);
+            var imageFqfn = GetCoverFqfn(buildId);
             if (!File.Exists(imageFqfn))
                 return (null, null);
 
@@ -81,7 +81,7 @@ namespace FactorioTech.Core.Services
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, "Failed to read blueprint rendering {Type} for {Hash}", type, hash);
+                    _logger.LogWarning(ex, "Failed to read rendering {Type} for {Hash}", type, hash);
                     return null;
                 }
             }
@@ -93,7 +93,7 @@ namespace FactorioTech.Core.Services
             switch (type)
             {
                 case RenderingType.Full:
-                    var payload = await _dbContext.BlueprintPayloads.AsNoTracking()
+                    var payload = await _dbContext.Payloads.AsNoTracking()
                         .FirstOrDefaultAsync(x => x.Hash == hash);
                     if (payload == null)
                         return null;
@@ -116,7 +116,7 @@ namespace FactorioTech.Core.Services
             return TryLoadIfExists();
         }
 
-        public async Task SaveRenderingFull(BlueprintPayload payload)
+        public async Task SaveRenderingFull(Payload payload)
         {
             var imageFqfn = GetRenderingFqfn(payload.Hash, RenderingType.Full);
             if (File.Exists(imageFqfn))
@@ -136,7 +136,7 @@ namespace FactorioTech.Core.Services
 
             try
             {
-                await using var imageData = await _fbsrClient.FetchBlueprintRendering(payload.Encoded);
+                await using var imageData = await _fbsrClient.FetchRendering(payload.Encoded);
                 using var image = await Image.LoadAsync(imageData);
 
                 await using var outFile = new FileStream(imageFqfn, FileMode.CreateNew, FileAccess.Write);
@@ -257,7 +257,7 @@ namespace FactorioTech.Core.Services
         private string GetRenderingFqfn(Hash hash, RenderingType type) =>
             Path.Combine(_appConfig.DataDir, "renderings", $"{hash}-{type}.png");
 
-        private string GetCoverFqfn(Guid blueprintId) =>
-            Path.Combine(_appConfig.DataDir, "covers", blueprintId.ToString());
+        private string GetCoverFqfn(Guid buildId) =>
+            Path.Combine(_appConfig.DataDir, "covers", buildId.ToString());
     }
 }

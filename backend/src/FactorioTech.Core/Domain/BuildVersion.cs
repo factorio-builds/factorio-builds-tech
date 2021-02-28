@@ -5,13 +5,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Core.Domain
 {
-    public class BlueprintVersion
+    public class BuildVersion
     {
         [Key]
         public Guid VersionId { get; init; }
 
         [Required]
-        public Guid BlueprintId { get; init; }
+        public Guid BuildId { get; init; }
 
         [Required]
         public Instant CreatedAt { get; init; }
@@ -22,7 +22,7 @@ namespace FactorioTech.Core.Domain
         public Hash Hash { get; init; }
 
         [Required]
-        public BlueprintType Type { get; init; }
+        public PayloadType Type { get; init; }
 
         [Required]
         public Version GameVersion { get; init; }
@@ -37,23 +37,23 @@ namespace FactorioTech.Core.Domain
 
         // navigation properties -> will be null if not included explicitly
 
-        public BlueprintPayload? Payload { get; init; }
+        public Payload? Payload { get; init; }
 
-        public Blueprint? Blueprint { get; init; }
+        public Build? Build { get; init; }
 
-        public BlueprintVersion(
+        public BuildVersion(
             Guid versionId,
-            Guid blueprintId,
+            Guid buildId,
             Instant createdAt,
             Hash hash,
-            BlueprintType type,
+            PayloadType type,
             Version gameVersion,
             string? name,
             string? description,
             IEnumerable<GameIcon> icons)
         {
             VersionId = versionId;
-            BlueprintId = blueprintId;
+            BuildId = buildId;
             CreatedAt = createdAt;
             GameVersion = gameVersion;
             Hash = hash;
@@ -64,7 +64,7 @@ namespace FactorioTech.Core.Domain
         }
 
 #pragma warning disable 8618 // required for EF
-        private BlueprintVersion() { }
+        private BuildVersion() { }
 #pragma warning restore 8618
     }
 }

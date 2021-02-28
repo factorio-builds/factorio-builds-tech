@@ -240,9 +240,9 @@ namespace FactorioTech.Api.Controllers
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetVersions([Required]string owner, [Required]string slug)
         {
-            var versions = await _dbContext.Blueprints.AsNoTracking()
+            var versions = await _dbContext.Builds.AsNoTracking()
                 .Where(bp => bp.NormalizedOwnerSlug == owner.ToUpperInvariant() && bp.NormalizedSlug == slug.ToUpperInvariant())
-                .Join(_dbContext.BlueprintVersions.AsNoTracking(), bp => bp.BlueprintId, v => v.BlueprintId, (bp, v) => v)
+                .Join(_dbContext.Versions.AsNoTracking(), bp => bp.BuildId, v => v.BuildId, (bp, v) => v)
                 .OrderBy(v => v.CreatedAt)
                 .ToListAsync();
 

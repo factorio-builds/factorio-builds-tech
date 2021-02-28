@@ -33,7 +33,7 @@ namespace FactorioTech.Core.Services
             if (slug == null || !tryValidateModel(new SlugValidationModel(slug)))
                 return SlugValidationResult.Invalid(slug ?? string.Empty);
 
-            var exists = await _dbContext.Blueprints
+            var exists = await _dbContext.Builds
                 .AnyAsync(x => x.NormalizedSlug == slug.ToUpperInvariant()
                             && x.OwnerId == userId);
 

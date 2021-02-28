@@ -12,16 +12,16 @@ using NpgsqlTypes;
 namespace FactorioTech.Core.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210202183751_CoverMeta")]
-    partial class CoverMeta
+    [Migration("20210227142852_InitialRelease")]
+    partial class InitialRelease
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityByDefaultColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.2");
+                .HasAnnotation("ProductVersion", "5.0.3")
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
                 {
@@ -162,9 +162,9 @@ namespace FactorioTech.Core.Data.Migrations
                     b.ToTable("PersistedGrants", "identity");
                 });
 
-            modelBuilder.Entity("FactorioTech.Core.Domain.Blueprint", b =>
+            modelBuilder.Entity("FactorioTech.Core.Domain.Build", b =>
                 {
-                    b.Property<Guid>("BlueprintId")
+                    b.Property<Guid>("BuildId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -233,7 +233,7 @@ namespace FactorioTech.Core.Data.Migrations
                     b.Property<Instant>("UpdatedAt")
                         .HasColumnType("timestamp");
 
-                    b.HasKey("BlueprintId");
+                    b.HasKey("BuildId");
 
                     b.HasAlternateKey("OwnerId", "NormalizedSlug");
 
@@ -242,38 +242,16 @@ namespace FactorioTech.Core.Data.Migrations
                     b.HasIndex("SearchVector")
                         .HasMethod("GIN");
 
-                    b.ToTable("Blueprints");
+                    b.ToTable("Builds");
                 });
 
-            modelBuilder.Entity("FactorioTech.Core.Domain.BlueprintPayload", b =>
-                {
-                    b.Property<string>("Hash")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.Property<string>("Encoded")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("GameVersion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Hash");
-
-                    b.ToTable("BlueprintPayloads");
-                });
-
-            modelBuilder.Entity("FactorioTech.Core.Domain.BlueprintVersion", b =>
+            modelBuilder.Entity("FactorioTech.Core.Domain.BuildVersion", b =>
                 {
                     b.Property<Guid>("VersionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BlueprintId")
+                    b.Property<Guid>("BuildId")
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
@@ -306,9 +284,9 @@ namespace FactorioTech.Core.Data.Migrations
 
                     b.HasAlternateKey("Hash");
 
-                    b.HasIndex("BlueprintId");
+                    b.HasIndex("BuildId");
 
-                    b.ToTable("BlueprintVersions");
+                    b.ToTable("Versions");
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Favorite", b =>
@@ -316,17 +294,39 @@ namespace FactorioTech.Core.Data.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BlueprintId")
+                    b.Property<Guid>("BuildId")
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
                         .HasColumnType("timestamp");
 
-                    b.HasKey("UserId", "BlueprintId");
+                    b.HasKey("UserId", "BuildId");
 
-                    b.HasIndex("BlueprintId");
+                    b.HasIndex("BuildId");
 
                     b.ToTable("Favorites");
+                });
+
+            modelBuilder.Entity("FactorioTech.Core.Domain.Payload", b =>
+                {
+                    b.Property<string>("Hash")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Encoded")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GameVersion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Hash");
+
+                    b.ToTable("Payloads");
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Role", b =>
@@ -362,14 +362,14 @@ namespace FactorioTech.Core.Data.Migrations
                         new
                         {
                             Id = new Guid("52a39ea9-ab54-40ab-8ee0-98c069504f69"),
-                            ConcurrencyStamp = "997a64fb-5bc9-453c-91e2-ac5ac1b14b2d",
+                            ConcurrencyStamp = "b37a1219-8acf-4836-8b86-892b8efd8b4f",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
                             Id = new Guid("3d15ca3a-584e-4d30-94df-b43d2303a4f4"),
-                            ConcurrencyStamp = "56eedf55-9512-44fe-a7ec-31a9e4541769",
+                            ConcurrencyStamp = "d3ae1ad7-fd83-4ba1-a7c2-cf7773f5cda1",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -460,7 +460,7 @@ namespace FactorioTech.Core.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -483,7 +483,7 @@ namespace FactorioTech.Core.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .UseIdentityByDefaultColumn();
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -557,21 +557,21 @@ namespace FactorioTech.Core.Data.Migrations
                     b.ToTable("UserTokens", "identity");
                 });
 
-            modelBuilder.Entity("FactorioTech.Core.Domain.Blueprint", b =>
+            modelBuilder.Entity("FactorioTech.Core.Domain.Build", b =>
                 {
-                    b.HasOne("FactorioTech.Core.Domain.BlueprintVersion", "LatestVersion")
+                    b.HasOne("FactorioTech.Core.Domain.BuildVersion", "LatestVersion")
                         .WithMany()
                         .HasForeignKey("LatestVersionId");
 
                     b.HasOne("FactorioTech.Core.Domain.User", "Owner")
-                        .WithMany("Blueprints")
+                        .WithMany("Builds")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.OwnsOne("FactorioTech.Core.Domain.ImageMeta", "CoverMeta", b1 =>
                         {
-                            b1.Property<Guid>("BlueprintId")
+                            b1.Property<Guid>("BuildId")
                                 .HasColumnType("uuid");
 
                             b1.Property<string>("Format")
@@ -587,12 +587,12 @@ namespace FactorioTech.Core.Data.Migrations
                             b1.Property<int>("Width")
                                 .HasColumnType("integer");
 
-                            b1.HasKey("BlueprintId");
+                            b1.HasKey("BuildId");
 
-                            b1.ToTable("Blueprints");
+                            b1.ToTable("Builds");
 
                             b1.WithOwner()
-                                .HasForeignKey("BlueprintId");
+                                .HasForeignKey("BuildId");
                         });
 
                     b.Navigation("CoverMeta")
@@ -603,30 +603,30 @@ namespace FactorioTech.Core.Data.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("FactorioTech.Core.Domain.BlueprintVersion", b =>
+            modelBuilder.Entity("FactorioTech.Core.Domain.BuildVersion", b =>
                 {
-                    b.HasOne("FactorioTech.Core.Domain.Blueprint", "Blueprint")
+                    b.HasOne("FactorioTech.Core.Domain.Build", "Build")
                         .WithMany()
-                        .HasForeignKey("BlueprintId")
+                        .HasForeignKey("BuildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FactorioTech.Core.Domain.BlueprintPayload", "Payload")
+                    b.HasOne("FactorioTech.Core.Domain.Payload", "Payload")
                         .WithMany()
                         .HasForeignKey("Hash")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Blueprint");
+                    b.Navigation("Build");
 
                     b.Navigation("Payload");
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Favorite", b =>
                 {
-                    b.HasOne("FactorioTech.Core.Domain.Blueprint", "Blueprint")
+                    b.HasOne("FactorioTech.Core.Domain.Build", "Build")
                         .WithMany()
-                        .HasForeignKey("BlueprintId")
+                        .HasForeignKey("BuildId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -636,7 +636,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Blueprint");
+                    b.Navigation("Build");
 
                     b.Navigation("User");
                 });
@@ -694,7 +694,7 @@ namespace FactorioTech.Core.Data.Migrations
 
             modelBuilder.Entity("FactorioTech.Core.Domain.User", b =>
                 {
-                    b.Navigation("Blueprints");
+                    b.Navigation("Builds");
                 });
 #pragma warning restore 612, 618
         }

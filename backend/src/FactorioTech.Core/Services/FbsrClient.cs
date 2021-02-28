@@ -39,7 +39,7 @@ namespace FactorioTech.Core.Services
             _httpClient = httpClient;
         }
 
-        public async Task<Stream> FetchBlueprintRendering(string blueprint)
+        public async Task<Stream> FetchRendering(string blueprint)
         {
             var response = await _httpClient.PostAsJsonAsync(_appConfig.FbsrWrapperUri, new RenderRequest
             {

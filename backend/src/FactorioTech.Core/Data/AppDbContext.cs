@@ -20,9 +20,9 @@ namespace FactorioTech.Core.Data
             Converters = { new JsonStringEnumConverter(new SnakeCaseNamingPolicy()) },
         };
 
-        public DbSet<Blueprint> Blueprints { get; set; }
-        public DbSet<BlueprintVersion> BlueprintVersions { get; set; }
-        public DbSet<BlueprintPayload> BlueprintPayloads { get; set; }
+        public DbSet<Build> Builds { get; set; }
+        public DbSet<BuildVersion> Versions { get; set; }
+        public DbSet<Payload> Payloads { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
 
 #pragma warning disable 8618
@@ -40,20 +40,20 @@ namespace FactorioTech.Core.Data
 
             builder.Entity<User>(entity =>
             {
-                entity.HasMany(e => e.Blueprints!)
+                entity.HasMany(e => e.Builds!)
                     .WithOne(e => e.Owner!)
                     .HasForeignKey(e => e.OwnerId)
                     .HasPrincipalKey(e => e.Id);
 
                 entity.HasMany(e => e.Favorites).WithMany(x => x.Followers)
                     .UsingEntity<Favorite>(
-                        je => je.HasOne(e => e.Blueprint!).WithMany()
-                            .HasForeignKey(x => x.BlueprintId)
-                            .HasPrincipalKey(x => x.BlueprintId),
+                        je => je.HasOne(e => e.Build!).WithMany()
+                            .HasForeignKey(x => x.BuildId)
+                            .HasPrincipalKey(x => x.BuildId),
                         je => je.HasOne(e => e.User!).WithMany()
                             .HasForeignKey(x => x.UserId)
                             .HasPrincipalKey(x => x.Id))
-                    .HasKey(e => new { e.UserId, e.BlueprintId });
+                    .HasKey(e => new { e.UserId, e.BuildId });
 
                 entity.Property(e => e.TimeZone)
                     .HasConversion(
@@ -61,7 +61,7 @@ namespace FactorioTech.Core.Data
                         tz => DateTimeZoneProviders.Tzdb[tz]);
             });
 
-            builder.Entity<Blueprint>(entity =>
+            builder.Entity<Build>(entity =>
             {
                 entity.HasAlternateKey(e => new { e.OwnerId, e.NormalizedSlug });
 
@@ -91,13 +91,13 @@ namespace FactorioTech.Core.Data
                 }
             });
 
-            builder.Entity<BlueprintVersion>(entity =>
+            builder.Entity<BuildVersion>(entity =>
             {
                 entity.HasAlternateKey(e => e.Hash);
 
-                entity.HasOne(x => x.Blueprint!).WithMany()
-                    .HasForeignKey(e => e.BlueprintId)
-                    .HasPrincipalKey(e => e.BlueprintId);
+                entity.HasOne(x => x.Build!).WithMany()
+                    .HasForeignKey(e => e.BuildId)
+                    .HasPrincipalKey(e => e.BuildId);
 
                 entity.Property(e => e.Hash)
                     .HasConversion(p => p.ToString(), p => Hash.Parse(p));
@@ -117,7 +117,7 @@ namespace FactorioTech.Core.Data
                     .HasColumnType("jsonb");
             });
 
-            builder.Entity<BlueprintPayload>(entity =>
+            builder.Entity<Payload>(entity =>
             {
                 entity.Property(e => e.Hash)
                     .HasConversion(p => p.ToString(), p => Hash.Parse(p));

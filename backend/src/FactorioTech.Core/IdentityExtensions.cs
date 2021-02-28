@@ -17,17 +17,17 @@ namespace FactorioTech.Core
             Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
                 ? userId : null;
 
-        public static bool CanEdit(this ClaimsPrincipal principal, Blueprint build) =>
+        public static bool CanEdit(this ClaimsPrincipal principal, Build build) =>
             principal.TryGetUserId() == build.OwnerId
             || principal.IsInRole(Role.Moderator)
             || principal.IsInRole(Role.Administrator);
 
-        public static bool CanAddVersion(this ClaimsPrincipal principal, Blueprint build) =>
+        public static bool CanAddVersion(this ClaimsPrincipal principal, Build build) =>
             principal.TryGetUserId() == build.OwnerId
             || principal.IsInRole(Role.Moderator)
             || principal.IsInRole(Role.Administrator);
 
-        public static bool CanDelete(this ClaimsPrincipal principal, Blueprint build) =>
+        public static bool CanDelete(this ClaimsPrincipal principal, Build build) =>
             principal.IsInRole(Role.Administrator);
     }
 }

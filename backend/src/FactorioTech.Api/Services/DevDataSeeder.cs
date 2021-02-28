@@ -104,12 +104,12 @@ namespace FactorioTech.Api.Services
                 return;
             }
 
-            await SeedBlueprints(data.Blueprints);
+            await SeedBuilds(data.Blueprints);
         }
 
-        private async Task SeedBlueprints(IReadOnlyCollection<SeedBlueprint> blueprints)
+        private async Task SeedBuilds(IReadOnlyCollection<SeedBlueprint> blueprints)
         {
-            _logger.LogInformation("Seeding {TotalCount} blueprints", blueprints.Count);
+            _logger.LogInformation("Seeding {TotalCount} builds", blueprints.Count);
             var createdCount = 0;
             var skippedCount = 0;
             var errorCount = 0;
@@ -119,7 +119,7 @@ namespace FactorioTech.Api.Services
                 var slug = blueprint.Title.ToSlug();
                 var username = blueprint.Owner.ToSlug();
 
-                var existing = await _dbContext.Blueprints.FirstOrDefaultAsync(bp => bp.OwnerSlug == username && bp.Slug == slug);
+                var existing = await _dbContext.Builds.FirstOrDefaultAsync(bp => bp.OwnerSlug == username && bp.Slug == slug);
                 if (existing != null)
                 {
                     skippedCount++;
@@ -152,7 +152,7 @@ namespace FactorioTech.Api.Services
 
                 var envelope = await _blueprintConverter.Decode(blueprint.Encoded);
 
-                var payload = new BlueprintPayload(
+                var payload = new Payload(
                     Hash.Compute(blueprint.Encoded),
                     _blueprintConverter.ParseType(envelope.Item),
                     _blueprintConverter.DecodeGameVersion(envelope.Version),
@@ -191,17 +191,17 @@ namespace FactorioTech.Api.Services
                 {
                     case BuildService.CreateResult.Success:
                         createdCount++;
-                        _logger.LogInformation("Blueprint {Title} by {Owner} created successfully", blueprint.Title, blueprint.Owner);
+                        _logger.LogInformation("Build {Title} by {Owner} created successfully", blueprint.Title, blueprint.Owner);
                         break;
 
                     default:
                         errorCount++;
-                        _logger.LogError("Failed to save blueprint {Title}: {ErrorType}", blueprint.Title, result.GetType());
+                        _logger.LogError("Failed to save build {Title}: {ErrorType}", blueprint.Title, result.GetType());
                         break;
                 }
             }
 
-            _logger.LogInformation("Done seeding {TotalCount} blueprints: created {CreatedCount}, skipped {SkippedCount}, {ErrorCount} errors",
+            _logger.LogInformation("Done seeding {TotalCount} builds: created {CreatedCount}, skipped {SkippedCount}, {ErrorCount} errors",
                 blueprints.Count, createdCount, skippedCount, errorCount);
         }
 

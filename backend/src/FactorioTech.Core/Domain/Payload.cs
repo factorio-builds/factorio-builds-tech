@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FactorioTech.Core.Domain
 {
-    public class BlueprintPayload
+    public class Payload
     {
         [Key]
         [MaxLength(32)]
@@ -12,7 +12,7 @@ namespace FactorioTech.Core.Domain
         public Hash Hash { get; init; }
 
         [Required]
-        public BlueprintType Type { get; init; }
+        public PayloadType Type { get; init; }
 
         [Required]
         public Version GameVersion { get; init; }
@@ -20,7 +20,7 @@ namespace FactorioTech.Core.Domain
         [Required]
         public string Encoded { get; init; }
 
-        public BlueprintPayload(Hash hash, BlueprintType type, Version gameVersion, string encoded)
+        public Payload(Hash hash, PayloadType type, Version gameVersion, string encoded)
         {
             Hash = hash;
             Type = type;
@@ -29,12 +29,12 @@ namespace FactorioTech.Core.Domain
         }
 
 #pragma warning disable 8618 // required for EF
-        private BlueprintPayload() { }
+        private Payload() { }
 #pragma warning restore 8618
 
-        private sealed class HashEqualityComparer : IEqualityComparer<BlueprintPayload>
+        private sealed class HashEqualityComparer : IEqualityComparer<Payload>
         {
-            public bool Equals(BlueprintPayload? x, BlueprintPayload? y)
+            public bool Equals(Payload? x, Payload? y)
             {
                 if (ReferenceEquals(x, y)) return true;
                 if (ReferenceEquals(x, null)) return false;
@@ -43,9 +43,9 @@ namespace FactorioTech.Core.Domain
                 return x.Hash.Equals(y.Hash);
             }
 
-            public int GetHashCode(BlueprintPayload obj) => obj.Hash.GetHashCode();
+            public int GetHashCode(Payload obj) => obj.Hash.GetHashCode();
         }
 
-        public static IEqualityComparer<BlueprintPayload> EqualityComparer => new HashEqualityComparer();
+        public static IEqualityComparer<Payload> EqualityComparer => new HashEqualityComparer();
     }
 }
