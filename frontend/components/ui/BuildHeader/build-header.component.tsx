@@ -13,6 +13,8 @@ import Tooltip from "../Tooltip"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-header.styles"
 import { TPayload } from "../../pages/BuildPage/usePayload"
+import Raw from "../../../icons/raw"
+import Editor from "../../../icons/editor"
 
 interface IBuildheader {
   build: IFullBuild
@@ -77,6 +79,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
               size="small"
               disabled={!props.payload.data}
             >
+              <Raw />
               Raw
             </Button>
           </Link>
@@ -89,6 +92,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
               size="small"
               disabled={!props.payload.data}
             >
+              <Editor />
               View in editor
             </Button>
           </Link>
