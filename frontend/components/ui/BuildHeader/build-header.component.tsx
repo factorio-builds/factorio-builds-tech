@@ -12,9 +12,11 @@ import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-header.styles"
+import { TPayload } from "../../pages/BuildPage/usePayload"
 
 interface IBuildheader {
   build: IFullBuild
+  payload: TPayload
 }
 
 function Buildheader(props: IBuildheader): JSX.Element {
@@ -69,9 +71,15 @@ function Buildheader(props: IBuildheader): JSX.Element {
         </Stacker>
         <Stacker orientation="horizontal" gutter={8}>
           <FavoriteButton build={props.build} size="small" />
-          <Button variant="default" size="small">
-            Raw
-          </Button>
+          <Link href={props.payload.data?._links.raw.href || ""} passHref>
+            <Button
+              variant="default"
+              size="small"
+              disabled={!props.payload.data}
+            >
+              Raw
+            </Button>
+          </Link>
           <Button variant="default" size="small">
             View in editor
           </Button>
