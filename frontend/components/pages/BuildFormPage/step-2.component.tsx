@@ -10,6 +10,7 @@ import Pager from "./pager.component"
 import { TPage } from "./pager.component"
 import Step2Cover from "./step-2-cover.component"
 import Step2Data from "./step-2-data.component"
+import useImageRenderIsReady from "./useImageRenderIsReady"
 
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
@@ -19,6 +20,11 @@ interface IStep2Props {
 
 const Step2: React.FC<IStep2Props> = (props) => {
   const [page, setPage] = useState<TPage>("data")
+  const renderIsReady = useImageRenderIsReady(
+    props.payloadData._links.rendering_thumb?.href ||
+      props.formikProps.values.cover.url ||
+      undefined
+  )
 
   const validateFields = <T extends keyof IFormValues>(
     fields: T[]
@@ -65,11 +71,15 @@ const Step2: React.FC<IStep2Props> = (props) => {
         <SC.ButtonsStack gutter={24} orientation="horizontal">
           <Button
             variant="success"
-            disabled={props.submitStatus.loading || !props.formikProps.isValid}
+            disabled={
+              !renderIsReady ||
+              props.submitStatus.loading ||
+              !props.formikProps.isValid
+            }
           >
             <Stacker gutter={10} orientation="horizontal">
               <span>Save build</span>
-              {props.submitStatus.loading && <Spinner />}
+              {!renderIsReady || (props.submitStatus.loading && <Spinner />)}
             </Stacker>
           </Button>
           {page === "data" && (
