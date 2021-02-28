@@ -12,9 +12,11 @@ import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-header.styles"
+import { TPayload } from "../../pages/BuildPage/usePayload"
 
 interface IBuildheader {
   build: IFullBuild
+  payload: TPayload
 }
 
 function Buildheader(props: IBuildheader): JSX.Element {
@@ -69,12 +71,27 @@ function Buildheader(props: IBuildheader): JSX.Element {
         </Stacker>
         <Stacker orientation="horizontal" gutter={8}>
           <FavoriteButton build={props.build} size="small" />
-          <Button variant="default" size="small">
-            Raw
-          </Button>
-          <Button variant="default" size="small">
-            View in editor
-          </Button>
+          <Link href={props.payload.data?._links.raw.href || ""} passHref>
+            <Button
+              variant="default"
+              size="small"
+              disabled={!props.payload.data}
+            >
+              Raw
+            </Button>
+          </Link>
+          <Link
+            href={`https://fbe.teoxoy.com/?source=${props.payload.data?.encoded}`}
+            passHref
+          >
+            <Button
+              variant="default"
+              size="small"
+              disabled={!props.payload.data}
+            >
+              View in editor
+            </Button>
+          </Link>
           <CopyStringToClipboard
             toCopy={props.build.latest_version.payload.encoded}
             variant="cta"

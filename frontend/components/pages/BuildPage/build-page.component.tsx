@@ -146,7 +146,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
 
   return (
     <Layout title={build.title} size="medium">
-      <BuildHeader build={build} />
+      <BuildHeader build={build} payload={payload} />
 
       <Tabs
         build={build}
