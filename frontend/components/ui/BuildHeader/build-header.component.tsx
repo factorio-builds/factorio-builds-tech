@@ -80,9 +80,18 @@ function Buildheader(props: IBuildheader): JSX.Element {
               Raw
             </Button>
           </Link>
-          <Button variant="default" size="small">
-            View in editor
-          </Button>
+          <Link
+            href={`https://fbe.teoxoy.com/?source=${props.payload.data?.encoded}`}
+            passHref
+          >
+            <Button
+              variant="default"
+              size="small"
+              disabled={!props.payload.data}
+            >
+              View in editor
+            </Button>
+          </Link>
           <CopyStringToClipboard
             toCopy={props.build.latest_version.payload.encoded}
             variant="cta"
