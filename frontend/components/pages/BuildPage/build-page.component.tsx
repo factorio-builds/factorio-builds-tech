@@ -13,9 +13,11 @@ import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
 import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
 import BlueprintsTab from "./tabs/blueprints-tab.component"
 import DetailsTab from "./tabs/details-tab.component"
+import ImageMobileTab from "./tabs/image-mobile-tab.component"
 import RequiredItemsTab from "./tabs/required-items-tab.component"
 import usePayload, { TPayload } from "./usePayload"
 import Links from "../../ui/Links"
+import { Media } from "../../../design/styles/media"
 
 interface IBuildPageProps {
   build: IFullBuild
@@ -34,6 +36,7 @@ interface ITab {
   key: string
   label: string
   tab: TTabComponent
+  mobileOnly?: boolean
 }
 
 interface ITabs {
@@ -59,20 +62,35 @@ const Tabs = (props: ITabs): JSX.Element => {
   return (
     <SC.TabsWrapper>
       <Stacker orientation="horizontal" gutter={16}>
-        {props.tabs.map((tab) => (
-          <Link
-            key={tab.label}
-            href={{
-              pathname: `/${props.build.owner.username}/${props.build.slug}`,
-              query: { tab: tab.key },
-            }}
-            passHref
-          >
-            <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
-              {tab.label}
-            </SC.Tab>
-          </Link>
-        ))}
+        {props.tabs.map((tab) => {
+          const Tab = (innerProps: { className?: string }) => (
+            <Link
+              {...innerProps}
+              key={tab.label}
+              href={{
+                pathname: `/${props.build.owner.username}/${props.build.slug}`,
+                query: { tab: tab.key },
+              }}
+              passHref
+            >
+              <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
+                {tab.label}
+              </SC.Tab>
+            </Link>
+          )
+
+          if (tab.mobileOnly) {
+            return (
+              <Media lessThan="sm">
+                {(mcx, renderChildren) => {
+                  return renderChildren ? <Tab className={mcx} /> : null
+                }}
+              </Media>
+            )
+          }
+
+          return <Tab />
+        })}
       </Stacker>
       <SC.TabsContent orientation="horizontal" gutter={16}>
         <SC.TabsContentInner>
@@ -89,7 +107,13 @@ const Tabs = (props: ITabs): JSX.Element => {
             )
           })}
         </SC.TabsContentInner>
-        <SC.TabsAside>{props.aside}</SC.TabsAside>
+        <Media greaterThanOrEqual="sm">
+          {(mcx, renderChildren) => {
+            return renderChildren ? (
+              <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside>
+            ) : null
+          }}
+        </Media>
       </SC.TabsContent>
     </SC.TabsWrapper>
   )
@@ -113,6 +137,12 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           tab: BlueprintsTab,
         },
         {
+          key: "image-mobile",
+          label: `blueprint image`,
+          tab: ImageMobileTab,
+          mobileOnly: true,
+        },
+        {
           key: "blueprint-string",
           label: "blueprint string",
           tab: BlueprintStringTab,
@@ -130,6 +160,12 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           key: "required-items",
           label: "required items",
           tab: RequiredItemsTab,
+        },
+        {
+          key: "image-mobile",
+          label: `blueprint image`,
+          tab: ImageMobileTab,
+          mobileOnly: true,
         },
         {
           key: "blueprint-string",
