@@ -40,7 +40,7 @@ function Header(): JSX.Element {
         )}
 
         <Link href="/">
-          <a>
+          <a aria-label="Factorio Builds">
             <SC.StyledLogo />
           </a>
         </Link>
