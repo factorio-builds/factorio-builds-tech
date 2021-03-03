@@ -6,7 +6,7 @@ import Logo from "../../../icons/logo"
 import { ContainerWrapper as Container } from "../Container/container.styles"
 import Stacker from "../Stacker"
 
-export const HeaderWrapper = styled.div`
+export const HeaderWrapper = styled.header`
   display: flex;
   align-items: center;
   background: ${COLOR.HEADER};
