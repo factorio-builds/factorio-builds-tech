@@ -12,6 +12,7 @@ import { theme } from "../design/styles/theme"
 import { IStoreState, wrapper } from "../redux/store"
 import auth from "../utils/auth"
 import { axios } from "../utils/axios"
+import { MediaContextProvider } from "../design/styles/media"
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -53,7 +54,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
+        <MediaContextProvider>
+          <Component {...pageProps} />
+        </MediaContextProvider>
       </ThemeProvider>
     </>
   )

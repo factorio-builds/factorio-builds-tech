@@ -11,10 +11,20 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   background: ${COLOR.HEADER};
   height: 74px;
+  position: relative;
+  z-index: 2;
 
   ${Container} {
     align-items: center;
   }
+`
+
+export const BurgerButton = styled.button`
+  background: transparent;
+  border: none;
+  margin-left: -8px;
+  padding: 8px;
+  margin-right: 8px;
 `
 
 export const StyledLogo = styled(Logo)`
