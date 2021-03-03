@@ -19,3 +19,13 @@ export const Content = styled.main`
     margin-bottom: 0;
   }
 `
+
+export const Backdrop = styled.div`
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`

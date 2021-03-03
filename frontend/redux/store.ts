@@ -11,6 +11,7 @@ import thunk from "redux-thunk"
 import reducers from "./reducer"
 import { IStoreAuthState, TAuthAction } from "./reducers/auth"
 import { IStoreFiltersState, TFiltersAction } from "./reducers/filters"
+import { IStoreLayoutState, TLayoutAction } from "./reducers/layout"
 import { IStoreSearchState, TSearchAction } from "./reducers/search"
 
 export interface IPayloadAction<T, P> extends Action<T> {
@@ -20,12 +21,18 @@ export interface IPayloadAction<T, P> extends Action<T> {
 export interface IStoreState {
   auth: IStoreAuthState
   filters: IStoreFiltersState
+  layout: IStoreLayoutState
   search: IStoreSearchState
 }
 
 type THydrateAction = IPayloadAction<typeof HYDRATE, any>
 
-type TAction = THydrateAction | TAuthAction | TFiltersAction | TSearchAction
+type TAction =
+  | THydrateAction
+  | TAuthAction
+  | TFiltersAction
+  | TLayoutAction
+  | TSearchAction
 
 export const makeStore: MakeStore<IStoreState, TAction> = () => {
   const combinedReducer = combineReducers({

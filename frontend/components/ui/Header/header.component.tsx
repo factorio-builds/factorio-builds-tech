@@ -1,17 +1,44 @@
-import React from "react"
-import { useSelector } from "react-redux"
+import React, { useCallback } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
 import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
 import UserDropdown from "../UserDropdown"
 import * as SC from "./header.styles"
+import { Media } from "../../../design/styles/media"
+import Burger from "../../../icons/burger"
+import { useRouter } from "next/router"
 
 function Header(): JSX.Element {
+  const dispatch = useDispatch()
   const user = useSelector((state: IStoreState) => state.auth.user)
+  const router = useRouter()
+
+  const toggleSidebar = useCallback(() => {
+    dispatch({
+      type: "TOGGLE_SIDEBAR",
+    })
+  }, [])
 
   return (
     <SC.HeaderWrapper>
       <Container>
+        {router.pathname === "/" && (
+          <Media lessThan="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren ? (
+                <SC.BurgerButton
+                  className={mcx}
+                  role="button"
+                  onClick={toggleSidebar}
+                >
+                  <Burger />
+                </SC.BurgerButton>
+              ) : null
+            }}
+          </Media>
+        )}
+
         <Link href="/">
           <a>
             <SC.StyledLogo />
