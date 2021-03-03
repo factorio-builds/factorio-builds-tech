@@ -7,7 +7,7 @@ interface ISidebarProps {
 
 function Sidebar(props: ISidebarProps): JSX.Element {
   return (
-    <SC.SidebarWrapper>
+    <SC.SidebarWrapper role="search">
       <SC.SidebarContent>{props.children}</SC.SidebarContent>
       <SC.SidebarBG />
     </SC.SidebarWrapper>

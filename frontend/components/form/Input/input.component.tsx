@@ -33,6 +33,7 @@ const Text: React.FC<ITextProps> = ({
   spellCheck,
   onChange,
   onKeyPress,
+  ...restProps
 }) => {
   const [focused, setFocused] = useState(false)
 
@@ -49,6 +50,7 @@ const Text: React.FC<ITextProps> = ({
       {customPrefix && <SC.Prefix>{customPrefix}</SC.Prefix>}
       {icon}
       <SC.StyledInput
+        {...restProps}
         id={id}
         name={name}
         value={value}
@@ -63,11 +65,17 @@ const Text: React.FC<ITextProps> = ({
   )
 }
 
-const Textarea: React.FC<ITextareaProps> = (props) => {
-  const { id, name, value, placeholder, spellCheck, ...restProps } = props
-
+const Textarea: React.FC<ITextareaProps> = ({
+  id,
+  name,
+  value,
+  placeholder,
+  spellCheck,
+  ...restProps
+}) => {
   return (
     <SC.StyledTextarea
+      {...restProps}
       name={name}
       id={id}
       value={value}

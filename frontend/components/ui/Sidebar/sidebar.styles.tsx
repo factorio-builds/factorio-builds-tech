@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { COLOR } from "../../../design/tokens/color"
 
-export const SidebarWrapper = styled.div`
+export const SidebarWrapper = styled.aside`
   width: 300px;
   flex: 0 0 300px;
   padding: 20px 20px 20px 0;
