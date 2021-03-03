@@ -26,6 +26,7 @@ const Search = (): JSX.Element => {
 
   return (
     <Input.Text
+      aria-label="Search"
       id="filter-search"
       value={input}
       placeholder="Search"
