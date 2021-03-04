@@ -13,7 +13,6 @@ interface IBuildCardListProps {
   items: IThinBuild[]
   count: number
   totalCount: number
-  lookupTime: number
   sort: {
     type: ESortType
     direction: ESortDirection
@@ -27,7 +26,6 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   items,
   count,
   totalCount,
-  lookupTime,
   sort,
 }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>()
@@ -58,11 +56,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   return (
     <SC.BuildCardListWrapper>
       <SC.Header>
-        <BuildListLookupStats
-          count={count}
-          totalCount={totalCount}
-          lookupTime={lookupTime}
-        />
+        <BuildListLookupStats count={count} totalCount={totalCount} />
         <BuildListSort sort={sort} />
       </SC.Header>
       <SC.Columns

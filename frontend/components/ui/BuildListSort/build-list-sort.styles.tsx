@@ -6,7 +6,6 @@ import { ETypo } from "../../../design/tokens/typo"
 export const BuildListSortWrapper = styled.div`
   ${getTypo(ETypo.BODY)};
   color: ${COLOR.FADEDBLUE700};
-  margin-bottom: 20px;
   text-align: right;
 `
 

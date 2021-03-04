@@ -35,7 +35,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         builds: deserializedSearchResults.builds,
         current_count: deserializedSearchResults.current_count,
         total_count: deserializedSearchResults.total_count,
-        processingTimeMs: 5,
       },
     })
 

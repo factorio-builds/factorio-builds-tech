@@ -26,7 +26,6 @@ function BuildListPage(): JSX.Element {
         items={search.builds}
         count={search.current_count}
         totalCount={search.total_count}
-        lookupTime={search.processingTimeMs}
         sort={sort}
       />
     </Layout>

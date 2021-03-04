@@ -9,14 +9,12 @@ export interface IStoreSearchState {
   current_count: number
   total_count: number
   builds: IThinBuild[]
-  processingTimeMs: number
 }
 
 const initialSearchState: IStoreSearchState = {
   current_count: 0,
   total_count: 0,
   builds: [],
-  processingTimeMs: 0,
 }
 
 type TSearchBuildsAction = Action<"SEARCH_BUILDS">
@@ -55,7 +53,6 @@ export const searchBuildsAsync = (): ThunkAction<
             current_count: data.current_count,
             total_count: data.total_count,
             builds: data.builds,
-            processingTimeMs: 5,
           },
         })
       })
@@ -71,7 +68,6 @@ const searchBuildsSuccess = (
     current_count: payload.current_count,
     total_count: payload.total_count,
     builds: payload.builds,
-    processingTimeMs: 5,
   }
 }
 

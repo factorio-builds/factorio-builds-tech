@@ -5,6 +5,9 @@ export const BuildCardListWrapper = styled.div`
 `
 
 export const Header = styled.div`
+  background: #333642;
+  margin: 0 -20px 20px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;

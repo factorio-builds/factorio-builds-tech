@@ -6,7 +6,7 @@ export const BodyWrapper = styled(Stacker)`
 `
 
 export const Content = styled.main`
-  padding: 20px 0;
+  padding-bottom: 20px;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
