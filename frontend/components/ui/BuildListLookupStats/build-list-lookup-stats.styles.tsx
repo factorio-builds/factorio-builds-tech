@@ -5,6 +5,7 @@ import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildListLookupStatWrapper = styled.div`
   ${getTypo(ETypo.BODY)};
+  font-size: 16px;
 `
 
 export const Count = styled.div`

@@ -1,10 +1,14 @@
 import * as React from "react"
+import { useCallback } from "react"
 import { useDispatch } from "react-redux"
+import { useToggle } from "react-use"
 import { usePress } from "@react-aria/interactions"
+import { useOverlay } from "@react-aria/overlays"
 import cx from "classnames"
+import { COLOR } from "../../../design/tokens/color"
+import Caret from "../../../icons/caret"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { ESortDirection, ESortType } from "../../../types"
-import Stacker from "../Stacker"
 import * as SC from "./build-list-sort.styles"
 
 interface IBuildListSortProps {
@@ -14,25 +18,79 @@ interface IBuildListSortProps {
   }
 }
 
-interface IOptionProps {
-  isActive: boolean
-  handlePress: () => void
+type ISortOptions = Record<
+  ESortType,
+  { name: string; direction: ESortDirection }
+>
+
+const sortOptions: ISortOptions = {
+  [ESortType.TITLE]: {
+    name: "title",
+    direction: ESortDirection.ASC,
+  },
+  [ESortType.CREATED]: {
+    name: "created",
+    direction: ESortDirection.ASC,
+  },
+  [ESortType.UPDATED]: {
+    name: "updated",
+    direction: ESortDirection.ASC,
+  },
+  [ESortType.FAVORITES]: {
+    name: "favorites",
+    direction: ESortDirection.DESC,
+  },
 }
 
-const Option: React.FC<IOptionProps> = (props) => {
+const SortDropdown: React.FC<{
+  handleSelect: (sortType: ESortType, sortDirection: ESortDirection) => void
+  selected: { key: ESortType; name: string }
+}> = (props) => {
+  const [isOpen, setIsOpen] = useToggle(false)
   const { pressProps } = usePress({
-    onPress: props.handlePress,
+    onPress: setIsOpen,
   })
+  const close = useCallback(() => {
+    setIsOpen(false)
+  }, [])
+  const overlayRef = React.useRef<HTMLDivElement>(null)
+  const { overlayProps } = useOverlay(
+    {
+      onClose: close,
+      shouldCloseOnBlur: true,
+      isOpen: true,
+      isDismissable: true,
+    },
+    overlayRef
+  )
 
   return (
-    <SC.Option
-      {...pressProps}
-      role="button"
-      tabIndex={0}
-      className={cx({ "is-active": props.isActive })}
-    >
-      {props.children}
-    </SC.Option>
+    <SC.SortDropdownWapper ref={overlayRef} {...overlayProps}>
+      <SC.DropdownTrigger {...pressProps}>
+        {props.selected.name} <Caret color={COLOR.FADEDBLUE900} />
+      </SC.DropdownTrigger>
+      {isOpen && (
+        <SC.DropdownMenu>
+          {Object.keys(sortOptions).map((key) => {
+            const typedKey = key as keyof typeof sortOptions
+            return (
+              <SC.DropdownItem
+                key={typedKey}
+                className={cx({
+                  "is-selected": typedKey === props.selected.key,
+                })}
+                onClick={() => {
+                  props.handleSelect(typedKey, sortOptions[typedKey].direction)
+                  setIsOpen(false)
+                }}
+              >
+                {sortOptions[typedKey].name}
+              </SC.DropdownItem>
+            )
+          })}
+        </SC.DropdownMenu>
+      )}
+    </SC.SortDropdownWapper>
   )
 }
 
@@ -52,39 +110,13 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
 
   return (
     <SC.BuildListSortWrapper>
-      Sort by
-      <Stacker orientation="horizontal" gutter={8}>
-        {/* <SC.Option
-          className={cx({ "is-active": sort === ESortType.RELEVANCY })}
-          onClick={() => set(ESortType.RELEVANCY)}
-        >
-          relevance
-        </SC.Option> */}
-        <Option
-          isActive={sort.type === ESortType.TITLE}
-          handlePress={() => set(ESortType.TITLE, ESortDirection.ASC)}
-        >
-          title
-        </Option>
-        <Option
-          isActive={sort.type === ESortType.CREATED}
-          handlePress={() => set(ESortType.CREATED, ESortDirection.ASC)}
-        >
-          created
-        </Option>
-        <Option
-          isActive={sort.type === ESortType.UPDATED}
-          handlePress={() => set(ESortType.UPDATED, ESortDirection.ASC)}
-        >
-          updated
-        </Option>
-        <Option
-          isActive={sort.type === ESortType.FAVORITES}
-          handlePress={() => set(ESortType.FAVORITES, ESortDirection.DESC)}
-        >
-          favorites
-        </Option>
-      </Stacker>
+      Sorted by
+      <SortDropdown
+        handleSelect={set}
+        selected={{ key: sort.type, name: sortOptions[sort.type].name }}
+      >
+        {sortOptions[sort.type].name}
+      </SortDropdown>
     </SC.BuildListSortWrapper>
   )
 }
