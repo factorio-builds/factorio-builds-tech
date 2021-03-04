@@ -19,7 +19,8 @@ export const Separator = styled.div`
 `
 
 export const FilterGroup = styled.div`
-  padding: 4px 0;
+  padding: 4px 20px 4px 0;
+  margin-right: -20px;
 
   & + & {
     border-top: 1px solid ${COLOR.FADEDBLUE300};
