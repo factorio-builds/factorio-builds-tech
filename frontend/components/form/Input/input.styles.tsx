@@ -28,6 +28,7 @@ export const StyledInputWrapper = styled.div`
   ${BaseInput};
   display: flex;
   align-items: center;
+  border-radius: 6px;
 `
 
 export const StyledInput = styled.input`
@@ -60,6 +61,7 @@ export const StyledTextarea = styled.textarea`
   padding: 11px 14px;
   resize: vertical;
   min-height: 200px;
+  border-radius: 6px;
 
   &::placeholder {
     color: ${COLOR.FADEDBLUE500};

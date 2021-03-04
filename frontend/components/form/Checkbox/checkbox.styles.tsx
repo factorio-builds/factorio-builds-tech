@@ -7,9 +7,10 @@ export const Square = styled.div`
   position: relative;
   box-sizing: border-box;
   background: ${COLOR.INPUT};
-  width: 34px;
-  height: 34px;
+  width: 18px;
+  height: 18px;
   border: 2px solid ${COLOR.FADEDBLUE500};
+  border-radius: 6px;
 
   &::after {
     content: "";
@@ -19,6 +20,7 @@ export const Square = styled.div`
     right: 3px;
     bottom: 3px;
     background: transparent;
+    border-radius: 3px;
   }
 `
 
@@ -60,6 +62,8 @@ export const CheckboxWrapper = styled.div`
 
 export const Text = styled.div`
   ${getTypo(ETypo.FORM_LABEL)};
+  font-size: 14px;
+  font-weight: 400;
   display: flex;
   align-items: center;
   margin-left: 12px;

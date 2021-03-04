@@ -4,8 +4,8 @@ import SearchIcon from "../../../icons/search-icon"
 
 export const StyledSearchIcon = styled(SearchIcon)`
   fill: ${COLOR.FADEDBLUE500};
-  width: 23px;
-  flex: 0 0 23px;
-  margin-right: 10px;
+  width: 18px;
+  flex: 0 0 18px;
+  margin-right: 8px;
   height: auto;
 `

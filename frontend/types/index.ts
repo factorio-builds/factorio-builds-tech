@@ -1,7 +1,6 @@
 import { IThinBuild } from "./models"
 
 export enum ESortType {
-  "RELEVANCY" = "RELEVANCY",
   "TITLE" = "TITLE",
   "CREATED" = "CREATED",
   "UPDATED" = "UPDATED",

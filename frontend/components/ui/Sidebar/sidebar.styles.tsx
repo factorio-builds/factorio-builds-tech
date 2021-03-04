@@ -7,6 +7,7 @@ export const SidebarWrapper = styled.aside`
   padding: 20px 20px 20px 0;
   position: relative;
   background: ${COLOR.SIDEBAR};
+  border-right: 1px solid ${COLOR.FADEDBLUE300};
 
   @media screen and (max-width: 767px) {
     position: absolute;

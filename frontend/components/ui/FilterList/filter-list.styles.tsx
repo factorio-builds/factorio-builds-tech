@@ -8,7 +8,7 @@ export const FilterListWrapper = styled.div``
 
 export const Title = styled.div`
   ${getTypo(ETypo.FORM_LABEL)};
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 `
 
 export const Separator = styled.div`
@@ -19,7 +19,8 @@ export const Separator = styled.div`
 `
 
 export const FilterGroup = styled.div`
-  padding: 4px 0;
+  padding: 4px 20px 4px 0;
+  margin-right: -20px;
 
   & + & {
     border-top: 1px solid ${COLOR.FADEDBLUE300};
@@ -31,7 +32,7 @@ export const GroupName = styled.button`
   align-items: center;
   justify-content: space-between;
   background: none;
-  font-size: 18px;
+  font-size: 14px;
   border: none;
   padding: 4px 0;
   color: ${COLOR.FADEDBLUE900};
@@ -45,5 +46,5 @@ export const GroupName = styled.button`
 `
 
 export const GroupFilters = styled(Stacker)`
-  margin-top: 8px;
+  margin: 8px 0;
 `

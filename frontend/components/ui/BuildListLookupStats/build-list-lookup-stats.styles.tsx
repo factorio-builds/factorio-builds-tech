@@ -5,11 +5,7 @@ import { ETypo } from "../../../design/tokens/typo"
 
 export const BuildListLookupStatWrapper = styled.div`
   ${getTypo(ETypo.BODY)};
-  margin-bottom: 20px;
-`
-
-export const LookupTime = styled.div`
-  color: ${COLOR.FADEDBLUE500};
+  font-size: 16px;
 `
 
 export const Count = styled.div`

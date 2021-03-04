@@ -24,7 +24,7 @@ function FilterGroup(props: IFilterGroupProps): JSX.Element {
       </SC.GroupName>
 
       {expanded && (
-        <SC.GroupFilters orientation="vertical" gutter={4}>
+        <SC.GroupFilters orientation="vertical" gutter={8}>
           {props.nodes.map((node, index) => {
             return (
               <Filter key={index} group={props.name} name={node} text={node} />
