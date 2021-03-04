@@ -1,4 +1,5 @@
 import React from "react"
+import upperFirst from "lodash/upperFirst"
 import { useDispatch, useSelector } from "react-redux"
 import { ITag } from "../../../redux/reducers/filters"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
@@ -40,7 +41,7 @@ function Filter(props: IFilterProps): JSX.Element {
     <Checkbox
       id={`filter-${props.name}`}
       prefix={props.icon}
-      label={props.text}
+      label={upperFirst(props.text)}
       value={props.name}
       checked={tag.isSelected}
       onChange={toggleChecked}
