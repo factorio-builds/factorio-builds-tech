@@ -53,6 +53,27 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
     colGutter
   )
 
+  const tabIndexes = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return Array.from(document.querySelectorAll("[data-slug]"))
+        .reduce((acc, card) => {
+          const slug = card.getAttribute("data-slug") as string
+          const boundingRect = card.getBoundingClientRect()
+          return [
+            ...acc,
+            {
+              slug,
+              top: boundingRect.top,
+              left: boundingRect.left,
+            },
+          ]
+        }, [] as { slug: string; top: number; left: number }[])
+        .sort((a, b) => a.top - b.top)
+    }
+
+    return []
+  }, [columns, items, containerWidth])
+
   return (
     <SC.BuildCardListWrapper>
       <SC.Header>
@@ -70,21 +91,29 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
       >
         {columns.map((items, i) => (
           <SC.Column key={i}>
-            {items.map((item, i2) => (
-              <SC.Item key={`${item.slug}_${i}_${i2}`}>
-                <BuildCard
-                  title={item.title}
-                  // TODO: probably switch to categories later
-                  categories={item.tags}
-                  icons={item.icons}
-                  // TODO: fill isBook once reimplemented
-                  isBook={false}
-                  image={item._links.cover}
-                  // TODO: switch to IThinBuild["_links"]["self"]
-                  link={`${item.owner.username}/${item.slug}`}
-                />
-              </SC.Item>
-            ))}
+            {items.map((item, i2) => {
+              const slug = `${item.owner.username}/${item.slug}`
+
+              return (
+                <SC.Item key={`${item.slug}_${i}_${i2}`}>
+                  <BuildCard
+                    tabIndex={
+                      tabIndexes.findIndex((index) => index.slug === slug) + 1
+                    }
+                    data-slug={slug}
+                    title={item.title}
+                    // TODO: probably switch to categories later
+                    categories={item.tags}
+                    icons={item.icons}
+                    // TODO: fill isBook once reimplemented
+                    isBook={false}
+                    image={item._links.cover}
+                    // TODO: switch to IThinBuild["_links"]["self"]
+                    link={slug}
+                  />
+                </SC.Item>
+              )
+            })}
           </SC.Column>
         ))}
       </SC.Columns>

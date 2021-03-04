@@ -17,6 +17,7 @@ interface IBuildCardProps {
   image: IThinBuild["_links"]["cover"]
   // TODO: switch to IThinBuild["_links"]["self"]
   link: string
+  tabIndex: number
 }
 
 function BuildCard({
@@ -26,6 +27,7 @@ function BuildCard({
   categories = [],
   image,
   link,
+  tabIndex,
 }: IBuildCardProps): JSX.Element {
   const router = useRouter()
   const { pressProps, isPressed } = usePress({
@@ -40,7 +42,7 @@ function BuildCard({
       <SC.BuildCardWrapper
         {...pressProps}
         role="button"
-        tabIndex={0}
+        tabIndex={tabIndex}
         className={cx({ "is-pressed": isPressed })}
       >
         <SC.ImageWrapper>
