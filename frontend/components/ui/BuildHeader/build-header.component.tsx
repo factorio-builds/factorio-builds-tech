@@ -1,9 +1,10 @@
 import React from "react"
 import Link from "next/link"
-// import { useCategories } from "../../../hooks/useCategories"
-// import { useGameStates } from "../../../hooks/useGameStates"
+import Editor from "../../../icons/editor"
+import Raw from "../../../icons/raw"
 import { IFullBuild } from "../../../types/models"
 import { formatDate, formatSince } from "../../../utils/date"
+import { TPayload } from "../../pages/BuildPage/usePayload"
 import BuildIcon from "../BuildIcon"
 import Button from "../Button"
 import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.component"
@@ -12,9 +13,6 @@ import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
 import WithIcons from "../WithIcons"
 import * as SC from "./build-header.styles"
-import { TPayload } from "../../pages/BuildPage/usePayload"
-import Raw from "../../../icons/raw"
-import Editor from "../../../icons/editor"
 
 interface IBuildheader {
   build: IFullBuild
@@ -22,12 +20,6 @@ interface IBuildheader {
 }
 
 function Buildheader(props: IBuildheader): JSX.Element {
-  // const { getCategory } = useCategories()
-  // const { getGameState } = useGameStates()
-
-  // const gameStates = props.build.metadata.state.map(getGameState)
-  // const icons = props.build.metadata.icons
-
   return (
     <SC.BuildHeaderWrapper>
       <Stacker orientation="vertical" gutter={16}>
@@ -40,11 +32,6 @@ function Buildheader(props: IBuildheader): JSX.Element {
               <WithIcons input={props.build.title} />
             </SC.BuildTitle>
             <Stacker orientation="horizontal" gutter={16}>
-              {/* {gameStates.map((gameState) => (
-                  <SC.BuildHeaderMeta key={gameState.value}>
-                    {gameState.icon} {gameState.name}
-                  </SC.BuildHeaderMeta>
-                ))} */}
               {props.build.tags.map((tag) => {
                 return <SC.BuildHeaderMeta key={tag}>{tag}</SC.BuildHeaderMeta>
               })}

@@ -8,11 +8,11 @@ import qs from "qs"
 import { compose } from "redux"
 import { ThemeProvider } from "styled-components"
 import { GlobalStyle } from "../design/styles/global-style"
+import { MediaContextProvider } from "../design/styles/media"
 import { theme } from "../design/styles/theme"
 import { IStoreState, wrapper } from "../redux/store"
 import auth from "../utils/auth"
 import { axios } from "../utils/axios"
-import { MediaContextProvider } from "../design/styles/media"
 
 const { publicRuntimeConfig } = getConfig()
 

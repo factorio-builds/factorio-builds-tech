@@ -1,39 +1,12 @@
 import React from "react"
 import ReactMarkdown from "react-markdown"
-// import Stacker from "../../../ui/Stacker"
 import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
 import Tab from "./tab.component"
 
-// interface IQuickInfoProps {
-//   label: string
-//   value: boolean
-// }
-
-// const QuickInfo = ({ label, value }: IQuickInfoProps): JSX.Element => {
-//   return (
-//     <div>
-//       {label}: {value ? "yes" : "no"}
-//     </div>
-//   )
-// }
-
 const DetailsTab: TTabComponent = (props) => {
   return (
     <Tab {...props}>
-      {/* <h3>Quick info</h3>
-      <Stacker orientation="vertical" gutter={4}>
-        <QuickInfo
-          label="Inputs are marked"
-          value={props.build.metadata.withMarkedInputs}
-        />
-        <QuickInfo label="Tileable" value={props.build.metadata.tileable} />
-        <QuickInfo
-          label="With beacons"
-          value={props.build.metadata.withBeacons}
-        />
-      </Stacker> */}
-
       <h3>Description</h3>
       <SC.Description>
         {props.build.description ? (
