@@ -24,7 +24,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
         console.error(err)
       })
 
-    // const deserializedSearchResults = JSON.parse(JSON.stringify(searchResults))
     const deserializedSearchResults: SearchResponse<IThinBuild> = JSON.parse(
       JSON.stringify(searchResults)
     )

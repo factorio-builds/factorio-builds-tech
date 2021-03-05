@@ -1,7 +1,5 @@
 import React from "react"
 import Link from "next/link"
-// import { useCategories } from "../../../hooks/useCategories"
-// import { useGameStates } from "../../../hooks/useGameStates"
 import Editor from "../../../icons/editor"
 import Raw from "../../../icons/raw"
 import { IFullBuild } from "../../../types/models"
@@ -22,12 +20,6 @@ interface IBuildheader {
 }
 
 function Buildheader(props: IBuildheader): JSX.Element {
-  // const { getCategory } = useCategories()
-  // const { getGameState } = useGameStates()
-
-  // const gameStates = props.build.metadata.state.map(getGameState)
-  // const icons = props.build.metadata.icons
-
   return (
     <SC.BuildHeaderWrapper>
       <Stacker orientation="vertical" gutter={16}>
@@ -40,11 +32,6 @@ function Buildheader(props: IBuildheader): JSX.Element {
               <WithIcons input={props.build.title} />
             </SC.BuildTitle>
             <Stacker orientation="horizontal" gutter={16}>
-              {/* {gameStates.map((gameState) => (
-                  <SC.BuildHeaderMeta key={gameState.value}>
-                    {gameState.icon} {gameState.name}
-                  </SC.BuildHeaderMeta>
-                ))} */}
               {props.build.tags.map((tag) => {
                 return <SC.BuildHeaderMeta key={tag}>{tag}</SC.BuildHeaderMeta>
               })}
