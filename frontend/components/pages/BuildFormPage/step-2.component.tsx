@@ -1,5 +1,6 @@
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
 import { FormikProps } from "formik"
+import getConfig from "next/config"
 import { IFullPayload } from "../../../types/models"
 import Button from "../../ui/Button"
 import Spinner from "../../ui/Spinner"
@@ -12,6 +13,8 @@ import Step2Cover from "./step-2-cover.component"
 import Step2Data from "./step-2-data.component"
 import useImageRenderIsReady from "./useImageRenderIsReady"
 
+const { publicRuntimeConfig } = getConfig()
+
 interface IStep2Props {
   formikProps: FormikProps<IFormValues>
   submitStatus: { loading: boolean; error: boolean | string }
@@ -20,11 +23,25 @@ interface IStep2Props {
 
 const Step2: React.FC<IStep2Props> = (props) => {
   const [page, setPage] = useState<TPage>("data")
-  const renderIsReady = useImageRenderIsReady(
-    props.payloadData._links.rendering_thumb?.href ||
-      props.formikProps.values.cover.url ||
-      undefined
-  )
+  const selectedImageHref = useMemo(() => {
+    if (props.payloadData.type === "blueprint") {
+      return (
+        props.payloadData._links.rendering_thumb?.href ||
+        props.formikProps.values.cover.url
+      )
+    }
+
+    const hash = props.formikProps.values.cover.hash
+
+    return hash
+      ? `${publicRuntimeConfig.apiUrl}/payloads/${hash}/rendering/thumb`
+      : null
+  }, [
+    props.payloadData._links.rendering_thumb?.href,
+    props.formikProps.values.cover.url,
+    props.formikProps.values.cover.hash,
+  ])
+  const renderIsReady = useImageRenderIsReady(selectedImageHref || undefined)
 
   const validateFields = <T extends keyof IFormValues>(
     fields: T[]
