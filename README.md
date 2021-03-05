@@ -6,6 +6,7 @@ This project aims to be a website and tool to share and browse [blueprints](http
 
 -   [Figma](https://www.figma.com/file/eDiTI6ZiAHHgoGSgXaWBO0/factorio-builds?node-id=393%3A11)
 -   [Issues](https://github.com/factorio-builds/factorio-builds-tech/issues)
+-   [Suggestions](https://github.com/factorio-builds/factorio-builds-tech/discussions/categories/suggestions)
 -   [Pull requests](https://github.com/factorio-builds/factorio-builds-tech/pulls)
 -   [Roadmap](https://github.com/factorio-builds/factorio-builds-tech/milestones?direction=asc&sort=title&state=open)
 
