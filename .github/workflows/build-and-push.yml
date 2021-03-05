@@ -154,7 +154,7 @@ jobs:
   deploy:
     environment:
       name: staging
-      url: https://staging.factorio.tech
+      url: https://factorio.tech
     runs-on: ubuntu-latest
     needs: build-and-push
     if: ${{ github.ref == 'refs/heads/main' }}
