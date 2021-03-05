@@ -4,7 +4,7 @@ The secrets in this folder are loaded into the docker containers under `/mnt/sec
 
 ## Available Secrets
 
-* `OAuthProviders__Discord__ClientId`
-* `OAuthProviders__Discord__ClientSecret`
-* `OAuthProviders__GitHub__ClientId`
-* `OAuthProviders__GitHub__ClientSecret`
+-   `OAuthProviders__Discord__ClientId`
+-   `OAuthProviders__Discord__ClientSecret`
+-   `OAuthProviders__GitHub__ClientId`
+-   `OAuthProviders__GitHub__ClientSecret`

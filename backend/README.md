@@ -4,9 +4,9 @@ factorio.tech is an [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/cor
 
 ## Components
 
-- REST (mostly) API: [FactorioTech.Api](src/FactorioTech.Api) powered by [ASP.NET Core 5 MVC Controllers](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-5.0)
-- Identity Provider: [FactorioTech.Identity](src/FactorioTech.Identity) powered by [IdentityServer](https://identityserver.io)
-- Database: [PostgreSQL](https://www.postgresql.org) via [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core) with [Npgsql](https://www.npgsql.org/efcore/index.html)
+-   REST (mostly) API: [FactorioTech.Api](src/FactorioTech.Api) powered by [ASP.NET Core 5 MVC Controllers](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-5.0)
+-   Identity Provider: [FactorioTech.Identity](src/FactorioTech.Identity) powered by [IdentityServer](https://identityserver.io)
+-   Database: [PostgreSQL](https://www.postgresql.org) via [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core) with [Npgsql](https://www.npgsql.org/efcore/index.html)
 
 ## Contributing
 
@@ -22,7 +22,7 @@ This command will run **all tests**. To only run **fast** unit test, you can fil
 dotnet test --filter Type=Fast
 ```
 
-Conversely, you could opt to run only **slow** tests with db or other *slow* dependencies:
+Conversely, you could opt to run only **slow** tests with db or other _slow_ dependencies:
 
 ```bash
 dotnet test --filter Type=Slow
@@ -55,8 +55,8 @@ docker run --rm --network factorio-tech_default factorio-tech/build \
 
 You can configure OAuth providers for local development the same way as for Docker, except for two differences:
 
-- The callback uri must be set to `https://localhost:5001`
-- The configuration source used by `dotnet` is different. Create `backend/src/FactorioTech.Identity/appsettings.secret.json` if it doesn't exist yet and **merge** the following settings, replacing the tokens in brackets `{}`:
+-   The callback uri must be set to `https://localhost:5001`
+-   The configuration source used by `dotnet` is different. Create `backend/src/FactorioTech.Identity/appsettings.secret.json` if it doesn't exist yet and **merge** the following settings, replacing the tokens in brackets `{}`:
 
     ```json
     {
