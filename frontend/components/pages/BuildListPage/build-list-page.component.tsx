@@ -4,6 +4,7 @@ import { IStoreState } from "../../../redux/store"
 import BuildCardList from "../../ui/BuildCardList"
 import FilterList from "../../ui/FilterList"
 import Layout from "../../ui/Layout"
+import Links from "../../ui/Links"
 import Search from "../../ui/Search"
 import Stacker from "../../ui/Stacker"
 
@@ -19,6 +20,7 @@ function BuildListPage(): JSX.Element {
         <Stacker gutter={32}>
           <Search />
           <FilterList />
+          <Links orientation="vertical" />
         </Stacker>
       }
     >
