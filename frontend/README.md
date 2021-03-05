@@ -1,4 +1,4 @@
-[![Factorio Builds/Tech](../README-LOGO.svg)](../README-LOGO.svg)
+# Factorio Builds/Tech Frontend
 
 This project aims to be a website and tool to share and browse [blueprints](https://wiki.factorio.com/Blueprint) for the [Factorio](https://factorio.com/) game, with strong values in user experience to make it the least painful experience to search/filter, and create builds.
 

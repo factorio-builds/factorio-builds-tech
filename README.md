@@ -1,13 +1,14 @@
-[![Factorio Builds/Tech](./README-LOGO.svg)](./README-LOGO.svg)
+# Factorio Builds/Tech
 
 This project aims to be a website and tool to share and browse [blueprints](https://wiki.factorio.com/Blueprint) for the [Factorio](https://factorio.com/) game, with strong values in user experience to make it the least painful experience to search/filter, and create builds.
 
 ## Quick links
 
-- [Figma](https://www.figma.com/file/eDiTI6ZiAHHgoGSgXaWBO0/factorio-builds?node-id=393%3A11)
-- [Issues](https://github.com/factorio-builds/factorio-builds-tech/issues)
-- [Pull requests](https://github.com/factorio-builds/factorio-builds-tech/pulls)
-- [Roadmap](https://github.com/factorio-builds/factorio-builds-tech/milestones?direction=asc&sort=title&state=open)
+-   [Figma](https://www.figma.com/file/eDiTI6ZiAHHgoGSgXaWBO0/factorio-builds?node-id=393%3A11)
+-   [Issues](https://github.com/factorio-builds/factorio-builds-tech/issues)
+-   [Suggestions](https://github.com/factorio-builds/factorio-builds-tech/discussions/categories/suggestions)
+-   [Pull requests](https://github.com/factorio-builds/factorio-builds-tech/pulls)
+-   [Roadmap](https://github.com/factorio-builds/factorio-builds-tech/milestones?direction=asc&sort=title&state=open)
 
 ## Running locally
 
@@ -15,23 +16,23 @@ The entire stack can be run in a self-contained local environment using [docker-
 
 1. Set up and configure prerequisites:
 
-   1. **Required**: Download [Factorio game data](#factorio-game-data)
-   2. _Optional_: Configure at least one [external OAuth provider](#optional-external-oauth-providers)
-   3. _Optional_: Configure [trusted development certificates](#optional-trusted-development-certificates)
+    1. **Required**: Download [Factorio game data](#factorio-game-data)
+    2. _Optional_: Configure at least one [external OAuth provider](#optional-external-oauth-providers)
+    3. _Optional_: Configure [trusted development certificates](#optional-trusted-development-certificates)
 
 2. Run the application
 
-   ```bash
-   docker-compose up --detach --build --remove-orphans
-   ```
+    ```bash
+    docker-compose up --detach --build --remove-orphans
+    ```
 
-   **Note**: This command will pull the [latest **ci** images](https://github.com/dstockhammer?tab=packages&repo_name=factorio-tech) from the GitHub Docker registry. If you prefer to instead **build** the images locally, open [docker-compose.yaml](docker-compose.yaml), comment out the lines with `image: ghcr.io/*` and uncomment the blocks with `image: factorio-tech/*` and `build: ..`. The same command will then build the Docker images locally.
+    **Note**: This command will pull the [latest **ci** images](https://github.com/dstockhammer?tab=packages&repo_name=factorio-tech) from the GitHub Docker registry. If you prefer to instead **build** the images locally, open [docker-compose.yaml](docker-compose.yaml), comment out the lines with `image: ghcr.io/*` and uncomment the blocks with `image: factorio-tech/*` and `build: ..`. The same command will then build the Docker images locally.
 
 3. Open the website in your browser of choice and take it for a spin 🚀
 
-   - **Frontend**: https://local.factorio.tech
-   - **API**: https://api.local.factorio.tech/swagger/index.html
-   - **Identity Provider**: https://identity.local.factorio.tech/.well-known/openid-configuration
+    - **Frontend**: https://local.factorio.tech
+    - **API**: https://api.local.factorio.tech/swagger/index.html
+    - **Identity Provider**: https://identity.local.factorio.tech/.well-known/openid-configuration
 
 ## Prerequisites
 
@@ -69,8 +70,8 @@ docker restart factorio-tech_traefik_1
 
 This is a monorepo that contains components in different tech stacks that make up factorio builds:
 
-- A [**frontend**](frontend) written in [React](https://reactjs.org)/[Nextjs](https://nextjs.org) + [TypeScript](https://www.typescriptlang.org)
-- Multiple [**backend services**](backend) written in [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-5.0)
-- A [Spring Boot](https://spring.io/projects/spring-boot) [**wrapper**](fbsr-wrapper) around [Factorio-FBSR](https://github.com/demodude4u/Factorio-FBSR) that exposes a dockerised HTTP API to render blueprint images
+-   A [**frontend**](frontend) written in [React](https://reactjs.org)/[Nextjs](https://nextjs.org) + [TypeScript](https://www.typescriptlang.org)
+-   Multiple [**backend services**](backend) written in [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-5.0)
+-   A [Spring Boot](https://spring.io/projects/spring-boot) [**wrapper**](fbsr-wrapper) around [Factorio-FBSR](https://github.com/demodude4u/Factorio-FBSR) that exposes a dockerised HTTP API to render blueprint images
 
 You can find instructions on how to build and contribute to those components in the respective folders.
