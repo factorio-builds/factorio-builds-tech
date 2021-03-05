@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 export const BuildCardListWrapper = styled.div`
-  //
+  margin-top: -20px !important;
 `
 
 export const Header = styled.div`
