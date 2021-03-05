@@ -1,13 +1,13 @@
 import React, { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
+import { useRouter } from "next/router"
+import { Media } from "../../../design/styles/media"
+import Burger from "../../../icons/burger"
 import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
 import UserDropdown from "../UserDropdown"
 import * as SC from "./header.styles"
-import { Media } from "../../../design/styles/media"
-import Burger from "../../../icons/burger"
-import { useRouter } from "next/router"
 
 function Header(): JSX.Element {
   const dispatch = useDispatch()

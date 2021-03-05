@@ -1,13 +1,13 @@
 import React, { ReactNode, useCallback } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useLockBodyScroll } from "react-use"
 import Head from "next/head"
+import { Media } from "../../../design/styles/media"
+import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
 import Header from "../Header"
 import Sidebar from "../Sidebar"
 import * as SC from "./layout.styles"
-import { useLockBodyScroll } from "react-use"
-import { Media } from "../../../design/styles/media"
-import { useDispatch, useSelector } from "react-redux"
-import { IStoreState } from "../../../redux/store"
 
 interface ILayoutProps {
   children?: ReactNode

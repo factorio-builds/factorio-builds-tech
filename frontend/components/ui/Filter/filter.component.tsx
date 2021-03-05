@@ -1,6 +1,6 @@
 import React from "react"
-import upperFirst from "lodash/upperFirst"
 import { useDispatch, useSelector } from "react-redux"
+import upperFirst from "lodash/upperFirst"
 import { ITag } from "../../../redux/reducers/filters"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { IStoreState } from "../../../redux/store"
