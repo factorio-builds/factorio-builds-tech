@@ -31,11 +31,11 @@ function Buildheader(props: IBuildheader): JSX.Element {
             <SC.BuildTitle>
               <WithIcons input={props.build.title} />
             </SC.BuildTitle>
-            <Stacker orientation="horizontal" gutter={16}>
+            <SC.BuildTags>
               {props.build.tags.map((tag) => {
                 return <SC.BuildHeaderMeta key={tag}>{tag}</SC.BuildHeaderMeta>
               })}
-            </Stacker>
+            </SC.BuildTags>
           </Stacker>
         </Stacker>
         <Stacker orientation="horizontal" gutter={16}>

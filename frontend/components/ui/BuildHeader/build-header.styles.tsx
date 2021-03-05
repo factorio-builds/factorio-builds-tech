@@ -28,10 +28,18 @@ export const StyledLink = styled.a`
   }
 `
 
+export const BuildTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px !important;
+`
+
 export const BuildHeaderMeta = styled.div`
   font-weight: 700;
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  margin: 4px 8px;
 
   img {
     width: 20px;
