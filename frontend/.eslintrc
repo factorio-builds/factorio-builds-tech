@@ -20,8 +20,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:prettier/recommended",
-    "plugin:react/recommended",
-    "prettier/@typescript-eslint"
+    "plugin:react/recommended"
   ],
   "rules": {
     "@typescript-eslint/ban-ts-comment": 1,
