@@ -6,7 +6,7 @@ import {
   differenceInHours,
 } from "date-fns"
 
-const FORMAT = "yyyy-MM-dd"
+const FORMAT = "yyyy-MM-dd h:m a O"
 
 export const formatDate = (isoString: string): string => {
   return format(parseISO(isoString), FORMAT)
