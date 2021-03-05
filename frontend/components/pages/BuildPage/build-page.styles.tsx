@@ -112,3 +112,9 @@ export const Description = styled.div`
     margin-bottom: 0;
   }
 `
+
+export const Footer = styled.footer`
+  border-top: 1px solid ${COLOR.FADEDBLUE300};
+  padding: 16px 0;
+  margin-top: 16px;
+`
