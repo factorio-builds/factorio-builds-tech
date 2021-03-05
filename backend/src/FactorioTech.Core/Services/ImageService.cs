@@ -220,17 +220,25 @@ namespace FactorioTech.Core.Services
         {
             var (image, format) = await Image.LoadWithFormatAsync(stream);
 
-            var rectangle = crop != null
-                ? new Rectangle(crop.X, crop.Y, crop.Width, crop.Height)
-                : new Rectangle(0, 0, Math.Min(image.Height, image.Width), Math.Min(image.Height, image.Width));
-
             var resize = new ResizeOptions
             {
                 Size = new Size(AppConfig.Cover.Width, AppConfig.Cover.Width),
                 Mode = ResizeMode.Max,
             };
 
-            image.Mutate(x => x.AutoOrient().Crop(rectangle).Resize(resize));
+            if (crop != null)
+            {
+                image.Mutate(x => x
+                    .AutoOrient()
+                    .Crop(new Rectangle(crop.X, crop.Y, crop.Width, crop.Height))
+                    .Resize(resize));
+            }
+            else
+            {
+                image.Mutate(x => x
+                    .AutoOrient()
+                    .Resize(resize));
+            }
 
             var tempId = Guid.NewGuid();
             var imageFqfn = GetCoverFqfn(tempId);
