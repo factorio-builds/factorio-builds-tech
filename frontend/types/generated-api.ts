@@ -937,7 +937,7 @@ export interface components {
       owner: components["schemas"]["FullUserModel"]
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
-      /** The build's latest version's blueprint type. */
+      /** The build's latest version's payload type. */
       latest_type: "blueprint" | "blueprint-book"
       /** The build's tags. */
       tags: string[]
@@ -1099,7 +1099,7 @@ export interface components {
       owner: components["schemas"]["ThinUserModel"]
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
-      /** The build's latest version's blueprint type. */
+      /** The build's latest version's payload type. */
       latest_type: "blueprint" | "blueprint-book"
       /** The build's tags. */
       tags: string[]
