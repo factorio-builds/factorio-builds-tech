@@ -15,6 +15,7 @@ import BlueprintsTab from "./tabs/blueprints-tab.component"
 import DetailsTab from "./tabs/details-tab.component"
 import RequiredItemsTab from "./tabs/required-items-tab.component"
 import usePayload, { TPayload } from "./usePayload"
+import Links from "../../ui/Links"
 
 interface IBuildPageProps {
   build: IFullBuild
@@ -176,6 +177,10 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           </Stacker>
         }
       />
+
+      <SC.Footer>
+        <Links orientation="horizontal" />
+      </SC.Footer>
     </Layout>
   )
 }
