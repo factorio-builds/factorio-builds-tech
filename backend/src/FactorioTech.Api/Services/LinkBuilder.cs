@@ -5,6 +5,7 @@ using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace FactorioTech.Api.Services
 {
@@ -14,11 +15,11 @@ namespace FactorioTech.Api.Services
             new()
             {
                 CreateBuild = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
-                    ? new(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), "post")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.CreateBuild), "Build"), HttpMethod.Post)
                     : null,
 
                 CreatePayload = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true
-                    ? new(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), "put")
+                    ? new(urlHelper.ActionLink(nameof(PayloadController.CreatePayload), "Payload"), HttpMethod.Put)
                     : null,
 
                 Prev = query.Page > 1
@@ -52,15 +53,15 @@ namespace FactorioTech.Api.Services
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
 
                 AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(build)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), HttpMethod.Post)
                     : null,
 
                 Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(build)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), HttpMethod.Patch)
                     : null,
 
                 Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(build)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), HttpMethod.Delete)
                     : null,
             };
         }
@@ -87,23 +88,23 @@ namespace FactorioTech.Api.Services
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
 
                 AddFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower == false
-                    ? new(urlHelper.ActionLink(nameof(BuildController.AddFavorite), "Build", buildValues), "put")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.AddFavorite), "Build", buildValues), HttpMethod.Put)
                     : null,
 
                 RemoveFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower
-                    ? new(urlHelper.ActionLink(nameof(BuildController.RemoveFavorite), "Build", buildValues), "delete")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.RemoveFavorite), "Build", buildValues), HttpMethod.Delete)
                     : null,
 
                 AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(build)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), "post")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), HttpMethod.Post)
                     : null,
 
                 Edit = urlHelper.ActionContext.HttpContext.User.CanEdit(build)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), "patch")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.EditDetails), "Build", buildValues), HttpMethod.Patch)
                     : null,
 
                 Delete = urlHelper.ActionContext.HttpContext.User.CanDelete(build)
-                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), "delete")
+                    ? new(urlHelper.ActionLink(nameof(BuildController.DeleteBuild), "Build", buildValues), HttpMethod.Delete)
                     : null,
             };
         }
@@ -146,6 +147,10 @@ namespace FactorioTech.Api.Services
                         hash = payload.Hash,
                         type = ImageService.RenderingType.Thumb.ToString().ToLowerInvariant(),
                     }))
+                    : null,
+
+                DeleteRendering = envelope.Blueprint != null && urlHelper.ActionContext.HttpContext.User.CanDeleteRendering(payload)
+                    ? new(urlHelper.ActionLink(nameof(PayloadController.DeleteRendering), "Payload", new { hash = payload.Hash, }), HttpMethod.Delete)
                     : null,
             };
     }

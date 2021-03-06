@@ -8,11 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using SluggyUnidecode;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
@@ -24,10 +21,7 @@ namespace FactorioTech.Api.Controllers
     public class PayloadController : ControllerBase
     {
         private const int OneMonthInSeconds = 2629800;
-        private static readonly TimeSpan NewRenderingLoadInterval = TimeSpan.FromSeconds(2);
-        private static readonly TimeSpan NewRenderingLoadTimeout = TimeSpan.FromSeconds(30);
 
-        private readonly ILogger<PayloadController> _logger;
         private readonly AppDbContext _dbContext;
         private readonly ImageService _imageService;
         private readonly BuildService _buildService;
@@ -35,14 +29,12 @@ namespace FactorioTech.Api.Controllers
         private readonly SlugService _slugService;
 
         public PayloadController(
-            ILogger<PayloadController> logger,
             AppDbContext dbContext,
             ImageService imageService,
             BuildService buildService,
             BlueprintConverter blueprintConverter,
             SlugService slugService)
         {
-            _logger = logger;
             _dbContext = dbContext;
             _imageService = imageService;
             _buildService = buildService;
@@ -128,21 +120,25 @@ namespace FactorioTech.Api.Controllers
         [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
         public async Task<IActionResult> GetRendering([Required]Hash hash, [Required]ImageService.RenderingType type)
         {
-            var sw = Stopwatch.StartNew();
+            var file = await _imageService.TryLoadRendering(hash, type);
+            if (file != null)
+                return File(file, "image/png");
 
-            do
-            {
-                var file = await _imageService.TryLoadRendering(hash, type);
-                if (file != null)
-                    return File(file, "image/png");
-
-                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry in {Interval}", type, hash, NewRenderingLoadInterval);
-                await Task.Delay(NewRenderingLoadInterval);
-            }
-            while (sw.Elapsed < NewRenderingLoadTimeout);
-
-            _logger.LogWarning("Rendering {Type} for {Hash} not found after {Timeout}; giving up", type, hash, NewRenderingLoadTimeout);
             return NotFound();
+        }
+
+        /// <summary>
+        /// Delete the renderings of all types for this payload
+        /// </summary>
+        /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
+        /// <response code="204">The renderings have been deleted or do not exist</response>
+        [Authorize(Roles = Role.Administrator)]
+        [HttpDelete("{hash}/rendering")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public IActionResult DeleteRendering([Required]Hash hash)
+        {
+            _imageService.DeleteRendering(hash);
+            return NoContent();
         }
 
         /// <summary>

@@ -8,6 +8,7 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -45,6 +46,9 @@ namespace FactorioTech.Core.Services
         private readonly AppConfig _appConfig;
         private readonly FbsrClient _fbsrClient;
 
+        private static readonly TimeSpan NewRenderingLoadInterval = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan NewRenderingLoadTimeout = TimeSpan.FromSeconds(30);
+
         public ImageService(
             ILogger<ImageService> logger,
             IOptions<AppConfig> appConfigMonitor,
@@ -70,6 +74,25 @@ namespace FactorioTech.Core.Services
         }
 
         public async Task<Stream?> TryLoadRendering(Hash hash, RenderingType type)
+        {
+            var sw = Stopwatch.StartNew();
+
+            do
+            {
+                var image = await TryLoadRenderingInner(hash, type);
+                if (image != null)
+                    return image;
+
+                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry in {Interval}", type, hash, NewRenderingLoadInterval);
+                await Task.Delay(NewRenderingLoadInterval);
+            }
+            while (sw.Elapsed < NewRenderingLoadTimeout);
+
+            _logger.LogWarning("Rendering {Type} for {Hash} not found after {Timeout}; giving up", type, hash, NewRenderingLoadTimeout);
+            return null;
+        }
+
+        private async Task<Stream?> TryLoadRenderingInner(Hash hash, RenderingType type)
         {
             Stream? TryLoadIfExists()
             {
@@ -164,6 +187,20 @@ namespace FactorioTech.Core.Services
                 {
                     File.Delete(imageFqfn);
                     _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", "Full", payload.Hash);
+                }
+            }
+        }
+
+        public void DeleteRendering(Hash hash)
+        {
+            var types = new[] { RenderingType.Full, RenderingType.Thumb };
+            foreach (var type in types)
+            {
+                var path = GetRenderingFqfn(hash, type);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                    _logger.LogInformation("Deleted rendering {Type} for {Hash}", type, hash);
                 }
             }
         }

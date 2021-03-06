@@ -34,6 +34,13 @@ namespace FactorioTech.Api.ViewModels
         /// Only available if the payload is of type `blueprint`.
         /// </summary>
         public LinkModel? RenderingThumb { get; init; }
+
+        /// <summary>
+        /// The absolute URL of the API endpoint to delete this payload's renderings.
+        /// Only available if the call has been made with an authenticated user token
+        /// and the authenticated user has the required permissions.
+        /// </summary>
+        public LinkModel? DeleteRendering { get; init; }
     }
 
     [SwaggerDiscriminator("type")]

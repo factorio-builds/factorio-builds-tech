@@ -29,5 +29,8 @@ namespace FactorioTech.Core
 
         public static bool CanDelete(this ClaimsPrincipal principal, Build build) =>
             principal.IsInRole(Role.Administrator);
+
+        public static bool CanDeleteRendering(this ClaimsPrincipal principal, Payload payload) =>
+            principal.IsInRole(Role.Administrator);
     }
 }
