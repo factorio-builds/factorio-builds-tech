@@ -61,7 +61,7 @@ const Tabs = (props: ITabs): JSX.Element => {
 
   return (
     <SC.TabsWrapper>
-      <Stacker orientation="horizontal" gutter={16}>
+      <SC.TabsItems orientation="horizontal" gutter={16}>
         {props.tabs.map((tab) => {
           const Tab = (innerProps: { className?: string }) => (
             <Link
@@ -91,7 +91,7 @@ const Tabs = (props: ITabs): JSX.Element => {
 
           return <Tab />
         })}
-      </Stacker>
+      </SC.TabsItems>
       <SC.TabsContent orientation="horizontal" gutter={16}>
         <SC.TabsContentInner>
           {props.tabs.map((tab) => {
