@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 import { FormikProps } from "formik"
-import getConfig from "next/config"
 import { IFullPayload } from "../../../types/models"
 import Button from "../../ui/Button"
 import Spinner from "../../ui/Spinner"
@@ -11,11 +10,9 @@ import Pager from "./pager.component"
 import { TPage } from "./pager.component"
 import Step2Cover from "./step-2-cover.component"
 import Step2Data from "./step-2-data.component"
-import useImageRenderIsReady from "./useImageRenderIsReady"
+import useCanSave from "./useCanSave"
 
-const { publicRuntimeConfig } = getConfig()
-
-interface IStep2Props {
+export interface IStep2Props {
   formikProps: FormikProps<IFormValues>
   submitStatus: { loading: boolean; error: boolean | string }
   payloadData: IFullPayload
@@ -23,25 +20,11 @@ interface IStep2Props {
 
 const Step2: React.FC<IStep2Props> = (props) => {
   const [page, setPage] = useState<TPage>("data")
-  const selectedImageHref = useMemo(() => {
-    if (props.payloadData.type === "blueprint") {
-      return (
-        props.payloadData._links.rendering_thumb?.href ||
-        props.formikProps.values.cover.url
-      )
-    }
-
-    const hash = props.formikProps.values.cover.hash
-
-    return hash
-      ? `${publicRuntimeConfig.apiUrl}/payloads/${hash}/rendering/thumb`
-      : null
-  }, [
-    props.payloadData._links.rendering_thumb?.href,
-    props.formikProps.values.cover.url,
-    props.formikProps.values.cover.hash,
-  ])
-  const renderIsReady = useImageRenderIsReady(selectedImageHref || undefined)
+  const canSave = useCanSave(
+    props.payloadData,
+    props.submitStatus,
+    props.formikProps
+  )
 
   const validateFields = <T extends keyof IFormValues>(
     fields: T[]
@@ -86,17 +69,10 @@ const Step2: React.FC<IStep2Props> = (props) => {
         )}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
-          <Button
-            variant="success"
-            disabled={
-              !renderIsReady ||
-              props.submitStatus.loading ||
-              !props.formikProps.isValid
-            }
-          >
+          <Button variant="success" disabled={!canSave}>
             <Stacker gutter={10} orientation="horizontal">
               <span>Save build</span>
-              {!renderIsReady || (props.submitStatus.loading && <Spinner />)}
+              {props.submitStatus.loading && <Spinner />}
             </Stacker>
           </Button>
           {page === "data" && (
