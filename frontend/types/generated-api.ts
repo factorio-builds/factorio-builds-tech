@@ -509,6 +509,24 @@ export interface paths {
       }
     }
   }
+  "/payloads/{hash}/rendering": {
+    delete: {
+      parameters: {
+        path: {
+          /** The hash of the desired payload */
+          hash: string
+        }
+      }
+      responses: {
+        /** The renderings have been deleted or do not exist */
+        204: never
+        /** Unauthorized */
+        401: unknown
+        /** Forbidden */
+        403: unknown
+      }
+    }
+  }
   "/payloads": {
     put: {
       responses: {
@@ -1020,6 +1038,12 @@ export interface components {
        * Only available if the payload is of type `blueprint`.
        */
       rendering_thumb?: components["schemas"]["LinkModel"] | null
+      /**
+       * The absolute URL of the API endpoint to delete this payload's renderings.
+       * Only available if the call has been made with an authenticated user token
+       * and the authenticated user has the required permissions.
+       */
+      delete_rendering?: components["schemas"]["LinkModel"] | null
     }
     PayloadModelBase: {
       /** The payload's blueprint type. */

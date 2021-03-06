@@ -146,6 +146,20 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
+        /// Delete the renderings of all types for this payload
+        /// </summary>
+        /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
+        /// <response code="204">The renderings have been deleted or do not exist</response>
+        [Authorize(Roles = Role.Administrator)]
+        [HttpDelete("{hash}/rendering")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public IActionResult DeleteRendering([Required]Hash hash)
+        {
+            _imageService.DeleteRendering(hash);
+            return NoContent();
+        }
+
+        /// <summary>
         /// Create a payload for the encoded blueprint string. If the blueprint is a `blueprint-book`,
         /// payloads for all children will be created too.
         /// </summary>

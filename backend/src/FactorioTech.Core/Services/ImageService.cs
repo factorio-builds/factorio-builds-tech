@@ -168,6 +168,20 @@ namespace FactorioTech.Core.Services
             }
         }
 
+        public void DeleteRendering(Hash hash)
+        {
+            var types = new[] { RenderingType.Full, RenderingType.Thumb };
+            foreach (var type in types)
+            {
+                var path = GetRenderingFqfn(hash, type);
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                    _logger.LogInformation("Deleted rendering {Type} for {Hash}", type, hash);
+                }
+            }
+        }
+
         public async Task SaveRenderingThumb(Hash hash, Stream rendering)
         {
             var (image, format) = await Image.LoadWithFormatAsync(rendering);

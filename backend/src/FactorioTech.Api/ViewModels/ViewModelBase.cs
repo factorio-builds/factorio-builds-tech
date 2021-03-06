@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 
 namespace FactorioTech.Api.ViewModels
@@ -16,18 +17,18 @@ namespace FactorioTech.Api.ViewModels
         /// The absolute URL of the linked resource.
         /// </summary>
         [Required]
-        public string Href { get; set; }
+        public string Href { get; }
 
         /// <summary>
         /// The HTTP method to request the linked resource.
         /// Defaults to `GET` if unset (`null`).
         /// </summary>
-        public string? Method { get; set; }
+        public string? Method { get; }
 
-        public LinkModel(string href, string? method = null)
+        public LinkModel(string href, HttpMethod? method = null)
         {
             Href = href;
-            Method = method?.ToLowerInvariant();
+            Method = method?.Method;
         }
     }
 
