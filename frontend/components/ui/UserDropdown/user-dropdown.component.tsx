@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import cx from "classnames"
 import Link from "next/link"
+import { Media } from "../../../design/styles/media"
 import Caret from "../../../icons/caret"
 import { IStoreUser } from "../../../types/models"
 import Avatar from "../Avatar"
@@ -18,7 +19,13 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
       <SC.Dropdown>
         <SC.User onClick={() => setOpen((prev) => !prev)}>
           <Avatar username={props.user.username} size="medium" />
-          <span>{props.user.username}</span>
+          <Media greaterThanOrEqual="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren ? (
+                <span className={mcx}>{props.user.username}</span>
+              ) : null
+            }}
+          </Media>
           <Caret />
         </SC.User>
         <SC.DropdownContent>
