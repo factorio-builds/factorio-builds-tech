@@ -46,11 +46,17 @@ function Header(): JSX.Element {
         </Link>
 
         <SC.StyledStacker orientation="horizontal" gutter={18}>
-          {user && (
-            <Link href="/build/create">
-              <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
-            </Link>
-          )}
+          <Media greaterThanOrEqual="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren && user ? (
+                <Link href="/build/create">
+                  <SC.CreateBuildButton className={mcx}>
+                    Add a build
+                  </SC.CreateBuildButton>
+                </Link>
+              ) : null
+            }}
+          </Media>
 
           {!user && (
             <Link href="/api/login" passHref>
