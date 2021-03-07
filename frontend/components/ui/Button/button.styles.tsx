@@ -84,6 +84,7 @@ export const Counter = styled.div`
   justify-content: center;
   align-items: center;
   border-left: 1px solid #323540;
+  margin-left: auto;
 
   ${ButtonWrapper}.size-medium & {
     padding: 9px 13px;

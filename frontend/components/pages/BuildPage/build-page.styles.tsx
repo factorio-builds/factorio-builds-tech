@@ -51,6 +51,32 @@ export const TabsWrapper = styled.div`
   flex-direction: column;
 `
 
+export const TabsItems = styled(Stacker)`
+  --scrollbarBG: ${COLOR.BACKGROUND};
+  --thumbBG: ${COLOR.FADEDBLUE300};
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+
+  @media screen and (max-width: 767px) {
+    overflow-x: scroll;
+  }
+
+  &::-webkit-scrollbar {
+    width: 11px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbarBG);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--thumbBG);
+    border-radius: 6px;
+    border: 3px solid var(--scrollbarBG);
+  }
+`
+
 export const TabsContent = styled(Stacker)`
   display: flex;
   flex: 1 0 auto;
@@ -76,6 +102,7 @@ export const Tab = styled.a`
   color: ${COLOR.FADEDBLUE900};
   border-bottom: 2px solid transparent;
   cursor: pointer;
+  white-space: nowrap;
 
   &:hover {
     border-color: ${COLOR.FADEDBLUE900};

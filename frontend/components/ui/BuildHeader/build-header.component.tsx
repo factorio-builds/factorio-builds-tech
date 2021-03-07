@@ -58,7 +58,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
             </Tooltip>
           </span>
         </Stacker>
-        <Stacker orientation="horizontal" gutter={8}>
+        <SC.Buttons>
           <FavoriteButton build={props.build} size="small" />
           <Link href={props.payload.data?._links.raw.href || ""} passHref>
             <Button
@@ -88,7 +88,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
             variant="cta"
             size="small"
           />
-        </Stacker>
+        </SC.Buttons>
       </Stacker>
     </SC.BuildHeaderWrapper>
   )
