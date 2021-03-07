@@ -131,3 +131,9 @@ export const Rendered = styled.div`
     max-height: calc(100vh - 40px);
   }
 `
+
+export const WaitingForRender = styled.div`
+  background: linear-gradient(90deg, #2b4564 0%, #333642 100%);
+  padding: 16px;
+  border-radius: 6px;
+`

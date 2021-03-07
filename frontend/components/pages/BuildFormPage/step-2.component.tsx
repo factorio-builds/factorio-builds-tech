@@ -20,7 +20,7 @@ export interface IStep2Props {
 
 const Step2: React.FC<IStep2Props> = (props) => {
   const [page, setPage] = useState<TPage>("data")
-  const canSave = useCanSave(
+  const { canSave, waitingForRender } = useCanSave(
     props.payloadData,
     props.submitStatus,
     props.formikProps
@@ -66,6 +66,12 @@ const Step2: React.FC<IStep2Props> = (props) => {
             formikProps={props.formikProps}
             payloadData={props.payloadData}
           />
+        )}
+
+        {!canSave && waitingForRender && (
+          <SC.WaitingForRender>
+            Blueprint image is still rendering, please be patient.
+          </SC.WaitingForRender>
         )}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">

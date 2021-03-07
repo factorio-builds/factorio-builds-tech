@@ -9,7 +9,10 @@ function useCanSave(
   payloadData: IStep2Props["payloadData"],
   submitStatus: IStep2Props["submitStatus"],
   formikProps: IStep2Props["formikProps"]
-): boolean {
+): {
+  canSave: boolean
+  waitingForRender: boolean
+} {
   const selectedImageHref = useMemo(() => {
     if (payloadData.type === "blueprint") {
       return (
@@ -27,11 +30,15 @@ function useCanSave(
   ])
   const { loaded: renderIsReady } = useImage(selectedImageHref || undefined)
 
-  const canSave = useMemo(() => {
+  const { canSave, waitingForRender } = useMemo(() => {
     const waitingForRender =
       formikProps.values.cover.type === "hash" && !renderIsReady
 
-    return !waitingForRender && !submitStatus.loading && formikProps.isValid
+    return {
+      canSave:
+        !waitingForRender && !submitStatus.loading && formikProps.isValid,
+      waitingForRender,
+    }
   }, [
     renderIsReady,
     submitStatus.loading,
@@ -39,7 +46,7 @@ function useCanSave(
     formikProps.values.cover.type,
   ])
 
-  return canSave
+  return { canSave, waitingForRender }
 }
 
 export default useCanSave
