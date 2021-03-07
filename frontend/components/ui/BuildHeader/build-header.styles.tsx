@@ -46,3 +46,20 @@ export const BuildHeaderMeta = styled.div`
     margin-right: 8px;
   }
 `
+
+export const Buttons = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin: -4px;
+
+  > * {
+    box-sizing: border-box;
+    margin: 4px !important;
+  }
+
+  @media screen and (max-width: 767px) {
+    > * {
+      width: calc(50% - 8px);
+    }
+  }
+`
