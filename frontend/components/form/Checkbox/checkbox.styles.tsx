@@ -27,8 +27,10 @@ export const Square = styled.div`
 export const Label = styled.label`
   ${getTypo(ETypo.FORM_LABEL)};
   display: flex;
+  flex-grow: 1;
   align-items: center;
   cursor: pointer;
+  padding: 3px;
 
   &.is-inline {
     font-weight: 400;
@@ -37,13 +39,16 @@ export const Label = styled.label`
 
 export const CheckboxWrapper = styled.div`
   display: flex;
+  margin: 0 -3px;
+  border-radius: 8px;
 
-  &:hover ${Square} {
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  &:hover {
+    background: linear-gradient(90deg, #2b4564 0%, #333642 100%);
   }
 
-  &:hover ${Square}::after {
-    background: ${COLOR.FADEDBLUE500};
+  &:hover ${Square} {
+    border-color: #6b98ce;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
   }
 
   &:focus-within ${Square} {
