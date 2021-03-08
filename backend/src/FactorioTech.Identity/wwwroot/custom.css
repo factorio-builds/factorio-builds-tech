@@ -1,0 +1,68 @@
+body {
+  color: rgb(237, 239, 242);
+  background: rgb(40, 42, 51);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+hr {
+  border-top: 1px solid rgb(79, 86, 110);
+}
+
+.navbar {
+  height: 74px;
+  background: rgb(17, 18, 22);
+}
+
+.navbar-brand svg {
+  height: 40px;
+  cursor: pointer;
+}
+
+  .navbar-brand svg:hover {
+    opacity: 0.8;
+  }
+
+.table {
+  color: rgb(237, 239, 242);
+}
+
+footer .container {
+  border-top: 1px solid rgb(79, 86, 110);
+  padding: 16px 0px;
+  margin-top: 16px;
+}
+
+footer a {
+  color: #ffffff;
+}
+
+footer a:hover {
+  color: rgb(193, 244, 255);
+}
+
+.input-wrapper {
+  padding: 5px 14px;
+  background: rgb(26, 28, 35);
+  border: 2px solid rgb(136, 141, 162);
+  color: rgb(208, 211, 220);
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.input-control {
+  font-size: 18px;
+  font-weight: 400;
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.8;
+  border: 0px;
+  background: transparent;
+  color: rgb(208, 211, 220);
+  flex: 1 0 auto;
+}
+
+.input-control:focus {
+  outline: 0px;
+}

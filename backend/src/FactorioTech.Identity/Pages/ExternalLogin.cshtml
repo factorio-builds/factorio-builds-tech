@@ -18,19 +18,25 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
                     <label asp-for="Input.Email"></label>
-                    <input asp-for="Input.Email" class="form-control" aria-describedby="email-help" />
+                    <div class="input-wrapper">
+                        <input asp-for="Input.Email" class="input-control" aria-describedby="email-help" />
+                    </div>
                     <small id="email-help" class="form-text text-muted">Your email will be visible to you only and we'll never share it with anyone else.</small>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.UserName"></label>
-                    <input asp-for="Input.UserName" class="form-control" aria-describedby="username-help" />
+                    <div class="input-wrapper">
+                        <input asp-for="Input.UserName" class="input-control" aria-describedby="username-help" />
+                    </div>
                     <small id="username-help" class="form-text text-muted">Your username will be placed in the URL of your builds. Only latin alphanumeric characters are supported.</small>
                     <span asp-validation-for="Input.UserName" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="Input.DisplayName"></label>
-                    <input asp-for="Input.DisplayName" class="form-control" aria-describedby="displayname-help" />
+                    <div class="input-wrapper">
+                        <input asp-for="Input.DisplayName" class="input-control" aria-describedby="displayname-help" />
+                    </div>
                     <small id="displayname-help" class="form-text text-muted">Your display name will be visible across the site in place of your username.</small>
                     <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
                 </div>
