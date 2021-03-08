@@ -71,7 +71,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
             </Button>
           </Link>
           <Link
-            href={`https://fbe.teoxoy.com/?source=${props.payload.data?.encoded}`}
+            href={`https://fbe.teoxoy.com/?source=${props.payload.data?._links.raw.href}`}
             passHref
           >
             <Button
