@@ -61,10 +61,6 @@ namespace FactorioTech.Identity.Configuration
                 AlwaysSendClientClaims = true,
                 AlwaysIncludeUserClaimsInIdToken = true,
 
-                // todo: the auth library used by the frontend doen't support PKCE
-                // see https://github.com/auth0/nextjs-auth0/issues/109
-                RequirePkce = false,
-
                 AllowedScopes = new List<string>
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
@@ -76,8 +72,9 @@ namespace FactorioTech.Identity.Configuration
             if (environment.IsProduction())
                 return new[] { web };
 
-            web.RedirectUris.Add("http://localhost:3000/api/callback");
-            web.RedirectUris.Add("https://local.factorio.tech/api/callback");
+            web.RedirectUris.Add("http://localhost:3000/api/auth/callback");
+            web.RedirectUris.Add("https://local.factorio.tech/api/auth/callback");
+            web.PostLogoutRedirectUris.Add("http://localhost:3000");
 
             var swagger = new Client
             {

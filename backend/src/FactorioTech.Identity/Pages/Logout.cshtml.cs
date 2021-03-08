@@ -1,3 +1,4 @@
+using Duende.IdentityServer.Services;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Extensions;
@@ -16,32 +17,35 @@ namespace FactorioTech.Identity.Pages
     [SecurityHeaders]
     public class LogoutModel : PageModel
     {
-        private readonly ILogger<LogoutModel> _logger;
         private readonly SignInManager<User> _signInManager;
+        private readonly ILogger<LogoutModel> _logger;
+        private readonly IIdentityServerInteractionService _interaction;
 
         public Uri FrontendUri { get; }
 
         public LogoutModel(
+            SignInManager<User> signInManager,
             ILogger<LogoutModel> logger,
             IOptions<AppConfig> appConfig,
-            SignInManager<User> signInManager)
+            IIdentityServerInteractionService interaction)
         {
             _logger = logger;
+            _interaction = interaction;
             _signInManager = signInManager;
             FrontendUri = appConfig.Value.WebUri;
         }
 
-        public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
+        public async Task<IActionResult> OnGetAsync(string? logoutId = null)
         {
             if (User.Identity?.IsAuthenticated == true)
             {
                 await _signInManager.SignOutAsync();
-
                 _logger.LogInformation("User logged out");
 
-                if (returnUrl != null)
+                var context = await _interaction.GetLogoutContextAsync(logoutId);
+                if (context.PostLogoutRedirectUri != null)
                 {
-                    return Redirect(returnUrl);
+                    return Redirect(context.PostLogoutRedirectUri);
                 }
             }
 

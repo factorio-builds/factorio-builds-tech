@@ -59,7 +59,7 @@ function Header(): JSX.Element {
           </Media>
 
           {!user && (
-            <Link href="/api/login" passHref>
+            <Link href="/api/auth/login" passHref>
               <SC.InnerLink>Login</SC.InnerLink>
             </Link>
           )}
