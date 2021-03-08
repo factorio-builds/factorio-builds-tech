@@ -3,6 +3,23 @@ import { IBlueprintPayload } from "../../../types/models"
 import Stacker from "../Stacker"
 import * as SC from "./blueprint-required-items.styles"
 
+const countAndSort = (
+  items: IBlueprintPayload["entities"] | IBlueprintPayload["tiles"]
+) => {
+  return Object.keys(items)
+    .map((itemName) => {
+      return {
+        count: items[itemName],
+        name: itemName,
+      }
+    })
+    .sort((a, b) => {
+      if (a.count === b.count) return 0
+
+      return a.count < b.count ? 1 : -1
+    })
+}
+
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
   return (
     <SC.WithRequiredItem orientation="horizontal" gutter={5}>
@@ -15,31 +32,31 @@ const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
 
 interface IBlueprintRequiredItemsProps {
   entities: IBlueprintPayload["entities"]
+  tiles: IBlueprintPayload["tiles"]
 }
 
 function BlueprintRequiredItems(
   props: IBlueprintRequiredItemsProps
 ): JSX.Element {
-  const sortedRequiredItems = useMemo(() => {
-    const entities = props.entities
-
-    return Object.keys(entities)
-      .map((itemName) => {
-        return {
-          count: entities[itemName],
-          name: itemName,
-        }
-      })
-      .sort((a, b) => {
-        if (a.count === b.count) return 0
-
-        return a.count < b.count ? 1 : -1
-      })
-  }, [props.entities])
+  const sortedRequired = useMemo(() => {
+    return {
+      entities: countAndSort(props.entities),
+      tiles: countAndSort(props.tiles),
+    }
+  }, [props.entities, props.tiles])
 
   return (
     <Stacker gutter={8}>
-      {sortedRequiredItems.map((item) => {
+      {sortedRequired.entities.map((item) => {
+        return (
+          <RequiredItem
+            key={item.name}
+            itemName={item.name}
+            count={item.count}
+          />
+        )
+      })}
+      {sortedRequired.tiles.map((item) => {
         return (
           <RequiredItem
             key={item.name}
