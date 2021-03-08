@@ -1,7 +1,8 @@
-import React, { useState } from "react"
+import React, { useMemo, useState } from "react"
+import { useSelector } from "react-redux"
 import startCase from "lodash/startCase"
-import Caret from "../../../icons/caret"
 import { ITag } from "../../../redux/reducers/filters"
+import { IStoreState } from "../../../redux/store"
 import Filter from "../Filter"
 import * as SC from "./filter-list.styles"
 
@@ -11,23 +12,42 @@ interface IFilterGroupProps {
 }
 
 function FilterGroup(props: IFilterGroupProps): JSX.Element {
+  const tags = useSelector((store: IStoreState) =>
+    store.filters.tags.filter(
+      (tag) => tag.group === props.name && props.nodes.includes(tag.name)
+    )
+  )
   const [expanded, setExpanded] = useState(false)
 
   function toggle() {
     setExpanded((prevExpanded) => !prevExpanded)
   }
 
+  const selectedTags = useMemo(() => {
+    return tags.filter((tag) => tag.isSelected)
+  }, [tags])
+
   return (
     <SC.FilterGroup>
       <SC.GroupName onClick={toggle}>
-        {startCase(props.name)} <Caret inverted={expanded} />
+        {startCase(props.name)}
+        {selectedTags.length > 0 && (
+          <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
+        )}
+        <SC.StyledCaret inverted={expanded} />
       </SC.GroupName>
 
       {expanded && (
         <SC.GroupFilters orientation="vertical" gutter={2}>
-          {props.nodes.map((node, index) => {
+          {tags.map((node, index) => {
             return (
-              <Filter key={index} group={props.name} name={node} text={node} />
+              <Filter
+                key={index}
+                group={node.group}
+                name={node.name}
+                isSelected={node.isSelected}
+                text={node.name}
+              />
             )
           })}
         </SC.GroupFilters>
