@@ -11,4 +11,4 @@ data:
   AppConfig__ApiUri: https://{{ .Values.hostNames.api }}
   AppConfig__IdentityUri: https://{{ .Values.hostNames.identity }}
   OAuthClients__Web__RedirectUri: https://{{ .Values.hostNames.web }}/api/auth/callback
-  OAuthClients__Web__PostLogoutRedirectUri: https://{{ .Values.hostNames.web }}/api/auth/callback
+  OAuthClients__Web__PostLogoutRedirectUri: https://{{ .Values.hostNames.web }}
