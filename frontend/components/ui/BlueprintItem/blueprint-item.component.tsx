@@ -119,10 +119,13 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                     ))}
                   </SC.Description>
                 )}
-                {!props.isBook && props.entities && (
+                {!props.isBook && (props.entities || props.tiles) && (
                   <SC.RequiredItems>
                     <SC.Subtitle>Required items</SC.Subtitle>
-                    <BlueprintRequiredItems entities={props.entities} />
+                    <BlueprintRequiredItems
+                      entities={props.entities}
+                      tiles={props.tiles}
+                    />
                   </SC.RequiredItems>
                 )}
                 {props.children}
