@@ -1,6 +1,7 @@
 using Duende.IdentityServer.EntityFramework.Options;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using System;
@@ -74,7 +75,8 @@ namespace FactorioTech.Core.Data
                         x => JsonSerializer.Serialize(x, JsonSerializerOptions),
                         x => JsonSerializer.Deserialize<IEnumerable<GameIcon>>(x, JsonSerializerOptions)
                              ?? Enumerable.Empty<GameIcon>())
-                    .HasColumnType("jsonb");
+                    .HasColumnType("jsonb")
+                    .Metadata.SetValueComparer(BuildSequenceValueComparer<GameIcon>());
 
                 if (Database.IsNpgsql())
                 {
@@ -114,7 +116,8 @@ namespace FactorioTech.Core.Data
                         x => JsonSerializer.Serialize(x, JsonSerializerOptions),
                         x => JsonSerializer.Deserialize<IEnumerable<GameIcon>>(x, JsonSerializerOptions)
                              ?? Enumerable.Empty<GameIcon>())
-                    .HasColumnType("jsonb");
+                    .HasColumnType("jsonb")
+                    .Metadata.SetValueComparer(BuildSequenceValueComparer<GameIcon>());
             });
 
             builder.Entity<Payload>(entity =>
@@ -126,5 +129,10 @@ namespace FactorioTech.Core.Data
                     .HasConversion(p => p.ToString(4), p => Version.Parse(p));
             });
         }
+
+        private static ValueComparer<IEnumerable<T>> BuildSequenceValueComparer<T>() => new(
+            (c1, c2) => c1.SequenceEqual(c2),
+            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v!.GetHashCode())),
+            c => (IEnumerable<T>)c.ToHashSet());
     }
 }

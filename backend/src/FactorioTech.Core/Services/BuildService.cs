@@ -115,11 +115,6 @@ namespace FactorioTech.Core.Services
                     Hash Hash)
                 : CreateResult { }
 
-            public sealed record InvalidCover(
-                    string Owner,
-                    string Slug)
-                : CreateResult { }
-
             private CreateResult() { }
         }
 
@@ -365,7 +360,7 @@ namespace FactorioTech.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        private CreateResult TryUpdate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Build? existing)
+        private CreateResult TryUpdate(CreateRequest request, ImageMeta coverMeta, ClaimsPrincipal principal, Build? existing)
         {
             if (existing == null)
             {
@@ -399,18 +394,12 @@ namespace FactorioTech.Core.Services
             return new CreateResult.Success(existing);
         }
 
-        private async Task<CreateResult> TryCreate(CreateRequest request, ImageMeta? coverMeta, ClaimsPrincipal principal, Build? existing)
+        private async Task<CreateResult> TryCreate(CreateRequest request, ImageMeta coverMeta, ClaimsPrincipal principal, Build? existing)
         {
             if (existing != null)
             {
                 _logger.LogWarning("Attempted to save blueprint with existing slug {Slug}", request.Slug);
                 return new CreateResult.DuplicateSlug(request.Owner, request.Slug);
-            }
-
-            if (coverMeta == null)
-            {
-                _logger.LogWarning("Attempted to save blueprint without cover metadata");
-                return new CreateResult.InvalidCover(request.Owner, request.Slug);
             }
 
             var owner = await _dbContext.Users.FindAsync(principal.GetUserId());

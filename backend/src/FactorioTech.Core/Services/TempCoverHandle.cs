@@ -7,7 +7,7 @@ namespace FactorioTech.Core.Services
 {
     public interface ITempCoverHandle : IDisposable
     {
-        public ImageMeta? Meta { get; }
+        public ImageMeta Meta { get; }
         public void Assign(Guid buildId);
     }
 
@@ -49,9 +49,13 @@ namespace FactorioTech.Core.Services
 
     public sealed class NullTempCoverHandle : ITempCoverHandle
     {
-        public Guid TempId => Guid.Empty;
-
-        public ImageMeta? Meta => null;
+        public ImageMeta Meta => new()
+        {
+            Format = "none",
+            Width = 0,
+            Height = 0,
+            Size = 0,
+        };
 
         public void Assign(Guid buildId) { }
         public void Dispose() { }
