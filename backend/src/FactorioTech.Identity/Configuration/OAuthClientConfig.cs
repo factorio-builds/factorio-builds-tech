@@ -10,7 +10,7 @@ namespace FactorioTech.Identity.Configuration
             {
                 ClientId = "frontend",
                 ClientSecret = "511536EF-F270-4058-80CA-1C89C192F69A",
-                RedirectUri = "https://local.factorio.tech/api/callback",
+                RedirectUri = "https://local.factorio.tech/api/auth/callback",
                 PostLogoutRedirectUri = "https://local.factorio.tech",
             };
         }

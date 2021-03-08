@@ -1,4 +1,5 @@
 using FactorioTech.Core.Domain;
+using IdentityModel;
 using System;
 using System.Security.Claims;
 
@@ -7,15 +8,21 @@ namespace FactorioTech.Core
     public static class IdentityExtensions
     {
         public static string GetUserName(this ClaimsPrincipal principal) =>
-            principal.FindFirstValue("username") ?? throw new Exception("UserName not found in principal");
+            principal.FindFirstValue("username")
+            ?? principal.FindFirstValue(JwtClaimTypes.Name)
+            ?? throw new Exception("UserName not found in principal");
 
-        public static Guid GetUserId(this ClaimsPrincipal principal) =>
-            Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
-                ? userId : throw new Exception("UserId not found in principal");
+        public static Guid GetUserId(this ClaimsPrincipal principal) => 
+            TryGetUserId(principal) ?? throw new Exception("UserId not found in principal");
 
-        public static Guid? TryGetUserId(this ClaimsPrincipal principal) =>
-            Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
-                ? userId : null;
+        public static Guid? TryGetUserId(this ClaimsPrincipal principal)
+        {
+            if (Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return userId;
+            if (Guid.TryParse(principal.FindFirstValue(JwtClaimTypes.Subject), out var sub))
+                return sub;
+            return null;
+        }
 
         public static bool CanEdit(this ClaimsPrincipal principal, Build build) =>
             principal.TryGetUserId() == build.OwnerId

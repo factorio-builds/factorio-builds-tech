@@ -60,11 +60,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "factorio-tech.fullname" . }}-web
                   key: clientSecret
-            - name: COOKIE_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "factorio-tech.fullname" . }}-web
-                  key: cookieSecret
           securityContext:
             runAsUser: 1000
             runAsNonRoot: true

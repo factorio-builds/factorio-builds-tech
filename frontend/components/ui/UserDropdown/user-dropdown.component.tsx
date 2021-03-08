@@ -33,7 +33,7 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
             <SC.InnerLink>my builds</SC.InnerLink>
           </Link>
           <SC.Spacer />
-          <Link href="/api/logout">
+          <Link href="/api/auth/logout">
             <SC.InnerLinkLogOff>log off</SC.InnerLinkLogOff>
           </Link>
         </SC.DropdownContent>

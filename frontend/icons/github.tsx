@@ -6,7 +6,7 @@ interface IGithubProps {
   color?: string
 }
 
-const Github = ({
+const GitHub = ({
   color = COLOR.FADEDBLUE700,
   ...restProps
 }: IGithubProps): JSX.Element => {
@@ -38,4 +38,4 @@ const Github = ({
   )
 }
 
-export default Github
+export default GitHub

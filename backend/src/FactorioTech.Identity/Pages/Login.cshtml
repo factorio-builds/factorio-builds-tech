@@ -3,10 +3,11 @@
 @{ ViewData["Title"] = "Log in"; }
 
 <div class="container">
-    <h1 class="display-4">@ViewData["Title"]</h1>
-    <h4>Use an external provider to log in.</h4>
+    <h1 class="display-4 pt-4">@ViewData["Title"]</h1>
+    <h4>Use an external provider to log in</h4>
     <hr />
-    <div class="container">
+
+    <div class="container pt-4">
         @if (Model.ExternalLogins.Any())
         {
             <form method="post" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
@@ -25,7 +26,7 @@
         {
             <p>
                 No external providers were configured.
-                Refer to the <a href="https://github.com/dstockhammer/factorio-tech#optional-external-oauth-providers">README</a> to get started.
+                Refer to the <a href="https://github.com/factorio-builds/factorio-builds-tech#optional-external-oauth-providers">README</a> to get started.
             </p>
         }
     </div>
@@ -33,7 +34,7 @@
     @if (Model.AllowLocalLogin)
     {
         <h4 class="pt-5">Development only: use a local account</h4>
-        <hr/>
+        <hr />
         <div class="container">
             <div class="row">
                 <div class="col">
@@ -42,18 +43,22 @@
                             <div asp-validation-summary="All" class="text-danger"></div>
                             <div class="form-group">
                                 <label asp-for="Input.Username"></label>
-                                <input asp-for="Input.Username" class="form-control"/>
+                                <div class="input-wrapper">
+                                    <input asp-for="Input.Username" class="input-control" />
+                                </div>
                                 <span asp-validation-for="Input.Username" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Input.Password"></label>
-                                <input asp-for="Input.Password" class="form-control"/>
+                                <div class="input-wrapper">
+                                    <input asp-for="Input.Password" class="input-control" />
+                                </div>
                                 <span asp-validation-for="Input.Password" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <div class="checkbox">
                                     <label asp-for="Input.RememberMe">
-                                        <input asp-for="Input.RememberMe"/>
+                                        <input asp-for="Input.RememberMe" />
                                         @Html.DisplayNameFor(m => m.Input.RememberMe)
                                     </label>
                                 </div>

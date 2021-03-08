@@ -64,7 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
   if (typeof window === "undefined") {
-    const session = await auth.getSession(ctx.req!)
+    const session = await auth.getSession(ctx.req!, ctx.res!)
 
     if (session?.user) {
       ctx.store.dispatch({

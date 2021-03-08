@@ -193,7 +193,6 @@ jobs:
             --set-string postgres.diskURI=${{ secrets.POSTGRES_DISK_URI }} \
             --set-string web.clientId=${{ secrets.WEB_CLIENT_ID }} \
             --set-string web.clientSecret=${{ secrets.WEB_CLIENT_SECRET }} \
-            --set-string web.cookieSecret=${{ secrets.WEB_COOKIE_SECRET }} \
             --set-string identity.providers[0].name=GitHub \
             --set-string identity.providers[0].clientId=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
             --set-string identity.providers[0].clientSecret=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
