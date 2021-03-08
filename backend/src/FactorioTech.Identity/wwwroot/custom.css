@@ -5,6 +5,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+main {
+    padding-top: 2rem;
+}
+
 hr {
   border-top: 1px solid rgb(79, 86, 110);
 }
@@ -25,12 +29,6 @@ hr {
 
 .table {
   color: rgb(237, 239, 242);
-}
-
-footer .container {
-  border-top: 1px solid rgb(79, 86, 110);
-  padding: 16px 0px;
-  margin-top: 16px;
 }
 
 footer a {
@@ -65,4 +63,8 @@ footer a:hover {
 
 .input-control:focus {
   outline: 0px;
+}
+
+.input-control[readonly] {
+  cursor: not-allowed;
 }

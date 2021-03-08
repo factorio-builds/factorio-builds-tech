@@ -1,3 +1,4 @@
+using Duende.IdentityServer.Extensions;
 using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Extensions;
 using Microsoft.AspNetCore.Authentication;
@@ -55,14 +56,21 @@ namespace FactorioTech.Identity.Pages
 
         public async Task<IActionResult> OnGetAsync(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Page("/");
+            ReturnUrl = returnUrl ?? Url.Page("./Manage/Index");
+
+            if (User.IsAuthenticated())
+            {
+                _logger.LogInformation("User is already logged in.");
+                return LocalRedirect(ReturnUrl);
+            }
+
             ExternalLogins = await _signInManager.GetExternalAuthenticationSchemesAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl ?? Url.Page("/");
+            ReturnUrl = returnUrl ?? Url.Page("./Manage/Index");
 
             if (AllowLocalLogin && ModelState.IsValid)
             {

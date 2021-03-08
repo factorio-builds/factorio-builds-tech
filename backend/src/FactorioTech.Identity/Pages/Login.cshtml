@@ -3,94 +3,90 @@
 @{ ViewData["Title"] = "Log in"; }
 
 <div class="container">
-    <h1 class="display-4 pt-4">@ViewData["Title"]</h1>
+    <h1 class="display-4">@ViewData["Title"]</h1>
     <h4>Use an external provider to log in</h4>
     <hr />
 
-    <div class="container pt-4">
-        @if (Model.ExternalLogins.Any())
-        {
-            <form method="post" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
-                @foreach (var provider in Model.ExternalLogins)
-                {
-                    <button type="submit" class="btn btn-lg btn-primary btn-block"
-                            name="provider" value="@provider.Name"
-                            title="Log in using your @provider.DisplayName account">
-                        <i class="fab fa-@provider.Name.ToLowerInvariant()"></i>
-                        @provider.DisplayName
-                    </button>
-                }
-            </form>
-        }
-        else
-        {
-            <p>
-                No external providers were configured.
-                Refer to the <a href="https://github.com/factorio-builds/factorio-builds-tech#optional-external-oauth-providers">README</a> to get started.
-            </p>
-        }
-    </div>
+    @if (Model.ExternalLogins.Any())
+    {
+        <form method="post" class="pt-4" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
+            @foreach (var provider in Model.ExternalLogins)
+            {
+                <button type="submit" class="btn btn-lg btn-primary btn-block"
+                        name="provider" value="@provider.Name"
+                        title="Log in using your @provider.DisplayName account">
+                    <i class="fab fa-@provider.Name.ToLowerInvariant()"></i>
+                    @provider.DisplayName
+                </button>
+            }
+        </form>
+    }
+    else
+    {
+        <p>
+            No external providers have been configured.
+            Refer to the <a href="https://github.com/factorio-builds/factorio-builds-tech#optional-external-oauth-providers">README</a> to get started.
+        </p>
+    }
 
     @if (Model.AllowLocalLogin)
     {
         <h4 class="pt-5">Development only: use a local account</h4>
         <hr />
-        <div class="container">
-            <div class="row">
-                <div class="col">
-                    <section>
-                        <form id="account" method="post">
-                            <div asp-validation-summary="All" class="text-danger"></div>
-                            <div class="form-group">
-                                <label asp-for="Input.Username"></label>
-                                <div class="input-wrapper">
-                                    <input asp-for="Input.Username" class="input-control" />
-                                </div>
-                                <span asp-validation-for="Input.Username" class="text-danger"></span>
+        <div class="row">
+            <div class="col">
+                <section>
+                    <form id="account" method="post">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Input.Username"></label>
+                            <div class="input-wrapper">
+                                <input asp-for="Input.Username" class="input-control" />
                             </div>
-                            <div class="form-group">
-                                <label asp-for="Input.Password"></label>
-                                <div class="input-wrapper">
-                                    <input asp-for="Input.Password" class="input-control" />
-                                </div>
-                                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                            <span asp-validation-for="Input.Username" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.Password"></label>
+                            <div class="input-wrapper">
+                                <input asp-for="Input.Password" class="input-control" />
                             </div>
-                            <div class="form-group">
-                                <div class="checkbox">
-                                    <label asp-for="Input.RememberMe">
-                                        <input asp-for="Input.RememberMe" />
-                                        @Html.DisplayNameFor(m => m.Input.RememberMe)
-                                    </label>
-                                </div>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="Input.RememberMe">
+                                    <input asp-for="Input.RememberMe" />
+                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
                             </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Log in</button>
-                            </div>
-                        </form>
-                    </section>
-                </div>
-                <div class="col">
-                    <p>In dev environments you can use any of the dev accounts to login. This option is disabled in production.</p>
-                    <table class="table">
-                        <thead>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Log in</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
+            <div class="col">
+                <p>In dev environments you can use any of the dev accounts to login. This option is disabled in production.</p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Password</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var (user, role) in DevDataSeeder.Users)
+                        {
                             <tr>
-                                <th scope="col">Username</th>
-                                <th scope="col">Password</th>
-                                <th scope="col">Role</th>
+                                <th scope="row">@user.UserName</th>
+                                <td><code>@DevDataSeeder.Password</code></td>
+                                <td>@role</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var (user, role) in DevDataSeeder.Users)
-                            {
-                                <tr>
-                                    <th scope="row">@user.UserName</th>
-                                    <td><code>@DevDataSeeder.Password</code></td>
-                                    <td>@role</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
