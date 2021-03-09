@@ -20,6 +20,14 @@ export const ImageWrapper = styled.div`
   width: 200px;
 `
 
+export const SpinnerWrapper = styled.div`
+  background: ${COLOR.FADEDBLUE100};
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 export const InnerContent = styled(Stacker)`
   flex-grow: 1;
 `
