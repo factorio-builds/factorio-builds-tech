@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from "react"
 import cx from "classnames"
+import useImage from "../../../hooks/useImage"
 import Caret from "../../../icons/caret"
 import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { countEntities, isBook } from "../../../utils/build"
 import BlueprintRequiredItems from "../BlueprintRequiredItems"
 import BuildIcon from "../BuildIcon"
+import Spinner from "../Spinner"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
 import * as SC from "./blueprint-item.styles"
@@ -38,6 +40,7 @@ type IBlueprintItemProps =
 
 function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
   const [expanded, setExpanded] = useState(false)
+  const { loaded: imageIsLoaded } = useImage(props.image?.href)
 
   const title = props.title || "[unnamed]"
 
@@ -105,7 +108,13 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
             <SC.Info>
               {props.image && (
                 <SC.ImageWrapper>
-                  <img src={props.image.href} alt="" width={200} />
+                  {imageIsLoaded ? (
+                    <img src={props.image.href} alt="" width={200} />
+                  ) : (
+                    <SC.SpinnerWrapper>
+                      <Spinner />
+                    </SC.SpinnerWrapper>
+                  )}
                 </SC.ImageWrapper>
               )}
               <SC.InnerContent orientation="vertical" gutter={16}>
