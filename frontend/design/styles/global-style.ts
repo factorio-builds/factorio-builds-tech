@@ -31,4 +31,14 @@ export const GlobalStyle = createGlobalStyle`
   .fresnel-container {
     width: 100%;
   }
+
+  p a {
+    font-weight: 700;
+    color: ${COLOR.FADEDBLUE700};
+
+    &:hover,
+    &:focus {
+      color: ${COLOR.FADEDBLUE900};
+    }
+  }
 `
