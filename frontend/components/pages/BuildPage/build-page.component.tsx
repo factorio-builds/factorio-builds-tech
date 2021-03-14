@@ -1,12 +1,15 @@
 import React, { useCallback, useMemo } from "react"
+import { useToggle } from "react-use"
 import cx from "classnames"
 import Image from "next/image"
 import Link from "next/link"
 import { NextRouter } from "next/router"
+import { Media } from "../../../design/styles/media"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
 import Layout from "../../ui/Layout"
+import Links from "../../ui/Links"
 import Stacker from "../../ui/Stacker"
 import * as SC from "./build-page.styles"
 import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
@@ -16,8 +19,6 @@ import DetailsTab from "./tabs/details-tab.component"
 import ImageMobileTab from "./tabs/image-mobile-tab.component"
 import RequiredItemsTab from "./tabs/required-items-tab.component"
 import usePayload, { TPayload } from "./usePayload"
-import Links from "../../ui/Links"
-import { Media } from "../../../design/styles/media"
 
 interface IBuildPageProps {
   build: IFullBuild
@@ -39,15 +40,16 @@ interface ITab {
   mobileOnly?: boolean
 }
 
-interface ITabs {
+interface ITabsProps {
   build: IFullBuild
   current?: string
   tabs: ITab[]
   payload: TPayload
   aside: React.ReactElement
+  isZoomedIn: boolean
 }
 
-const Tabs = (props: ITabs): JSX.Element => {
+const Tabs = (props: ITabsProps): JSX.Element => {
   const isCurrentTab = useCallback(
     (tab: ITab) => {
       if (!props.current && tab.key === "details") {
@@ -60,7 +62,7 @@ const Tabs = (props: ITabs): JSX.Element => {
   )
 
   return (
-    <SC.TabsWrapper>
+    <SC.TabsWrapper className={cx({ "is-zoomed": props.isZoomedIn })}>
       <SC.TabsItems orientation="horizontal" gutter={16}>
         {props.tabs.map((tab) => {
           const Tab = (innerProps: { className?: string }) => (
@@ -92,7 +94,10 @@ const Tabs = (props: ITabs): JSX.Element => {
           return <Tab />
         })}
       </SC.TabsItems>
-      <SC.TabsContent orientation="horizontal" gutter={16}>
+      <SC.TabsContent
+        orientation={props.isZoomedIn ? "vertical" : "horizontal"}
+        gutter={16}
+      >
         <SC.TabsContentInner>
           {props.tabs.map((tab) => {
             const { tab: Tab } = tab
@@ -121,6 +126,7 @@ const Tabs = (props: ITabs): JSX.Element => {
 
 function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
   const payload = usePayload(build)
+  const [zoomedImage, toggleZoomedImage] = useToggle(false)
 
   const tabs = useMemo(() => {
     if (isBook(build.latest_version.payload)) {
@@ -190,6 +196,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
         current={router.query.tab as string | undefined}
         tabs={tabs}
         payload={payload}
+        isZoomedIn={zoomedImage}
         aside={
           <Stacker orientation="vertical" gutter={16}>
             {build._links.edit && (
@@ -199,13 +206,15 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
             )}
             <SC.BuildImage>
               {build._links.cover ? (
-                <Image
-                  src={build._links.cover.href}
-                  alt=""
-                  width={build._links.cover.width}
-                  height={build._links.cover.height}
-                  layout="responsive"
-                />
+                <SC.ImageWrapper role="button" onClick={toggleZoomedImage}>
+                  <Image
+                    src={build._links.cover.href}
+                    alt=""
+                    width={build._links.cover.width}
+                    height={build._links.cover.height}
+                    layout="responsive"
+                  />
+                </SC.ImageWrapper>
               ) : (
                 "No image"
               )}

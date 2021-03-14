@@ -16,6 +16,15 @@ export const BuildImage = styled.div`
   }
 `
 
+export const ImageWrapper = styled.div`
+  cursor: zoom-in;
+  max-height: 100vh;
+
+  .is-zoomed & {
+    cursor: zoom-out;
+  }
+`
+
 export const CopyClipboardWrapper = styled.div`
   margin-bottom: 16px;
 `
@@ -91,6 +100,11 @@ export const TabsContentInner = styled.div`
 export const TabsAside = styled.aside`
   flex: 0 0 400px;
   width: 400px;
+
+  .is-zoomed & {
+    order: -1;
+    width: 100%;
+  }
 `
 
 export const Tab = styled.a`
