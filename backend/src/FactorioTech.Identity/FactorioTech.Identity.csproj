@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Discord" Version="5.0.1" />
-    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="5.0.1" />
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="5.0.2" />
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="5.0.5" />
     <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="5.0.5" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
