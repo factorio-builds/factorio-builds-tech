@@ -33,21 +33,33 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
     return (
       <>
         <Media lessThan="sm">
-          <SC.BodyWrapper orientation="vertical" gutter={0}>
-            {sidebarActive && sidebar && (
-              <>
-                <SC.Backdrop onClick={closeSidebar} />
-                <Sidebar>{sidebar}</Sidebar>
-              </>
-            )}
-            <SC.Content>{children}</SC.Content>
-          </SC.BodyWrapper>
+          {(mcx, renderChildren) => {
+            return renderChildren ? (
+              <SC.BodyWrapper className={mcx} orientation="vertical" gutter={0}>
+                {sidebarActive && sidebar && (
+                  <>
+                    <SC.Backdrop onClick={closeSidebar} />
+                    <Sidebar>{sidebar}</Sidebar>
+                  </>
+                )}
+                <SC.Content>{children}</SC.Content>
+              </SC.BodyWrapper>
+            ) : null
+          }}
         </Media>
         <Media greaterThanOrEqual="sm">
-          <SC.BodyWrapper orientation="horizontal" gutter={20}>
-            {sidebar && <Sidebar>{sidebar}</Sidebar>}
-            <SC.Content>{children}</SC.Content>
-          </SC.BodyWrapper>
+          {(mcx, renderChildren) => {
+            return renderChildren ? (
+              <SC.BodyWrapper
+                className={mcx}
+                orientation="horizontal"
+                gutter={20}
+              >
+                {sidebar && <Sidebar>{sidebar}</Sidebar>}
+                <SC.Content>{children}</SC.Content>
+              </SC.BodyWrapper>
+            ) : null
+          }}
         </Media>
       </>
     )
@@ -61,7 +73,9 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Header />
-      {sidebar ? <Container>{wrapper}</Container> : <>{wrapper}</>}
+      <SC.ContentWrapper>
+        {sidebar ? <Container>{wrapper}</Container> : <>{wrapper}</>}
+      </SC.ContentWrapper>
     </>
   )
 }

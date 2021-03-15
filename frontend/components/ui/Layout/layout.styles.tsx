@@ -3,6 +3,12 @@ import Stacker from "../Stacker"
 
 export const BodyWrapper = styled(Stacker)`
   width: 100%;
+  flex: 1 0 auto;
+`
+
+export const ContentWrapper = styled.div`
+  display: flex;
+  flex: 1 0 auto;
 `
 
 export const Content = styled.main`
