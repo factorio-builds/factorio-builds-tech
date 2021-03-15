@@ -7,8 +7,7 @@ import { ButtonWrapper } from "../../ui/Button/button.styles"
 import Stacker from "../../ui/Stacker"
 
 export const BuildImage = styled.div`
-  border: 4px solid ${COLOR.FADEDBLUE300};
-  border-radius: 4px;
+  border: 8px solid ${COLOR.CARD};
 
   img {
     display: block;
