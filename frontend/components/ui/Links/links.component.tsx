@@ -1,6 +1,7 @@
 import React from "react"
 import Link from "next/link"
 import GitHub from "../../../icons/github"
+import { Line } from "../../../icons/line"
 import * as SC from "./links.styles"
 
 interface ILinksProps {
@@ -16,6 +17,12 @@ const Links = (props: ILinksProps): JSX.Element => {
       >
         <SC.StyledLink target="_blank">
           <GitHub /> GitHub
+        </SC.StyledLink>
+      </Link>
+      <Link href="/about">
+        <SC.StyledLink>
+          {props.orientation === "vertical" && <Line />}
+          About
         </SC.StyledLink>
       </Link>
     </SC.LinksWrapper>

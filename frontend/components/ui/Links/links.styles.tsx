@@ -7,6 +7,7 @@ export const LinksWrapper = styled(Stacker)`
 `
 
 export const StyledLink = styled.a`
+  cursor: pointer;
   display: flex;
   align-items: center;
   color: ${COLOR.FADEDBLUE700};
@@ -19,5 +20,7 @@ export const StyledLink = styled.a`
 
   svg {
     margin-right: 8px;
+    width: 16px;
+    height: 16px;
   }
 `
