@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from "react"
+import React, { ReactNode, useCallback, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useLockBodyScroll } from "react-use"
 import Head from "next/head"
@@ -14,7 +14,6 @@ interface ILayoutProps {
   sidebar?: ReactNode
   title?: string
   subheader?: ReactNode
-  size?: "small" | "medium" | "large"
 }
 
 const Layout: React.FC<ILayoutProps> = ({
@@ -22,7 +21,6 @@ const Layout: React.FC<ILayoutProps> = ({
   sidebar,
   title,
   subheader,
-  size = "large",
 }) => {
   const dispatch = useDispatch()
   const sidebarActive = useSelector(
@@ -37,16 +35,9 @@ const Layout: React.FC<ILayoutProps> = ({
 
   useLockBodyScroll(sidebarActive)
 
-  return (
-    <>
-      <Head>
-        <title>{["Factorio Builds", title].filter(Boolean).join(" | ")}</title>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
-      <Header />
-      {subheader}
-      <Container size={size}>
+  const wrapper = useMemo(() => {
+    return (
+      <>
         <Media lessThan="sm">
           <SC.BodyWrapper orientation="vertical" gutter={0}>
             {sidebarActive && sidebar && (
@@ -64,7 +55,20 @@ const Layout: React.FC<ILayoutProps> = ({
             <SC.Content>{children}</SC.Content>
           </SC.BodyWrapper>
         </Media>
-      </Container>
+      </>
+    )
+  }, [children, sidebar, sidebarActive])
+
+  return (
+    <>
+      <Head>
+        <title>{["Factorio Builds", title].filter(Boolean).join(" | ")}</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <Header />
+      {subheader}
+      {sidebar ? <Container>{wrapper}</Container> : <>{wrapper}</>}
     </>
   )
 }

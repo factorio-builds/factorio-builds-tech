@@ -60,6 +60,10 @@ export const TabsWrapper = styled.div`
   flex-direction: column;
 `
 
+export const TabsInnerWrapper = styled.div`
+  border-bottom: 1px solid ${COLOR.FADEDBLUE300};
+`
+
 export const TabsItems = styled(Stacker)`
   --scrollbarBG: ${COLOR.BACKGROUND};
   --thumbBG: ${COLOR.FADEDBLUE300};
@@ -69,10 +73,12 @@ export const TabsItems = styled(Stacker)`
 
   @media screen and (max-width: 767px) {
     overflow-x: scroll;
+    overflow-y: hidden;
   }
 
   &::-webkit-scrollbar {
     width: 11px;
+    height: 11px;
   }
 
   &::-webkit-scrollbar-track {
@@ -86,10 +92,9 @@ export const TabsItems = styled(Stacker)`
   }
 `
 
-export const TabsContent = styled(Stacker)`
+export const TabsContent = styled.div`
   display: flex;
   flex: 1 0 auto;
-  margin-top: 16px;
 `
 
 export const TabsContentInner = styled.div`
@@ -100,6 +105,11 @@ export const TabsContentInner = styled.div`
 export const TabsAside = styled.aside`
   flex: 0 0 400px;
   width: 400px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 16px;
+  border-left: 1px solid ${COLOR.FADEDBLUE300};
+  margin-left: 16px;
 
   .is-zoomed & {
     order: -1;
@@ -109,27 +119,46 @@ export const TabsAside = styled.aside`
 
 export const Tab = styled.a`
   ${getTypo(ETypo.BUTTON)};
+  position: relative;
   text-decoration: none;
-  background: none;
-  border: none;
-  padding: 0;
+  padding: 10px 0;
   color: ${COLOR.FADEDBLUE900};
-  border-bottom: 2px solid transparent;
   cursor: pointer;
   white-space: nowrap;
 
-  &:hover {
-    border-color: ${COLOR.FADEDBLUE900};
+  &::after {
+    position: absolute;
+    content: "";
+    height: 2px;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+  }
+
+  &:hover::after {
+    background: ${COLOR.FADEDBLUE900};
   }
 
   &.is-active {
     font-weight: 700;
-    border-color: ${COLOR.FADEDBLUE900};
+  }
+
+  &.is-active::after {
+    background: ${COLOR.FADEDBLUE900};
   }
 `
 
 export const TabWrapper = styled.div`
   display: none;
+  padding: 16px 0;
+
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  & > :last-child {
+    margin-bottom: 0;
+  }
 
   // TODO: remove, temporary
   & ${ButtonWrapper} {
@@ -157,5 +186,4 @@ export const Description = styled.div`
 export const Footer = styled.footer`
   border-top: 1px solid ${COLOR.FADEDBLUE300};
   padding: 16px 0;
-  margin-top: 16px;
 `

@@ -6,11 +6,10 @@ export const BodyWrapper = styled(Stacker)`
 `
 
 export const Content = styled.main`
-  margin-top: 20px;
-  padding-bottom: 20px;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 
   > :first-child {
     margin-top: 0;

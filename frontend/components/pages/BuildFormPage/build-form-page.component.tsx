@@ -12,6 +12,7 @@ import {
   IFullPayload,
   IThinBuild,
 } from "../../../types/models"
+import Container from "../../ui/Container"
 import Layout from "../../ui/Layout"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
@@ -366,21 +367,26 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     >
       {(formikProps) => {
         return (
-          <Layout title={title} size="small">
-            <h2>{title}</h2>
-            <Form>
-              {step === 1 && props.type === "CREATE" && (
-                <Step1 formikProps={formikProps} goToNextStep={goToNextStep} />
-              )}
+          <Layout title={title}>
+            <Container direction="column" size="small">
+              <h2>{title}</h2>
+              <Form>
+                {step === 1 && props.type === "CREATE" && (
+                  <Step1
+                    formikProps={formikProps}
+                    goToNextStep={goToNextStep}
+                  />
+                )}
 
-              {(step === 2 || props.type === "EDIT") && payloadData && (
-                <Step2
-                  formikProps={formikProps}
-                  payloadData={payloadData}
-                  submitStatus={submit}
-                />
-              )}
-            </Form>
+                {(step === 2 || props.type === "EDIT") && payloadData && (
+                  <Step2
+                    formikProps={formikProps}
+                    payloadData={payloadData}
+                    submitStatus={submit}
+                  />
+                )}
+              </Form>
+            </Container>
           </Layout>
         )
       }}

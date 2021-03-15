@@ -3,12 +3,29 @@ import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
 
+export const SubHeader = styled.div`
+  background: #333642;
+  padding: 20px 0;
+  font-family: monospace;
+  font-size: 18px;
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+`
+
+export const SubHeaderLink = styled.a`
+  text-decoration: underline;
+  color: ${COLOR.FADEDBLUE900};
+
+  &:hover {
+    color: ${COLOR.FADEDBLUE700};
+  }
+`
+
 export const BuildHeaderWrapper = styled.header`
   margin-bottom: 16px;
-  padding: 10px;
+  padding: 10px 0;
   border-radius: 7px;
   color: ${COLOR.FADEDBLUE700};
-  background: ${COLOR.SUBHEADER};
 `
 
 export const BuildTitle = styled.h2`
