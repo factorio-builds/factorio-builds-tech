@@ -13,15 +13,9 @@ interface ILayoutProps {
   children?: ReactNode
   sidebar?: ReactNode
   title?: string
-  subheader?: ReactNode
 }
 
-const Layout: React.FC<ILayoutProps> = ({
-  children,
-  sidebar,
-  title,
-  subheader,
-}) => {
+const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
   const dispatch = useDispatch()
   const sidebarActive = useSelector(
     (state: IStoreState) => state.layout.sidebar
@@ -67,7 +61,6 @@ const Layout: React.FC<ILayoutProps> = ({
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Header />
-      {subheader}
       {sidebar ? <Container>{wrapper}</Container> : <>{wrapper}</>}
     </>
   )
