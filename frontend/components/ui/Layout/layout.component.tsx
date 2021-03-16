@@ -33,33 +33,21 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
     return (
       <>
         <Media lessThan="sm">
-          {(mcx, renderChildren) => {
-            return renderChildren ? (
-              <SC.BodyWrapper className={mcx} orientation="vertical" gutter={0}>
-                {sidebarActive && sidebar && (
-                  <>
-                    <SC.Backdrop onClick={closeSidebar} />
-                    <Sidebar>{sidebar}</Sidebar>
-                  </>
-                )}
-                <SC.Content>{children}</SC.Content>
-              </SC.BodyWrapper>
-            ) : null
-          }}
+          <SC.BodyWrapper orientation="vertical" gutter={0}>
+            {sidebarActive && sidebar && (
+              <>
+                <SC.Backdrop onClick={closeSidebar} />
+                <Sidebar>{sidebar}</Sidebar>
+              </>
+            )}
+            <SC.Content>{children}</SC.Content>
+          </SC.BodyWrapper>
         </Media>
         <Media greaterThanOrEqual="sm">
-          {(mcx, renderChildren) => {
-            return renderChildren ? (
-              <SC.BodyWrapper
-                className={mcx}
-                orientation="horizontal"
-                gutter={20}
-              >
-                {sidebar && <Sidebar>{sidebar}</Sidebar>}
-                <SC.Content>{children}</SC.Content>
-              </SC.BodyWrapper>
-            ) : null
-          }}
+          <SC.BodyWrapper orientation="horizontal" gutter={20}>
+            {sidebar && <Sidebar>{sidebar}</Sidebar>}
+            <SC.Content>{children}</SC.Content>
+          </SC.BodyWrapper>
         </Media>
       </>
     )
