@@ -4,7 +4,10 @@ import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
 import Stacker from "../Stacker"
 
-export const BuildListWrapper = styled.div``
+export const BuildListWrapper = styled.div`
+  margin: 20px 0;
+  width: 100%;
+`
 
 export const Title = styled(Stacker)`
   ${getTypo(ETypo.PAGE_HEADER)};

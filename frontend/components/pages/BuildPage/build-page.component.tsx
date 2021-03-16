@@ -8,6 +8,7 @@ import { Media } from "../../../design/styles/media"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
+import Container from "../../ui/Container"
 import Layout from "../../ui/Layout"
 import Links from "../../ui/Links"
 import Stacker from "../../ui/Stacker"
@@ -63,63 +64,67 @@ const Tabs = (props: ITabsProps): JSX.Element => {
 
   return (
     <SC.TabsWrapper className={cx({ "is-zoomed": props.isZoomedIn })}>
-      <SC.TabsItems orientation="horizontal" gutter={16}>
-        {props.tabs.map((tab) => {
-          const Tab = (innerProps: { className?: string }) => (
-            <Link
-              {...innerProps}
-              key={tab.label}
-              href={{
-                pathname: `/${props.build.owner.username}/${props.build.slug}`,
-                query: { tab: tab.key },
-              }}
-              passHref
-            >
-              <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
-                {tab.label}
-              </SC.Tab>
-            </Link>
-          )
+      <SC.TabsInnerWrapper>
+        <Container size="medium">
+          <SC.TabsItems orientation="horizontal" gutter={32}>
+            {props.tabs.map((tab) => {
+              const Tab = (innerProps: { className?: string }) => (
+                <Link
+                  {...innerProps}
+                  key={tab.label}
+                  href={{
+                    pathname: `/${props.build.owner.username}/${props.build.slug}`,
+                    query: { tab: tab.key },
+                  }}
+                  passHref
+                >
+                  <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
+                    {tab.label}
+                  </SC.Tab>
+                </Link>
+              )
 
-          if (tab.mobileOnly) {
-            return (
-              <Media lessThan="sm">
-                {(mcx, renderChildren) => {
-                  return renderChildren ? <Tab className={mcx} /> : null
-                }}
-              </Media>
-            )
-          }
+              if (tab.mobileOnly) {
+                return (
+                  <Media lessThan="sm">
+                    {(mcx, renderChildren) => {
+                      return renderChildren ? <Tab className={mcx} /> : null
+                    }}
+                  </Media>
+                )
+              }
 
-          return <Tab />
-        })}
-      </SC.TabsItems>
-      <SC.TabsContent
-        orientation={props.isZoomedIn ? "vertical" : "horizontal"}
-        gutter={16}
-      >
-        <SC.TabsContentInner>
-          {props.tabs.map((tab) => {
-            const { tab: Tab } = tab
+              return <Tab />
+            })}
+          </SC.TabsItems>
+        </Container>
+      </SC.TabsInnerWrapper>
 
-            return (
-              <Tab
-                key={tab.label}
-                build={props.build}
-                payload={props.payload}
-                isActive={isCurrentTab(tab)}
-              />
-            )
-          })}
-        </SC.TabsContentInner>
-        <Media greaterThanOrEqual="sm">
-          {(mcx, renderChildren) => {
-            return renderChildren ? (
-              <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside>
-            ) : null
-          }}
-        </Media>
-      </SC.TabsContent>
+      <Container direction="column" size="medium">
+        <SC.TabsContent>
+          <SC.TabsContentInner>
+            {props.tabs.map((tab) => {
+              const { tab: Tab } = tab
+
+              return (
+                <Tab
+                  key={tab.label}
+                  build={props.build}
+                  payload={props.payload}
+                  isActive={isCurrentTab(tab)}
+                />
+              )
+            })}
+          </SC.TabsContentInner>
+          <Media greaterThanOrEqual="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren ? (
+                <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside>
+              ) : null
+            }}
+          </Media>
+        </SC.TabsContent>
+      </Container>
     </SC.TabsWrapper>
   )
 }
@@ -188,7 +193,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
   }, [build.latest_version.hash, payload.data])
 
   return (
-    <Layout title={build.title} size="medium">
+    <Layout title={build.title}>
       <BuildHeader build={build} payload={payload} />
 
       <Tabs
@@ -224,7 +229,9 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
       />
 
       <SC.Footer>
-        <Links orientation="horizontal" />
+        <Container size="medium">
+          <Links orientation="horizontal" />
+        </Container>
       </SC.Footer>
     </Layout>
   )
