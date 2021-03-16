@@ -52,11 +52,16 @@ export const BuildTags = styled.div`
 `
 
 export const BuildHeaderMeta = styled.div`
-  font-weight: 700;
+  font-weight: 500;
   display: flex;
   align-items: center;
   white-space: nowrap;
-  margin: 4px 8px;
+  margin: 4px;
+  background: #1c1c1c;
+  padding: 4px 6px;
+  border: 1px solid #4d4d4d;
+  border-radius: 4px;
+  font-size: 14px;
 
   img {
     width: 20px;
