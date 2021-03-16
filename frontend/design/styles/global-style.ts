@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components"
 import { COLOR } from "../tokens/color"
+import { FONT_FAMILY } from "../tokens/typo"
 
 export const GlobalStyle = createGlobalStyle`
   body {
@@ -14,8 +15,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-      monospace;
+    font-family: ${FONT_FAMILY.MONO};
   }
 
   body,

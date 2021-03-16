@@ -25,6 +25,7 @@ export enum ETypo {
 export const FONT_FAMILY = {
   HEADING: "DM Sans, sans-serif",
   BODY: "DM Sans, sans-serif",
+  MONO: "JetBrains Mono, monospace",
 }
 
 export const TYPO = {
