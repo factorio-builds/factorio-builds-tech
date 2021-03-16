@@ -4,6 +4,7 @@ import { ETypo } from "../../../design/tokens/typo"
 
 export const ButtonWrapper = styled.button`
   ${getTypo(ETypo.BUTTON)};
+  text-decoration: none;
   display: flex;
   padding: 0;
   color: #fff;

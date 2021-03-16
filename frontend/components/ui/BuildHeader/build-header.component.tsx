@@ -80,6 +80,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
               <FavoriteButton build={props.build} size="small" />
               <Link href={props.payload.data?._links.raw.href || ""} passHref>
                 <Button
+                  as="a"
                   variant="default"
                   size="small"
                   disabled={!props.payload.data}
@@ -93,6 +94,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
                 passHref
               >
                 <Button
+                  as="a"
                   variant="default"
                   size="small"
                   disabled={!props.payload.data}
