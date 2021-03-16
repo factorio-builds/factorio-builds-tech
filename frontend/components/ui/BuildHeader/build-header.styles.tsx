@@ -7,7 +7,7 @@ export const SubHeader = styled.div`
   background: #333642;
   padding: 20px 0;
   font-family: ${FONT_FAMILY.MONO};
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: -0.025em;
   margin-bottom: 10px;
 `
