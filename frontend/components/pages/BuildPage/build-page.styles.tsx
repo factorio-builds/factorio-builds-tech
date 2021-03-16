@@ -8,6 +8,7 @@ import Stacker from "../../ui/Stacker"
 
 export const BuildImage = styled.div`
   border: 8px solid ${COLOR.CARD};
+  width: 100%;
 
   img {
     display: block;
@@ -15,9 +16,34 @@ export const BuildImage = styled.div`
   }
 `
 
+export const ZoomedImage = styled.div`
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid ${COLOR.FADEDBLUE300};
+
+  ${BuildImage} {
+    border: none;
+    margin: 8px 0;
+  }
+`
+
+export const GlowWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: ${COLOR.CARD};
+
+  svg {
+    opacity: 0.85;
+    width: 100%;
+  }
+`
+
 export const ImageWrapper = styled.div`
   cursor: zoom-in;
-  max-height: 100vh;
 
   .is-zoomed & {
     cursor: zoom-out;
@@ -111,8 +137,7 @@ export const TabsAside = styled.aside`
   margin-left: 16px;
 
   .is-zoomed & {
-    order: -1;
-    width: 100%;
+    opacity: 0;
   }
 `
 

@@ -13,6 +13,7 @@ import Layout from "../../ui/Layout"
 import Links from "../../ui/Links"
 import Stacker from "../../ui/Stacker"
 import * as SC from "./build-page.styles"
+import Glow from "./glow.component"
 import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
 import BlueprintStringTab from "./tabs/blueprint-string-tab.component"
 import BlueprintsTab from "./tabs/blueprints-tab.component"
@@ -46,6 +47,7 @@ interface ITabsProps {
   current?: string
   tabs: ITab[]
   payload: TPayload
+  before?: React.ReactElement
   aside: React.ReactElement
   isZoomedIn: boolean
 }
@@ -99,6 +101,8 @@ const Tabs = (props: ITabsProps): JSX.Element => {
           </SC.TabsItems>
         </Container>
       </SC.TabsInnerWrapper>
+
+      {props.before}
 
       <Container direction="column" size="medium">
         <SC.TabsContent>
@@ -192,6 +196,24 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
     }
   }, [build.latest_version.hash, payload.data])
 
+  const buildImage = (
+    <SC.BuildImage>
+      {build._links.cover ? (
+        <SC.ImageWrapper role="button" onClick={toggleZoomedImage}>
+          <Image
+            src={build._links.cover.href}
+            alt=""
+            width={build._links.cover.width}
+            height={build._links.cover.height}
+            layout="responsive"
+          />
+        </SC.ImageWrapper>
+      ) : (
+        "No image"
+      )}
+    </SC.BuildImage>
+  )
+
   return (
     <Layout title={build.title}>
       <BuildHeader build={build} payload={payload} />
@@ -202,6 +224,18 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
         tabs={tabs}
         payload={payload}
         isZoomedIn={zoomedImage}
+        before={
+          zoomedImage ? (
+            <SC.ZoomedImage>
+              <Container size="medium">
+                {buildImage}
+                <SC.GlowWrapper>
+                  <Glow color1="blue" color2="green" color3="red" />
+                </SC.GlowWrapper>
+              </Container>
+            </SC.ZoomedImage>
+          ) : undefined
+        }
         aside={
           <Stacker orientation="vertical" gutter={16}>
             {build._links.edit && (
@@ -209,21 +243,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
                 <SC.EditBuild>{"edit build"}</SC.EditBuild>
               </Link>
             )}
-            <SC.BuildImage>
-              {build._links.cover ? (
-                <SC.ImageWrapper role="button" onClick={toggleZoomedImage}>
-                  <Image
-                    src={build._links.cover.href}
-                    alt=""
-                    width={build._links.cover.width}
-                    height={build._links.cover.height}
-                    layout="responsive"
-                  />
-                </SC.ImageWrapper>
-              ) : (
-                "No image"
-              )}
-            </SC.BuildImage>
+            {!zoomedImage && buildImage}
           </Stacker>
         }
       />
