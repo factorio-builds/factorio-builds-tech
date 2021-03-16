@@ -94,7 +94,7 @@ const Tabs = (props: ITabsProps): JSX.Element => {
                 )
               }
 
-              return <Tab />
+              return <Tab key={tab.label} />
             })}
           </SC.TabsItems>
         </Container>
