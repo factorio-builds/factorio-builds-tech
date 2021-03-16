@@ -1,12 +1,12 @@
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
-import { ETypo } from "../../../design/tokens/typo"
+import { ETypo, FONT_FAMILY } from "../../../design/tokens/typo"
 
 export const SubHeader = styled.div`
   background: #333642;
   padding: 20px 0;
-  font-family: monospace;
+  font-family: ${FONT_FAMILY.MONO};
   font-size: 18px;
   letter-spacing: -0.025em;
   margin-bottom: 10px;
