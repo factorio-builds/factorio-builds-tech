@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
+import { SSRProvider } from "@react-aria/ssr"
 import { withApplicationInsights } from "next-applicationinsights"
 import type { AppContext, AppProps } from "next/app"
 import getConfig from "next/config"
@@ -55,7 +56,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <MediaContextProvider>
-          <Component {...pageProps} />
+          <SSRProvider>
+            <Component {...pageProps} />
+          </SSRProvider>
         </MediaContextProvider>
       </ThemeProvider>
     </>
