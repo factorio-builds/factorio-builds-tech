@@ -1,3 +1,5 @@
+import { useRef } from "react"
+import { useRadioGroup, useRadio } from "@react-aria/radio"
 import cx from "classnames"
 import * as SC from "./radio.styles"
 
@@ -20,6 +22,16 @@ const Radio: React.FC<IRadioProps> = ({
   onChange,
   inline,
 }) => {
+  // const state = React.useContext(RadioContext)
+  const ref = useRef<HTMLInputElement>(null)
+  const { inputProps } = useRadio(
+    props,
+    {
+      name: value,
+    },
+    ref
+  )
+
   return (
     <SC.RadioWrapper className={cx({ "is-checked": checked })}>
       <SC.HiddenRadio
@@ -28,6 +40,7 @@ const Radio: React.FC<IRadioProps> = ({
         value={value}
         checked={checked}
         onChange={onChange}
+        ref={ref}
       />
       <SC.Label htmlFor={id} className={cx({ "is-inline": inline })}>
         {checked}
