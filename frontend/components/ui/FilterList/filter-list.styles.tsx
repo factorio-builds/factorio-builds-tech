@@ -12,13 +12,6 @@ export const Title = styled.div`
   margin-bottom: 8px;
 `
 
-export const Separator = styled.div`
-  margin: 16px 0;
-  width: 100%;
-  height: 1px;
-  background: #402e5b;
-`
-
 export const FilterGroup = styled.div`
   padding: 4px 20px 4px 0;
   margin-right: -20px;

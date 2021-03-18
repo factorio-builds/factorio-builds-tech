@@ -9,32 +9,6 @@ export const ImageUploadWrapper = styled.div`
   flex-direction: column;
 `
 
-export const TopRow = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-// TODO: extract
-export const Label = styled.label`
-  ${getTypo(ETypo.FORM_LABEL)};
-  color: ${COLOR.FADEDBLUE900};
-`
-
-export const SwapImage = styled.button`
-  margin-left: auto;
-  background: none;
-  border: none;
-  padding: 0;
-  color: ${COLOR.BLUE500};
-  border-bottom: 1px solid ${COLOR.BLUE500};
-  cursor: pointer;
-
-  &:hover {
-    color: ${COLOR.BLUE700};
-    border-bottom-color: ${COLOR.BLUE700};
-  }
-`
-
 export const UploadZone = styled.div`
   position: relative;
   display: flex;

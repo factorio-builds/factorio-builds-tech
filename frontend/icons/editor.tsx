@@ -1,7 +1,7 @@
 import * as React from "react"
 import { COLOR } from "../design/tokens/color"
 
-interface IEditorProps {
+interface IEditorProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
@@ -11,11 +11,11 @@ const Editor = ({
 }: IEditorProps): JSX.Element => {
   return (
     <svg
-      {...restProps}
       width="9"
       height="9"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...restProps}
     >
       <path
         d="M3 8H2v1h1V8zM7 8H6v1h1V8zM9 8H8v1h1V8zM5 8H4v1h1V8zM9 6H8v1h1V6z"

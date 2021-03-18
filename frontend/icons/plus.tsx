@@ -1,14 +1,11 @@
 import React from "react"
 
-interface IPlusProps {
+interface IPlusProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
-export const Plus: React.FC<IPlusProps> = ({
-  color = "#000",
-  ...restProps
-}) => (
-  <svg {...restProps} fill="none" viewBox="0 0 96 100">
+const Plus = ({ color = "#000", ...restProps }: IPlusProps): JSX.Element => (
+  <svg fill="none" viewBox="0 0 96 100" {...restProps}>
     <path
       stroke={color}
       strokeLinecap="round"
@@ -24,3 +21,5 @@ export const Plus: React.FC<IPlusProps> = ({
     />
   </svg>
 )
+
+export default Plus

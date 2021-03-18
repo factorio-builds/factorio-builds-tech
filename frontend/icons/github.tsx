@@ -2,7 +2,7 @@ import * as React from "react"
 import { useUID } from "react-uid"
 import { COLOR } from "../design/tokens/color"
 
-interface IGithubProps {
+interface IGithubProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
@@ -15,11 +15,11 @@ const GitHub = ({
 
   return (
     <svg
-      {...restProps}
       width="16"
       height="16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...restProps}
     >
       <g clipPath={`url(#${id})`}>
         <path

@@ -83,16 +83,6 @@ export const Expand = styled.button`
   }
 `
 
-export const Category = styled.div`
-  ${getTypo(ETypo.METADATA)};
-  color: #a392b5;
-  text-transform: lowercase;
-
-  ${BlueprintItemWrapper}:hover & {
-    color: ${lighten(0.05, "#a392b5")};
-  }
-`
-
 export const Expanded = styled.div``
 
 export const Description = styled.p`

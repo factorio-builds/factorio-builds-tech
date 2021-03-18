@@ -2,7 +2,7 @@ import * as React from "react"
 import { useUID } from "react-uid"
 import { COLOR } from "../design/tokens/color"
 
-interface IRawProps {
+interface IRawProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
@@ -15,11 +15,11 @@ const Raw = ({
 
   return (
     <svg
-      {...restProps}
       width="10"
       height="10"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...restProps}
     >
       <g clipPath={`url(#${id})`} fill={color}>
         <path d="M7.932.182h-6.5C.782.182.25.672.25 1.272V8.91C.25 9.51.782 10 1.432 10h6.5c.65 0 1.182-.49 1.182-1.09V1.272c0-.6-.532-1.091-1.182-1.091zm0 8.727h-6.5V1.273h6.5v7.636z" />

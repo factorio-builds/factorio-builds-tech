@@ -188,18 +188,6 @@ const validation = {
   version: Yup.mixed().nullable(),
 }
 
-// TODO: validate image
-export const validate = (fieldName: keyof IFormValues) => async (
-  value: string
-): Promise<any> => {
-  try {
-    await validation[fieldName].validate(value)
-    return
-  } catch (err) {
-    return err.message
-  }
-}
-
 const toFormDataInner = (
   request: ICreateBuildRequest | ICreateVersionRequest | IEditBuildRequest
 ) => {

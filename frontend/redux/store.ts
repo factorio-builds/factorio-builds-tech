@@ -34,7 +34,7 @@ type TAction =
   | TLayoutAction
   | TSearchAction
 
-export const makeStore: MakeStore<IStoreState, TAction> = () => {
+const makeStore: MakeStore<IStoreState, TAction> = () => {
   const combinedReducer = combineReducers({
     ...reducers,
   })

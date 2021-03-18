@@ -5,7 +5,7 @@ export interface IStoreLayoutState {
   sidebar: boolean
 }
 
-export const initialLayoutState: IStoreLayoutState = {
+const initialLayoutState: IStoreLayoutState = {
   sidebar: false,
 }
 
