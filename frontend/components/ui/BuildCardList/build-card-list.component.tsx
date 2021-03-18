@@ -50,7 +50,8 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
     items,
     colCount,
     containerWidth,
-    colGutter
+    colGutter,
+    100 // extra wiggle room to account for card information
   )
 
   return (
