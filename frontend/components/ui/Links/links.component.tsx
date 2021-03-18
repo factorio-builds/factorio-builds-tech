@@ -19,7 +19,7 @@ const Links = (props: ILinksProps): JSX.Element => {
           <GitHub /> GitHub
         </SC.StyledLink>
       </Link>
-      <Link href="/about">
+      <Link href="/about" passHref>
         <SC.StyledLink>
           {props.orientation === "vertical" && <Line />}
           About
