@@ -15,7 +15,6 @@ interface IBuildCardProps {
   isBook: boolean
   categories: IThinBuild["tags"]
   image: IThinBuild["_links"]["cover"]
-  // TODO: switch to IThinBuild["_links"]["self"]
   link: string
   tabIndex: number
 }

@@ -103,13 +103,11 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
                     }
                     data-slug={slug}
                     title={item.title}
-                    // TODO: probably switch to categories later
                     categories={item.tags}
                     icons={item.icons}
                     // TODO: fill isBook once reimplemented
                     isBook={false}
                     image={item._links.cover}
-                    // TODO: switch to IThinBuild["_links"]["self"]
                     link={slug}
                   />
                 </SC.Item>
