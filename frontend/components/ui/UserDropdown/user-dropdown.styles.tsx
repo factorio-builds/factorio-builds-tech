@@ -72,6 +72,6 @@ export const InnerLink = styled.div`
   text-decoration: none;
 `
 
-export const InnerLinkLogOff = styled(InnerLink)`
+export const InnerLinkLogOff = styled(InnerLink as any)`
   color: ${COLOR.DANGER};
 `
