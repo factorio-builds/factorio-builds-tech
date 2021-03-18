@@ -14,6 +14,7 @@ interface IFormikInputProps extends FieldProps {
   size: "small" | "large"
   required?: boolean
   spellCheck?: boolean
+  readOnly?: boolean
   inline?: boolean
   validFeedback?: string
   onKeyPress?: (

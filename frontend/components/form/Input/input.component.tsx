@@ -31,6 +31,7 @@ const Text: React.FC<ITextProps> = ({
   customPrefix,
   icon,
   spellCheck,
+  readOnly,
   onChange,
   onKeyPress,
   ...restProps
@@ -56,6 +57,7 @@ const Text: React.FC<ITextProps> = ({
         value={value}
         placeholder={placeholder}
         spellCheck={spellCheck}
+        readOnly={readOnly}
         onChange={onChange}
         onKeyPress={onKeyPress}
         onFocus={setFocus}
@@ -71,6 +73,7 @@ const Textarea: React.FC<ITextareaProps> = ({
   value,
   placeholder,
   spellCheck,
+  readOnly,
   ...restProps
 }) => {
   return (
@@ -81,6 +84,7 @@ const Textarea: React.FC<ITextareaProps> = ({
       value={value}
       placeholder={placeholder}
       spellCheck={spellCheck}
+      readOnly={readOnly}
       onChange={restProps.onChange}
       onKeyPress={restProps.onKeyPress}
     />

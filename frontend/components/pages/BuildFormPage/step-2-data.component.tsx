@@ -20,6 +20,7 @@ interface ICollapsableGroupProps {
 
 interface IStep2DataProps {
   formikProps: FormikProps<IFormValues>
+  type: "CREATE" | "EDIT"
 }
 
 const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
@@ -92,6 +93,7 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
         type="text"
         required
         component={Input}
+        readOnly={props.type === "EDIT"}
         prefix={<>{user?.username} /</>}
       />
 
