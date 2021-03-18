@@ -11,19 +11,6 @@ export const BuildListSortWrapper = styled.div`
   text-align: right;
 `
 
-export const Option = styled.div`
-  cursor: pointer;
-
-  &:hover {
-    color: ${COLOR.FADEDBLUE900};
-  }
-
-  &.is-active {
-    font-weight: 700;
-    text-decoration: underline;
-  }
-`
-
 export const SortDropdownWapper = styled.div`
   position: relative;
   margin-left: 4px;
