@@ -97,6 +97,12 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
         prefix={<>{user?.username} /</>}
       />
 
+      <SC.InputHint>
+        {props.type === "CREATE"
+          ? "Be mindful of your slug, as it cannot be edited at the moment."
+          : "The slug cannot be edited at the moment."}
+      </SC.InputHint>
+
       <Field
         name="description"
         label="Description"

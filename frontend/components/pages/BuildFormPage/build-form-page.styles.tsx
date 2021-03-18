@@ -115,6 +115,14 @@ export const PageFeedback = styled(Stacker)`
   }
 `
 
+export const InputHint = styled.div`
+  margin-top: 8px !important;
+  background: linear-gradient(90deg, #2b4564 0%, #333642 100%);
+  color: ${COLOR.FADEDBLUE900};
+  padding: 10px 14px;
+  border-radius: 5px;
+`
+
 export const RenderedCovers = styled.div``
 
 export const SelectRenderButton = styled(Button)`
