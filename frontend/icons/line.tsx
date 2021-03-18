@@ -1,14 +1,14 @@
 import * as React from "react"
 import { COLOR } from "../design/tokens/color"
 
-interface ILineProps {
+interface ILineProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
-export const Line: React.FC<ILineProps> = ({
+export const Line = ({
   color = COLOR.FADEDBLUE900,
   ...restProps
-}) => (
+}: ILineProps): JSX.Element => (
   <svg
     {...restProps}
     xmlns="http://www.w3.org/2000/svg"
