@@ -1,67 +1,77 @@
 import styled from "styled-components"
+import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
+import { ETypo } from "../../../design/tokens/typo"
 import Stacker from "../Stacker"
 
-export const DropdownWrapper = styled.div`
-  height: 38px;
-  user-select: none;
-`
-
-export const Dropdown = styled.div`
-  position: relative;
-  background: ${COLOR.HEADER};
-  margin-left: -12px;
-  margin-top: -2px;
-  border: 2px solid transparent;
-  border-radius: 10px;
-  padding: 10px 17px;
-
-  .is-open & {
-    border-color: ${COLOR.FADEDBLUE500};
-  }
-`
-
-const StyledStacker = (props: any) => (
-  <Stacker {...props} orientation="horizontal" gutter={10} />
-)
-
-export const User = styled(StyledStacker)`
+export const MenuTrigger = styled.button`
+  ${getTypo(ETypo.BUTTON)};
   display: flex;
   align-items: center;
+  background: linear-gradient(180deg, #333742, #272b33);
+  color: ${COLOR.FADEDBLUE900};
+  height: 38px;
+  padding: 0 11px 0 9px;
+  border-radius: 5px;
+  border: 1px solid ${COLOR.FADEDBLUE500};
+  border: none;
   cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(180deg, #2f323a, #23262b);
+  }
 
   svg path {
     fill: ${COLOR.FADEDBLUE500};
   }
 `
 
-export const DropdownContent = styled.div`
-  display: none;
-  margin: 8px 0 4px;
-  flex-direction: column;
-  text-align: right;
-  align-items: flex-end;
+export const InnerMenuTrigger = styled(Stacker)`
+  display: flex;
+  align-items: center;
+`
 
-  .is-open & {
-    display: flex;
+export const StyledMenuButton = styled.div`
+  position: relative;
+  display: inline-block;
+`
+
+export const StyledMenuPopup = styled.ul`
+  box-sizing: border-box;
+  list-style: none;
+  min-width: 100%;
+  position: absolute;
+  right: 0;
+  border-radius: 5px;
+  margin: 4px 0 0 0;
+  border: 1px solid ${COLOR.FADEDBLUE500};
+  border: 1px solid #454854;
+  padding: 6px 0;
+  background: ${COLOR.HEADER};
+  overflow: hidden;
+`
+
+export const StyledMenuItem = styled.li`
+  color: ${COLOR.FADEDBLUE900};
+  padding: 6px 9px;
+  outline: none;
+  cursor: pointer;
+  text-align: right;
+
+  &:hover,
+  &.is-focused {
+    background: ${COLOR.FADEDBLUE300};
+    background: linear-gradient(180deg, #333742, #272b33);
   }
 `
 
-export const Spacer = styled.div`
-  width: 100%;
-  border-top: 1px solid ${COLOR.FADEDBLUE300};
-  margin: 8px 0;
-`
-
-export const InnerLink = styled.a`
+export const InnerLink = styled.div`
   display: inline-block;
   cursor: pointer;
   color: ${COLOR.FADEDBLUE900};
-
-  &:hover {
-    text-decoration: underline;
-  }
+  text-decoration: none;
 `
+
 export const InnerLinkLogOff = styled(InnerLink)`
   color: ${COLOR.DANGER};
 `
