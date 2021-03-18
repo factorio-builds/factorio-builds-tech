@@ -189,7 +189,7 @@ const validation = {
 }
 
 // TODO: validate image
-export const validate = (fieldName: keyof IFormValues) => async (
+const validate = (fieldName: keyof IFormValues) => async (
   value: string
 ): Promise<any> => {
   try {

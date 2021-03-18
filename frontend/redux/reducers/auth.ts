@@ -6,7 +6,7 @@ export interface IStoreAuthState {
   user: IStoreUser | null
 }
 
-export const initialAuthState: IStoreAuthState = {
+const initialAuthState: IStoreAuthState = {
   user: null,
 }
 

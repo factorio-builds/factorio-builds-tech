@@ -4,10 +4,7 @@ interface IPlusProps {
   color?: string
 }
 
-export const Plus: React.FC<IPlusProps> = ({
-  color = "#000",
-  ...restProps
-}) => (
+const Plus: React.FC<IPlusProps> = ({ color = "#000", ...restProps }) => (
   <svg {...restProps} fill="none" viewBox="0 0 96 100">
     <path
       stroke={color}
@@ -24,3 +21,5 @@ export const Plus: React.FC<IPlusProps> = ({
     />
   </svg>
 )
+
+export default Plus

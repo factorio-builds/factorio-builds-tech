@@ -1,7 +1,7 @@
 import React from "react"
 import * as SC from "./tooltip.styles"
 
-export interface ITooltipProps {
+interface ITooltipProps {
   content: JSX.Element | React.ReactText
 }
 
