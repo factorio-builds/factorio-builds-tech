@@ -371,6 +371,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                     formikProps={formikProps}
                     payloadData={payloadData}
                     submitStatus={submit}
+                    type={props.type}
                   />
                 )}
               </Form>

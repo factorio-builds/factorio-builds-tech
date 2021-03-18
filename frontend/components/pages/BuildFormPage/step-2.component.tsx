@@ -16,6 +16,7 @@ export interface IStep2Props {
   formikProps: FormikProps<IFormValues>
   submitStatus: { loading: boolean; error: boolean | string }
   payloadData: IFullPayload
+  type: "CREATE" | "EDIT"
 }
 
 const Step2: React.FC<IStep2Props> = (props) => {
@@ -60,7 +61,9 @@ const Step2: React.FC<IStep2Props> = (props) => {
           goToPage={setPage}
         />
 
-        {page === "data" && <Step2Data formikProps={props.formikProps} />}
+        {page === "data" && (
+          <Step2Data formikProps={props.formikProps} type={props.type} />
+        )}
         {page === "cover" && (
           <Step2Cover
             formikProps={props.formikProps}
