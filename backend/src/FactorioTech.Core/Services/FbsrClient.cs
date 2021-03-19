@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -41,6 +42,9 @@ namespace FactorioTech.Core.Services
 
         public async Task<Stream> FetchRendering(string blueprint)
         {
+            _logger.LogInformation("Fetching rendering from FBSR at {FbsrUrl}", _appConfig.FbsrWrapperUri);
+
+            var sw = Stopwatch.StartNew();
             var response = await _httpClient.PostAsJsonAsync(_appConfig.FbsrWrapperUri, new RenderRequest
             {
                 Blueprint = blueprint,
@@ -52,13 +56,15 @@ namespace FactorioTech.Core.Services
             if (!response.IsSuccessStatusCode)
             {
                 var problem = await response.Content.ReadAsStringAsync();
-                _logger.LogError("Error response from fbsr-wrapper {StatusCode} {Problem}", response.StatusCode, problem);
-                throw new Exception($"Error response from fbsr-wrapper: {response.StatusCode}");
+                _logger.LogError("Error response from FBSR {StatusCode} {Problem}", response.StatusCode, problem);
+                throw new Exception($"Error response from FBSR: {response.StatusCode}");
             }
 
             var rendering = await response.Content.ReadAsStreamAsync();
             if (rendering.Length == 0)
-                throw new Exception("Fetched 0 bytes from fbsr-wrapper");
+                throw new Exception("Fetched 0 bytes from FBSR");
+
+            _logger.LogInformation("Request to FBSR completed successfully in {Elapsed}", sw.Elapsed);
 
             return rendering;
         }

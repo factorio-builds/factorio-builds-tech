@@ -100,7 +100,9 @@ namespace FactorioTech.Core.Services
 
                 try
                 {
-                    return File.Exists(fqfn) ? new FileStream(fqfn, FileMode.Open, FileAccess.Read) : null;
+                    return File.Exists(fqfn)
+                        ? new FileStream(fqfn, FileMode.Open, FileAccess.Read)
+                        : null;
                 }
                 catch (Exception ex)
                 {
@@ -118,8 +120,12 @@ namespace FactorioTech.Core.Services
                 case RenderingType.Full:
                     var payload = await _dbContext.Payloads.AsNoTracking()
                         .FirstOrDefaultAsync(x => x.Hash == hash);
+
                     if (payload == null)
+                    {
+                        _logger.LogWarning("Payload for {Hash} not found");
                         return null;
+                    }
 
                     await SaveRenderingFull(payload);
                     break;
@@ -141,6 +147,8 @@ namespace FactorioTech.Core.Services
 
         public async Task SaveRenderingFull(Payload payload)
         {
+            _logger.LogInformation("Creating rendering for {Hash}", payload.Hash);
+
             var imageFqfn = GetRenderingFqfn(payload.Hash, RenderingType.Full);
             if (File.Exists(imageFqfn))
             {
@@ -177,16 +185,18 @@ namespace FactorioTech.Core.Services
                     throw new Exception($"Wrote 0 bytes to {imageFqfn}");
 
                 _logger.LogInformation("Saved rendering {Type} for {Hash}: {Width}x{Height} - {FileSize} bytes",
-                    "Full", payload.Hash, image.Width, image.Height, fileSize);
+                    RenderingType.Full, payload.Hash, image.Width, image.Height, fileSize);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to fetch or save blueprint rendering{Type} for {Hash}", "Full", payload.Hash);
+                _logger.LogError(ex, "Failed to fetch or save blueprint rendering {Type} for {Hash}",
+                    RenderingType.Full, payload.Hash);
 
                 if (File.Exists(imageFqfn))
                 {
                     File.Delete(imageFqfn);
-                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", "Full", payload.Hash);
+                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}",
+                        RenderingType.Full, payload.Hash);
                 }
             }
         }
