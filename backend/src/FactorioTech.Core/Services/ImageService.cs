@@ -123,7 +123,7 @@ namespace FactorioTech.Core.Services
 
                     if (payload == null)
                     {
-                        _logger.LogWarning("Payload for {Hash} not found");
+                        _logger.LogWarning("Payload for {Hash} not found", hash);
                         return null;
                     }
 
