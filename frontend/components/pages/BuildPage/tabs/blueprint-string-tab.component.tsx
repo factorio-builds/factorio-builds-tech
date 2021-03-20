@@ -1,6 +1,6 @@
 import React from "react"
-import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
+import { TTabComponent } from "../tabs.component"
 import Tab from "./tab.component"
 
 const BlueprintStringTab: TTabComponent = (props) => {

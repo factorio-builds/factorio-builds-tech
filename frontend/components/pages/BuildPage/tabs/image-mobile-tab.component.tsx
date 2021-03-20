@@ -1,7 +1,7 @@
 import React from "react"
-import { TTabComponent } from "../build-page.component"
-import * as SC from "../build-page.styles"
 import Image from "next/image"
+import * as SC from "../build-page.styles"
+import { TTabComponent } from "../tabs.component"
 import Tab from "./tab.component"
 
 const ImageMobileTab: TTabComponent = (props) => {
