@@ -1,7 +1,7 @@
 import React from "react"
 import { isBook } from "../../../../utils/build"
 import BlueprintRequiredItems from "../../../ui/BlueprintRequiredItems"
-import { TTabComponent } from "../build-page.component"
+import { TTabComponent } from "../tabs.component"
 import Tab from "./tab.component"
 
 const RequiredItemsTab: TTabComponent = (props) => {

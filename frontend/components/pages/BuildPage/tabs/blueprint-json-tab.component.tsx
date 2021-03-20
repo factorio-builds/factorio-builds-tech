@@ -1,7 +1,7 @@
 import React from "react"
 import { decodeBlueprint } from "../../../../utils/blueprint"
-import { TTabComponent } from "../build-page.component"
 import * as SC from "../build-page.styles"
+import { TTabComponent } from "../tabs.component"
 import Tab from "./tab.component"
 
 const BlueprintJsonTab: TTabComponent = (props) => {

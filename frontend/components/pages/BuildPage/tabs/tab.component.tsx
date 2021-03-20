@@ -1,8 +1,8 @@
 import React from "react"
 import cx from "classnames"
 import isEqual from "lodash/isEqual"
-import { ITabComponentProps } from "../build-page.component"
 import * as SC from "../build-page.styles"
+import { ITabComponentProps } from "../tabs.component"
 
 const Tab: React.FC<ITabComponentProps> = (props) => {
   return (
