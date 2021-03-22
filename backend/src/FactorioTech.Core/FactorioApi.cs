@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -6,18 +7,14 @@ namespace FactorioTech.Core
 {
     public static class FactorioApi
     {
-        public interface IBlueprint
-        {
-            ulong Version { get; }
-            string Item { get; }
-        }
-
-        public interface IItem
+        // ReSharper disable MemberHidesStaticFromOuterClass
+        // ReSharper disable once InconsistentNaming
+        public interface Item
         {
             string Name { get; }
         }
 
-        public sealed class BlueprintEnvelope : IBlueprint
+        public sealed class BlueprintEnvelope
         {
             [JsonPropertyName("blueprint"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public Blueprint? Blueprint { get; init; }
@@ -25,35 +22,43 @@ namespace FactorioTech.Core
             [JsonPropertyName("blueprint_book"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public BlueprintBook? BlueprintBook { get; init; }
 
+            [JsonPropertyName("deconstruction_planner"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            public DeconstructionPlanner? DeconstructionPlanner { get; init; }
+
+            [JsonPropertyName("upgrade_planner"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            public UpgradePlanner? UpgradePlanner { get; init; }
+
             [JsonPropertyName("index"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public int? Index { get; init; }
-
-            [JsonIgnore]
-            public string Item => Blueprint?.Item ?? BlueprintBook?.Item ?? string.Empty;
-
-            [JsonIgnore]
-            public string? Label => Blueprint?.Label ?? BlueprintBook?.Label ?? null;
-
-            [JsonIgnore]
-            public string? Description => Blueprint?.Description ?? BlueprintBook?.Description ?? null;
-
-            [JsonIgnore]
-            public IEnumerable<Icon>? Icons => Blueprint?.Icons ?? BlueprintBook?.Icons ?? null;
-
-            [JsonIgnore]
-            public ulong Version => Blueprint?.Version ?? BlueprintBook?.Version ?? 0;
+            public int? Index { get; set; }
 
             [JsonExtensionData]
             public Dictionary<string, object>? ExtensionData { get; init; }
+
+            [JsonIgnore]
+            public BlueprintEntity Entity =>
+                Blueprint as BlueprintEntity
+                ?? BlueprintBook as BlueprintEntity
+                ?? DeconstructionPlanner as BlueprintEntity
+                ?? UpgradePlanner as BlueprintEntity
+                ?? throw new Exception("Envelope has no entity");
+
+            public BlueprintEnvelope CloneAsTopLevel() => Entity switch
+            {
+                Blueprint e => new BlueprintEnvelope { Blueprint = e },
+                BlueprintBook e => new BlueprintEnvelope { BlueprintBook = e },
+                DeconstructionPlanner e => new BlueprintEnvelope { DeconstructionPlanner = e },
+                UpgradePlanner e => new BlueprintEnvelope { UpgradePlanner = e },
+                _ => throw new Exception($"Invalid entity type: {Entity.Item} / {Entity.GetType()}"),
+            };
         }
 
-        public sealed class BlueprintBook : IBlueprint
+        public abstract class BlueprintEntity
         {
+            [JsonPropertyName("item")]
+            public abstract string Item { get; init; }
+
             [JsonPropertyName("version")]
             public ulong Version { get; init; }
-
-            [JsonPropertyName("item")]
-            public string Item { get; init; } = "blueprint-book";
 
             [JsonPropertyName("label"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string? Label { get; init; }
@@ -64,39 +69,54 @@ namespace FactorioTech.Core
             [JsonPropertyName("icons"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public IEnumerable<Icon>? Icons { get; init; }
 
-            [JsonPropertyName("blueprints"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public IEnumerable<BlueprintEnvelope>? Blueprints { get; init; }
-
             [JsonExtensionData]
             public Dictionary<string, object>? ExtensionData { get; init; }
+        }
+
+        public sealed class BlueprintBook : BlueprintEntity
+        {
+            [JsonPropertyName("item")]
+            public override string Item { get; init; } = "blueprint-book";
+
+            [JsonPropertyName("blueprints"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            public IEnumerable<BlueprintEnvelope>? Blueprints { get; init; }
         }
 
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Blueprint_object
         /// </summary>
-        public sealed class Blueprint : IBlueprint
+        public sealed class Blueprint : BlueprintEntity
         {
-            [JsonPropertyName("version")]
-            public ulong Version { get; init; }
-
             [JsonPropertyName("item")]
-            public string Item { get; init; } = "blueprint";
+            public override string Item { get; init; } = "blueprint";
 
             [JsonPropertyName("entities")]
             public IEnumerable<Entity> Entities { get; init; } = Enumerable.Empty<Entity>();
 
             [JsonPropertyName("tiles")]
             public IEnumerable<Tile> Tiles { get; init; } = Enumerable.Empty<Tile>();
+        }
 
-            [JsonPropertyName("label"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public string? Label { get; init; }
+        public sealed class DeconstructionPlanner : BlueprintEntity
+        {
+            [JsonPropertyName("item")]
+            public override string Item { get; init; } = "deconstruction-planner";
 
-            [JsonPropertyName("description"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public string? Description { get; init; }
+            [JsonPropertyName("settings")]
+            public PlannerSettings Settings { get; init; } = new();
+        }
 
-            [JsonPropertyName("icons"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public IEnumerable<Icon>? Icons { get; init; }
+        public sealed class UpgradePlanner : BlueprintEntity
+        {
+            [JsonPropertyName("item")]
+            public override string Item { get; init; } = "upgrade-planner";
 
+            [JsonPropertyName("settings")]
+            public PlannerSettings Settings { get; init; } = new();
+        }
+
+        public class PlannerSettings
+        {
             [JsonExtensionData]
             public Dictionary<string, object>? ExtensionData { get; init; }
         }
@@ -104,7 +124,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Entity_object
         /// </summary>
-        public sealed class Entity : IItem
+        public sealed class Entity : Item
         {
             /// <summary>
             /// Prototype name of the entity (e.g. "offshore-pump").
@@ -125,7 +145,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#Tile_object
         /// </summary>
-        public sealed class Tile : IItem
+        public sealed class Tile : Item
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;
@@ -155,7 +175,7 @@ namespace FactorioTech.Core
         /// <summary>
         /// https://wiki.factorio.com/Blueprint_string_format#SignalID_object
         /// </summary>
-        public sealed class SignalId : IItem
+        public sealed class SignalId : Item
         {
             [JsonPropertyName("name")]
             public string Name { get; init; } = string.Empty;

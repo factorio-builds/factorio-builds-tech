@@ -9,5 +9,11 @@ namespace FactorioTech.Core.Domain
 
         [EnumMember(Value = "blueprint-book")]
         Book,
+
+        [EnumMember(Value = "deconstruction-planner")]
+        DeconstructionPlanner,
+
+        [EnumMember(Value = "upgrade-planner")]
+        UpgradePlanner,
     }
 }

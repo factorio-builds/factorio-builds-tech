@@ -47,6 +47,8 @@ namespace FactorioTech.Core.Services
                 "" => PayloadType.Blueprint, // todo: this seems fishy?
                 "blueprint" => PayloadType.Blueprint,
                 "blueprint-book" => PayloadType.Book,
+                "deconstruction-planner" => PayloadType.DeconstructionPlanner,
+                "upgrade-planner" => PayloadType.UpgradePlanner,
                 _ => throw new ArgumentException($"Invalid blueprint type: {item}", nameof(item)),
             };
 
@@ -74,6 +76,8 @@ namespace FactorioTech.Core.Services
                 {
                     { Blueprint: not null } envelope => envelope,
                     { BlueprintBook: not null } envelope => envelope,
+                    { DeconstructionPlanner: not null } envelope => envelope,
+                    { UpgradePlanner: not null } envelope => envelope,
                     _ => throw new Exception("Failed to deserialize blueprint."),
                 };
 
@@ -89,20 +93,12 @@ namespace FactorioTech.Core.Services
             }
         }
 
-        public async Task<string> Encode(FactorioApi.IBlueprint blueprint)
+        public async Task<string> Encode(FactorioApi.BlueprintEnvelope envelope)
         {
-            var envelope = blueprint switch
-            {
-                FactorioApi.Blueprint bp => new FactorioApi.BlueprintEnvelope { Blueprint = bp },
-                FactorioApi.BlueprintBook bb => new FactorioApi.BlueprintEnvelope { BlueprintBook = bb },
-                FactorioApi.BlueprintEnvelope e => e,
-                _ => throw new ArgumentOutOfRangeException(nameof(blueprint), blueprint.GetType(), null),
-            };
-
             await using var json = new MemoryStream();
-            await JsonSerializer.SerializeAsync(json, envelope, JsonSerializerOptions);
-            json.Seek(0, SeekOrigin.Begin);
+            await JsonSerializer.SerializeAsync(json, envelope.CloneAsTopLevel(), JsonSerializerOptions);
 
+            json.Seek(0, SeekOrigin.Begin);
 #if DEBUG
             // set a breakpoint here and manually step into the if block to debug the json
             if (!json.CanRead)

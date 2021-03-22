@@ -23,7 +23,7 @@ namespace FactorioTech.Core
                   .Select(i => new GameIcon(Enum.Parse<IconType>(i.Signal.Type, true), i.Signal.Name))
             ?? Enumerable.Empty<GameIcon>();
 
-        public static IReadOnlyDictionary<string, int> ToItemStats(this IEnumerable<FactorioApi.IItem>? items) =>
+        public static IReadOnlyDictionary<string, int> ToItemStats(this IEnumerable<FactorioApi.Item>? items) =>
             items?.GroupBy(e => e.Name)
                   .OrderByDescending(g => g.Count())
                   .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Count())
