@@ -1,3 +1,4 @@
+using FactorioTech.Core;
 using FactorioTech.Core.Services;
 using FactorioTech.Tests.Helpers;
 using FluentAssertions;
@@ -38,10 +39,10 @@ namespace FactorioTech.Tests
                 config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
             result.BlueprintBook.Should().BeNull();
 
-            result.Item.Should().Be(TestData.SimpleBlueprint.Item);
-            result.Label.Should().Be(TestData.SimpleBlueprint.Label);
-            result.Description.Should().Be(TestData.SimpleBlueprint.Description);
-            result.Icons.Should().BeEquivalentTo(TestData.SimpleBlueprint.Icons);
+            result.Entity.Item.Should().Be(TestData.SimpleBlueprint.Item);
+            result.Entity.Label.Should().Be(TestData.SimpleBlueprint.Label);
+            result.Entity.Description.Should().Be(TestData.SimpleBlueprint.Description);
+            result.Entity.Icons.Should().BeEquivalentTo(TestData.SimpleBlueprint.Icons);
         }
 
         [Fact]
@@ -55,10 +56,10 @@ namespace FactorioTech.Tests
             result.BlueprintBook.Should().BeEquivalentTo(TestData.SimpleBook, config =>
                 config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
 
-            result.Item.Should().Be(TestData.SimpleBook.Item);
-            result.Label.Should().Be(TestData.SimpleBook.Label);
-            result.Description.Should().Be(TestData.SimpleBook.Description);
-            result.Icons.Should().BeEquivalentTo(TestData.SimpleBook.Icons);
+            result.Entity.Item.Should().Be(TestData.SimpleBook.Item);
+            result.Entity.Label.Should().Be(TestData.SimpleBook.Label);
+            result.Entity.Description.Should().Be(TestData.SimpleBook.Description);
+            result.Entity.Icons.Should().BeEquivalentTo(TestData.SimpleBook.Icons);
         }
 
         [Fact]
@@ -72,10 +73,10 @@ namespace FactorioTech.Tests
             result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook, config =>
                 config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
 
-            result.Item.Should().Be(TestData.AdvancedBook.Item);
-            result.Label.Should().Be(TestData.AdvancedBook.Label);
-            result.Description.Should().Be(TestData.AdvancedBook.Description);
-            result.Icons.Should().BeEquivalentTo(TestData.AdvancedBook.Icons);
+            result.Entity.Item.Should().Be(TestData.AdvancedBook.Item);
+            result.Entity.Label.Should().Be(TestData.AdvancedBook.Label);
+            result.Entity.Description.Should().Be(TestData.AdvancedBook.Description);
+            result.Entity.Icons.Should().BeEquivalentTo(TestData.AdvancedBook.Icons);
         }
 
         [Fact]
@@ -83,7 +84,11 @@ namespace FactorioTech.Tests
         public async Task SimpleBlueprintIsEncoded()
         {
             var converter = new BlueprintConverter();
-            var encoded = await converter.Encode(TestData.SimpleBlueprint);
+            var encoded = await converter.Encode(new FactorioApi.BlueprintEnvelope
+            {
+                Blueprint = TestData.SimpleBlueprint,
+            });
+
             _output.WriteLine($"Encoded blueprint string:\n{encoded}");
 
             var allowance = (uint)Math.Floor(TestData.SimpleBlueprintEncoded.Length * 0.05);
@@ -99,7 +104,11 @@ namespace FactorioTech.Tests
         public async Task SimpleBlueprintBookIsEncoded()
         {
             var converter = new BlueprintConverter();
-            var encoded = await converter.Encode(TestData.SimpleBook);
+            var encoded = await converter.Encode(new FactorioApi.BlueprintEnvelope
+            {
+                BlueprintBook = TestData.SimpleBook,
+            });
+
             _output.WriteLine($"Encoded blueprint string:\n{encoded}");
 
             var allowance = (uint)Math.Floor(TestData.SimpleBookEncoded.Length * 0.05);
@@ -115,7 +124,11 @@ namespace FactorioTech.Tests
         public async Task AdvancedBlueprintBookIsEncoded()
         {
             var converter = new BlueprintConverter();
-            var encoded = await converter.Encode(TestData.AdvancedBook);
+            var encoded = await converter.Encode(new FactorioApi.BlueprintEnvelope
+            {
+                BlueprintBook = TestData.AdvancedBook,
+            });
+
             _output.WriteLine($"Encoded blueprint string:\n{encoded}");
 
             var allowance = (uint)Math.Floor(TestData.AdvancedBookEncoded.Length * 0.05);
@@ -124,6 +137,28 @@ namespace FactorioTech.Tests
             var result = await converter.Decode(encoded);
             result.BlueprintBook.Should().BeEquivalentTo(TestData.AdvancedBook, config =>
                 config.Excluding(x => x.CompileTimeType == typeof(Dictionary<string, object>)));
+        }
+
+        [Fact]
+        [Trait("Type", "Fast")]
+        public async Task EnvelopeIsEncodedWithoutIndex()
+        {
+            var converter = new BlueprintConverter();
+            var envelope = await converter.Decode(TestData.SolarBook);
+
+            envelope.Index.Should().BeNull();
+
+            foreach (var blueprint in envelope.BlueprintBook!.Blueprints!)
+            {
+                blueprint.Index.Should().NotBeNull();
+                blueprint.Entity.Label.Should().NotBeNull();
+
+                var encoded = await converter.Encode(blueprint);
+                var decoded = await converter.Decode(encoded);
+
+                decoded.Index.Should().BeNull();
+                decoded.Entity.Label.Should().Be(blueprint.Entity.Label);
+            }
         }
     }
 }

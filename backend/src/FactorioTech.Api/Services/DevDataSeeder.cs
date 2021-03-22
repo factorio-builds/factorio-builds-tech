@@ -154,8 +154,8 @@ namespace FactorioTech.Api.Services
 
                 var payload = new Payload(
                     Hash.Compute(blueprint.Encoded),
-                    _blueprintConverter.ParseType(envelope.Item),
-                    _blueprintConverter.DecodeGameVersion(envelope.Version),
+                    _blueprintConverter.ParseType(envelope.Entity.Item),
+                    _blueprintConverter.DecodeGameVersion(envelope.Entity.Version),
                     blueprint.Encoded);
 
                 var cache = new PayloadCache();
@@ -175,7 +175,7 @@ namespace FactorioTech.Api.Services
                     blueprint.Title,
                     blueprint.Description,
                     tags.Any() ? tags : GetSomeRandomTags(),
-                    (payload.Hash, null, null, envelope.Icons.ToGameIcons()),
+                    (payload.Hash, null, null, envelope.Entity.Icons.ToGameIcons()),
                     null);
 
                 var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]

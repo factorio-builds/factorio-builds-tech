@@ -102,6 +102,32 @@ namespace FactorioTech.Api.Controllers
         }
 
         /// <summary>
+        /// Get the decoded json body of a blueprint
+        /// </summary>
+        /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
+        /// <response code="200" type="application/json">The decoded json body</response>
+        /// <response code="400" type="application/json">The request is malformed or invalid</response>
+        /// <response code="404" type="application/json">The requested payload does not exist</response>
+        [HttpGet("{hash}/json")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+        [ResponseCache(Duration = OneMonthInSeconds, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> GetJson([Required]Hash hash)
+        {
+            var encoded = await _dbContext.Payloads.AsNoTracking()
+                .Where(v => v.Hash == hash)
+                .Select(v => v.Encoded)
+                .FirstOrDefaultAsync();
+
+            if (encoded == null)
+                return NotFound();
+
+            var envelope = await _blueprintConverter.Decode(encoded);
+            return Ok(envelope);
+        }
+
+        /// <summary>
         /// Get the rendering for this payload in the specified type
         /// </summary>
         /// <param name="hash" example="f8283ab0085a7e31c0ad3c43db36ae87">The hash of the desired payload</param>
@@ -156,8 +182,8 @@ namespace FactorioTech.Api.Controllers
             var hash = Hash.Compute(request.Encoded);
             var payload = new Payload(
                 hash,
-                _blueprintConverter.ParseType(envelope.Item),
-                _blueprintConverter.DecodeGameVersion(envelope.Version),
+                _blueprintConverter.ParseType(envelope.Entity.Item),
+                _blueprintConverter.DecodeGameVersion(envelope.Entity.Version),
                 request.Encoded);
 
             var cache = new PayloadCache();
@@ -169,7 +195,7 @@ namespace FactorioTech.Api.Controllers
             return Ok(new CreatePayloadResult
             {
                 Payload = payload.ToViewModel(Url, envelope, cache),
-                ExtractedSlug = await _slugService.Validate(TryValidateModel, envelope.Label?.ToSlug(), User.GetUserId()),
+                ExtractedSlug = await _slugService.Validate(TryValidateModel, envelope.Entity.Label?.ToSlug(), User.GetUserId()),
             });
         }
 

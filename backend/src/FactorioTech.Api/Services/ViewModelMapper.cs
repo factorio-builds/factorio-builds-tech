@@ -120,9 +120,9 @@ namespace FactorioTech.Api.Services
                 Type = payload.Type,
                 GameVersion = payload.GameVersion,
                 Encoded = payload.Encoded,
-                Label = envelope.Label,
-                Description = envelope.Description,
-                Icons = envelope.Icons.ToGameIcons(),
+                Label = envelope.Entity.Label,
+                Description = envelope.Entity.Description,
+                Icons = envelope.Entity.Icons.ToGameIcons(),
                 Entities = envelope.Blueprint?.Entities.ToItemStats() ?? throw new ArgumentNullException(nameof(envelope.Blueprint)),
                 Tiles = envelope.Blueprint?.Tiles.ToItemStats() ?? throw new ArgumentNullException(nameof(envelope.Blueprint)),
             };
@@ -136,9 +136,9 @@ namespace FactorioTech.Api.Services
                 Type = payload.Type,
                 GameVersion = payload.GameVersion,
                 Encoded = payload.Encoded,
-                Label = envelope.Label,
-                Description = envelope.Description,
-                Icons = envelope.Icons.ToGameIcons(),
+                Label = envelope.Entity.Label,
+                Description = envelope.Entity.Description,
+                Icons = envelope.Entity.Icons.ToGameIcons(),
                 Children = payloadGraph != null ? MapChildren(urlHelper, envelope, payloadGraph) : null,
             };
 
