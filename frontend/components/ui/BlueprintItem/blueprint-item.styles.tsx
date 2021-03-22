@@ -45,6 +45,11 @@ export const Content = styled.div`
   }
 `
 
+export const Buttons = styled.div`
+  margin-top: 16px;
+  display: flex;
+`
+
 export const Info = styled.div`
   display: flex;
   gap: 16px;

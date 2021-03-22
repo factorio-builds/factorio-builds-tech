@@ -3,7 +3,6 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
-import { ButtonWrapper } from "../../ui/Button/button.styles"
 import Stacker from "../../ui/Stacker"
 
 export const BuildImage = styled.div`
@@ -182,12 +181,6 @@ export const TabWrapper = styled.div`
 
   & > :last-child {
     margin-bottom: 0;
-  }
-
-  // TODO: remove, temporary
-  & ${ButtonWrapper} {
-    align-self: flex-start;
-    margin-bottom: 16px;
   }
 
   &.is-active {
