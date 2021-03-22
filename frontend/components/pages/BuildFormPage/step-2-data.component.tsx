@@ -15,7 +15,7 @@ import * as SC from "./build-form-page.styles"
 interface ICollapsableGroupProps {
   group: string
   groupTags: string[]
-  isCollapsable: (tags: string[]) => boolean
+  selectedTags: (tags: string[]) => string[]
 }
 
 interface IStep2DataProps {
@@ -28,51 +28,52 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
     () => props.groupTags.map((tag) => `/${props.group}/${tag}`),
     [props.groupTags]
   )
-  const isCollapsable = props.isCollapsable(groupsToTags)
+  const selectedTags = props.selectedTags(groupsToTags)
 
   const [collapsed, setCollapsed] = useState(true)
 
   const expand = useCallback(() => {
-    if (isCollapsable) {
-      setCollapsed((prevCollapsed) => !prevCollapsed)
-    }
-  }, [collapsed, isCollapsable])
+    setCollapsed((prevCollapsed) => !prevCollapsed)
+  }, [collapsed])
 
   return (
-    <InputGroup
-      key={props.group}
-      legend={
-        <SC.GroupTitle type="button" onClick={expand}>
-          <Caret inverted={collapsed} />
-          {startCase(props.group)}
-        </SC.GroupTitle>
-      }
-    >
-      {!(collapsed && isCollapsable) && (
-        <Stacker gutter={4}>
-          {props.groupTags.map((tag) => {
-            return (
-              <Field
-                key={tag}
-                name="tags"
-                label={tag}
-                type="checkbox"
-                value={`/${props.group}/${tag}`}
-                component={Input}
-              />
-            )
-          })}
-        </Stacker>
-      )}
-    </InputGroup>
+    <SC.CollapsableGroupWrapper>
+      <InputGroup
+        key={props.group}
+        legend={
+          <SC.GroupTitle type="button" onClick={expand}>
+            <Caret inverted={collapsed} />
+            {startCase(props.group)}
+            <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
+          </SC.GroupTitle>
+        }
+      >
+        {!collapsed && (
+          <Stacker gutter={4}>
+            {props.groupTags.map((tag) => {
+              return (
+                <Field
+                  key={tag}
+                  name="tags"
+                  label={tag}
+                  type="checkbox"
+                  value={`/${props.group}/${tag}`}
+                  component={Input}
+                />
+              )
+            })}
+          </Stacker>
+        )}
+      </InputGroup>
+    </SC.CollapsableGroupWrapper>
   )
 }
 
 const Step2Data: React.FC<IStep2DataProps> = (props) => {
   const user = useSelector((state: IStoreState) => state.auth.user)
-  const isCollapsable = useCallback(
+  const selectedTags = useCallback(
     (tags: string[]) => {
-      return !tags.some((tag) => props.formikProps.values.tags.includes(tag))
+      return props.formikProps.values.tags.filter((tag) => tags.includes(tag))
     },
     [props.formikProps.values.tags]
   )
@@ -127,7 +128,7 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
                 key={tagCategory}
                 group={tagCategory}
                 groupTags={tagGroup}
-                isCollapsable={isCollapsable}
+                selectedTags={selectedTags}
               />
             )
           })}

@@ -13,7 +13,7 @@ const Caret = ({
 }: ICaretProps): JSX.Element => {
   return (
     <svg
-      style={{ transform: inverted ? "rotate(180deg)" : undefined }}
+      style={{ transform: inverted ? "scaleY(-1)" : undefined }}
       width="11"
       height="11"
       viewBox="0 0 11 11"
