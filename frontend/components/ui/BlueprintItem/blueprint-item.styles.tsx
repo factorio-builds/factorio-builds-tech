@@ -18,6 +18,14 @@ export const BlueprintItemInner = styled.div``
 
 export const ImageWrapper = styled.div`
   width: 200px;
+
+  img {
+    cursor: zoom-in;
+  }
+
+  img.is-zoomed {
+    cursor: zoom-out;
+  }
 `
 
 export const SpinnerWrapper = styled.div`
@@ -48,6 +56,15 @@ export const Content = styled.div`
 export const Buttons = styled.div`
   margin-top: 16px;
   display: flex;
+`
+
+export const ZoomedImage = styled.div`
+  margin-top: 16px;
+
+  ${ImageWrapper},
+  img {
+    width: 100%;
+  }
 `
 
 export const Info = styled.div`
