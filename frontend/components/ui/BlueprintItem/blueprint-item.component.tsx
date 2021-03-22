@@ -1,4 +1,6 @@
 import React, { useCallback, useState } from "react"
+import { useToggle } from "react-use"
+import { usePress } from "@react-aria/interactions"
 import cx from "classnames"
 import Link from "next/link"
 import useImage from "../../../hooks/useImage"
@@ -44,7 +46,11 @@ type IBlueprintItemProps =
 
 function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
   const [expanded, setExpanded] = useState(false)
+  const [zoomedImage, toggleZoomedImage] = useToggle(false)
   const { loaded: imageIsLoaded } = useImage(props.image?.href)
+  const { pressProps } = usePress({
+    onPress: toggleZoomedImage,
+  })
 
   const title = props.title || "[unnamed]"
 
@@ -80,6 +86,30 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
         return `${d.count} ${singleOrPlural}`
       })
       .join(" & ")}`
+  }
+
+  const renderImage = () => {
+    if (!props.image) {
+      return null
+    }
+
+    return (
+      <SC.ImageWrapper>
+        {imageIsLoaded ? (
+          <img
+            {...pressProps}
+            className={cx({ "is-zoomed": zoomedImage })}
+            src={props.image.href}
+            alt=""
+            width={200}
+          />
+        ) : (
+          <SC.SpinnerWrapper>
+            <Spinner />
+          </SC.SpinnerWrapper>
+        )}
+      </SC.ImageWrapper>
+    )
   }
 
   return (
@@ -123,18 +153,11 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   </Link>
                 )}
               </SC.Buttons>
+              {props.image && zoomedImage && (
+                <SC.ZoomedImage>{renderImage()}</SC.ZoomedImage>
+              )}
               <SC.Info>
-                {props.image && (
-                  <SC.ImageWrapper>
-                    {imageIsLoaded ? (
-                      <img src={props.image.href} alt="" width={200} />
-                    ) : (
-                      <SC.SpinnerWrapper>
-                        <Spinner />
-                      </SC.SpinnerWrapper>
-                    )}
-                  </SC.ImageWrapper>
-                )}
+                {props.image && !zoomedImage && renderImage()}
                 <SC.InnerContent orientation="vertical" gutter={16}>
                   {props.description && (
                     <SC.Description>
