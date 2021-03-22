@@ -26,6 +26,12 @@ export const TextButton = styled.button`
   }
 `
 
+export const CollapsableGroupWrapper = styled.div`
+  background: ${COLOR.INPUT};
+  border-radius: 6px;
+  padding: 10px;
+`
+
 export const GroupTitle = styled.button`
   padding: 0;
   margin: 0;
@@ -37,10 +43,29 @@ export const GroupTitle = styled.button`
   position: relative;
   display: flex;
   align-items: center;
+  font-size: 16px;
 
   svg {
-    margin-right: 12px;
+    margin-left: 3px;
+    margin-right: 15px;
   }
+
+  svg path {
+    fill: ${COLOR.FADEDBLUE500};
+  }
+`
+
+export const GroupCount = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(90deg, #2b4564 0%, #333642 100%);
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 8px;
 `
 
 export const CoverWrapper = styled.div`
