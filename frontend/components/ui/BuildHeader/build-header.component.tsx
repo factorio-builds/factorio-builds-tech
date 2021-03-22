@@ -89,20 +89,22 @@ function Buildheader(props: IBuildheader): JSX.Element {
                   Raw
                 </Button>
               </Link>
-              <Link
-                href={`https://fbe.teoxoy.com/?source=${props.payload.data?._links.raw.href}`}
-                passHref
-              >
-                <Button
-                  as="a"
-                  variant="default"
-                  size="small"
-                  disabled={!props.payload.data}
+              {props.build.latest_type === "blueprint" && (
+                <Link
+                  href={`https://fbe.teoxoy.com/?source=${props.payload.data?._links.raw.href}`}
+                  passHref
                 >
-                  <Editor />
-                  View in editor
-                </Button>
-              </Link>
+                  <Button
+                    as="a"
+                    variant="default"
+                    size="small"
+                    disabled={!props.payload.data}
+                  >
+                    <Editor />
+                    View in editor
+                  </Button>
+                </Link>
+              )}
               <CopyStringToClipboard
                 toCopy={props.build.latest_version.payload.encoded}
                 variant="cta"

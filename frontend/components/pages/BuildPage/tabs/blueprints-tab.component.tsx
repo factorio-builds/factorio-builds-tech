@@ -39,6 +39,7 @@ const BlueprintsTab: TTabComponent = (props) => {
                   icons={bp.icons}
                   description={bp.description}
                   image={bp._links?.rendering_thumb}
+                  raw={bp._links?.raw}
                   entities={bp.entities}
                   tiles={bp.tiles}
                 />

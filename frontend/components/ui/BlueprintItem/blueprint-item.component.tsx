@@ -1,11 +1,14 @@
 import React, { useCallback, useState } from "react"
 import cx from "classnames"
+import Link from "next/link"
 import useImage from "../../../hooks/useImage"
 import Caret from "../../../icons/caret"
+import Editor from "../../../icons/editor"
 import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { countEntities, isBook } from "../../../utils/build"
 import BlueprintRequiredItems from "../BlueprintRequiredItems"
 import BuildIcon from "../BuildIcon"
+import Button from "../Button"
 import Spinner from "../Spinner"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
@@ -32,6 +35,7 @@ interface IBlueprintItemPropsBlueprint extends IBaseBlueprintItemProps {
   tiles: IBlueprintPayload["tiles"]
   children?: React.ReactNode
   highlighted?: boolean
+  raw?: IFullPayload["_links"]["raw"]
 }
 
 type IBlueprintItemProps =
@@ -105,41 +109,56 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
             )}
           </SC.Title>
           {expanded && (props.image || props.description) && (
-            <SC.Info>
-              {props.image && (
-                <SC.ImageWrapper>
-                  {imageIsLoaded ? (
-                    <img src={props.image.href} alt="" width={200} />
-                  ) : (
-                    <SC.SpinnerWrapper>
-                      <Spinner />
-                    </SC.SpinnerWrapper>
+            <>
+              <SC.Buttons>
+                {!props.isBook && props.raw && (
+                  <Link
+                    href={`https://fbe.teoxoy.com/?source=${props.raw.href}`}
+                    passHref
+                  >
+                    <Button as="a" variant="default" size="small">
+                      <Editor />
+                      View in editor
+                    </Button>
+                  </Link>
+                )}
+              </SC.Buttons>
+              <SC.Info>
+                {props.image && (
+                  <SC.ImageWrapper>
+                    {imageIsLoaded ? (
+                      <img src={props.image.href} alt="" width={200} />
+                    ) : (
+                      <SC.SpinnerWrapper>
+                        <Spinner />
+                      </SC.SpinnerWrapper>
+                    )}
+                  </SC.ImageWrapper>
+                )}
+                <SC.InnerContent orientation="vertical" gutter={16}>
+                  {props.description && (
+                    <SC.Description>
+                      {props.description.split("\n").map((text) => (
+                        <>
+                          {text}
+                          <br />
+                        </>
+                      ))}
+                    </SC.Description>
                   )}
-                </SC.ImageWrapper>
-              )}
-              <SC.InnerContent orientation="vertical" gutter={16}>
-                {props.description && (
-                  <SC.Description>
-                    {props.description.split("\n").map((text) => (
-                      <>
-                        {text}
-                        <br />
-                      </>
-                    ))}
-                  </SC.Description>
-                )}
-                {!props.isBook && (props.entities || props.tiles) && (
-                  <SC.RequiredItems>
-                    <SC.Subtitle>Required items</SC.Subtitle>
-                    <BlueprintRequiredItems
-                      entities={props.entities}
-                      tiles={props.tiles}
-                    />
-                  </SC.RequiredItems>
-                )}
-                {props.children}
-              </SC.InnerContent>
-            </SC.Info>
+                  {!props.isBook && (props.entities || props.tiles) && (
+                    <SC.RequiredItems>
+                      <SC.Subtitle>Required items</SC.Subtitle>
+                      <BlueprintRequiredItems
+                        entities={props.entities}
+                        tiles={props.tiles}
+                      />
+                    </SC.RequiredItems>
+                  )}
+                  {props.children}
+                </SC.InnerContent>
+              </SC.Info>
+            </>
           )}
         </SC.Content>
       </SC.BlueprintItemInner>
@@ -171,6 +190,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   icons={node.icons}
                   description={node.description}
                   image={node._links.rendering_thumb}
+                  raw={node._links.raw}
                   entities={node.entities}
                   tiles={node.tiles}
                 />
