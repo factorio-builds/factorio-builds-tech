@@ -6,11 +6,13 @@ import Link from "next/link"
 import useImage from "../../../hooks/useImage"
 import Caret from "../../../icons/caret"
 import Editor from "../../../icons/editor"
+import Raw from "../../../icons/raw"
 import { IBlueprintPayload, IFullPayload } from "../../../types/models"
 import { countEntities, isBook } from "../../../utils/build"
 import BlueprintRequiredItems from "../BlueprintRequiredItems"
 import BuildIcon from "../BuildIcon"
 import Button from "../Button"
+import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.component"
 import Spinner from "../Spinner"
 import Stacker from "../Stacker"
 import WithIcons from "../WithIcons"
@@ -38,6 +40,7 @@ interface IBlueprintItemPropsBlueprint extends IBaseBlueprintItemProps {
   children?: React.ReactNode
   highlighted?: boolean
   raw?: IFullPayload["_links"]["raw"]
+  encoded?: IFullPayload["encoded"]
 }
 
 type IBlueprintItemProps =
@@ -140,19 +143,36 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
           </SC.Title>
           {expanded && (props.image || props.description) && (
             <>
-              <SC.Buttons>
-                {!props.isBook && props.raw && (
-                  <Link
-                    href={`https://fbe.teoxoy.com/?source=${props.raw.href}`}
-                    passHref
-                  >
-                    <Button as="a" variant="default" size="small">
-                      <Editor />
-                      View in editor
-                    </Button>
-                  </Link>
-                )}
-              </SC.Buttons>
+              {!props.isBook && (props.raw || props.encoded) && (
+                <SC.Buttons>
+                  {!props.isBook && props.raw && (
+                    <Link href={props.raw.href} passHref>
+                      <Button as="a" variant="default" size="small">
+                        <Raw />
+                        Raw
+                      </Button>
+                    </Link>
+                  )}
+                  {!props.isBook && props.raw && (
+                    <Link
+                      href={`https://fbe.teoxoy.com/?source=${props.raw.href}`}
+                      passHref
+                    >
+                      <Button as="a" variant="default" size="small">
+                        <Editor />
+                        View in editor
+                      </Button>
+                    </Link>
+                  )}
+                  {!props.isBook && props.encoded && (
+                    <CopyStringToClipboard
+                      toCopy={props.encoded}
+                      variant="cta"
+                      size="small"
+                    />
+                  )}
+                </SC.Buttons>
+              )}
               {props.image && zoomedImage && (
                 <SC.ZoomedImage>{renderImage()}</SC.ZoomedImage>
               )}
@@ -214,6 +234,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   description={node.description}
                   image={node._links.rendering_thumb}
                   raw={node._links.raw}
+                  encoded={node.encoded}
                   entities={node.entities}
                   tiles={node.tiles}
                 />

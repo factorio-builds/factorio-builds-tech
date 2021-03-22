@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import { ButtonWrapper } from "../Button/button.styles"
 import Stacker from "../Stacker"
 
 export const BlueprintItemWrapper = styled.div<{ depth: number }>`
@@ -54,8 +55,12 @@ export const Content = styled.div`
 `
 
 export const Buttons = styled.div`
-  margin-top: 16px;
   display: flex;
+  margin: 16px -4px 0;
+
+  ${ButtonWrapper} {
+    margin: 4px;
+  }
 `
 
 export const ZoomedImage = styled.div`
