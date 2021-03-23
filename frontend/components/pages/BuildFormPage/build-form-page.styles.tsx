@@ -3,7 +3,6 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
-import Button from "../../ui/Button"
 import Stacker from "../../ui/Stacker"
 
 export const Content = styled.div``
@@ -149,11 +148,6 @@ export const InputHint = styled.div`
 `
 
 export const RenderedCovers = styled.div``
-
-export const SelectRenderButton = styled(Button)`
-  margin-top: 8px;
-  align-self: flex-end;
-`
 
 export const Rendered = styled.div`
   border-radius: 4px;

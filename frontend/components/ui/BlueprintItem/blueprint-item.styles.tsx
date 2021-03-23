@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import Button from "../Button"
 import { ButtonWrapper } from "../Button/button.styles"
 import Stacker from "../Stacker"
 
@@ -12,7 +13,7 @@ export const BlueprintItemWrapper = styled.div<{ depth: number }>`
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
-  margin-left: ${(props) => props.depth * 40}px;
+  margin-left: ${(props) => (props.depth > 0 ? 40 : 0)}px;
 `
 
 export const BlueprintItemInner = styled.div``
@@ -104,6 +105,7 @@ export const Expand = styled.button`
   color: ${COLOR.LINK};
   margin-left: auto !important;
   cursor: pointer;
+  flex: 0 0 auto;
 
   &:hover {
     color: ${lighten(0.05, COLOR.LINK)};
@@ -129,4 +131,9 @@ export const Subtitle = styled.h3`
   ${getTypo(ETypo.METADATA_TITLE)};
   font-size: 16px;
   margin-top: 0;
+`
+
+export const SelectRenderButton = styled(Button)`
+  margin-top: 8px;
+  align-self: flex-end;
 `
