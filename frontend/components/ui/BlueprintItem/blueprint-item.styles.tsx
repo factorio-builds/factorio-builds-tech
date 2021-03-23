@@ -13,7 +13,7 @@ export const BlueprintItemWrapper = styled.div<{ depth: number }>`
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
-  margin-left: ${(props) => props.depth * 40}px;
+  margin-left: ${(props) => (props.depth > 0 ? 40 : 0)}px;
 `
 
 export const BlueprintItemInner = styled.div``
