@@ -148,36 +148,38 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
           </SC.Title>
           {expanded && (props.image || props.description) && (
             <>
-              {!props.isBook && (props.raw || props.encoded) && (
-                <SC.Buttons>
-                  {!props.isBook && props.raw && (
-                    <Link href={props.raw.href} passHref>
-                      <Button as="a" variant="default" size="small">
-                        <Raw />
-                        Raw
-                      </Button>
-                    </Link>
-                  )}
-                  {!props.isBook && props.raw && (
-                    <Link
-                      href={`https://fbe.teoxoy.com/?source=${props.raw.href}`}
-                      passHref
-                    >
-                      <Button as="a" variant="default" size="small">
-                        <Editor />
-                        View in editor
-                      </Button>
-                    </Link>
-                  )}
-                  {!props.isBook && props.encoded && (
-                    <CopyStringToClipboard
-                      toCopy={props.encoded}
-                      variant="cta"
-                      size="small"
-                    />
-                  )}
-                </SC.Buttons>
-              )}
+              {!props.isBook &&
+                bpItemExplorer.type === "readOnly" &&
+                (props.raw || props.encoded) && (
+                  <SC.Buttons>
+                    {!props.isBook && props.raw && (
+                      <Link href={props.raw.href} passHref>
+                        <Button as="a" variant="default" size="small">
+                          <Raw />
+                          Raw
+                        </Button>
+                      </Link>
+                    )}
+                    {!props.isBook && props.raw && (
+                      <Link
+                        href={`https://fbe.teoxoy.com/?source=${props.raw.href}`}
+                        passHref
+                      >
+                        <Button as="a" variant="default" size="small">
+                          <Editor />
+                          View in editor
+                        </Button>
+                      </Link>
+                    )}
+                    {!props.isBook && props.encoded && (
+                      <CopyStringToClipboard
+                        toCopy={props.encoded}
+                        variant="cta"
+                        size="small"
+                      />
+                    )}
+                  </SC.Buttons>
+                )}
               {props.image && zoomedImage && (
                 <SC.ZoomedImage>{renderImage()}</SC.ZoomedImage>
               )}
