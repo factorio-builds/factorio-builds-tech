@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import Button from "../Button"
 import { ButtonWrapper } from "../Button/button.styles"
 import Stacker from "../Stacker"
 
@@ -129,4 +130,9 @@ export const Subtitle = styled.h3`
   ${getTypo(ETypo.METADATA_TITLE)};
   font-size: 16px;
   margin-top: 0;
+`
+
+export const SelectRenderButton = styled(Button)`
+  margin-top: 8px;
+  align-self: flex-end;
 `

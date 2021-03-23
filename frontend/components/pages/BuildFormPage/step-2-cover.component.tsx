@@ -1,10 +1,10 @@
-import React, { useCallback } from "react"
+import React from "react"
 import { FormikProps } from "formik"
-import { IBlueprintPayload, IFullPayload } from "../../../types/models"
+import { IFullPayload } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import ErrorMessage from "../../form/ErrorMessage"
 import Radio from "../../form/Radio"
-import BlueprintItem from "../../ui/BlueprintItem"
+import BlueprintItemExplorer from "../../ui/BlueprintItemExplorer"
 import ImageUpload from "../../ui/ImageUpload"
 import { IImageUpload } from "../../ui/ImageUpload/image-upload.component"
 import Stacker from "../../ui/Stacker"
@@ -27,15 +27,13 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
     props.formikProps.setFieldTouched("cover.file")
   }
 
-  function selectRenderedCover(e: React.MouseEvent, bp: IBlueprintPayload) {
+  function selectRenderedCover(
+    e: React.MouseEvent,
+    hash: IFullPayload["hash"]
+  ) {
     e.stopPropagation()
-    props.formikProps.setFieldValue("cover.hash", bp.hash)
+    props.formikProps.setFieldValue("cover.hash", hash)
   }
-
-  const coverIsSelected = useCallback(
-    (hash: string) => props.formikProps.values.cover.hash === hash,
-    [props.formikProps.values.cover.hash]
-  )
 
   return (
     <Stacker orientation="vertical" gutter={16}>
@@ -91,47 +89,13 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
           <SC.RenderedCovers>
             {isBook(props.payloadData) ? (
               <div>
-                {props.payloadData.children.map((bp) => {
-                  if (isBook(bp)) {
-                    return (
-                      <BlueprintItem
-                        key={bp.hash}
-                        depth={0}
-                        isBook={true}
-                        title={bp.label}
-                        icons={bp.icons}
-                        description={bp.description}
-                        image={bp._links?.rendering_thumb}
-                        nodes={bp.children}
-                      />
-                    )
-                  }
-
-                  return (
-                    <BlueprintItem
-                      key={bp.hash}
-                      depth={0}
-                      isBook={false}
-                      title={bp.label}
-                      icons={bp.icons}
-                      description={bp.description}
-                      image={bp._links?.rendering_thumb}
-                      entities={bp.entities}
-                      tiles={bp.tiles}
-                      highlighted={coverIsSelected(bp.hash)}
-                    >
-                      <SC.SelectRenderButton
-                        variant="alt"
-                        type="button"
-                        onClick={(e) => {
-                          selectRenderedCover(e, bp)
-                        }}
-                      >
-                        Select render
-                      </SC.SelectRenderButton>
-                    </BlueprintItem>
-                  )
-                })}
+                <BlueprintItemExplorer
+                  type="selectable"
+                  onSelect={selectRenderedCover}
+                  selectedHash={props.formikProps.values.cover.hash}
+                >
+                  {props.payloadData.children}
+                </BlueprintItemExplorer>
               </div>
             ) : (
               <SC.Rendered>
