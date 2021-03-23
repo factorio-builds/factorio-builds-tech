@@ -105,6 +105,7 @@ export const Expand = styled.button`
   color: ${COLOR.LINK};
   margin-left: auto !important;
   cursor: pointer;
+  flex: 0 0 auto;
 
   &:hover {
     color: ${lighten(0.05, COLOR.LINK)};
