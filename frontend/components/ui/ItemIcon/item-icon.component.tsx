@@ -14,6 +14,7 @@ const ItemIcon: React.FC<IItemIconProps> = (props) => {
   return (
     <SC.ItemIconWrapper
       {...props}
+      data-testid="item-icon"
       src={`${publicRuntimeConfig.cdnUrl}/icon/64/${props.type}/${props.name}.png`}
     />
   )
