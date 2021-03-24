@@ -72,6 +72,8 @@ function BlueprintItemExplorer(
             icons={bp.icons}
             description={bp.description}
             image={bp._links?.rendering_thumb}
+            raw={bp._links?.raw}
+            encoded={bp.encoded}
             entities={bp.entities}
             tiles={bp.tiles}
           />
