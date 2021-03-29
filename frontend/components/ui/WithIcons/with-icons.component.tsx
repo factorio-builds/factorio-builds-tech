@@ -1,5 +1,6 @@
 import React from "react"
 import ItemIcon from "../ItemIcon"
+import useParseRichText from "./useParseRichText.hook"
 import * as SC from "./with-icons.styles"
 
 interface IWithIcons {
@@ -8,26 +9,19 @@ interface IWithIcons {
 }
 
 function WithIcons(props: IWithIcons): JSX.Element {
+  const parts = useParseRichText(props.input)
+
   const formatted = React.useMemo(() => {
     if (!props.input) {
       return "[unnamed]"
     }
 
-    const regex = new RegExp(/(\[item=[A-z-]+\])/, "gi")
-    const itemRegex = new RegExp(/\[item=([A-z-]+)\]/, "i")
-    const parts = props.input.split(regex).filter(Boolean)
-
     return parts.map((part, index) => {
-      if (!part.match(regex)) {
-        return <span key={index}>{part}</span>
+      if (part.type === "text") {
+        return <span key={index}>{part.value}</span>
       }
 
-      const match = part.match(itemRegex)
-      if (!match || !match[1]) {
-        return <span key={index}>{part}</span>
-      }
-
-      return <ItemIcon key={index} type="item" name={match[1]} />
+      return <ItemIcon key={index} type="item" name={part.value} />
     })
   }, [props.input])
 

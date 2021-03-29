@@ -14,7 +14,7 @@ exports[`<WithIcons /> parses a title with item icon 1`] = `
       type="item"
     />
     <span>
-       build name
+      build name
     </span>
   </span>
 </div>
@@ -34,7 +34,7 @@ exports[`<WithIcons /> parses a title with multiple item icons 1`] = `
       type="item"
     />
     <span>
-       build name 
+      build name
     </span>
     <img
       class="item-iconstyles__ItemIconWrapper-sc-16iffik-0 llnkpE"
