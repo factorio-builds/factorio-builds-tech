@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<WithIcons /> parses a title with item icon 1`] = `
+<div>
+  <span
+    class="with-iconsstyles__WithIconsWrapper-z8o2sl-0 iAJRvc"
+  >
+     
+    <img
+      class="item-iconstyles__ItemIconWrapper-sc-16iffik-0 llnkpE"
+      data-testid="item-icon"
+      name="transport-belt"
+      src="https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png"
+      type="item"
+    />
+    <span>
+      build name
+    </span>
+  </span>
+</div>
+`;
+
+exports[`<WithIcons /> parses a title with multiple item icons 1`] = `
+<div>
+  <span
+    class="with-iconsstyles__WithIconsWrapper-z8o2sl-0 iAJRvc"
+  >
+     
+    <img
+      class="item-iconstyles__ItemIconWrapper-sc-16iffik-0 llnkpE"
+      data-testid="item-icon"
+      name="transport-belt"
+      src="https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png"
+      type="item"
+    />
+    <span>
+      build name
+    </span>
+    <img
+      class="item-iconstyles__ItemIconWrapper-sc-16iffik-0 llnkpE"
+      data-testid="item-icon"
+      name="fast-transport-belt"
+      src="https://api.local.factorio.tech/assets/icon/64/item/fast-transport-belt.png"
+      type="item"
+    />
+  </span>
+</div>
+`;
