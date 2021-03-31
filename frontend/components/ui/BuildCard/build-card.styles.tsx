@@ -66,7 +66,7 @@ export const Title = styled(Stacker)`
 export const Categories = styled(Stacker)`
   margin-top: 8px;
   flex-wrap: wrap;
-  gap: 4px 8px;
+  gap: 3px;
 
   > * {
     margin: 0 !important;
@@ -75,8 +75,13 @@ export const Categories = styled(Stacker)`
 
 export const Category = styled.div`
   ${getTypo(ETypo.METADATA)};
+  font-size: 12px;
+  background: #1f2128;
   color: #9ca4c3;
   text-transform: lowercase;
+  padding: 2px 4px;
+  border: 1px solid #2d2f39;
+  border-radius: 3px;
 
   ${BuildCardWrapper}:hover & {
     color: ${lighten(0.05, "#9CA4C3")};
