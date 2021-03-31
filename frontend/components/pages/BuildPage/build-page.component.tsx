@@ -8,7 +8,6 @@ import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
 import Container from "../../ui/Container"
 import Layout from "../../ui/Layout"
-import Links from "../../ui/Links"
 import Stacker from "../../ui/Stacker"
 import * as SC from "./build-page.styles"
 import Glow from "./glow.component"
@@ -140,12 +139,6 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           </Stacker>
         }
       />
-
-      <SC.Footer>
-        <Container size="medium">
-          <Links orientation="horizontal" />
-        </Container>
-      </SC.Footer>
     </Layout>
   )
 }

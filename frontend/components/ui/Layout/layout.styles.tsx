@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { COLOR } from "../../../design/tokens/color"
 import Stacker from "../Stacker"
 
 export const BodyWrapper = styled(Stacker)`
@@ -8,6 +9,7 @@ export const BodyWrapper = styled(Stacker)`
 
 export const ContentWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   flex: 1 0 auto;
 `
 
@@ -16,7 +18,10 @@ export const Content = styled.main`
   display: flex;
   flex-direction: column;
   max-width: 100%;
-  margin-bottom: 20px;
+
+  .has-sidebar & {
+    margin-bottom: 20px;
+  }
 
   > :first-child {
     margin-top: 0;
@@ -35,4 +40,9 @@ export const Backdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+`
+
+export const Footer = styled.footer`
+  border-top: 1px solid ${COLOR.FADEDBLUE300};
+  padding: 16px 0;
 `
