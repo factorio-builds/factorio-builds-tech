@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
+    "analyze": "ANALYZE=true NODE_ENV=production next build && node scripts/bundle-size.js",
     "build": "next build",
     "dev": "next",
     "format": "prettier --write {components,design,hooks,icons,pages,redux,types,utils}/{**,**/**}/*.{yml,json,js,ts,tsx}",
