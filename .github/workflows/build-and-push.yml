@@ -170,7 +170,7 @@ jobs:
             cluster-name: ${{ secrets.AKS_CLUSTER_NAME }}
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v1.1
 
       - name: Package Helm chart
         run: |
