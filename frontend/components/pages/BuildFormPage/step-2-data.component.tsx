@@ -44,7 +44,9 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
           <SC.GroupTitle type="button" onClick={expand}>
             <Caret inverted={collapsed} />
             {startCase(props.group)}
-            <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
+            {selectedTags.length > 0 && (
+              <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
+            )}
           </SC.GroupTitle>
         }
       >
