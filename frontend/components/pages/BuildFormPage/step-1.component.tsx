@@ -82,14 +82,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
         isBook: true,
         json,
         data: getBlueprintData(json),
-        tags: json.blueprint_book.blueprints
-          .map((bp) => {
-            if (!isBlueprintItem(bp)) {
-              return []
-            }
-            return tagsFromHeuristics(bp.blueprint)
-          })
-          .reduce((acc, curr) => [...acc, ...curr], []),
+        tags: tagsFromHeuristics(json.blueprint_book),
       }
     } else {
       return {

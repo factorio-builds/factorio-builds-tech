@@ -1,4 +1,6 @@
-import { IBlueprint, IBlueprintEntity } from "../types"
+import uniq from "lodash/uniq"
+import { IBlueprint, IBlueprintBook, IBlueprintEntity } from "../types"
+import { isBlueprintItem } from "./blueprint"
 
 interface IComputedHeuristic {
   value: boolean
@@ -102,7 +104,7 @@ const LATE_GAME_ENTITIES = [
 ]
 const END_GAME_ENTITIES = ["rocket-silo"]
 
-export function tagsFromHeuristics(blueprint: IBlueprint): string[] {
+function parse(blueprint: IBlueprint): string[] {
   const tags: string[] = []
 
   // Belt tags
@@ -187,4 +189,25 @@ export function tagsFromHeuristics(blueprint: IBlueprint): string[] {
   }
 
   return tags
+}
+
+export function tagsFromHeuristics(
+  blueprintOrBook: IBlueprint | IBlueprintBook
+): string[] {
+  if (blueprintOrBook.type === "blueprint") {
+    const tags = parse(blueprintOrBook)
+
+    return uniq(tags)
+  }
+
+  const tags = blueprintOrBook.blueprints
+    .map((bp) => {
+      if (!isBlueprintItem(bp)) {
+        return []
+      }
+      return parse(bp.blueprint)
+    })
+    .reduce((acc, curr) => [...acc, ...curr], [])
+
+  return uniq(tags)
 }
