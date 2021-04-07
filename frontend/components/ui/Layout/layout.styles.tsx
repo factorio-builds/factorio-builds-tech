@@ -43,6 +43,7 @@ export const Backdrop = styled.div`
 `
 
 export const Footer = styled.footer`
+  margin-top: 20px;
   border-top: 1px solid ${COLOR.FADEDBLUE300};
   padding: 16px 0;
 `
