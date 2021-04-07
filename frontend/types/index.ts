@@ -76,11 +76,10 @@ export interface IDecodedBlueprintBookData {
 }
 
 export interface IBlueprint {
-  type: "blueprint"
+  item: "blueprint"
   icons?: Array<IBlueprintIcon>
   entities?: Array<IBlueprintEntity>
   tiles?: Array<IBlueprintTile>
-  item: string
   label: string
   description?: string
   version: number
@@ -110,7 +109,7 @@ interface IBookItemDeconstructionPlanner {
 export type TBookItem = IBookItemBlueprint | IBookItemDeconstructionPlanner
 
 export interface IBlueprintBook {
-  type: "blueprint-book"
+  item: "blueprint-book"
   blueprints: TBookItem[]
   icons?: Array<IBlueprintIcon>
   label: string
