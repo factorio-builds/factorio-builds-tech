@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next"
 import Link from "next/link"
-import Layout from "../../components/ui/Layout"
+import LayoutDefault from "../../components/ui/LayoutDefault"
 import { IThinUser } from "../../types/models"
 
 interface IUsersIndexPage {
@@ -8,7 +8,7 @@ interface IUsersIndexPage {
 }
 
 const UsersIndexPage: NextPage<IUsersIndexPage> = ({ users }) => (
-  <Layout title="Users">
+  <LayoutDefault title="Users">
     <h1>Users List</h1>
     <p>You are currently on: /users</p>
     {users.map((user, index) => (
@@ -19,7 +19,7 @@ const UsersIndexPage: NextPage<IUsersIndexPage> = ({ users }) => (
         <a>Go home</a>
       </Link>
     </p>
-  </Layout>
+  </LayoutDefault>
 )
 
 export const getServerSideProps: GetServerSideProps = async () => {

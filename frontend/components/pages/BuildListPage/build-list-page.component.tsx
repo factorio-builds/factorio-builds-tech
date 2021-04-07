@@ -3,7 +3,7 @@ import { useSelector } from "react-redux"
 import { IStoreState } from "../../../redux/store"
 import BuildCardList from "../../ui/BuildCardList"
 import FilterList from "../../ui/FilterList"
-import Layout from "../../ui/Layout"
+import LayoutSidebar from "../../ui/LayoutSidebar"
 import Links from "../../ui/Links"
 import Search from "../../ui/Search"
 import Stacker from "../../ui/Stacker"
@@ -15,7 +15,7 @@ function BuildListPage(): JSX.Element {
   }))
 
   return (
-    <Layout
+    <LayoutSidebar
       sidebar={
         <Stacker gutter={32}>
           <Search />
@@ -30,7 +30,7 @@ function BuildListPage(): JSX.Element {
         totalCount={search.total_count}
         sort={sort}
       />
-    </Layout>
+    </LayoutSidebar>
   )
 }
 

@@ -1,37 +1,18 @@
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react"
+import React, { ReactNode, useEffect } from "react"
 import { useInView } from "react-intersection-observer"
-import { useDispatch, useSelector } from "react-redux"
-import { useLockBodyScroll } from "react-use"
+import { useDispatch } from "react-redux"
 import "intersection-observer"
-import cx from "classnames"
 import Head from "next/head"
-import { Media } from "../../../design/styles/media"
 import { HEADER_HEIGHT } from "../../../design/tokens/layout"
-import { IStoreState } from "../../../redux/store"
-import Container from "../Container"
 import Header from "../Header"
-import Links from "../Links"
-import Sidebar from "../Sidebar"
-import * as SC from "./layout.styles"
 
 interface ILayoutProps {
-  children?: ReactNode
-  sidebar?: ReactNode
   title?: string
+  children?: ReactNode
 }
 
-const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
+const Layout: React.FC<ILayoutProps> = ({ children, title }) => {
   const dispatch = useDispatch()
-  const sidebarActive = useSelector(
-    (state: IStoreState) => state.layout.sidebar
-  )
-  const closeSidebar = useCallback(() => {
-    dispatch({
-      type: "SET_SIDEBAR",
-      payload: false,
-    })
-  }, [])
-
   const { ref, entry } = useInView({
     threshold: Array.from({ length: HEADER_HEIGHT }).map((_, i) => {
       return i / HEADER_HEIGHT
@@ -47,52 +28,6 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
     }
   }, [entry])
 
-  useLockBodyScroll(sidebarActive)
-
-  const wrapper = useMemo(() => {
-    return (
-      <>
-        <Media lessThan="sm">
-          {(mcx, renderChildren) => {
-            return (
-              <SC.BodyWrapper className={mcx} orientation="vertical" gutter={0}>
-                {renderChildren ? (
-                  <>
-                    {sidebarActive && sidebar && (
-                      <>
-                        <SC.Backdrop onClick={closeSidebar} />
-                        <Sidebar>{sidebar}</Sidebar>
-                      </>
-                    )}
-                    <SC.Content>{children}</SC.Content>
-                  </>
-                ) : null}
-              </SC.BodyWrapper>
-            )
-          }}
-        </Media>
-        <Media greaterThanOrEqual="sm">
-          {(mcx, renderChildren) => {
-            return renderChildren ? (
-              <SC.BodyWrapper
-                className={mcx}
-                orientation="horizontal"
-                gutter={20}
-              >
-                {renderChildren ? (
-                  <>
-                    {sidebar && <Sidebar>{sidebar}</Sidebar>}
-                    <SC.Content>{children}</SC.Content>
-                  </>
-                ) : null}
-              </SC.BodyWrapper>
-            ) : null
-          }}
-        </Media>
-      </>
-    )
-  }, [children, sidebar, sidebarActive])
-
   return (
     <>
       <Head>
@@ -101,16 +36,7 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Header ref={ref} />
-      <SC.ContentWrapper className={cx({ "has-sidebar": Boolean(sidebar) })}>
-        {sidebar ? <Container>{wrapper}</Container> : <>{wrapper}</>}
-        {!sidebar && (
-          <SC.Footer>
-            <Container size="medium">
-              <Links orientation="horizontal" />
-            </Container>
-          </SC.Footer>
-        )}
-      </SC.ContentWrapper>
+      {children}
     </>
   )
 }

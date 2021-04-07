@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next"
 import BuildFormPage from "../../../components/pages/BuildFormPage"
-import Layout from "../../../components/ui/Layout"
+import LayoutDefault from "../../../components/ui/LayoutDefault"
 import { IFullBuild } from "../../../types/models"
 import { axios } from "../../../utils/axios"
 
@@ -12,11 +12,11 @@ interface IBuildsEditPageProps {
 const BuildsEditPage: NextPage<IBuildsEditPageProps> = ({ build, errors }) => {
   if (errors || !build) {
     return (
-      <Layout title="Error">
+      <LayoutDefault title="Error">
         <p>
           <span style={{ color: "red" }}>Error:</span> {errors}
         </p>
-      </Layout>
+      </LayoutDefault>
     )
   }
 

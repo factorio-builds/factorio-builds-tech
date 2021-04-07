@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from "next"
-import Layout from "../../components/ui/Layout"
+import LayoutDefault from "../../components/ui/LayoutDefault"
 import { IUser } from "../../types/models"
 
 interface IUsersPageProps {
@@ -10,15 +10,15 @@ interface IUsersPageProps {
 const UsersPage: NextPage<IUsersPageProps> = ({ user, errors }) => {
   if (errors || !user) {
     return (
-      <Layout title="Error">
+      <LayoutDefault title="Error">
         <p>
           <span style={{ color: "red" }}>Error:</span> {errors}
         </p>
-      </Layout>
+      </LayoutDefault>
     )
   }
 
-  return <Layout title={user.username}>{user.username}</Layout>
+  return <LayoutDefault title={user.username}>{user.username}</LayoutDefault>
 }
 
 export default UsersPage
