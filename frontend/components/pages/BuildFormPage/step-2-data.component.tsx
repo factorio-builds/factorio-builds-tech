@@ -9,7 +9,7 @@ import ErrorMessage from "../../form/ErrorMessage"
 import Input from "../../form/FormikInputWrapper"
 import InputGroup from "../../form/InputGroup"
 import Stacker from "../../ui/Stacker"
-import { IFormValues } from "./build-form-page.component"
+import { IFormValues } from "./build-form-page.d"
 import * as SC from "./build-form-page.styles"
 
 interface ICollapsableGroupProps {

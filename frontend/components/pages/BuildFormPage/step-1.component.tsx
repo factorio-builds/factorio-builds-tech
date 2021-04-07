@@ -18,7 +18,7 @@ import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
 import Stacker from "../../ui/Stacker"
 import WithIcons from "../../ui/WithIcons"
-import { IFormValues } from "./build-form-page.component"
+import { IFormValues } from "./build-form-page.d"
 import * as SC from "./build-form-page.styles"
 
 interface IBlueprintData {

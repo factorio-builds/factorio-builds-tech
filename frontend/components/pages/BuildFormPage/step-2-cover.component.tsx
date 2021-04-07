@@ -8,7 +8,7 @@ import BlueprintItemExplorer from "../../ui/BlueprintItemExplorer"
 import ImageUpload from "../../ui/ImageUpload"
 import { IImageUpload } from "../../ui/ImageUpload/image-upload.component"
 import Stacker from "../../ui/Stacker"
-import { IFormValues } from "./build-form-page.component"
+import { IFormValues } from "./build-form-page.d"
 import * as SC from "./build-form-page.styles"
 
 interface IStep2CoverProps {
