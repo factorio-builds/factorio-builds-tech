@@ -51,6 +51,9 @@ export const validation = {
           message: "cover.file is required",
           test: function (value) {
             if (value) return true
+            // optional in edit
+            // @ts-ignore
+            if (this.options.from[1].value.__operation === "EDIT") return true
             // optional if it's a single blueprint
             // @ts-ignore
             if (!this.options.from[1].value.isBook) return true
@@ -74,6 +77,9 @@ export const validation = {
           message: "cover.hash is required",
           test: function (value) {
             if (value) return true
+            // optional in edit
+            // @ts-ignore
+            if (this.options.from[1].value.__operation === "EDIT") return true
             // optional if it's a single blueprint
             // @ts-ignore
             if (!this.options.from[1].value.isBook) return true

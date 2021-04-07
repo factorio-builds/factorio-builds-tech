@@ -8,6 +8,7 @@ import {
 import { IFormValues, IValidFormValues } from "./build-form-page.d"
 
 const baseInitialValues: IFormValues = {
+  __operation: "CREATE",
   isBook: undefined,
   hash: "",
   title: "",
@@ -29,6 +30,7 @@ export const createInitialValues = (build?: IFullBuild): IFormValues => {
   }
 
   return {
+    __operation: "EDIT",
     isBook: build.latest_version.type === "blueprint-book",
     hash: build.latest_version.hash,
     title: build.title,
