@@ -1,6 +1,7 @@
 import { ICreateBuildRequest } from "../../../types/models"
 
 export interface IFormValues {
+  __operation: "CREATE" | "EDIT"
   isBook: boolean | undefined
   hash: string
   title: string
