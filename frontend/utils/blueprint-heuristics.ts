@@ -194,7 +194,7 @@ function parse(blueprint: IBlueprint): string[] {
 export function tagsFromHeuristics(
   blueprintOrBook: IBlueprint | IBlueprintBook
 ): string[] {
-  if (blueprintOrBook.type === "blueprint") {
+  if (blueprintOrBook.item === "blueprint") {
     const tags = parse(blueprintOrBook)
 
     return uniq(tags)
