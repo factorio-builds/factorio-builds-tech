@@ -8,10 +8,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "daily"
 
   # infrastructure
   - package-ecosystem: "terraform"
@@ -20,18 +16,30 @@ updates:
       interval: "daily"
 
   # frontend
+  - package-ecosystem: "docker"
+    directory: "/frontend/"
+    schedule:
+      interval: "daily"
   # - package-ecosystem: "npm"
   #   directory: "/frontend/"
   #   schedule:
   #     interval: "weekly"
 
   # backend
+  - package-ecosystem: "docker"
+    directory: "/backend/"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "nuget"
     directory: "/backend/"
     schedule:
       interval: "daily"
 
   # fbsr-wrapper
+  - package-ecosystem: "docker"
+    directory: "/fbsr-wrapper/"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "maven"
     directory: "/fbsr-wrapper/"
     schedule:
