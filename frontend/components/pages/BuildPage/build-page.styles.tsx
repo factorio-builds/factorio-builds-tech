@@ -3,7 +3,18 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
+import { Footer } from "../../ui/Layout/layout.styles"
 import Stacker from "../../ui/Stacker"
+
+export const LayoutWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  ${Footer} {
+    margin-top: 0;
+  }
+`
 
 export const BuildImage = styled.div`
   border: 8px solid ${COLOR.CARD};

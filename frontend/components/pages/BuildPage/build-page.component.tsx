@@ -107,39 +107,41 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
   )
 
   return (
-    <Layout title={build.title}>
-      <BuildHeader build={build} payload={payload} />
+    <SC.LayoutWrapper>
+      <Layout title={build.title}>
+        <BuildHeader build={build} payload={payload} />
 
-      <Tabs
-        build={build}
-        current={router.query.tab as string | undefined}
-        tabs={tabs}
-        payload={payload}
-        isZoomedIn={zoomedImage}
-        before={
-          zoomedImage ? (
-            <SC.ZoomedImage>
-              <Container size="medium">
-                {buildImage}
-                <SC.GlowWrapper>
-                  <Glow color1="blue" color2="green" color3="red" />
-                </SC.GlowWrapper>
-              </Container>
-            </SC.ZoomedImage>
-          ) : undefined
-        }
-        aside={
-          <Stacker orientation="vertical" gutter={16}>
-            {build._links.edit && (
-              <Link href={`/${build.owner.username}/${build.slug}/edit`}>
-                <SC.EditBuild>{"edit build"}</SC.EditBuild>
-              </Link>
-            )}
-            {!zoomedImage && buildImage}
-          </Stacker>
-        }
-      />
-    </Layout>
+        <Tabs
+          build={build}
+          current={router.query.tab as string | undefined}
+          tabs={tabs}
+          payload={payload}
+          isZoomedIn={zoomedImage}
+          before={
+            zoomedImage ? (
+              <SC.ZoomedImage>
+                <Container size="medium">
+                  {buildImage}
+                  <SC.GlowWrapper>
+                    <Glow color1="blue" color2="green" color3="red" />
+                  </SC.GlowWrapper>
+                </Container>
+              </SC.ZoomedImage>
+            ) : undefined
+          }
+          aside={
+            <Stacker orientation="vertical" gutter={16}>
+              {build._links.edit && (
+                <Link href={`/${build.owner.username}/${build.slug}/edit`}>
+                  <SC.EditBuild>{"edit build"}</SC.EditBuild>
+                </Link>
+              )}
+              {!zoomedImage && buildImage}
+            </Stacker>
+          }
+        />
+      </Layout>
+    </SC.LayoutWrapper>
   )
 }
 
