@@ -195,7 +195,9 @@ const Step1: React.FC<IStep1Props> = (props) => {
           <>
             {/* prettier-ignore */}
             <p>
-              Blueprint with a name of <b><WithIcons input={stepState.data.label} /></b>, totalling <b>{stepState.data.entityCount}</b> entities.<br />
+              {stepState.data.label && <>Blueprint with a name of <b><WithIcons input={stepState.data.label} /></b>, </>}
+              {!stepState.data.label && <>Unnamed blueprint, </>}
+              totalling <b>{stepState.data.entityCount}</b> entities.<br />
               {stepState.data.isBook && <>Found a <b>blueprint book</b>, with <b>{stepState.data.blueprintCount}</b> blueprints.</>}
               {!stepState.data.isBook && <>Found a <b>single blueprint</b>.</>}
               {/*Assuming category of ABC, game state of DEF with ZZ% confidence.*/}
