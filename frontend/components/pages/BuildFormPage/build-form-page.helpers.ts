@@ -75,6 +75,20 @@ const toFormDataInner = (
   return formData
 }
 
+const getCover = (cover: IValidFormValues["cover"]) => {
+  if (cover.type === "file") {
+    return {
+      file: cover.file,
+      crop: cover.crop,
+    }
+  }
+
+  return {
+    hash: cover.hash,
+    crop: cover.crop,
+  }
+}
+
 export const toFormData = (formValues: IValidFormValues): FormData => {
   const request: ICreateBuildRequest = {
     slug: formValues.slug,
@@ -82,11 +96,7 @@ export const toFormData = (formValues: IValidFormValues): FormData => {
     title: formValues.title,
     description: formValues.description,
     tags: formValues.tags,
-    cover: {
-      file: formValues.cover.file,
-      hash: formValues.cover.hash,
-      crop: formValues.cover.crop,
-    },
+    cover: getCover(formValues.cover),
     version: {
       icons: formValues.version?.icons || [],
     },
@@ -100,11 +110,7 @@ export const toPatchFormData = (formValues: IValidFormValues): FormData => {
     title: formValues.title,
     description: formValues.description,
     tags: formValues.tags,
-    cover: {
-      file: formValues.cover.file,
-      hash: formValues.cover.hash,
-      crop: formValues.cover.crop,
-    },
+    cover: getCover(formValues.cover),
   }
 
   return toFormDataInner(request)
