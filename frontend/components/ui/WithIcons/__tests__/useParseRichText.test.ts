@@ -78,4 +78,10 @@ describe("useParseRichText", () => {
 
     expect(result.current).toEqual([])
   })
+
+  it("parses an undefined value", () => {
+    const { result } = renderHook(() => useParseRichText(undefined))
+
+    expect(result.current).toEqual([])
+  })
 })

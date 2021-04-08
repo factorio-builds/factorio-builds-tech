@@ -43,7 +43,11 @@ function parseText(
   return { part: { type: "text", value: value.trim() }, rest }
 }
 
-function useParseRichText(text: string): IParsedRichTextNode[] {
+function useParseRichText(text?: string): IParsedRichTextNode[] {
+  if (!text) {
+    return []
+  }
+
   const parts: IParsedRichTextNode[] = []
   let rest = ""
 
