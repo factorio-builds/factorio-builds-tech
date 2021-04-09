@@ -2,9 +2,10 @@ name: Analyze Bundle Size
 
 on:
   pull_request:
-  push:
     branches:
       - main
+    paths:
+      - frontend/**
 
   workflow_dispatch:
 
