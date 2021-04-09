@@ -20,7 +20,7 @@ COPY deps/Factorio-FBSR/FactorioBlueprintStringRenderer/res/*.png src/main/resou
 RUN mvn package
 
 
-FROM openjdk:11-jdk-slim
+FROM openjdk:14-jdk-slim
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
