@@ -53,6 +53,7 @@ function BuildCard({
             width={image.width}
             height={image.height}
             layout="responsive"
+            sizes="300px"
           />
         </SC.ImageWrapper>
         <SC.Content>
