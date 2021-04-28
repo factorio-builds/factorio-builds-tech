@@ -2,33 +2,25 @@ import React from "react"
 import { IBookPayload, IFullPayload } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BlueprintItem from "../BlueprintItem"
-import BlueprintItemExplorerContext, {
-  IBlueprintItemExplorerContext,
-} from "./blueprint-item-explorer.provider"
+import BlueprintItemExplorerContext, { IBlueprintItemExplorerContext } from "./blueprint-item-explorer.provider"
 
 interface IBaseBlueprintItemExplorerProps {
   children: IBookPayload["children"]
 }
 
-interface IBlueprintItemExplorerPropsReadonly
-  extends IBaseBlueprintItemExplorerProps {
+interface IBlueprintItemExplorerPropsReadonly extends IBaseBlueprintItemExplorerProps {
   type: "readOnly"
 }
 
-interface IBlueprintItemExplorerPropsSelectable
-  extends IBaseBlueprintItemExplorerProps {
+interface IBlueprintItemExplorerPropsSelectable extends IBaseBlueprintItemExplorerProps {
   type: "selectable"
   onSelect: (e: React.MouseEvent, hash: IFullPayload["hash"]) => void
   selectedHash: IFullPayload["hash"] | null
 }
 
-type IBlueprintItemExplorerProps =
-  | IBlueprintItemExplorerPropsReadonly
-  | IBlueprintItemExplorerPropsSelectable
+type IBlueprintItemExplorerProps = IBlueprintItemExplorerPropsReadonly | IBlueprintItemExplorerPropsSelectable
 
-function BlueprintItemExplorer(
-  props: IBlueprintItemExplorerProps
-): JSX.Element {
+function BlueprintItemExplorer(props: IBlueprintItemExplorerProps): JSX.Element {
   const createContextValue = (): IBlueprintItemExplorerContext => {
     if (props.type === "readOnly") {
       return {

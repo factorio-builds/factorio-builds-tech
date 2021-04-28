@@ -44,9 +44,7 @@ interface IBlueprintItemPropsBlueprint extends IBaseBlueprintItemProps {
   encoded?: IFullPayload["encoded"]
 }
 
-type IBlueprintItemProps =
-  | IBlueprintItemPropsBook
-  | IBlueprintItemPropsBlueprint
+type IBlueprintItemProps = IBlueprintItemPropsBook | IBlueprintItemPropsBlueprint
 
 function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
   const bpItemExplorer = useBlueprintItemExplorer()
@@ -59,17 +57,11 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
 
   const title = props.title || "[unnamed]"
 
-  const expand = useCallback(
-    () => setExpanded((prevExpanded) => !prevExpanded),
-    [expanded]
-  )
+  const expand = useCallback(() => setExpanded((prevExpanded) => !prevExpanded), [expanded])
 
   const isExpandable = props.isBook || props.description || props.image
 
-  const renderEntities = (
-    entities: IBlueprintPayload["entities"],
-    tiles: IBlueprintPayload["tiles"]
-  ) => {
+  const renderEntities = (entities: IBlueprintPayload["entities"], tiles: IBlueprintPayload["tiles"]) => {
     const entitiesData = {
       count: countEntities(entities),
       name: "entity|entities",
@@ -101,13 +93,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
     return (
       <SC.ImageWrapper>
         {imageIsLoaded ? (
-          <img
-            {...pressProps}
-            className={cx({ "is-zoomed": zoomedImage })}
-            src={props.image.href}
-            alt=""
-            width={200}
-          />
+          <img {...pressProps} className={cx({ "is-zoomed": zoomedImage })} src={props.image.href} alt="" width={200} />
         ) : (
           <SC.SpinnerWrapper>
             <Spinner />
@@ -123,9 +109,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
       className={cx({
         "is-expanded": expanded,
         "is-highlighted":
-          !props.isBook &&
-          bpItemExplorer.type === "selectable" &&
-          bpItemExplorer.selectedHash === props.hash,
+          !props.isBook && bpItemExplorer.type === "selectable" && bpItemExplorer.selectedHash === props.hash,
       })}
     >
       <SC.BlueprintItemInner>
@@ -148,41 +132,30 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
           </SC.Title>
           {expanded && (props.image || props.description) && (
             <>
-              {!props.isBook &&
-                bpItemExplorer.type === "readOnly" &&
-                (props.raw || props.encoded) && (
-                  <SC.Buttons>
-                    {!props.isBook && props.raw && (
-                      <Link href={props.raw.href} passHref>
-                        <Button as="a" variant="default" size="small">
-                          <Raw />
-                          Raw
-                        </Button>
-                      </Link>
-                    )}
-                    {!props.isBook && props.raw && (
-                      <Link
-                        href={`https://fbe.teoxoy.com/?source=${props.raw.href}`}
-                        passHref
-                      >
-                        <Button as="a" variant="default" size="small">
-                          <Editor />
-                          View in editor
-                        </Button>
-                      </Link>
-                    )}
-                    {!props.isBook && props.encoded && (
-                      <CopyStringToClipboard
-                        toCopy={props.encoded}
-                        variant="cta"
-                        size="small"
-                      />
-                    )}
-                  </SC.Buttons>
-                )}
-              {props.image && zoomedImage && (
-                <SC.ZoomedImage>{renderImage()}</SC.ZoomedImage>
+              {!props.isBook && bpItemExplorer.type === "readOnly" && (props.raw || props.encoded) && (
+                <SC.Buttons>
+                  {!props.isBook && props.raw && (
+                    <Link href={props.raw.href} passHref>
+                      <Button as="a" variant="default" size="small">
+                        <Raw />
+                        Raw
+                      </Button>
+                    </Link>
+                  )}
+                  {!props.isBook && props.raw && (
+                    <Link href={`https://fbe.teoxoy.com/?source=${props.raw.href}`} passHref>
+                      <Button as="a" variant="default" size="small">
+                        <Editor />
+                        View in editor
+                      </Button>
+                    </Link>
+                  )}
+                  {!props.isBook && props.encoded && (
+                    <CopyStringToClipboard toCopy={props.encoded} variant="cta" size="small" />
+                  )}
+                </SC.Buttons>
               )}
+              {props.image && zoomedImage && <SC.ZoomedImage>{renderImage()}</SC.ZoomedImage>}
               <SC.Info>
                 {props.image && !zoomedImage && renderImage()}
                 <SC.InnerContent orientation="vertical" gutter={16}>
@@ -199,10 +172,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   {!props.isBook && (props.entities || props.tiles) && (
                     <SC.RequiredItems>
                       <SC.Subtitle>Required items</SC.Subtitle>
-                      <BlueprintRequiredItems
-                        entities={props.entities}
-                        tiles={props.tiles}
-                      />
+                      <BlueprintRequiredItems entities={props.entities} tiles={props.tiles} />
                     </SC.RequiredItems>
                   )}
                   {!props.isBook && bpItemExplorer.type === "selectable" && (

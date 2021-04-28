@@ -7,17 +7,11 @@ interface IFormikInputProps extends FieldProps {
   type: "text" | "textarea"
   spellCheck?: boolean
   readOnly?: boolean
-  onKeyPress?: (
-    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void
+  onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   prefix?: JSX.Element
 }
 
-const FormikInput: React.FC<IFormikInputProps> = ({
-  id,
-  type,
-  ...restProps
-}) => {
+const FormikInput: React.FC<IFormikInputProps> = ({ id, type, ...restProps }) => {
   const [field] = useField(restProps.field.name)
 
   if (type === "textarea") {

@@ -41,16 +41,12 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             padding: "1px 13px",
             background: COLOR.INPUT,
             border: "2px solid",
-            borderColor: `${
-              error ? COLOR.DANGER : COLOR.FADEDBLUE500
-            } !important`,
+            borderColor: `${error ? COLOR.DANGER : COLOR.FADEDBLUE500} !important`,
             borderRadius: 0,
             boxShadow: state.isFocused ? focusedShadow : "none",
             transition: "none",
             "&:hover": {
-              boxShadow: state.isFocused
-                ? focusedShadow
-                : "0px 2px 8px rgba(0, 0, 0, 0.2)",
+              boxShadow: state.isFocused ? focusedShadow : "0px 2px 8px rgba(0, 0, 0, 0.2)",
             },
           }
         },
@@ -115,10 +111,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
             : state.isFocused
             ? `${COLOR.FOCUSED} !important`
             : "none",
-          color:
-            state.isSelected || state.isFocused
-              ? "#241A34 !important"
-              : COLOR.FADEDBLUE700,
+          color: state.isSelected || state.isFocused ? "#241A34 !important" : COLOR.FADEDBLUE700,
           "&:hover": {
             background: COLOR.FOCUSED,
             color: "#241A34 !important",

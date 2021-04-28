@@ -1,10 +1,5 @@
 import asFormData from "json-form-data"
-import {
-  ICreateBuildRequest,
-  ICreateVersionRequest,
-  IEditBuildRequest,
-  IFullBuild,
-} from "../../../types/models"
+import { ICreateBuildRequest, ICreateVersionRequest, IEditBuildRequest, IFullBuild } from "../../../types/models"
 import { IFormValues, IValidFormValues } from "./build-form-page.d"
 
 const baseInitialValues: IFormValues = {
@@ -42,17 +37,12 @@ export const createInitialValues = (build?: IFullBuild): IFormValues => {
       crop: null,
       file: null,
       url: build._links.cover?.href || null,
-      hash:
-        build.latest_version.type === "blueprint"
-          ? build.latest_version.hash
-          : null,
+      hash: build.latest_version.type === "blueprint" ? build.latest_version.hash : null,
     },
   }
 }
 
-const toFormDataInner = (
-  request: ICreateBuildRequest | ICreateVersionRequest | IEditBuildRequest
-): FormData => {
+const toFormDataInner = (request: ICreateBuildRequest | ICreateVersionRequest | IEditBuildRequest): FormData => {
   // todo: not sure about the `ValidJSON` type. seems wrong to me...
   // `any` cast fixes the type error
   const formData = asFormData(request as any)
@@ -65,10 +55,7 @@ const toFormDataInner = (
   }
 
   // this is necessary for the version field to not get stripped with an empty array
-  if (
-    !formData.get("version[icons][0][type]") ||
-    !formData.get("version[icons][0][name]")
-  ) {
+  if (!formData.get("version[icons][0][type]") || !formData.get("version[icons][0][name]")) {
     formData.append("version[icons]", JSON.stringify([]))
   }
 

@@ -24,12 +24,7 @@ function BuildListPage(): JSX.Element {
         </Stacker>
       }
     >
-      <BuildCardList
-        items={search.builds}
-        count={search.current_count}
-        totalCount={search.total_count}
-        sort={sort}
-      />
+      <BuildCardList items={search.builds} count={search.current_count} totalCount={search.total_count} sort={sort} />
     </Layout>
   )
 }

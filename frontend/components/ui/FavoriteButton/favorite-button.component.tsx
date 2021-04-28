@@ -11,17 +11,11 @@ interface IFavoriteButtonProps extends IButtonProps {
   build: IFullBuild
 }
 
-const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
-  build,
-  ...restProps
-}) => {
+const FavoriteButton: React.FC<IFavoriteButtonProps> = ({ build, ...restProps }) => {
   const links = build._links
 
   const authUser = useSelector((state: IStoreState) => state.auth?.user)
-  const [{ loading, error }, execute] = useApi(
-    { url: links.followers.href },
-    { manual: true }
-  )
+  const [{ loading, error }, execute] = useApi({ url: links.followers.href }, { manual: true })
 
   const [count, setCount] = useState(build._links.followers.count)
   const [isFavorite, setIsFavorite] = useState(Boolean(links.remove_favorite))

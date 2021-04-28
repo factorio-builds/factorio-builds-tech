@@ -11,24 +11,10 @@ interface IRadioProps {
   inline?: boolean
 }
 
-const Radio: React.FC<IRadioProps> = ({
-  id,
-  label,
-  prefix,
-  value,
-  checked,
-  onChange,
-  inline,
-}) => {
+const Radio: React.FC<IRadioProps> = ({ id, label, prefix, value, checked, onChange, inline }) => {
   return (
     <SC.RadioWrapper className={cx({ "is-checked": checked })}>
-      <SC.HiddenRadio
-        id={id}
-        type="radio"
-        value={value}
-        checked={checked}
-        onChange={onChange}
-      />
+      <SC.HiddenRadio id={id} type="radio" value={value} checked={checked} onChange={onChange} />
       <SC.Label htmlFor={id} className={cx({ "is-inline": inline })}>
         {checked}
         <SC.Square />

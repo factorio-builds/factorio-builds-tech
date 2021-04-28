@@ -20,9 +20,7 @@ const isManual = (config: AxiosRequestConfig, options?: Options) => {
 }
 
 export function useApi<T = any>(config: AxiosRequestConfig, options?: Options) {
-  const accessToken = useSelector(
-    (store: IStoreState) => store.auth?.user?.accessToken
-  )
+  const accessToken = useSelector((store: IStoreState) => store.auth?.user?.accessToken)
 
   return useAxios<T, IProblemDetails>(
     {

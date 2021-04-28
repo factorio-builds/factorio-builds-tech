@@ -7,10 +7,7 @@ interface IComputedHeuristic {
   confidence: number
 }
 
-function hasEntity(
-  blueprint: IBlueprint,
-  entityName: IBlueprintEntity["name"]
-): boolean {
+function hasEntity(blueprint: IBlueprint, entityName: IBlueprintEntity["name"]): boolean {
   if (!blueprint.entities) {
     return false
   }
@@ -20,10 +17,7 @@ function hasEntity(
   })
 }
 
-function hasEntities(
-  blueprint: IBlueprint,
-  entityNames: IBlueprintEntity["name"][]
-): boolean {
+function hasEntities(blueprint: IBlueprint, entityNames: IBlueprintEntity["name"][]): boolean {
   if (!blueprint.entities) {
     return false
   }
@@ -33,10 +27,7 @@ function hasEntities(
   })
 }
 
-function hasAllEntities(
-  blueprint: IBlueprint,
-  entityNames: IBlueprintEntity["name"][]
-): boolean {
+function hasAllEntities(blueprint: IBlueprint, entityNames: IBlueprintEntity["name"][]): boolean {
   if (!blueprint.entities) {
     return false
   }
@@ -86,22 +77,9 @@ export function withMarkedInputs(blueprint: IBlueprint): IComputedHeuristic {
   }
 }
 
-const EARLY_GAME_ENTITIES = [
-  "assembling-machine-1",
-  "steam-engine",
-  "transport-belt",
-]
-const MID_GAME_ENTITIES = [
-  "assembling-machine-2",
-  "fast-transport-belt",
-  "pumpjack",
-]
-const LATE_GAME_ENTITIES = [
-  "assembling-machine-3",
-  "nuclear-reactor",
-  "beacon",
-  "express-transport-belt",
-]
+const EARLY_GAME_ENTITIES = ["assembling-machine-1", "steam-engine", "transport-belt"]
+const MID_GAME_ENTITIES = ["assembling-machine-2", "fast-transport-belt", "pumpjack"]
+const LATE_GAME_ENTITIES = ["assembling-machine-3", "nuclear-reactor", "beacon", "express-transport-belt"]
 const END_GAME_ENTITIES = ["rocket-silo"]
 
 function parse(blueprint: IBlueprint): string[] {
@@ -122,11 +100,7 @@ function parse(blueprint: IBlueprint): string[] {
 
   if (
     hasEntities(blueprint, EARLY_GAME_ENTITIES) &&
-    !hasEntities(blueprint, [
-      ...MID_GAME_ENTITIES,
-      ...LATE_GAME_ENTITIES,
-      ...END_GAME_ENTITIES,
-    ])
+    !hasEntities(blueprint, [...MID_GAME_ENTITIES, ...LATE_GAME_ENTITIES, ...END_GAME_ENTITIES])
   ) {
     tags.push("/state/early game")
   }
@@ -138,10 +112,7 @@ function parse(blueprint: IBlueprint): string[] {
     tags.push("/state/mid game")
   }
 
-  if (
-    hasEntities(blueprint, LATE_GAME_ENTITIES) &&
-    !hasEntities(blueprint, END_GAME_ENTITIES)
-  ) {
+  if (hasEntities(blueprint, LATE_GAME_ENTITIES) && !hasEntities(blueprint, END_GAME_ENTITIES)) {
     tags.push("/state/late game")
   }
 
@@ -163,9 +134,7 @@ function parse(blueprint: IBlueprint): string[] {
     tags.push("/power/nuclear")
   }
 
-  if (
-    hasEntityWithRecipe(blueprint, "centrifuge", "kovarex-enrichment-process")
-  ) {
+  if (hasEntityWithRecipe(blueprint, "centrifuge", "kovarex-enrichment-process")) {
     tags.push("/power/kovarex enrichment")
   }
 
@@ -176,24 +145,14 @@ function parse(blueprint: IBlueprint): string[] {
   // TODO: Production tags
 
   // TODO: More train tags
-  if (
-    hasEntities(blueprint, [
-      "straight-rail",
-      "curved-rail",
-      "train-stop",
-      "train-stop",
-      "rail-chain-signal",
-    ])
-  ) {
+  if (hasEntities(blueprint, ["straight-rail", "curved-rail", "train-stop", "train-stop", "rail-chain-signal"])) {
     tags.push("/train/track")
   }
 
   return tags
 }
 
-export function tagsFromHeuristics(
-  blueprintOrBook: IBlueprint | IBlueprintBook
-): string[] {
+export function tagsFromHeuristics(blueprintOrBook: IBlueprint | IBlueprintBook): string[] {
   if (blueprintOrBook.item === "blueprint") {
     const tags = parse(blueprintOrBook)
 

@@ -18,19 +18,11 @@ const initialSearchState: IStoreSearchState = {
 }
 
 type TSearchBuildsAction = Action<"SEARCH_BUILDS">
-type TSearchBuildsSuccessAction = IPayloadAction<
-  "SEARCH_BUILDS_SUCCESS",
-  SearchResponse<IThinBuild>
->
+type TSearchBuildsSuccessAction = IPayloadAction<"SEARCH_BUILDS_SUCCESS", SearchResponse<IThinBuild>>
 
 export type TSearchAction = TSearchBuildsAction | TSearchBuildsSuccessAction
 
-export const searchBuildsAsync = (): ThunkAction<
-  void,
-  IStoreState,
-  unknown,
-  Action
-> => {
+export const searchBuildsAsync = (): ThunkAction<void, IStoreState, unknown, Action> => {
   return async function (dispatch, getState) {
     const state = getState()
 
@@ -38,9 +30,7 @@ export const searchBuildsAsync = (): ThunkAction<
       .get("/builds", {
         params: {
           q: getState().filters.query || undefined,
-          tags: state.filters.tags
-            .filter((tag) => tag.isSelected)
-            .map((tag) => `/${tag.group}/${tag.name}`),
+          tags: state.filters.tags.filter((tag) => tag.isSelected).map((tag) => `/${tag.group}/${tag.name}`),
           sort_field: state.filters.sort.type.toLowerCase(),
           sort_direction: state.filters.sort.direction.toLowerCase(),
         },
@@ -59,10 +49,7 @@ export const searchBuildsAsync = (): ThunkAction<
   }
 }
 
-const searchBuildsSuccess = (
-  state: IStoreSearchState,
-  payload: TSearchBuildsSuccessAction["payload"]
-) => {
+const searchBuildsSuccess = (state: IStoreSearchState, payload: TSearchBuildsSuccessAction["payload"]) => {
   return {
     ...state,
     current_count: payload.current_count,
@@ -71,10 +58,7 @@ const searchBuildsSuccess = (
   }
 }
 
-export const searchReducer = (
-  state = initialSearchState,
-  action: TSearchAction
-): IStoreSearchState => {
+export const searchReducer = (state = initialSearchState, action: TSearchAction): IStoreSearchState => {
   switch (action.type) {
     case "SEARCH_BUILDS_SUCCESS":
       return searchBuildsSuccess(state, action.payload)

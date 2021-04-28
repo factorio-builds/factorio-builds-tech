@@ -25,10 +25,7 @@ const Checkbox: React.FC<ICheckboxProps> = (props) => {
       <VisuallyHidden>
         <input id={props.id} {...inputProps} ref={ref} />
       </VisuallyHidden>
-      <SC.Label
-        htmlFor={props.id}
-        className={cx({ "is-inline": props.inline })}
-      >
+      <SC.Label htmlFor={props.id} className={cx({ "is-inline": props.inline })}>
         {state.isSelected}
         <SC.Square />
         {props.label && (

@@ -16,11 +16,7 @@ const BlueprintJsonTab: TTabComponent = (props) => {
 
   return (
     <Tab {...props}>
-      <SC.BlueprintData
-        value={parsed.stringified}
-        readOnly
-        onClick={(e) => e.currentTarget.select()}
-      />
+      <SC.BlueprintData value={parsed.stringified} readOnly onClick={(e) => e.currentTarget.select()} />
     </Tab>
   )
 }

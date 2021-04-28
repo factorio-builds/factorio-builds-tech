@@ -30,10 +30,7 @@ type TUknownObject = Record<string, unknown>
 
 // TODO: get rid once latest version of react-aria is released
 // see https://github.com/adobe/react-spectrum/pull/1239
-interface TreeProps<T>
-  extends CollectionBase<T>,
-    Expandable,
-    MultipleSelection {}
+interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
 
 interface IUserDropdownProps {
   user: IStoreUser
@@ -70,9 +67,7 @@ function MenuButton(props: IMenuButton): JSX.Element {
           <Avatar username={props.user.username} size="medium" />
           <Media greaterThanOrEqual="sm">
             {(mcx, renderChildren) => {
-              return renderChildren ? (
-                <span className={mcx}>{props.label}</span>
-              ) : null
+              return renderChildren ? <span className={mcx}>{props.label}</span> : null
             }}
           </Media>
           <Caret aria-hidden="true" />
@@ -120,18 +115,9 @@ function MenuPopup(props: IMenuProps) {
     <FocusScope restoreFocus>
       <div {...overlayProps} ref={overlayRef}>
         <DismissButton onDismiss={props.onClose} />
-        <SC.StyledMenuPopup
-          {...mergeProps(menuProps, props.domProps)}
-          ref={ref}
-        >
+        <SC.StyledMenuPopup {...mergeProps(menuProps, props.domProps)} ref={ref}>
           {[...state.collection].map((item) => (
-            <MenuItem
-              key={item.key}
-              item={item}
-              state={state}
-              onAction={props.onAction}
-              onClose={props.onClose}
-            />
+            <MenuItem key={item.key} item={item} state={state} onAction={props.onAction} onClose={props.onClose} />
           ))}
         </SC.StyledMenuPopup>
         <DismissButton onDismiss={props.onClose} />
@@ -168,11 +154,7 @@ function MenuItem({ item, state, onAction, onClose }: IMenuItem) {
   const { focusProps } = useFocus({ onFocusChange: setFocused })
 
   return (
-    <SC.StyledMenuItem
-      {...mergeProps(menuItemProps, focusProps)}
-      ref={ref}
-      className={cx({ "is-focused": isFocused })}
-    >
+    <SC.StyledMenuItem {...mergeProps(menuItemProps, focusProps)} ref={ref} className={cx({ "is-focused": isFocused })}>
       {item.rendered}
     </SC.StyledMenuItem>
   )
@@ -184,11 +166,7 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
   const links = [`/${props.user.username}/builds`, "/api/auth/logout"]
 
   return (
-    <MenuButton
-      {...props}
-      label={props.user.username}
-      onAction={(index) => router.push(links[index])}
-    >
+    <MenuButton {...props} label={props.user.username} onAction={(index) => router.push(links[index])}>
       <Item key={0}>
         <SC.InnerLink>my builds</SC.InnerLink>
       </Item>

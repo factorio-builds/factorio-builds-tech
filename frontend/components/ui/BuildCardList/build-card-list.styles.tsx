@@ -19,9 +19,7 @@ export const Columns = styled.div`
 `
 
 export const Column = styled.div`
-  --width: calc(
-    100% / var(--cols) - (var(--gutter) * (var(--cols) - 1) / var(--cols))
-  );
+  --width: calc(100% / var(--cols) - (var(--gutter) * (var(--cols) - 1) / var(--cols)));
   flex: 0 0 var(--width);
   width: var(--width);
 `

@@ -21,11 +21,7 @@ export interface IStep2Props {
 
 const Step2: React.FC<IStep2Props> = (props) => {
   const [page, setPage] = useState<TPage>("data")
-  const { canSave, waitingForRender } = useCanSave(
-    props.payloadData,
-    props.submitStatus,
-    props.formikProps
-  )
+  const { canSave, waitingForRender } = useCanSave(props.payloadData, props.submitStatus, props.formikProps)
 
   const validateFields = <T extends keyof IFormValues>(
     fields: T[]
@@ -33,9 +29,7 @@ const Step2: React.FC<IStep2Props> = (props) => {
     isValid: boolean
     invalidFields: T[]
   } => {
-    const invalidFields = fields.filter(
-      (field) => props.formikProps.errors[field]
-    )
+    const invalidFields = fields.filter((field) => props.formikProps.errors[field])
 
     return {
       isValid: invalidFields.length === 0,
@@ -50,8 +44,7 @@ const Step2: React.FC<IStep2Props> = (props) => {
           currentPage={page}
           pagesState={{
             data: {
-              isValid: validateFields(["title", "slug", "description", "tags"])
-                .isValid,
+              isValid: validateFields(["title", "slug", "description", "tags"]).isValid,
             },
             cover: {
               isValid: validateFields(["cover"]).isValid,
@@ -61,20 +54,11 @@ const Step2: React.FC<IStep2Props> = (props) => {
           goToPage={setPage}
         />
 
-        {page === "data" && (
-          <Step2Data formikProps={props.formikProps} type={props.type} />
-        )}
-        {page === "cover" && (
-          <Step2Cover
-            formikProps={props.formikProps}
-            payloadData={props.payloadData}
-          />
-        )}
+        {page === "data" && <Step2Data formikProps={props.formikProps} type={props.type} />}
+        {page === "cover" && <Step2Cover formikProps={props.formikProps} payloadData={props.payloadData} />}
 
         {!canSave && waitingForRender && (
-          <SC.WaitingForRender>
-            Blueprint image is still rendering, please be patient.
-          </SC.WaitingForRender>
+          <SC.WaitingForRender>Blueprint image is still rendering, please be patient.</SC.WaitingForRender>
         )}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
@@ -84,11 +68,7 @@ const Step2: React.FC<IStep2Props> = (props) => {
               {props.submitStatus.loading && <Spinner />}
             </Stacker>
           </Button>
-          {page === "data" && (
-            <SC.TextButton onClick={() => setPage("cover")}>
-              pick cover image
-            </SC.TextButton>
-          )}
+          {page === "data" && <SC.TextButton onClick={() => setPage("cover")}>pick cover image</SC.TextButton>}
         </SC.ButtonsStack>
       </Stacker>
     </SC.Content>

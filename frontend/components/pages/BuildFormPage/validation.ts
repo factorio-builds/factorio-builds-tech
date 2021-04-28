@@ -1,28 +1,17 @@
 import * as Yup from "yup"
 
 const FILE_SIZE = 10 * 1000 * 1024 // 10MB
-const SUPPORTED_FORMATS = [
-  "image/jpg",
-  "image/jpeg",
-  "image/gif",
-  "image/png",
-] as const
+const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"] as const
 
 export const validation = {
   isBook: Yup.boolean(),
   hash: Yup.string(),
-  title: Yup.string()
-    .min(2, "Too Short!")
-    .max(128, "Too Long!")
-    .required("Required"),
+  title: Yup.string().min(2, "Too Short!").max(128, "Too Long!").required("Required"),
   slug: Yup.string()
     .min(3, "Too Short!")
     .max(100, "Too Long!")
     .required("A slug is required")
-    .matches(
-      /[a-zA-Z0-9_-]+/,
-      "A slug can only contain alphanumerical characters, plus _ and -"
-    )
+    .matches(/[a-zA-Z0-9_-]+/, "A slug can only contain alphanumerical characters, plus _ and -")
     .not(
       ["account", "admin", "administrator", "delete", "edit", "import", "raw"],
       "A slug cannot use a reserved keyword"

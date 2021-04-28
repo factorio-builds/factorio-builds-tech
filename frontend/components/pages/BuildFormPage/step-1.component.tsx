@@ -1,17 +1,9 @@
 import React, { useMemo, useState } from "react"
 import { FormikProps } from "formik"
 import { useApi } from "../../../hooks/useApi"
-import {
-  IDecodedBlueprintBookData,
-  IDecodedBlueprintData,
-} from "../../../types"
+import { IDecodedBlueprintBookData, IDecodedBlueprintData } from "../../../types"
 import { ICreatePayloadResult, IFullPayload } from "../../../types/models"
-import {
-  decodeBlueprint,
-  isBlueprintItem,
-  isBook,
-  isValidBlueprint,
-} from "../../../utils/blueprint"
+import { decodeBlueprint, isBlueprintItem, isBook, isValidBlueprint } from "../../../utils/blueprint"
 import { tagsFromHeuristics } from "../../../utils/blueprint-heuristics"
 import Input from "../../form/Input"
 import InputWrapper from "../../form/InputWrapper"
@@ -48,10 +40,7 @@ interface IStepStateInvalid {
   isValid: false
 }
 
-type TStepState =
-  | IStepStateValidSingle
-  | IStepStateValidBook
-  | IStepStateInvalid
+type TStepState = IStepStateValidSingle | IStepStateValidBook | IStepStateInvalid
 
 interface IStep1Props {
   formikProps: FormikProps<IFormValues>
@@ -111,9 +100,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
       return
     }
 
-    const bp = stepState.isBook
-      ? stepState.json.blueprint_book
-      : stepState.json.blueprint
+    const bp = stepState.isBook ? stepState.json.blueprint_book : stepState.json.blueprint
 
     props.formikProps.setFieldValue("isBook", stepState.isBook)
     props.formikProps.setFieldValue("title", bp.label)
@@ -142,9 +129,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
     }
   }
 
-  function getBlueprintData(
-    json: IDecodedBlueprintData | IDecodedBlueprintBookData
-  ): IBlueprintData {
+  function getBlueprintData(json: IDecodedBlueprintData | IDecodedBlueprintBookData): IBlueprintData {
     if (isBook(json)) {
       const book = json.blueprint_book
       return {
@@ -176,8 +161,8 @@ const Step1: React.FC<IStep1Props> = (props) => {
     <SC.Content>
       <Stacker>
         <p>
-          Get started with a blueprint string, we will parse your blueprint to
-          extract the relevant metadata as best as we can!
+          Get started with a blueprint string, we will parse your blueprint to extract the relevant metadata as best as
+          we can!
         </p>
 
         <InputWrapper uid="encoded">
@@ -208,12 +193,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
         )}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
-          <Button
-            variant="success"
-            type="button"
-            disabled={!stepState.isValid}
-            onClick={preFillForm}
-          >
+          <Button variant="success" type="button" disabled={!stepState.isValid} onClick={preFillForm}>
             Continue
           </Button>
         </SC.ButtonsStack>

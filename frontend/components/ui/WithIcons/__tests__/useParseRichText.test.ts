@@ -9,17 +9,13 @@ describe("useParseRichText", () => {
   })
 
   it("parses a single icon", () => {
-    const { result } = renderHook(() =>
-      useParseRichText("[item=stone-furnace]")
-    )
+    const { result } = renderHook(() => useParseRichText("[item=stone-furnace]"))
 
     expect(result.current).toEqual([{ type: "item", value: "stone-furnace" }])
   })
 
   it("parses two icons", () => {
-    const { result } = renderHook(() =>
-      useParseRichText("[item=stone-furnace][item=transport-belt]")
-    )
+    const { result } = renderHook(() => useParseRichText("[item=stone-furnace][item=transport-belt]"))
 
     expect(result.current).toEqual([
       { type: "item", value: "stone-furnace" },
@@ -28,9 +24,7 @@ describe("useParseRichText", () => {
   })
 
   it("parses a string + icon", () => {
-    const { result } = renderHook(() =>
-      useParseRichText("some text [item=stone-furnace]")
-    )
+    const { result } = renderHook(() => useParseRichText("some text [item=stone-furnace]"))
 
     expect(result.current).toEqual([
       { type: "text", value: "some text" },
@@ -39,9 +33,7 @@ describe("useParseRichText", () => {
   })
 
   it("parses an icon + string", () => {
-    const { result } = renderHook(() =>
-      useParseRichText("[item=stone-furnace] some text")
-    )
+    const { result } = renderHook(() => useParseRichText("[item=stone-furnace] some text"))
 
     expect(result.current).toEqual([
       { type: "item", value: "stone-furnace" },
@@ -50,9 +42,7 @@ describe("useParseRichText", () => {
   })
 
   it("parses an icon + string + icon", () => {
-    const { result } = renderHook(() =>
-      useParseRichText("[item=stone-furnace] some text [item=fast-inserter]")
-    )
+    const { result } = renderHook(() => useParseRichText("[item=stone-furnace] some text [item=fast-inserter]"))
 
     expect(result.current).toEqual([
       { type: "item", value: "stone-furnace" },
@@ -62,9 +52,7 @@ describe("useParseRichText", () => {
   })
 
   it("parses a text + icon + text", () => {
-    const { result } = renderHook(() =>
-      useParseRichText("some text [item=stone-furnace] more text")
-    )
+    const { result } = renderHook(() => useParseRichText("some text [item=stone-furnace] more text"))
 
     expect(result.current).toEqual([
       { type: "text", value: "some text" },

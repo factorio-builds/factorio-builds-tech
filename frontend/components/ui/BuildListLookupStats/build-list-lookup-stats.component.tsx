@@ -6,10 +6,7 @@ interface IBuildListLookupStatProps {
   totalCount: number
 }
 
-const BuildListLookupStats: React.FC<IBuildListLookupStatProps> = ({
-  count,
-  totalCount,
-}) => {
+const BuildListLookupStats: React.FC<IBuildListLookupStatProps> = ({ count, totalCount }) => {
   return (
     <SC.BuildListLookupStatWrapper>
       <SC.Count>

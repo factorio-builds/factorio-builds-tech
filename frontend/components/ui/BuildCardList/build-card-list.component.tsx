@@ -22,12 +22,7 @@ interface IBuildCardListProps {
 const CARD_WIDTH = 300
 const COL_GUTTER = 16
 
-const BuildCardList: React.FC<IBuildCardListProps> = ({
-  items,
-  count,
-  totalCount,
-  sort,
-}) => {
+const BuildCardList: React.FC<IBuildCardListProps> = ({ items, count, totalCount, sort }) => {
   const [ref, { width, height }] = useMeasure<HTMLDivElement>()
 
   const { colCount, colGutter, containerWidth } = useMemo<{
@@ -39,8 +34,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
       return { colCount: 0, colGutter: COL_GUTTER, containerWidth: width }
     }
 
-    const totalCardsWith =
-      width + COL_GUTTER - ((width + COL_GUTTER) % (CARD_WIDTH + COL_GUTTER))
+    const totalCardsWith = width + COL_GUTTER - ((width + COL_GUTTER) % (CARD_WIDTH + COL_GUTTER))
     const colCount = Math.floor(totalCardsWith / CARD_WIDTH)
 
     return { colCount, colGutter: COL_GUTTER, containerWidth: width }
@@ -98,9 +92,7 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
               return (
                 <SC.Item key={`${item.slug}_${i}_${i2}`}>
                   <BuildCard
-                    tabIndex={
-                      tabIndexes.findIndex((index) => index.slug === slug) + 1
-                    }
+                    tabIndex={tabIndexes.findIndex((index) => index.slug === slug) + 1}
                     data-slug={slug}
                     title={item.title}
                     categories={item.tags}

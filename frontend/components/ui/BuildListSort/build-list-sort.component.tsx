@@ -18,10 +18,7 @@ interface IBuildListSortProps {
   }
 }
 
-type ISortOptions = Record<
-  ESortType,
-  { name: string; direction: ESortDirection }
->
+type ISortOptions = Record<ESortType, { name: string; direction: ESortDirection }>
 
 const sortOptions: ISortOptions = {
   [ESortType.TITLE]: {
@@ -111,10 +108,7 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
   return (
     <SC.BuildListSortWrapper>
       Sorted by
-      <SortDropdown
-        handleSelect={set}
-        selected={{ key: sort.type, name: sortOptions[sort.type].name }}
-      >
+      <SortDropdown handleSelect={set} selected={{ key: sort.type, name: sortOptions[sort.type].name }}>
         {sortOptions[sort.type].name}
       </SortDropdown>
     </SC.BuildListSortWrapper>

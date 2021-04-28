@@ -21,33 +21,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   const user = useSelector((store: IStoreState) => store.auth.user)
 
   useEffect(() => {
-    axios.defaults.paramsSerializer = (params) =>
-      qs.stringify(params, { arrayFormat: "repeat" })
-    axios.defaults.headers.common["Authorization"] = user?.accessToken
-      ? `Bearer ${user.accessToken}`
-      : ""
+    axios.defaults.paramsSerializer = (params) => qs.stringify(params, { arrayFormat: "repeat" })
+    axios.defaults.headers.common["Authorization"] = user?.accessToken ? `Bearer ${user.accessToken}` : ""
   }, [user])
 
   return (
     <>
       <Head>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#1a161d" />
         <meta name="msapplication-TileColor" content="#1a161d" />
@@ -78,17 +61,13 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
           accessToken: session.accessToken,
         },
       })
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${session.accessToken}`
+      axios.defaults.headers.common["Authorization"] = `Bearer ${session.accessToken}`
     }
   }
 
   return {
     pageProps: {
-      ...(Component.getInitialProps
-        ? await Component.getInitialProps(ctx)
-        : {}),
+      ...(Component.getInitialProps ? await Component.getInitialProps(ctx) : {}),
     },
   }
 }

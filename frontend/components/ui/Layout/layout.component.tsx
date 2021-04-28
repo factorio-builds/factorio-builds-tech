@@ -19,9 +19,7 @@ interface ILayoutProps {
 
 const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
   const dispatch = useDispatch()
-  const sidebarActive = useSelector(
-    (state: IStoreState) => state.layout.sidebar
-  )
+  const sidebarActive = useSelector((state: IStoreState) => state.layout.sidebar)
   const closeSidebar = useCallback(() => {
     dispatch({
       type: "SET_SIDEBAR",
@@ -56,11 +54,7 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
         <Media greaterThanOrEqual="sm">
           {(mcx, renderChildren) => {
             return renderChildren ? (
-              <SC.BodyWrapper
-                className={mcx}
-                orientation="horizontal"
-                gutter={20}
-              >
+              <SC.BodyWrapper className={mcx} orientation="horizontal" gutter={20}>
                 {renderChildren ? (
                   <>
                     {sidebar && <Sidebar>{sidebar}</Sidebar>}

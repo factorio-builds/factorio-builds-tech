@@ -9,20 +9,9 @@ export interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   counter?: React.ReactText
 }
 
-const Button: React.FC<IButtonProps> = ({
-  as = "button",
-  children,
-  variant,
-  size,
-  counter,
-  ...restProps
-}) => {
+const Button: React.FC<IButtonProps> = ({ as = "button", children, variant, size, counter, ...restProps }) => {
   return (
-    <SC.ButtonWrapper
-      {...restProps}
-      as={as}
-      className={cx(restProps.className, `variant-${variant} size-${size}`)}
-    >
+    <SC.ButtonWrapper {...restProps} as={as} className={cx(restProps.className, `variant-${variant} size-${size}`)}>
       <SC.ButtonInner>{children}</SC.ButtonInner>
       {counter !== undefined && <SC.Counter>{counter}</SC.Counter>}
     </SC.ButtonWrapper>

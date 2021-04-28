@@ -26,11 +26,7 @@ interface IPayloadStateLoading {
   data: undefined
 }
 
-export type TPayload =
-  | IPayloadStateInitial
-  | IPayloadStateSuccess
-  | IPayloadStateError
-  | IPayloadStateLoading
+export type TPayload = IPayloadStateInitial | IPayloadStateSuccess | IPayloadStateError | IPayloadStateLoading
 
 function usePayload(build: IFullBuild): TPayload {
   const [, execute] = useApi<IFullPayload>(

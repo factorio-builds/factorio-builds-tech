@@ -24,14 +24,9 @@ const CopyToClipboard = ({
   )
 }
 
-const MemoizedCopyToClipboard = React.memo<typeof CopyToClipboard>(
-  CopyToClipboard
-)
+const MemoizedCopyToClipboard = React.memo<typeof CopyToClipboard>(CopyToClipboard)
 
-export const CopyStringToClipboard = ({
-  toCopy,
-  ...restProps
-}: ICopyToClipboardProps): JSX.Element => {
+export const CopyStringToClipboard = ({ toCopy, ...restProps }: ICopyToClipboardProps): JSX.Element => {
   return (
     <MemoizedCopyToClipboard toCopy={toCopy} {...restProps}>
       Copy to clipboard
@@ -39,10 +34,7 @@ export const CopyStringToClipboard = ({
   )
 }
 
-export const CopyJsonToClipboard = ({
-  toCopy,
-  ...restProps
-}: ICopyToClipboardProps): JSX.Element => {
+export const CopyJsonToClipboard = ({ toCopy, ...restProps }: ICopyToClipboardProps): JSX.Element => {
   return (
     <MemoizedCopyToClipboard toCopy={toCopy} {...restProps}>
       Copy JSON to clipboard

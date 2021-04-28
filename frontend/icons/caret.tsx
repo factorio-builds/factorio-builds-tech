@@ -6,11 +6,7 @@ interface ICaretProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
-const Caret = ({
-  inverted,
-  color = COLOR.LINK,
-  ...restProps
-}: ICaretProps): JSX.Element => {
+const Caret = ({ inverted, color = COLOR.LINK, ...restProps }: ICaretProps): JSX.Element => {
   return (
     <svg
       style={{ transform: inverted ? "scaleY(-1)" : undefined }}

@@ -21,14 +21,7 @@ interface IStateGroup {
 
 interface IMetaGroup {
   group: "meta"
-  name:
-    | "beaconized"
-    | "tileable"
-    | "compact"
-    | "marathon"
-    | "storage"
-    | "inputs are marked"
-    | "ups optimized"
+  name: "beaconized" | "tileable" | "compact" | "marathon" | "storage" | "inputs are marked" | "ups optimized"
   isSelected: boolean
 }
 
@@ -88,14 +81,7 @@ interface ICircuitGroup {
   isSelected: boolean
 }
 
-export type ITag =
-  | IBeltGroup
-  | IStateGroup
-  | IMetaGroup
-  | IPowerGroup
-  | IProductionGroup
-  | ITrainGroup
-  | ICircuitGroup
+export type ITag = IBeltGroup | IStateGroup | IMetaGroup | IPowerGroup | IProductionGroup | ITrainGroup | ICircuitGroup
 
 export interface IStoreFiltersState {
   query: string
@@ -183,25 +169,16 @@ type TSetQueryAction = IPayloadAction<"SET_QUERY", string>
 type TSetSortAction = IPayloadAction<"SET_SORT", TSortPayload>
 type TToggleFilterAction = IPayloadAction<"TOGGLE_FILTER", TFilterPayload>
 
-export type TFiltersAction =
-  | TSetQueryAction
-  | TSetSortAction
-  | TToggleFilterAction
+export type TFiltersAction = TSetQueryAction | TSetSortAction | TToggleFilterAction
 
-const setQuery = (
-  state: IStoreFiltersState,
-  payload: TSetQueryAction["payload"]
-): IStoreFiltersState => {
+const setQuery = (state: IStoreFiltersState, payload: TSetQueryAction["payload"]): IStoreFiltersState => {
   return {
     ...state,
     query: payload,
   }
 }
 
-const setSort = (
-  state: IStoreFiltersState,
-  payload: TSetSortAction["payload"]
-): IStoreFiltersState => {
+const setSort = (state: IStoreFiltersState, payload: TSetSortAction["payload"]): IStoreFiltersState => {
   return {
     ...state,
     sort: {
@@ -211,10 +188,7 @@ const setSort = (
   }
 }
 
-const toggleFilter = (
-  state: IStoreFiltersState,
-  payload: TToggleFilterAction["payload"]
-): IStoreFiltersState => {
+const toggleFilter = (state: IStoreFiltersState, payload: TToggleFilterAction["payload"]): IStoreFiltersState => {
   return {
     ...state,
     tags: state.tags.map((tag) => {
@@ -226,10 +200,7 @@ const toggleFilter = (
   }
 }
 
-export const filtersReducer = (
-  state = initialFiltersState,
-  action: TFiltersAction
-): IStoreFiltersState => {
+export const filtersReducer = (state = initialFiltersState, action: TFiltersAction): IStoreFiltersState => {
   switch (action.type) {
     case "SET_QUERY":
       return setQuery(state, action.payload)

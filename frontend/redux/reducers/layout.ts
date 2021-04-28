@@ -14,10 +14,7 @@ type TToggleSidebarAction = Action<"TOGGLE_SIDEBAR">
 
 export type TLayoutAction = TSetSidebarAction | TToggleSidebarAction
 
-const setSidebar = (
-  state: IStoreLayoutState,
-  payload: TSetSidebarAction["payload"]
-) => {
+const setSidebar = (state: IStoreLayoutState, payload: TSetSidebarAction["payload"]) => {
   return {
     ...state,
     sidebar: payload,
@@ -31,10 +28,7 @@ const toggleSidebar = (state: IStoreLayoutState) => {
   }
 }
 
-export const layoutReducer = (
-  state = initialLayoutState,
-  action: TLayoutAction
-): IStoreLayoutState => {
+export const layoutReducer = (state = initialLayoutState, action: TLayoutAction): IStoreLayoutState => {
   switch (action.type) {
     case "SET_SIDEBAR":
       return setSidebar(state, action.payload)

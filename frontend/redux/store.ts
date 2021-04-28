@@ -1,11 +1,5 @@
 import { createWrapper, HYDRATE, MakeStore } from "next-redux-wrapper"
-import {
-  createStore,
-  applyMiddleware,
-  Action,
-  combineReducers,
-  Reducer,
-} from "redux"
+import { createStore, applyMiddleware, Action, combineReducers, Reducer } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import thunk from "redux-thunk"
 import reducers from "./reducer"
@@ -27,12 +21,7 @@ export interface IStoreState {
 
 type THydrateAction = IPayloadAction<typeof HYDRATE, any>
 
-type TAction =
-  | THydrateAction
-  | TAuthAction
-  | TFiltersAction
-  | TLayoutAction
-  | TSearchAction
+type TAction = THydrateAction | TAuthAction | TFiltersAction | TLayoutAction | TSearchAction
 
 const makeStore: MakeStore<IStoreState, TAction> = () => {
   const combinedReducer = combineReducers({
@@ -51,10 +40,7 @@ const makeStore: MakeStore<IStoreState, TAction> = () => {
     }
   }
 
-  const store = createStore(
-    reducer,
-    composeWithDevTools(applyMiddleware(thunk))
-  )
+  const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
 
   // @ts-ignore
   if (module.hot) {

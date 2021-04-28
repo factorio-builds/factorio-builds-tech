@@ -15,36 +15,23 @@ function useCanSave(
 } {
   const selectedImageHref = useMemo(() => {
     if (payloadData.type === "blueprint") {
-      return (
-        payloadData._links.rendering_thumb?.href || formikProps.values.cover.url
-      )
+      return payloadData._links.rendering_thumb?.href || formikProps.values.cover.url
     }
 
     return formikProps.values.cover.hash
       ? `${publicRuntimeConfig.apiUrl}/payloads/${formikProps.values.cover.hash}/rendering/thumb`
       : null
-  }, [
-    payloadData._links.rendering_thumb?.href,
-    formikProps.values.cover.url,
-    formikProps.values.cover.hash,
-  ])
+  }, [payloadData._links.rendering_thumb?.href, formikProps.values.cover.url, formikProps.values.cover.hash])
   const { loaded: renderIsReady } = useImage(selectedImageHref || undefined)
 
   const { canSave, waitingForRender } = useMemo(() => {
-    const waitingForRender =
-      formikProps.values.cover.type === "hash" && !renderIsReady
+    const waitingForRender = formikProps.values.cover.type === "hash" && !renderIsReady
 
     return {
-      canSave:
-        !waitingForRender && !submitStatus.loading && formikProps.isValid,
+      canSave: !waitingForRender && !submitStatus.loading && formikProps.isValid,
       waitingForRender,
     }
-  }, [
-    renderIsReady,
-    submitStatus.loading,
-    formikProps.isValid,
-    formikProps.values.cover.type,
-  ])
+  }, [renderIsReady, submitStatus.loading, formikProps.isValid, formikProps.values.cover.type])
 
   return { canSave, waitingForRender }
 }

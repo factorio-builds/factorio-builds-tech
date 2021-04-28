@@ -60,9 +60,7 @@ const Tabs = (props: ITabsProps): JSX.Element => {
                   }}
                   passHref
                 >
-                  <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
-                    {tab.label}
-                  </SC.Tab>
+                  <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>{tab.label}</SC.Tab>
                 </Link>
               )
 
@@ -90,21 +88,12 @@ const Tabs = (props: ITabsProps): JSX.Element => {
             {props.tabs.map((tab) => {
               const { tab: Tab } = tab
 
-              return (
-                <Tab
-                  key={tab.label}
-                  build={props.build}
-                  payload={props.payload}
-                  isActive={isCurrentTab(tab)}
-                />
-              )
+              return <Tab key={tab.label} build={props.build} payload={props.payload} isActive={isCurrentTab(tab)} />
             })}
           </SC.TabsContentInner>
           <Media greaterThanOrEqual="sm">
             {(mcx, renderChildren) => {
-              return renderChildren ? (
-                <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside>
-              ) : null
+              return renderChildren ? <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside> : null
             }}
           </Media>
         </SC.TabsContent>

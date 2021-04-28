@@ -27,11 +27,7 @@ function Header(): JSX.Element {
           <Media lessThan="sm">
             {(mcx, renderChildren) => {
               return renderChildren ? (
-                <SC.BurgerButton
-                  className={mcx}
-                  role="button"
-                  onClick={toggleSidebar}
-                >
+                <SC.BurgerButton className={mcx} role="button" onClick={toggleSidebar}>
                   <Burger />
                 </SC.BurgerButton>
               ) : null
@@ -50,9 +46,7 @@ function Header(): JSX.Element {
             {(mcx, renderChildren) => {
               return renderChildren && user ? (
                 <Link href="/build/create">
-                  <SC.CreateBuildButton className={mcx}>
-                    Add a build
-                  </SC.CreateBuildButton>
+                  <SC.CreateBuildButton className={mcx}>Add a build</SC.CreateBuildButton>
                 </Link>
               ) : null
             }}

@@ -104,9 +104,7 @@ function ImageUpload(props: IImageUploadProps): JSX.Element | null {
   }
 
   return (
-    <SC.ImageUploadWrapper
-      className={cx({ "is-active": isDragActive, "has-image": imagePreview })}
-    >
+    <SC.ImageUploadWrapper className={cx({ "is-active": isDragActive, "has-image": imagePreview })}>
       <InputWrapper uid="build-image" label={props.label}>
         <SC.UploadZone {...getRootProps()}>
           <input {...getInputProps()} />
@@ -114,17 +112,14 @@ function ImageUpload(props: IImageUploadProps): JSX.Element | null {
             <SC.ImagePreview src={image} />
           ) : (
             <SC.NoImageBackdrop>
-              <SC.Hint>
-                {isDragActive ? "(drop image here)" : "(click or drag image)"}
-              </SC.Hint>
+              <SC.Hint>{isDragActive ? "(drop image here)" : "(click or drag image)"}</SC.Hint>
             </SC.NoImageBackdrop>
           )}
         </SC.UploadZone>
 
         <SC.Recommended>
           <SC.StyledLamp />
-          We recommended using a tall image, if possible, share the build image
-          vertically.
+          We recommended using a tall image, if possible, share the build image vertically.
         </SC.Recommended>
 
         {image && suggestRotating && (

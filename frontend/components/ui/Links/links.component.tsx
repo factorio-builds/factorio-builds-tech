@@ -11,10 +11,7 @@ interface ILinksProps {
 const Links = (props: ILinksProps): JSX.Element => {
   return (
     <SC.LinksWrapper orientation={props.orientation}>
-      <Link
-        href="https://github.com/factorio-builds/factorio-builds-tech"
-        passHref
-      >
+      <Link href="https://github.com/factorio-builds/factorio-builds-tech" passHref>
         <SC.StyledLink target="_blank">
           <GitHub /> GitHub
         </SC.StyledLink>

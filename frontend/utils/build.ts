@@ -4,9 +4,7 @@ export function isBook(payload: IFullPayload): payload is IBookPayload {
   return payload.type === "blueprint-book"
 }
 
-export function countEntities(
-  entities?: IBlueprintPayload["entities"] | IBlueprintPayload["tiles"]
-): number {
+export function countEntities(entities?: IBlueprintPayload["entities"] | IBlueprintPayload["tiles"]): number {
   if (!entities) {
     return 0
   }

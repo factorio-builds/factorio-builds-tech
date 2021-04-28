@@ -6,11 +6,7 @@ import { IFullBuild, IFullPayload, IThinBuild } from "../../../types/models"
 import Container from "../../ui/Container"
 import Layout from "../../ui/Layout"
 import { IFormValues, IValidFormValues } from "./build-form-page.d"
-import {
-  createInitialValues,
-  toFormData,
-  toPatchFormData,
-} from "./build-form-page.helpers"
+import { createInitialValues, toFormData, toPatchFormData } from "./build-form-page.helpers"
 import Step1 from "./step-1.component"
 import Step2 from "./step-2.component"
 import { validationSchema } from "./validation"
@@ -127,19 +123,11 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
               <h2>{title}</h2>
               <Form>
                 {step === 1 && props.type === "CREATE" && (
-                  <Step1
-                    formikProps={formikProps}
-                    goToNextStep={goToNextStep}
-                  />
+                  <Step1 formikProps={formikProps} goToNextStep={goToNextStep} />
                 )}
 
                 {(step === 2 || props.type === "EDIT") && payloadData && (
-                  <Step2
-                    formikProps={formikProps}
-                    payloadData={payloadData}
-                    submitStatus={submit}
-                    type={props.type}
-                  />
+                  <Step2 formikProps={formikProps} payloadData={payloadData} submitStatus={submit} type={props.type} />
                 )}
               </Form>
             </Container>

@@ -32,9 +32,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
   const tabs = useMemo(() => {
     if (isBook(build.latest_version.payload)) {
       const childrenLength =
-        payload.data && isBook(payload.data) && payload.data.children
-          ? payload.data.children.length
-          : "..."
+        payload.data && isBook(payload.data) && payload.data.children ? payload.data.children.length : "..."
 
       return [
         { key: "details", label: "details", tab: DetailsTab },

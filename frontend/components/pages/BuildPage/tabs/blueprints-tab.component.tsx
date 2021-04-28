@@ -10,15 +10,11 @@ const BlueprintsTab: TTabComponent = (props) => {
       {props.payload.loading && "loading..."}
       {props.payload.error && "error?"}
 
-      {props.payload.data &&
-        isBook(props.payload.data) &&
-        isBook(props.build.latest_version.payload) && (
-          <>
-            <BlueprintItemExplorer type="readOnly">
-              {props.payload.data.children}
-            </BlueprintItemExplorer>
-          </>
-        )}
+      {props.payload.data && isBook(props.payload.data) && isBook(props.build.latest_version.payload) && (
+        <>
+          <BlueprintItemExplorer type="readOnly">{props.payload.data.children}</BlueprintItemExplorer>
+        </>
+      )}
     </Tab>
   )
 }

@@ -47,26 +47,12 @@ function BuildCard({
         className={cx({ "is-pressed": isPressed })}
       >
         <SC.ImageWrapper>
-          <Image
-            src={image.href}
-            alt=""
-            width={image.width}
-            height={image.height}
-            layout="responsive"
-            sizes="300px"
-          />
+          <Image src={image.href} alt="" width={image.width} height={image.height} layout="responsive" sizes="300px" />
         </SC.ImageWrapper>
         <SC.Content>
           <SC.Title orientation="horizontal" gutter={8}>
             {icons.length > 0 && <BuildIcon icons={icons} />}
-            <WithIcons
-              input={title}
-              prefix={
-                isBook ? (
-                  <img src="/img/blueprint-book.png" alt="" />
-                ) : undefined
-              }
-            />
+            <WithIcons input={title} prefix={isBook ? <img src="/img/blueprint-book.png" alt="" /> : undefined} />
           </SC.Title>
           <SC.Categories orientation="horizontal" gutter={8}>
             {categories.map((category) => {

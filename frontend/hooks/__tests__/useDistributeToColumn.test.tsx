@@ -34,22 +34,13 @@ const OUTPUT = [
 ]
 
 describe("useDistributeToColumn", () => {
-  it.each([0, 2, 3, 4])(
-    "distributes by the right amount of %i columns",
-    (a) => {
-      expect(
-        useDistributeToColumn(ITEMS as any, a, COL_WIDTH, GUTTER)
-      ).toHaveLength(a)
-    }
-  )
+  it.each([0, 2, 3, 4])("distributes by the right amount of %i columns", (a) => {
+    expect(useDistributeToColumn(ITEMS as any, a, COL_WIDTH, GUTTER)).toHaveLength(a)
+  })
 
   it("distributes when no items are passed", () => {
     const items = [] as any
-    expect(useDistributeToColumn(items, 3, COL_WIDTH, GUTTER)).toEqual([
-      [],
-      [],
-      [],
-    ])
+    expect(useDistributeToColumn(items, 3, COL_WIDTH, GUTTER)).toEqual([[], [], []])
   })
 
   it("distributes less items than the column count", () => {
@@ -78,9 +69,7 @@ describe("useDistributeToColumn", () => {
   })
 
   it("returns the expected output", () => {
-    expect(useDistributeToColumn(ITEMS as any, 3, COL_WIDTH, GUTTER)).toEqual(
-      OUTPUT
-    )
+    expect(useDistributeToColumn(ITEMS as any, 3, COL_WIDTH, GUTTER)).toEqual(OUTPUT)
   })
 
   it("carries the original value in the value key", () => {

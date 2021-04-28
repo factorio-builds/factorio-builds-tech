@@ -38,18 +38,14 @@ function Buildheader(props: IBuildheader): JSX.Element {
         <Container size="medium">
           <Stacker orientation="vertical" gutter={16}>
             <Stacker orientation="horizontal" gutter={16}>
-              {props.build.icons.length > 0 && (
-                <BuildIcon icons={props.build.icons} size="large" />
-              )}
+              {props.build.icons.length > 0 && <BuildIcon icons={props.build.icons} size="large" />}
               <Stacker orientation="vertical" gutter={8}>
                 <SC.BuildTitle>
                   <WithIcons input={props.build.title} />
                 </SC.BuildTitle>
                 <SC.BuildTags>
                   {props.build.tags.map((tag) => {
-                    return (
-                      <SC.BuildHeaderMeta key={tag}>{tag}</SC.BuildHeaderMeta>
-                    )
+                    return <SC.BuildHeaderMeta key={tag}>{tag}</SC.BuildHeaderMeta>
                   })}
                 </SC.BuildTags>
               </Stacker>
@@ -58,9 +54,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
               <span>
                 by{" "}
                 <Link href={`/${props.build.owner.username}/builds`} passHref>
-                  <SC.StyledLink>
-                    {props.build.owner.display_name}
-                  </SC.StyledLink>
+                  <SC.StyledLink>{props.build.owner.display_name}</SC.StyledLink>
                 </Link>
               </span>
               <span>
@@ -79,37 +73,20 @@ function Buildheader(props: IBuildheader): JSX.Element {
             <SC.Buttons>
               <FavoriteButton build={props.build} size="small" />
               <Link href={props.payload.data?._links.raw.href || ""} passHref>
-                <Button
-                  as="a"
-                  variant="default"
-                  size="small"
-                  disabled={!props.payload.data}
-                >
+                <Button as="a" variant="default" size="small" disabled={!props.payload.data}>
                   <Raw />
                   Raw
                 </Button>
               </Link>
               {props.build.latest_type === "blueprint" && (
-                <Link
-                  href={`https://fbe.teoxoy.com/?source=${props.payload.data?._links.raw.href}`}
-                  passHref
-                >
-                  <Button
-                    as="a"
-                    variant="default"
-                    size="small"
-                    disabled={!props.payload.data}
-                  >
+                <Link href={`https://fbe.teoxoy.com/?source=${props.payload.data?._links.raw.href}`} passHref>
+                  <Button as="a" variant="default" size="small" disabled={!props.payload.data}>
                     <Editor />
                     View in editor
                   </Button>
                 </Link>
               )}
-              <CopyStringToClipboard
-                toCopy={props.build.latest_version.payload.encoded}
-                variant="cta"
-                size="small"
-              />
+              <CopyStringToClipboard toCopy={props.build.latest_version.payload.encoded} variant="cta" size="small" />
             </SC.Buttons>
           </Stacker>
         </Container>

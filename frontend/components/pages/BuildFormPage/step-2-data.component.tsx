@@ -24,10 +24,7 @@ interface IStep2DataProps {
 }
 
 const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
-  const groupsToTags = useMemo(
-    () => props.groupTags.map((tag) => `/${props.group}/${tag}`),
-    [props.groupTags]
-  )
+  const groupsToTags = useMemo(() => props.groupTags.map((tag) => `/${props.group}/${tag}`), [props.groupTags])
   const selectedTags = props.selectedTags(groupsToTags)
 
   const [collapsed, setCollapsed] = useState(true)
@@ -44,9 +41,7 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
           <SC.GroupTitle type="button" onClick={expand}>
             <Caret inverted={collapsed} />
             {startCase(props.group)}
-            {selectedTags.length > 0 && (
-              <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
-            )}
+            {selectedTags.length > 0 && <SC.GroupCount>{selectedTags.length}</SC.GroupCount>}
           </SC.GroupTitle>
         }
       >
@@ -82,13 +77,7 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
 
   return (
     <>
-      <Field
-        name="title"
-        label="Title"
-        type="text"
-        required
-        component={Input}
-      />
+      <Field name="title" label="Title" type="text" required component={Input} />
 
       <Field
         name="slug"
@@ -106,13 +95,7 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
           : "The slug cannot be edited at the moment."}
       </SC.InputHint>
 
-      <Field
-        name="description"
-        label="Description"
-        type="textarea"
-        rows="5"
-        component={Input}
-      />
+      <Field name="description" label="Description" type="textarea" rows="5" component={Input} />
 
       <InputGroup
         legend={

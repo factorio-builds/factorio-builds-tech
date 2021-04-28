@@ -15,9 +15,7 @@ export type IBlueprintItemExplorerContext =
   | IBlueprintItemExplorerContextSelectable
   | IBlueprintItemExplorerContextReadonly
 
-const BlueprintItemExplorerContext = React.createContext<IBlueprintItemExplorerContext | null>(
-  null
-)
+const BlueprintItemExplorerContext = React.createContext<IBlueprintItemExplorerContext | null>(null)
 
 export const useBlueprintItemExplorer = () => {
   const context = useContext(BlueprintItemExplorerContext)

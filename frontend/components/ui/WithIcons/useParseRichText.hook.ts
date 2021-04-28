@@ -3,9 +3,7 @@ interface IParsedRichTextNode<T = "item" | "text"> {
   value: string
 }
 
-function parseItem(
-  text: string
-): { part: IParsedRichTextNode<"item"> | null; rest: string } {
+function parseItem(text: string): { part: IParsedRichTextNode<"item"> | null; rest: string } {
   const itemRegex = new RegExp(/(\[(item)=([a-z-]+)\])/)
   const result = text.match(itemRegex)
 
@@ -21,9 +19,7 @@ function parseItem(
   return { part: null, rest: text }
 }
 
-function parseText(
-  text: string
-): { part: IParsedRichTextNode<"text"> | null; rest: string } {
+function parseText(text: string): { part: IParsedRichTextNode<"text"> | null; rest: string } {
   const itemRegex = new RegExp(/(\[(item)=([a-z-]+)\])/)
   const result = text.match(itemRegex)
 

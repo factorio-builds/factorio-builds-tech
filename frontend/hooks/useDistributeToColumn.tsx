@@ -10,12 +10,7 @@ function calcRatio(width: number, height: number): number {
   return ratio
 }
 
-function columnHeight(
-  items: IThinBuild[],
-  colWidth: number,
-  gutter: number,
-  extraHeightPerCard: number
-): number {
+function columnHeight(items: IThinBuild[], colWidth: number, gutter: number, extraHeightPerCard: number): number {
   const gutterHeight = Math.max(items.length - 1, 0) * gutter
   const itemsTotalHeight = items.reduce((acc, item) => {
     const width = item._links.cover.width
@@ -26,15 +21,8 @@ function columnHeight(
   return itemsTotalHeight + gutterHeight
 }
 
-function getShortestColumn(
-  columns: IThinBuild[][],
-  colWidth: number,
-  gutter: number,
-  extraHeightPerCard: number
-) {
-  const currColumnsHeight = columns.map((column) =>
-    columnHeight(column, colWidth, gutter, extraHeightPerCard)
-  )
+function getShortestColumn(columns: IThinBuild[][], colWidth: number, gutter: number, extraHeightPerCard: number) {
+  const currColumnsHeight = columns.map((column) => columnHeight(column, colWidth, gutter, extraHeightPerCard))
   const min = Math.min(...currColumnsHeight)
   const shortestColumnIndex = currColumnsHeight.indexOf(min)
 
@@ -52,19 +40,13 @@ export function useDistributeToColumn(
     return []
   }
 
-  const colWidth =
-    containerWidth / colCount - (gutter * (colCount - 1)) / colCount
+  const colWidth = containerWidth / colCount - (gutter * (colCount - 1)) / colCount
 
   const columns = Array.from({ length: colCount }, () => [] as IThinBuild[])
 
   // TODO: memoize
   items.forEach((item) => {
-    const shortestColumn = getShortestColumn(
-      columns,
-      colWidth,
-      gutter,
-      extraHeightPerCard
-    )
+    const shortestColumn = getShortestColumn(columns, colWidth, gutter, extraHeightPerCard)
 
     shortestColumn.push(item)
   })

@@ -6,21 +6,12 @@ interface IGithubProps extends React.SVGProps<SVGSVGElement> {
   color?: string
 }
 
-const GitHub = ({
-  color = COLOR.FADEDBLUE700,
-  ...restProps
-}: IGithubProps): JSX.Element => {
+const GitHub = ({ color = COLOR.FADEDBLUE700, ...restProps }: IGithubProps): JSX.Element => {
   const uid = useUID()
   const id = `github-${uid}`
 
   return (
-    <svg
-      width="16"
-      height="16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      {...restProps}
-    >
+    <svg width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" {...restProps}>
       <g clipPath={`url(#${id})`}>
         <path
           fillRule="evenodd"

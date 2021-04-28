@@ -8,11 +8,7 @@ interface IContainerProps {
   size?: "small" | "medium" | "large"
 }
 
-function Container({
-  children,
-  direction = "row",
-  size = "large",
-}: IContainerProps): JSX.Element {
+function Container({ children, direction = "row", size = "large" }: IContainerProps): JSX.Element {
   return (
     <SC.ContainerWrapper
       className={cx({

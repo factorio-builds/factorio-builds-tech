@@ -16,25 +16,19 @@ describe("<WithIcons />", () => {
   })
 
   it("renders a prefix", () => {
-    const { getByText } = render(
-      <WithIcons prefix={<div>prefix</div>} input="build name" />
-    )
+    const { getByText } = render(<WithIcons prefix={<div>prefix</div>} input="build name" />)
 
     expect(getByText("build name")).toBeTruthy()
     expect(getByText("prefix")).toBeTruthy()
   })
 
   it("parses a title with item icon", () => {
-    const { container, getByText, getAllByTestId } = render(
-      <WithIcons input="[item=transport-belt] build name" />
-    )
+    const { container, getByText, getAllByTestId } = render(<WithIcons input="[item=transport-belt] build name" />)
 
     const icons = getAllByTestId("item-icon") as HTMLImageElement[]
 
     expect(icons).toHaveLength(1)
-    expect(icons[0].src).toBe(
-      "https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png"
-    )
+    expect(icons[0].src).toBe("https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png")
     expect(getByText("build name")).toBeTruthy()
     expect(container).toMatchSnapshot()
   })
@@ -47,12 +41,8 @@ describe("<WithIcons />", () => {
     const icons = getAllByTestId("item-icon") as HTMLImageElement[]
 
     expect(icons).toHaveLength(2)
-    expect(icons[0].src).toBe(
-      "https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png"
-    )
-    expect(icons[1].src).toBe(
-      "https://api.local.factorio.tech/assets/icon/64/item/fast-transport-belt.png"
-    )
+    expect(icons[0].src).toBe("https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png")
+    expect(icons[1].src).toBe("https://api.local.factorio.tech/assets/icon/64/item/fast-transport-belt.png")
     expect(getByText("build name")).toBeTruthy()
     expect(container).toMatchSnapshot()
   })

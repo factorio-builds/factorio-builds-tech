@@ -3,9 +3,7 @@ import { IBlueprintPayload } from "../../../types/models"
 import Stacker from "../Stacker"
 import * as SC from "./blueprint-required-items.styles"
 
-const countAndSort = (
-  items: IBlueprintPayload["entities"] | IBlueprintPayload["tiles"]
-) => {
+const countAndSort = (items: IBlueprintPayload["entities"] | IBlueprintPayload["tiles"]) => {
   return Object.keys(items)
     .map((itemName) => {
       return {
@@ -35,9 +33,7 @@ interface IBlueprintRequiredItemsProps {
   tiles: IBlueprintPayload["tiles"]
 }
 
-function BlueprintRequiredItems(
-  props: IBlueprintRequiredItemsProps
-): JSX.Element {
+function BlueprintRequiredItems(props: IBlueprintRequiredItemsProps): JSX.Element {
   const sortedRequired = useMemo(() => {
     return {
       entities: countAndSort(props.entities),
@@ -48,22 +44,10 @@ function BlueprintRequiredItems(
   return (
     <Stacker gutter={8}>
       {sortedRequired.entities.map((item) => {
-        return (
-          <RequiredItem
-            key={item.name}
-            itemName={item.name}
-            count={item.count}
-          />
-        )
+        return <RequiredItem key={item.name} itemName={item.name} count={item.count} />
       })}
       {sortedRequired.tiles.map((item) => {
-        return (
-          <RequiredItem
-            key={item.name}
-            itemName={item.name}
-            count={item.count}
-          />
-        )
+        return <RequiredItem key={item.name} itemName={item.name} count={item.count} />
       })}
     </Stacker>
   )

@@ -15,10 +15,7 @@ type TUnsetUserAction = Action<"UNSET_USER">
 
 export type TAuthAction = TSetUserAction | TUnsetUserAction
 
-const setUser = (
-  state: IStoreAuthState,
-  payload: TSetUserAction["payload"]
-) => {
+const setUser = (state: IStoreAuthState, payload: TSetUserAction["payload"]) => {
   return {
     ...state,
     user: payload,
@@ -32,10 +29,7 @@ const unsetUser = (state: IStoreAuthState) => {
   }
 }
 
-export const authReducer = (
-  state = initialAuthState,
-  action: TAuthAction
-): IStoreAuthState => {
+export const authReducer = (state = initialAuthState, action: TAuthAction): IStoreAuthState => {
   switch (action.type) {
     case "SET_USER":
       return setUser(state, action.payload)

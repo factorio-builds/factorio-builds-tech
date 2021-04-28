@@ -1,10 +1,5 @@
 import { IDecodedBlueprintData } from "../../types"
-import {
-  decodeBlueprint,
-  getCountPerItem,
-  isBook,
-  isValidBlueprint,
-} from "../blueprint"
+import { decodeBlueprint, getCountPerItem, isBook, isValidBlueprint } from "../blueprint"
 import {
   yellowBeltBlueprintMock,
   redBeltBlueprintMock,
@@ -37,19 +32,15 @@ describe("blueprint utils", () => {
   })
 
   it("returns count of items", () => {
-    const decodedRobotsSpeedModulesFactory = decodeBlueprint(
-      robotsSpeedModulesFactoryMock
-    ) as IDecodedBlueprintData
-    expect(getCountPerItem(decodedRobotsSpeedModulesFactory.blueprint)).toEqual(
-      {
-        "assembling-machine-3": 18,
-        beacon: 25,
-        "fast-inserter": 36,
-        "logistic-chest-buffer": 16,
-        "logistic-chest-requester": 18,
-        "steel-chest": 2,
-        substation: 4,
-      }
-    )
+    const decodedRobotsSpeedModulesFactory = decodeBlueprint(robotsSpeedModulesFactoryMock) as IDecodedBlueprintData
+    expect(getCountPerItem(decodedRobotsSpeedModulesFactory.blueprint)).toEqual({
+      "assembling-machine-3": 18,
+      beacon: 25,
+      "fast-inserter": 36,
+      "logistic-chest-buffer": 16,
+      "logistic-chest-requester": 18,
+      "steel-chest": 2,
+      substation: 4,
+    })
   })
 })

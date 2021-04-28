@@ -8,12 +8,7 @@ interface IStackerProps extends React.ComponentPropsWithoutRef<"div"> {
   orientation?: "horizontal" | "vertical"
 }
 
-function Stacker({
-  children,
-  gutter = 16,
-  orientation = "vertical",
-  ...restProps
-}: IStackerProps): JSX.Element {
+function Stacker({ children, gutter = 16, orientation = "vertical", ...restProps }: IStackerProps): JSX.Element {
   return (
     <SC.StackerWrapper
       {...restProps}

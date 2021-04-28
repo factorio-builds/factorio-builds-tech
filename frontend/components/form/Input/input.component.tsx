@@ -13,8 +13,7 @@ interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onKeyPress?: (event: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
-interface ITextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface ITextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   id: string
   name?: string
   value: React.ReactText
@@ -67,15 +66,7 @@ const Text: React.FC<ITextProps> = ({
   )
 }
 
-const Textarea: React.FC<ITextareaProps> = ({
-  id,
-  name,
-  value,
-  placeholder,
-  spellCheck,
-  readOnly,
-  ...restProps
-}) => {
+const Textarea: React.FC<ITextareaProps> = ({ id, name, value, placeholder, spellCheck, readOnly, ...restProps }) => {
   return (
     <SC.StyledTextarea
       {...restProps}

@@ -62,25 +62,19 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
               <th></th>
               <th>
                 <SC.Sort onClick={() => toggleSort("title")}>
-                  {sortBy.key === "title" && (
-                    <Caret inverted={sortBy.direction === "asc"} />
-                  )}
+                  {sortBy.key === "title" && <Caret inverted={sortBy.direction === "asc"} />}
                   Build title
                 </SC.Sort>
               </th>
               <th>
                 <SC.Sort onClick={() => toggleSort("created_at")}>
-                  {sortBy.key === "created_at" && (
-                    <Caret inverted={sortBy.direction === "asc"} />
-                  )}
+                  {sortBy.key === "created_at" && <Caret inverted={sortBy.direction === "asc"} />}
                   Created at
                 </SC.Sort>
               </th>
               <th>
                 <SC.Sort onClick={() => toggleSort("updated_at")}>
-                  {sortBy.key === "updated_at" && (
-                    <Caret inverted={sortBy.direction === "asc"} />
-                  )}
+                  {sortBy.key === "updated_at" && <Caret inverted={sortBy.direction === "asc"} />}
                   Updated at
                 </SC.Sort>
               </th>
@@ -97,17 +91,10 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
               .map((item) => (
                 <tr key={item.slug}>
                   <td style={{ width: "1px" }}>
-                    <Image
-                      src={item._links.cover.href}
-                      width={64}
-                      height={64}
-                      layout="fixed"
-                    />
+                    <Image src={item._links.cover.href} width={64} height={64} layout="fixed" />
                   </td>
                   <td>
-                    <a href={`/${router.query.user}/${item.slug}`}>
-                      {item.title}
-                    </a>
+                    <a href={`/${router.query.user}/${item.slug}`}>{item.title}</a>
                   </td>
                   <td style={{ width: "1px" }}>
                     <Tooltip content={formatSince(item.created_at)}>

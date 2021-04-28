@@ -17,9 +17,7 @@ interface IFormikInputProps extends FieldProps {
   readOnly?: boolean
   inline?: boolean
   validFeedback?: string
-  onKeyPress?: (
-    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void
+  onKeyPress?: (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 const FormikInputWrapper: React.FC<IFormikInputProps> = ({
@@ -56,27 +54,12 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
       uid={uid}
     >
       {(type === "text" || type === "textarea") && (
-        <FormikInput
-          {...props}
-          {...formikProps}
-          prefix={prefix}
-          onKeyPress={onKeyPress}
-          type={type}
-          id={uid}
-        />
+        <FormikInput {...props} {...formikProps} prefix={prefix} onKeyPress={onKeyPress} type={type} id={uid} />
       )}
       {type === "checkbox" && (
-        <FormikCheckbox
-          {...props}
-          {...formikProps}
-          prefix={prefix}
-          label={props.label}
-          id={uid}
-        />
+        <FormikCheckbox {...props} {...formikProps} prefix={prefix} label={props.label} id={uid} />
       )}
-      {type === "select" && (
-        <FormikSelect {...formikProps} {...props} id={uid} />
-      )}
+      {type === "select" && <FormikSelect {...formikProps} {...props} id={uid} />}
     </InputWrapper>
   )
 }

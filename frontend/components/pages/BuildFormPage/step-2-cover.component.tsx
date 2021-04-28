@@ -27,10 +27,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
     props.formikProps.setFieldTouched("cover.file")
   }
 
-  function selectRenderedCover(
-    e: React.MouseEvent,
-    hash: IFullPayload["hash"]
-  ) {
+  function selectRenderedCover(e: React.MouseEvent, hash: IFullPayload["hash"]) {
     e.stopPropagation()
     props.formikProps.setFieldValue("cover.hash", hash)
   }
@@ -38,14 +35,9 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
   return (
     <Stacker orientation="vertical" gutter={16}>
       {isBook(props.payloadData) ? (
-        <p>
-          Select a generated render, or provide a custom image on the next step.
-        </p>
+        <p>Select a generated render, or provide a custom image on the next step.</p>
       ) : (
-        <p>
-          This generated render will be used. Optionally, a custom image can be
-          provided on the next step.
-        </p>
+        <p>This generated render will be used. Optionally, a custom image can be provided on the next step.</p>
       )}
 
       <Stacker orientation="vertical">
@@ -64,22 +56,15 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
               imageUrl={props.formikProps.values.cover.url || null}
               onChange={onChangeImage}
             />
-            {props.formikProps.touched.cover?.file &&
-              props.formikProps.errors.cover?.file && (
-                <ErrorMessage>
-                  {props.formikProps.errors.cover.file}
-                </ErrorMessage>
-              )}
+            {props.formikProps.touched.cover?.file && props.formikProps.errors.cover?.file && (
+              <ErrorMessage>{props.formikProps.errors.cover.file}</ErrorMessage>
+            )}
           </SC.CoverWrapper>
         )}
 
         <Radio
           id="cover-hash"
-          label={
-            isBook(props.payloadData)
-              ? "Pick a rendered image"
-              : "Use the rendered image"
-          }
+          label={isBook(props.payloadData) ? "Pick a rendered image" : "Use the rendered image"}
           value="hash"
           onChange={() => props.formikProps.setFieldValue("cover.type", "hash")}
           checked={props.formikProps.values.cover.type === "hash"}
@@ -99,10 +84,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
               </div>
             ) : (
               <SC.Rendered>
-                <img
-                  src={props.payloadData._links.rendering_thumb?.href}
-                  alt=""
-                />
+                <img src={props.payloadData._links.rendering_thumb?.href} alt="" />
               </SC.Rendered>
             )}
           </SC.RenderedCovers>

@@ -13,9 +13,7 @@ interface IFilterGroupProps {
 
 function FilterGroup(props: IFilterGroupProps): JSX.Element {
   const tags = useSelector((store: IStoreState) =>
-    store.filters.tags.filter(
-      (tag) => tag.group === props.name && props.nodes.includes(tag.name)
-    )
+    store.filters.tags.filter((tag) => tag.group === props.name && props.nodes.includes(tag.name))
   )
   const [expanded, setExpanded] = useState(false)
 
@@ -31,9 +29,7 @@ function FilterGroup(props: IFilterGroupProps): JSX.Element {
     <SC.FilterGroup>
       <SC.GroupName onClick={toggle}>
         {startCase(props.name)}
-        {selectedTags.length > 0 && (
-          <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
-        )}
+        {selectedTags.length > 0 && <SC.GroupCount>{selectedTags.length}</SC.GroupCount>}
         <SC.StyledCaret inverted={expanded} />
       </SC.GroupName>
 
@@ -41,13 +37,7 @@ function FilterGroup(props: IFilterGroupProps): JSX.Element {
         <SC.GroupFilters orientation="vertical" gutter={2}>
           {tags.map((node, index) => {
             return (
-              <Filter
-                key={index}
-                group={node.group}
-                name={node.name}
-                isSelected={node.isSelected}
-                text={node.name}
-              />
+              <Filter key={index} group={node.group} name={node.name} isSelected={node.isSelected} text={node.name} />
             )
           })}
         </SC.GroupFilters>

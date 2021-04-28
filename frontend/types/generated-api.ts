@@ -737,10 +737,7 @@ export interface components {
        * All payloads that are included in this blueprint book.
        * Only set when the `include_children` query parameter is `true`.
        */
-      children: (
-        | components["schemas"]["BlueprintPayloadModel"]
-        | components["schemas"]["BookPayloadModel"]
-      )[]
+      children: (components["schemas"]["BlueprintPayloadModel"] | components["schemas"]["BookPayloadModel"])[]
     }
     BuildsLinks: {
       /**
@@ -829,9 +826,7 @@ export interface components {
     }
     CreatePayloadResult: {
       /** The full payload graph that was created in this operation. */
-      payload:
-        | components["schemas"]["BlueprintPayloadModel"]
-        | components["schemas"]["BookPayloadModel"]
+      payload: components["schemas"]["BlueprintPayloadModel"] | components["schemas"]["BookPayloadModel"]
       /**
        * The primary blueprint's title (aka label) converted to slug,
        * including fields indicating whether the slug is valid and available for the authenticated user.
@@ -989,9 +984,7 @@ export interface components {
       /** An optional description for the version. */
       description?: string | null
       /** The payload attached to the version. */
-      payload:
-        | components["schemas"]["BlueprintPayloadModel"]
-        | components["schemas"]["BookPayloadModel"]
+      payload: components["schemas"]["BlueprintPayloadModel"] | components["schemas"]["BookPayloadModel"]
     }
     GameIcon: {
       type: "virtual" | "item"

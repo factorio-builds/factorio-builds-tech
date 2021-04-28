@@ -1,10 +1,6 @@
 import * as React from "react"
 
-export function useDebouncedEffect(
-  effect: () => void,
-  delay: number,
-  deps: React.DependencyList
-): void {
+export function useDebouncedEffect(effect: () => void, delay: number, deps: React.DependencyList): void {
   const callback = React.useCallback(effect, deps)
 
   React.useEffect(() => {
