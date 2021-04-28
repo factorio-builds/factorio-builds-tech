@@ -53,7 +53,6 @@ const Tabs = (props: ITabsProps): JSX.Element => {
               const Tab = (innerProps: { className?: string }) => (
                 <Link
                   {...innerProps}
-                  key={tab.label}
                   href={{
                     pathname: `/${props.build.owner.username}/${props.build.slug}`,
                     query: { tab: tab.key },
@@ -68,7 +67,7 @@ const Tabs = (props: ITabsProps): JSX.Element => {
 
               if (tab.mobileOnly) {
                 return (
-                  <Media lessThan="sm">
+                  <Media lessThan="sm" key={tab.key}>
                     {(mcx, renderChildren) => {
                       return renderChildren ? <Tab className={mcx} /> : null
                     }}
