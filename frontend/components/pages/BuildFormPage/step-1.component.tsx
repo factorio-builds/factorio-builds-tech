@@ -13,6 +13,7 @@ import {
   isValidBlueprint,
 } from "../../../utils/blueprint"
 import { tagsFromHeuristics } from "../../../utils/blueprint-heuristics"
+import FormError from "../../form/FormError"
 import Input from "../../form/Input"
 import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
@@ -60,7 +61,7 @@ interface IStep1Props {
 
 const Step1: React.FC<IStep1Props> = (props) => {
   const [encoded, setEncoded] = useState("")
-  const [, execute] = useApi<ICreatePayloadResult>({
+  const [{ error }, execute] = useApi<ICreatePayloadResult>({
     url: "/payloads",
     method: "PUT",
   })
@@ -206,6 +207,8 @@ const Step1: React.FC<IStep1Props> = (props) => {
             <p>You’ll get to adjust everything on the next screen.</p>
           </>
         )}
+
+        {error && <FormError error={error} />}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
           <Button
