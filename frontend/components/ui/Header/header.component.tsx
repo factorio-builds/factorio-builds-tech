@@ -9,7 +9,7 @@ import Container from "../Container"
 import UserDropdown from "../UserDropdown"
 import * as SC from "./header.styles"
 
-function Header(): JSX.Element {
+const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
   const dispatch = useDispatch()
   const user = useSelector((state: IStoreState) => state.auth.user)
   const router = useRouter()
@@ -21,7 +21,7 @@ function Header(): JSX.Element {
   }, [])
 
   return (
-    <SC.HeaderWrapper>
+    <SC.HeaderWrapper ref={ref}>
       <Container>
         {router.pathname === "/" && (
           <Media lessThan="sm">
@@ -69,6 +69,6 @@ function Header(): JSX.Element {
       </Container>
     </SC.HeaderWrapper>
   )
-}
+})
 
 export default Header

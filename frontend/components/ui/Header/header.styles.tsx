@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
+import { HEADER_HEIGHT } from "../../../design/tokens/layout"
 import { ETypo } from "../../../design/tokens/typo"
 import Logo from "../../../icons/logo"
 import { ContainerWrapper as Container } from "../Container/container.styles"
@@ -10,7 +11,7 @@ export const HeaderWrapper = styled.header`
   display: flex;
   align-items: center;
   background: ${COLOR.HEADER};
-  height: 74px;
+  height: ${HEADER_HEIGHT}px;
   position: relative;
   z-index: 2;
 
