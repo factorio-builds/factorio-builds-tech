@@ -147,14 +147,6 @@ export const InputHint = styled.div`
   border-radius: 5px;
 `
 
-export const FormError = styled.div`
-  margin-top: 0 !important;
-  background: linear-gradient(90deg, #6d2d28 0%, #333642 100%);
-  color: ${COLOR.FADEDBLUE900};
-  padding: 10px 14px;
-  border-radius: 5px;
-`
-
 export const RenderedCovers = styled.div``
 
 export const Rendered = styled.div`

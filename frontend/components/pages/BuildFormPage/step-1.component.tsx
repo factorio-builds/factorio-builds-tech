@@ -13,6 +13,7 @@ import {
   isValidBlueprint,
 } from "../../../utils/blueprint"
 import { tagsFromHeuristics } from "../../../utils/blueprint-heuristics"
+import FormError from "../../form/FormError"
 import Input from "../../form/Input"
 import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
@@ -207,9 +208,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
           </>
         )}
 
-        {error?.response?.status === 401 && (
-          <SC.FormError>Failed: unauthentified, please log in.</SC.FormError>
-        )}
+        {error && <FormError error={error} />}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
           <Button
