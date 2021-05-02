@@ -29,7 +29,7 @@
     "next-applicationinsights": "^1.0.4",
     "next-redux-wrapper": "^6.0.2",
     "pako": "^2.0.3",
-    "polished": "^4.1.1",
+    "polished": "^4.1.2",
     "react": "^17.0.2",
     "react-aria": "^3.5.0",
     "react-dom": "^17.0.2",
