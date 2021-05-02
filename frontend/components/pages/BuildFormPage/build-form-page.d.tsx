@@ -1,3 +1,4 @@
+import { AxiosError } from "axios"
 import { ICreateBuildRequest } from "../../../types/models"
 
 export interface IFormValues {
@@ -44,3 +45,23 @@ export interface IValidFormValues {
   }
   version?: ICreateBuildRequest["version"]
 }
+
+interface ISubmitStatusNeutral {
+  loading: false
+  error: false
+}
+
+interface ISubmitStatusLoading {
+  loading: true
+  error: false
+}
+
+interface ISubmitStatusError {
+  loading: false
+  error: AxiosError
+}
+
+export type ISubmitStatus =
+  | ISubmitStatusNeutral
+  | ISubmitStatusLoading
+  | ISubmitStatusError

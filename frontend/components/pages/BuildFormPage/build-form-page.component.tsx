@@ -1,11 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { AxiosError } from "axios"
 import { Form, Formik } from "formik"
 import { useRouter } from "next/router"
 import { useApi } from "../../../hooks/useApi"
 import { IFullBuild, IFullPayload, IThinBuild } from "../../../types/models"
 import Container from "../../ui/Container"
 import Layout from "../../ui/Layout"
-import { IFormValues, IValidFormValues } from "./build-form-page.d"
+import {
+  IFormValues,
+  ISubmitStatus,
+  IValidFormValues,
+} from "./build-form-page.d"
 import {
   createInitialValues,
   toFormData,
@@ -32,7 +37,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const [step, setStep] = useState<1 | 2>(1)
   const [build, setBuild] = useState<IFullBuild | undefined>(props.build)
   const [payloadData, setPayloadData] = useState<IFullPayload>()
-  const [submit, setSubmit] = useState({
+  const [submit, setSubmit] = useState<ISubmitStatus>({
     loading: false,
     error: false,
   })
@@ -112,7 +117,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
             })
             router.push(`/${res.data.owner.username}/${res.data.slug}`)
           })
-          .catch((err) => {
+          .catch((err: AxiosError) => {
             setSubmit({
               loading: false,
               error: err,

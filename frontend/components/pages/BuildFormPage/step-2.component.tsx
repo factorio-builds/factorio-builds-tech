@@ -1,10 +1,11 @@
 import React, { useState } from "react"
 import { FormikProps } from "formik"
 import { IFullPayload } from "../../../types/models"
+import FormError from "../../form/FormError"
 import Button from "../../ui/Button"
 import Spinner from "../../ui/Spinner"
 import Stacker from "../../ui/Stacker"
-import { IFormValues } from "./build-form-page.d"
+import { IFormValues, ISubmitStatus } from "./build-form-page.d"
 import * as SC from "./build-form-page.styles"
 import Pager from "./pager.component"
 import { TPage } from "./pager.component"
@@ -14,7 +15,7 @@ import useCanSave from "./useCanSave"
 
 export interface IStep2Props {
   formikProps: FormikProps<IFormValues>
-  submitStatus: { loading: boolean; error: boolean | string }
+  submitStatus: ISubmitStatus
   payloadData: IFullPayload
   type: "CREATE" | "EDIT"
 }
@@ -75,6 +76,10 @@ const Step2: React.FC<IStep2Props> = (props) => {
           <SC.WaitingForRender>
             Blueprint image is still rendering, please be patient.
           </SC.WaitingForRender>
+        )}
+
+        {props.submitStatus.error && (
+          <FormError error={props.submitStatus.error} />
         )}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
