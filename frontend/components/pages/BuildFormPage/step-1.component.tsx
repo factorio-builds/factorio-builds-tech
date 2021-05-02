@@ -60,7 +60,7 @@ interface IStep1Props {
 
 const Step1: React.FC<IStep1Props> = (props) => {
   const [encoded, setEncoded] = useState("")
-  const [, execute] = useApi<ICreatePayloadResult>({
+  const [{ error }, execute] = useApi<ICreatePayloadResult>({
     url: "/payloads",
     method: "PUT",
   })
@@ -205,6 +205,10 @@ const Step1: React.FC<IStep1Props> = (props) => {
 
             <p>You’ll get to adjust everything on the next screen.</p>
           </>
+        )}
+
+        {error?.response?.status === 401 && (
+          <SC.FormError>Failed: unauthentified, please log in.</SC.FormError>
         )}
 
         <SC.ButtonsStack gutter={24} orientation="horizontal">
