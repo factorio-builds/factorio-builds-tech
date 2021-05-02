@@ -1,9 +1,12 @@
-import React, { ReactNode, useCallback, useMemo } from "react"
+import React, { ReactNode, useCallback, useEffect, useMemo } from "react"
+import { useInView } from "react-intersection-observer"
 import { useDispatch, useSelector } from "react-redux"
 import { useLockBodyScroll } from "react-use"
+import "intersection-observer"
 import cx from "classnames"
 import Head from "next/head"
 import { Media } from "../../../design/styles/media"
+import { HEADER_HEIGHT } from "../../../design/tokens/layout"
 import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
 import Header from "../Header"
@@ -28,6 +31,21 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
       payload: false,
     })
   }, [])
+
+  const { ref, entry } = useInView({
+    threshold: Array.from({ length: HEADER_HEIGHT }).map((_, i) => {
+      return i / HEADER_HEIGHT
+    }),
+  })
+
+  useEffect(() => {
+    if (entry) {
+      dispatch({
+        type: "SET_HEADER",
+        payload: entry.intersectionRect.height,
+      })
+    }
+  }, [entry])
 
   useLockBodyScroll(sidebarActive)
 
@@ -82,7 +100,7 @@ const Layout: React.FC<ILayoutProps> = ({ children, sidebar, title }) => {
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <Header />
+      <Header ref={ref} />
       <SC.ContentWrapper className={cx({ "has-sidebar": Boolean(sidebar) })}>
         {sidebar ? <Container>{wrapper}</Container> : <>{wrapper}</>}
         {!sidebar && (

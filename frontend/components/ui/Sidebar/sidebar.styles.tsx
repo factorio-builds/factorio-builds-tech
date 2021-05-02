@@ -1,5 +1,6 @@
 import styled from "styled-components"
 import { COLOR } from "../../../design/tokens/color"
+import { HEADER_HEIGHT } from "../../../design/tokens/layout"
 
 export const SidebarWrapper = styled.aside`
   width: 300px;
@@ -8,17 +9,22 @@ export const SidebarWrapper = styled.aside`
   position: relative;
   background: ${COLOR.SIDEBAR};
   border-right: 1px solid ${COLOR.FADEDBLUE300};
+  height: calc(100vh - var(--headerHeight) - 40px);
+  position: sticky;
+  top: 0;
+  bottom: 0;
+  overflow-y: scroll;
 
   @media screen and (max-width: 767px) {
     position: absolute;
-    top: 74px;
+    top: ${HEADER_HEIGHT}px;
     left: 0;
     max-width: 400px;
     right: 40px;
     padding: 20px;
     width: auto;
     z-index: 5;
-    height: calc(100vh - 74px - 40px);
+    height: calc(100vh - ${HEADER_HEIGHT}px - 40px);
     overflow-y: scroll;
   }
 `
