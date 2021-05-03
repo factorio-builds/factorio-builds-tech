@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
 import { COLOR } from "../../../design/tokens/color"
 import { ETypo } from "../../../design/tokens/typo"
-import { Footer } from "../../ui/Layout/layout.styles"
+import { Footer } from "../../ui/LayoutDefault/layout-default.styles"
 import Stacker from "../../ui/Stacker"
 
 export const LayoutWrapper = styled.div`

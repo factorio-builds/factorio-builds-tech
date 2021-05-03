@@ -2,7 +2,7 @@ import React from "react"
 import { IThinBuild } from "../../../types/models"
 import BuildList from "../../ui/BuildList"
 import Container from "../../ui/Container"
-import Layout from "../../ui/Layout"
+import LayoutDefault from "../../ui/LayoutDefault"
 
 export interface IUserBuildListPageProps {
   builds: IThinBuild[]
@@ -10,11 +10,11 @@ export interface IUserBuildListPageProps {
 
 function UserBuildListPage(props: IUserBuildListPageProps): JSX.Element {
   return (
-    <Layout>
+    <LayoutDefault>
       <Container size="medium">
         <BuildList items={props.builds} />
       </Container>
-    </Layout>
+    </LayoutDefault>
   )
 }
 

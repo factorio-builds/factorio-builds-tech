@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from "next"
 import { WithRouterProps } from "next/dist/client/with-router"
 import { withRouter } from "next/router"
 import BuildPage from "../../components/pages/BuildPage"
-import Layout from "../../components/ui/Layout"
+import LayoutDefault from "../../components/ui/LayoutDefault"
 import { IFullBuild } from "../../types/models"
 import { axios } from "../../utils/axios"
 
@@ -14,11 +14,11 @@ interface IBuildsPageProps extends WithRouterProps {
 const BuildsPage: NextPage<IBuildsPageProps> = ({ build, errors, router }) => {
   if (errors || !build) {
     return (
-      <Layout title="Error">
+      <LayoutDefault title="Error">
         <p>
           <span style={{ color: "red" }}>Error:</span> {errors}
         </p>
-      </Layout>
+      </LayoutDefault>
     )
   }
 

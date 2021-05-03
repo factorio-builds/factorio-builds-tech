@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Container from "../components/ui/Container"
-import Layout from "../components/ui/Layout"
+import LayoutDefault from "../components/ui/LayoutDefault"
 
 const GH_REPO = "https://github.com/factorio-builds/factorio-builds-tech"
 const GH_ISSUES =
@@ -12,7 +12,7 @@ const GH_LONG_ROADMAP =
 const DISCORD_INVITE = "https://discord.gg/WCnHufvdGE"
 
 const AboutPage = (): JSX.Element => (
-  <Layout title="About">
+  <LayoutDefault title="About">
     <Container direction="column" size="small">
       <h1>About</h1>
       <p>
@@ -47,7 +47,7 @@ const AboutPage = (): JSX.Element => (
         early contribution.
       </p>
     </Container>
-  </Layout>
+  </LayoutDefault>
 )
 
 export default AboutPage

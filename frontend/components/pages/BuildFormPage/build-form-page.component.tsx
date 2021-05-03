@@ -5,7 +5,7 @@ import { useRouter } from "next/router"
 import { useApi } from "../../../hooks/useApi"
 import { IFullBuild, IFullPayload, IThinBuild } from "../../../types/models"
 import Container from "../../ui/Container"
-import Layout from "../../ui/Layout"
+import LayoutDefault from "../../ui/LayoutDefault"
 import {
   IFormValues,
   ISubmitStatus,
@@ -127,7 +127,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
     >
       {(formikProps) => {
         return (
-          <Layout title={title}>
+          <LayoutDefault title={title}>
             <Container direction="column" size="small">
               <h2>{title}</h2>
               <Form>
@@ -148,7 +148,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
                 )}
               </Form>
             </Container>
-          </Layout>
+          </LayoutDefault>
         )
       }}
     </Formik>

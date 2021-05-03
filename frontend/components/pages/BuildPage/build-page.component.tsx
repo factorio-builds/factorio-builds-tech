@@ -7,7 +7,7 @@ import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
 import Container from "../../ui/Container"
-import Layout from "../../ui/Layout"
+import LayoutDefault from "../../ui/LayoutDefault"
 import Stacker from "../../ui/Stacker"
 import * as SC from "./build-page.styles"
 import Glow from "./glow.component"
@@ -108,7 +108,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
 
   return (
     <SC.LayoutWrapper>
-      <Layout title={build.title}>
+      <LayoutDefault title={build.title}>
         <BuildHeader build={build} payload={payload} />
 
         <Tabs
@@ -140,7 +140,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
             </Stacker>
           }
         />
-      </Layout>
+      </LayoutDefault>
     </SC.LayoutWrapper>
   )
 }
