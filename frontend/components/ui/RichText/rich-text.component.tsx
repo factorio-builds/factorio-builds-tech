@@ -1,9 +1,9 @@
 import React from "react"
 import ItemIcon from "../ItemIcon"
+import * as SC from "./rich-text.styles"
 import useParseRichText, { IParsedRichTextNode } from "./useParseRichText.hook"
-import * as SC from "./with-icons.styles"
 
-interface IWithIcons {
+interface IRichText {
   input: string
   prefix?: JSX.Element
 }
@@ -31,7 +31,7 @@ function RichTextNode({ node, index }: IRichTextNodeProps): JSX.Element {
   )
 }
 
-function WithIcons(props: IWithIcons): JSX.Element {
+function RichText(props: IRichText): JSX.Element {
   const parts = useParseRichText(props.input)
 
   const formatted = React.useMemo(() => {
@@ -45,10 +45,10 @@ function WithIcons(props: IWithIcons): JSX.Element {
   }, [props.input])
 
   return (
-    <SC.WithIconsWrapper>
+    <SC.RichTextWrapper>
       {props.prefix} {formatted}
-    </SC.WithIconsWrapper>
+    </SC.RichTextWrapper>
   )
 }
 
-export default WithIcons
+export default RichText

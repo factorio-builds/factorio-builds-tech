@@ -10,9 +10,9 @@ import Button from "../Button"
 import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.component"
 import Container from "../Container"
 import FavoriteButton from "../FavoriteButton"
+import RichText from "../RichText"
 import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
-import WithIcons from "../WithIcons"
 import * as SC from "./build-header.styles"
 
 interface IBuildheader {
@@ -43,7 +43,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
               )}
               <Stacker orientation="vertical" gutter={8}>
                 <SC.BuildTitle>
-                  <WithIcons input={props.build.title} />
+                  <RichText input={props.build.title} />
                 </SC.BuildTitle>
                 <SC.BuildTags>
                   {props.build.tags.map((tag) => {
