@@ -126,11 +126,11 @@ function resursiveParse(text: string): IParsedRichTextNode[] {
 }
 
 function useParseRichText(text?: string): IParsedRichTextNode[] {
-  if (!text) {
-    return []
-  }
-
   return useMemo(() => {
+    if (!text) {
+      return []
+    }
+
     return resursiveParse(text)
   }, [text])
 }
