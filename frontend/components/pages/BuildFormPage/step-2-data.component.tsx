@@ -8,6 +8,8 @@ import tags from "../../../tags.json"
 import ErrorMessage from "../../form/ErrorMessage"
 import Input from "../../form/FormikInputWrapper"
 import InputGroup from "../../form/InputGroup"
+import RichText from "../../ui/RichText"
+import useParseRichText from "../../ui/RichText/useParseRichText.hook"
 import Stacker from "../../ui/Stacker"
 import { IFormValues } from "./build-form-page.d"
 import * as SC from "./build-form-page.styles"
@@ -73,6 +75,11 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
 
 const Step2Data: React.FC<IStep2DataProps> = (props) => {
   const user = useSelector((state: IStoreState) => state.auth.user)
+
+  // TODO: memoize to optimize performance
+  const parsedRichText = useParseRichText(props.formikProps.values.title)
+  const titleHasRichText = parsedRichText.some((part) => part.type !== "text")
+
   const selectedTags = useCallback(
     (tags: string[]) => {
       return props.formikProps.values.tags.filter((tag) => tags.includes(tag))
@@ -89,6 +96,12 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
         required
         component={Input}
       />
+
+      {titleHasRichText && (
+        <SC.InputHint>
+          <RichText input={props.formikProps.values.title}></RichText>
+        </SC.InputHint>
+      )}
 
       <Field
         name="slug"
