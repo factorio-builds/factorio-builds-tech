@@ -1,11 +1,27 @@
-interface IParsedRichTextNode<T = "item" | "text"> {
-  type: T
+interface IParsedRichTextNodeItem {
+  type: "item"
   value: string
 }
 
+interface IParsedRichTextNodeText {
+  type: "text"
+  value: string
+}
+
+interface IParsedRichTextNodeColor {
+  type: "color"
+  value: string
+  children: IParsedRichTextNode[]
+}
+
+export type IParsedRichTextNode =
+  | IParsedRichTextNodeItem
+  | IParsedRichTextNodeText
+  | IParsedRichTextNodeColor
+
 function parseItem(
   text: string
-): { part: IParsedRichTextNode<"item"> | null; rest: string } {
+): { part: IParsedRichTextNodeItem | null; rest: string } {
   const itemRegex = new RegExp(/(\[(item)=([a-z-]+)\])/)
   const result = text.match(itemRegex)
 
@@ -23,12 +39,13 @@ function parseItem(
 
 function parseText(
   text: string
-): { part: IParsedRichTextNode<"text"> | null; rest: string } {
-  const itemRegex = new RegExp(/(\[(item)=([a-z-]+)\])/)
-  const result = text.match(itemRegex)
+): { part: IParsedRichTextNodeText | null; rest: string } {
+  // TODO: smarter regex to match value by type: https://wiki.factorio.com/Rich_text
+  const regex = new RegExp(/(\[((item)|(color))=(.+?)\])/)
+  const result = text.match(regex)
 
   if (!result && text) {
-    return { part: { type: "text", value: text.trim() }, rest: "" }
+    return { part: { type: "text", value: text }, rest: "" }
   }
 
   if (!result) {
@@ -40,18 +57,51 @@ function parseText(
   const rest = text.slice(index)
   const value = text.replace(rest, "")
 
-  return { part: { type: "text", value: value.trim() }, rest }
+  return { part: { type: "text", value: value }, rest }
 }
 
-function useParseRichText(text?: string): IParsedRichTextNode[] {
-  if (!text) {
-    return []
+function parseColor(
+  text: string
+): { part: IParsedRichTextNodeColor | null; rest: string } {
+  // TODO: smarter regex to match different kind of colors: https://wiki.factorio.com/Rich_text
+  const colorRegex = new RegExp(/(\[(color)=(.+?)\](.+?)\[\/color\])/)
+  const result = text.match(colorRegex)
+
+  if (!result) {
+    return { part: null, rest: text }
   }
 
+  const rest = text.replace(result[1], "")
+
+  const children = resursiveParse(result[4])
+
+  return {
+    part: {
+      type: "color",
+      value: result[3].trim(),
+      children,
+    },
+    rest: rest,
+  }
+}
+
+function parse(text: string) {
+  if (text.startsWith("[item")) {
+    return parseItem(text)
+  }
+
+  if (text.startsWith("[color")) {
+    return parseColor(text)
+  }
+
+  return parseText(text)
+}
+
+function resursiveParse(text: string): IParsedRichTextNode[] {
   const parts: IParsedRichTextNode[] = []
   let rest = ""
 
-  const initialParse = text.startsWith("[") ? parseItem(text) : parseText(text)
+  const initialParse = parse(text)
 
   if (!initialParse.part) {
     return []
@@ -61,16 +111,24 @@ function useParseRichText(text?: string): IParsedRichTextNode[] {
   rest = initialParse.rest
 
   while (rest !== "") {
-    const parse = rest.startsWith("[") ? parseItem(rest) : parseText(rest)
+    const parsed = parse(rest)
 
-    if (parse.part) {
-      parts.push(parse.part)
+    if (parsed.part) {
+      parts.push(parsed.part)
     }
 
-    rest = parse.rest
+    rest = parsed.rest
   }
 
   return parts
+}
+
+function useParseRichText(text?: string): IParsedRichTextNode[] {
+  if (!text) {
+    return []
+  }
+
+  return resursiveParse(text)
 }
 
 export default useParseRichText

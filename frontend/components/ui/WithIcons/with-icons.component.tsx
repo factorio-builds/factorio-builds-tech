@@ -1,11 +1,34 @@
 import React from "react"
 import ItemIcon from "../ItemIcon"
-import useParseRichText from "./useParseRichText.hook"
+import useParseRichText, { IParsedRichTextNode } from "./useParseRichText.hook"
 import * as SC from "./with-icons.styles"
 
 interface IWithIcons {
   input: string
   prefix?: JSX.Element
+}
+
+interface IRichTextNodeProps {
+  node: IParsedRichTextNode
+  index: number
+}
+
+function RichTextNode({ node, index }: IRichTextNodeProps): JSX.Element {
+  if (node.type === "text") {
+    return <span key={index}>{node.value}</span>
+  }
+
+  if (node.type === "item") {
+    return <ItemIcon key={index} type="item" name={node.value} />
+  }
+
+  return (
+    <span style={{ color: node.value }}>
+      {node.children.map((child, i) => {
+        return <RichTextNode key={i} index={i} node={child} />
+      })}
+    </span>
+  )
 }
 
 function WithIcons(props: IWithIcons): JSX.Element {
@@ -17,11 +40,7 @@ function WithIcons(props: IWithIcons): JSX.Element {
     }
 
     return parts.map((part, index) => {
-      if (part.type === "text") {
-        return <span key={index}>{part.value}</span>
-      }
-
-      return <ItemIcon key={index} type="item" name={part.value} />
+      return <RichTextNode key={index} node={part} index={index} />
     })
   }, [props.input])
 
