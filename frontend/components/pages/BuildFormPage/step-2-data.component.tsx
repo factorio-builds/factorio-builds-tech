@@ -76,7 +76,6 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
 const Step2Data: React.FC<IStep2DataProps> = (props) => {
   const user = useSelector((state: IStoreState) => state.auth.user)
 
-  // TODO: memoize to optimize performance
   const parsedRichText = useParseRichText(props.formikProps.values.title)
   const titleHasRichText = parsedRichText.some((part) => part.type !== "text")
 

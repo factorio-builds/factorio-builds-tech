@@ -1,3 +1,5 @@
+import { useMemo } from "react"
+
 interface IParsedRichTextNodeItem {
   type: "item"
   value: string
@@ -128,7 +130,9 @@ function useParseRichText(text?: string): IParsedRichTextNode[] {
     return []
   }
 
-  return resursiveParse(text)
+  return useMemo(() => {
+    return resursiveParse(text)
+  }, [text])
 }
 
 export default useParseRichText
