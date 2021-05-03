@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<WithIcons /> parses a title with item icon 1`] = `
+exports[`<RichText /> parses a title with item icon 1`] = `
 <div>
   <span
-    class="with-iconsstyles__WithIconsWrapper-z8o2sl-0 iAJRvc"
+    class="rich-textstyles__RichTextWrapper-sc-1hmb2ya-0 huDzTU"
   >
      
     <img
@@ -14,16 +14,16 @@ exports[`<WithIcons /> parses a title with item icon 1`] = `
       type="item"
     />
     <span>
-      build name
+       build name
     </span>
   </span>
 </div>
 `;
 
-exports[`<WithIcons /> parses a title with multiple item icons 1`] = `
+exports[`<RichText /> parses a title with multiple item icons 1`] = `
 <div>
   <span
-    class="with-iconsstyles__WithIconsWrapper-z8o2sl-0 iAJRvc"
+    class="rich-textstyles__RichTextWrapper-sc-1hmb2ya-0 huDzTU"
   >
      
     <img
@@ -34,7 +34,7 @@ exports[`<WithIcons /> parses a title with multiple item icons 1`] = `
       type="item"
     />
     <span>
-      build name
+       build name 
     </span>
     <img
       class="item-iconstyles__ItemIconWrapper-sc-16iffik-0 llnkpE"

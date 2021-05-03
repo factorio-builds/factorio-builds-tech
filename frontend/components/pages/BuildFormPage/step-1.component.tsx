@@ -17,8 +17,8 @@ import FormError from "../../form/FormError"
 import Input from "../../form/Input"
 import InputWrapper from "../../form/InputWrapper"
 import Button from "../../ui/Button"
+import RichText from "../../ui/RichText"
 import Stacker from "../../ui/Stacker"
-import WithIcons from "../../ui/WithIcons"
 import { IFormValues } from "./build-form-page.d"
 import * as SC from "./build-form-page.styles"
 
@@ -196,7 +196,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
           <>
             {/* prettier-ignore */}
             <p>
-              {stepState.data.label && <>Blueprint with a name of <b><WithIcons input={stepState.data.label} /></b>, </>}
+              {stepState.data.label && <>Blueprint with a name of <b><RichText input={stepState.data.label} /></b>, </>}
               {!stepState.data.label && <>Unnamed blueprint, </>}
               totalling <b>{stepState.data.entityCount}</b> entities.<br />
               {stepState.data.isBook && <>Found a <b>blueprint book</b>, with <b>{stepState.data.blueprintCount}</b> blueprints.</>}

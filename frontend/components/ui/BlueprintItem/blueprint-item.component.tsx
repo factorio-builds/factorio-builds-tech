@@ -14,9 +14,9 @@ import BlueprintRequiredItems from "../BlueprintRequiredItems"
 import BuildIcon from "../BuildIcon"
 import Button from "../Button"
 import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.component"
+import RichText from "../RichText"
 import Spinner from "../Spinner"
 import Stacker from "../Stacker"
-import WithIcons from "../WithIcons"
 import * as SC from "./blueprint-item.styles"
 
 interface IBaseBlueprintItemProps {
@@ -133,7 +133,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
           <SC.Title orientation="horizontal" gutter={8}>
             {props.icons.length > 0 && <BuildIcon icons={props.icons} />}
             <Stacker orientation="vertical" gutter={4}>
-              <WithIcons input={title} />
+              <RichText input={title} />
               {props.isBook ? (
                 <SC.Meta>Contains {props.nodes.length} blueprints</SC.Meta>
               ) : (

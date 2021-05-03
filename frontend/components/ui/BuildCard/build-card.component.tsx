@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
-import WithIcons from "../WithIcons"
+import RichText from "../RichText"
 import * as SC from "./build-card.styles"
 
 interface IBuildCardProps {
@@ -59,7 +59,7 @@ function BuildCard({
         <SC.Content>
           <SC.Title orientation="horizontal" gutter={8}>
             {icons.length > 0 && <BuildIcon icons={icons} />}
-            <WithIcons
+            <RichText
               input={title}
               prefix={
                 isBook ? (

@@ -1,23 +1,23 @@
 import React from "react"
 import { render } from "@testing-library/react"
-import WithIcons from "../index"
+import RichText from "../index"
 
-describe("<WithIcons />", () => {
+describe("<RichText />", () => {
   it("parses a title with no icons", () => {
-    const { getByText } = render(<WithIcons input="build name" />)
+    const { getByText } = render(<RichText input="build name" />)
 
     expect(getByText("build name")).toBeTruthy()
   })
 
   it("returns a default title when passed an empty string", () => {
-    const { getByText } = render(<WithIcons input="" />)
+    const { getByText } = render(<RichText input="" />)
 
     expect(getByText("[unnamed]")).toBeTruthy()
   })
 
   it("renders a prefix", () => {
     const { getByText } = render(
-      <WithIcons prefix={<div>prefix</div>} input="build name" />
+      <RichText prefix={<div>prefix</div>} input="build name" />
     )
 
     expect(getByText("build name")).toBeTruthy()
@@ -26,7 +26,7 @@ describe("<WithIcons />", () => {
 
   it("parses a title with item icon", () => {
     const { container, getByText, getAllByTestId } = render(
-      <WithIcons input="[item=transport-belt] build name" />
+      <RichText input="[item=transport-belt] build name" />
     )
 
     const icons = getAllByTestId("item-icon") as HTMLImageElement[]
@@ -41,7 +41,7 @@ describe("<WithIcons />", () => {
 
   it("parses a title with multiple item icons", () => {
     const { container, getByText, getAllByTestId } = render(
-      <WithIcons input="[item=transport-belt] build name [item=fast-transport-belt]" />
+      <RichText input="[item=transport-belt] build name [item=fast-transport-belt]" />
     )
 
     const icons = getAllByTestId("item-icon") as HTMLImageElement[]
