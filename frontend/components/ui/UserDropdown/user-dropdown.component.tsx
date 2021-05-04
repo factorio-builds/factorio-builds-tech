@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { useDispatch } from "react-redux"
 import { useRouter } from "next/router"
-import { Media } from "../../../design/styles/media"
+import { DesktopOnly } from "../../../design/helpers/media"
 import { IStoreUser } from "../../../types/models"
 import { logout } from "../../../utils/auth"
 import Avatar from "../Avatar"
@@ -38,13 +38,9 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
   return (
     <Dropdown links={links}>
       <Avatar username={props.user.username} size="medium" />
-      <Media greaterThanOrEqual="sm">
-        {(mcx, renderChildren) => {
-          return renderChildren ? (
-            <span className={mcx}>{props.user.username}</span>
-          ) : null
-        }}
-      </Media>
+      <DesktopOnly>
+        <span>{props.user.username}</span>
+      </DesktopOnly>
     </Dropdown>
   )
 }
