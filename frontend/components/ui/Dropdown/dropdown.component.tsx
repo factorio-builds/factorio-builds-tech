@@ -8,28 +8,14 @@ import { useOverlay, DismissButton } from "@react-aria/overlays"
 import { mergeProps } from "@react-aria/utils"
 import { Item } from "@react-stately/collections"
 import { useMenuTriggerState } from "@react-stately/menu"
-import { useTreeState, TreeState } from "@react-stately/tree"
+import { useTreeState, TreeProps, TreeState } from "@react-stately/tree"
 import { MenuTriggerProps } from "@react-types/menu"
-import {
-  CollectionChildren,
-  CollectionBase,
-  Expandable,
-  MultipleSelection,
-  Node,
-  FocusStrategy,
-} from "@react-types/shared"
+import { CollectionChildren, Node, FocusStrategy } from "@react-types/shared"
 import cx from "classnames"
 import Caret from "../../../icons/caret"
 import * as SC from "./dropdown.styles"
 
 type TUknownObject = Record<string, unknown>
-
-// TODO: get rid once latest version of react-aria is released
-// see https://github.com/adobe/react-spectrum/pull/1239
-interface TreeProps<T>
-  extends CollectionBase<T>,
-    Expandable,
-    MultipleSelection {}
 
 interface IDropdownLink {
   action: () => void
