@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useMemo } from "react"
+import { useDispatch } from "react-redux"
 import { useButton } from "@react-aria/button"
 import { FocusScope } from "@react-aria/focus"
 import { useFocus } from "@react-aria/interactions"
@@ -23,6 +24,7 @@ import { useRouter } from "next/router"
 import { Media } from "../../../design/styles/media"
 import Caret from "../../../icons/caret"
 import { IStoreUser } from "../../../types/models"
+import { logout } from "../../../utils/auth"
 import Avatar from "../Avatar"
 import * as SC from "./user-dropdown.styles"
 
@@ -180,21 +182,36 @@ function MenuItem({ item, state, onAction, onClose }: IMenuItem) {
 
 function UserDropdown(props: IUserDropdownProps): JSX.Element {
   const router = useRouter()
+  const dispatch = useDispatch()
 
-  const links = [`/${props.user.username}/builds`, "/api/auth/logout"]
+  const links = useMemo(
+    () => [
+      {
+        action: () => {
+          router.push(`/${props.user.username}/builds`)
+        },
+        body: <SC.InnerLink>my builds</SC.InnerLink>,
+      },
+      {
+        action: () => {
+          logout(dispatch)
+          router.push("/api/auth/logout")
+        },
+        body: <SC.InnerLinkLogOff>log off</SC.InnerLinkLogOff>,
+      },
+    ],
+    [props.user.username]
+  )
 
   return (
     <MenuButton
       {...props}
       label={props.user.username}
-      onAction={(index) => router.push(links[index])}
+      onAction={(index) => links[index].action()}
     >
-      <Item key={0}>
-        <SC.InnerLink>my builds</SC.InnerLink>
-      </Item>
-      <Item key={1}>
-        <SC.InnerLinkLogOff>log off</SC.InnerLinkLogOff>
-      </Item>
+      {links.map((link, index) => (
+        <Item key={index}>{link.body}</Item>
+      ))}
     </MenuButton>
   )
 }

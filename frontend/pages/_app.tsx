@@ -12,7 +12,7 @@ import { GlobalStyle } from "../design/styles/global-style"
 import { MediaContextProvider } from "../design/styles/media"
 import { theme } from "../design/styles/theme"
 import { IStoreState, wrapper } from "../redux/store"
-import auth from "../utils/auth"
+import auth, { login, sync as syncAuth } from "../utils/auth"
 import { axios } from "../utils/axios"
 
 const { publicRuntimeConfig } = getConfig()
@@ -23,9 +23,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     axios.defaults.paramsSerializer = (params) =>
       qs.stringify(params, { arrayFormat: "repeat" })
-    axios.defaults.headers.common["Authorization"] = user?.accessToken
-      ? `Bearer ${user.accessToken}`
-      : ""
+  }, [])
+
+  useEffect(() => {
+    syncAuth(user)
   }, [user])
 
   return (
@@ -67,20 +68,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
   if (typeof window === "undefined") {
-    const session = await auth.getSession(ctx.req!, ctx.res!)
+    const session = auth.getSession(ctx.req!, ctx.res!)
 
     if (session?.user) {
-      ctx.store.dispatch({
-        type: "SET_USER",
-        payload: {
-          id: session.user.sub,
-          username: session.user.username,
-          accessToken: session.accessToken,
-        },
-      })
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${session.accessToken}`
+      login(session, ctx.store.dispatch)
     }
   }
 
