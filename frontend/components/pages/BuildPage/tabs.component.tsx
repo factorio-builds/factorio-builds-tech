@@ -1,7 +1,7 @@
 import React, { useCallback } from "react"
 import cx from "classnames"
 import Link from "next/link"
-import { DesktopOnly, MobileOnly } from "../../../design/helpers/media"
+import { Media } from "../../../design/styles/media"
 import { IFullBuild } from "../../../types/models"
 import Container from "../../ui/Container"
 import * as SC from "./build-page.styles"
@@ -67,9 +67,11 @@ const Tabs = (props: ITabsProps): JSX.Element => {
 
               if (tab.mobileOnly) {
                 return (
-                  <MobileOnly key={tab.key}>
-                    <Tab />
-                  </MobileOnly>
+                  <Media lessThan="sm" key={tab.key}>
+                    {(mcx, renderChildren) => {
+                      return renderChildren ? <Tab className={mcx} /> : null
+                    }}
+                  </Media>
                 )
               }
 
@@ -97,9 +99,13 @@ const Tabs = (props: ITabsProps): JSX.Element => {
               )
             })}
           </SC.TabsContentInner>
-          <DesktopOnly>
-            <SC.TabsAside>{props.aside}</SC.TabsAside>
-          </DesktopOnly>
+          <Media greaterThanOrEqual="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren ? (
+                <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside>
+              ) : null
+            }}
+          </Media>
         </SC.TabsContent>
       </Container>
     </SC.TabsWrapper>

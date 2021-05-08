@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useLockBodyScroll } from "react-use"
-import { DesktopOnly, MobileOnly } from "../../../design/helpers/media"
+import { Media } from "../../../design/styles/media"
 import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
 import Layout from "../Layout"
@@ -36,24 +36,47 @@ const LayoutSidebar: React.FC<ILayoutSidebarProps> = ({
     <Layout title={title}>
       <SC.ContentWrapper>
         <Container>
-          <MobileOnly>
-            <SC.BodyWrapper orientation="vertical" gutter={0}>
-              {sidebarActive && (
-                <>
-                  <SC.Backdrop onClick={closeSidebar} />
-                  <Sidebar>{sidebar}</Sidebar>
-                </>
-              )}
-              <SC.Content>{children}</SC.Content>
-            </SC.BodyWrapper>
-          </MobileOnly>
-
-          <DesktopOnly>
-            <SC.BodyWrapper orientation="horizontal" gutter={20}>
-              <Sidebar>{sidebar}</Sidebar>
-              <SC.Content>{children}</SC.Content>
-            </SC.BodyWrapper>
-          </DesktopOnly>
+          <Media lessThan="sm">
+            {(mcx, renderChildren) => {
+              return (
+                <SC.BodyWrapper
+                  className={mcx}
+                  orientation="vertical"
+                  gutter={0}
+                >
+                  {renderChildren ? (
+                    <>
+                      {sidebarActive && (
+                        <>
+                          <SC.Backdrop onClick={closeSidebar} />
+                          <Sidebar>{sidebar}</Sidebar>
+                        </>
+                      )}
+                      <SC.Content>{children}</SC.Content>
+                    </>
+                  ) : null}
+                </SC.BodyWrapper>
+              )
+            }}
+          </Media>
+          <Media greaterThanOrEqual="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren ? (
+                <SC.BodyWrapper
+                  className={mcx}
+                  orientation="horizontal"
+                  gutter={20}
+                >
+                  {renderChildren ? (
+                    <>
+                      <Sidebar>{sidebar}</Sidebar>
+                      <SC.Content>{children}</SC.Content>
+                    </>
+                  ) : null}
+                </SC.BodyWrapper>
+              ) : null
+            }}
+          </Media>
         </Container>
       </SC.ContentWrapper>
     </Layout>
