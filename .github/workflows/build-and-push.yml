@@ -13,9 +13,6 @@ on:
     branches:
       - main
 
-env:
-  version: "1.0.0-ci${{ github.run_id }}"
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -24,6 +21,24 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
+
+      - name: Determine version
+        id: version
+        run: |
+          echo "push -> ${GITHUB_REF##*/}.${{ github.run_id }}"
+          echo "pr -> pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
+
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            version="pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
+          elif [ "${{ github.event_name }}" == "push" ]; then
+            version="${GITHUB_REF##*/}.${{ github.run_id }}"
+          else
+            echo "ERROR: there is no versioning strategy for event ${{ github.event_name }}"
+            exit 1
+          fi
+
+          echo "Setting version to $version"
+          echo "::set-output name=full::$version"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -58,7 +73,7 @@ jobs:
           push: false
           load: true
           build-args: |
-            version=${{ env.version }}
+            version=${{ steps.version.outputs.full }}
             build_branch=${{ github.ref }}
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -79,12 +94,12 @@ jobs:
           file: ./fbsr-wrapper/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/fbsr-wrapper:${{ env.version }}
+            ghcr.io/${{ github.repository }}/fbsr-wrapper:${{ steps.version.outputs.full }}
             ghcr.io/${{ github.repository }}/fbsr-wrapper:ci
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/fbsr-wrapper:ci
           cache-to: type=inline
           labels: |
-            org.opencontainers.image.version=${{ env.version }}
+            org.opencontainers.image.version=${{ steps.version.outputs.full }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
@@ -96,15 +111,15 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           build-args: |
-            version=${{ env.version }}
+            version=${{ steps.version.outputs.full }}
             build_branch=${{ github.ref }}
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           tags: |
-            ghcr.io/${{ github.repository }}/web:${{ env.version }}
+            ghcr.io/${{ github.repository }}/web:${{ steps.version.outputs.full }}
             ghcr.io/${{ github.repository }}/web:ci
           labels: |
-            org.opencontainers.image.version=${{ env.version }}
+            org.opencontainers.image.version=${{ steps.version.outputs.full }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
@@ -117,15 +132,15 @@ jobs:
           target: api
           push: true
           build-args: |
-            version=${{ env.version }}
+            version=${{ steps.version.outputs.full }}
             build_branch=${{ github.ref }}
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           tags: |
-            ghcr.io/${{ github.repository }}/api:${{ env.version }}
+            ghcr.io/${{ github.repository }}/api:${{ steps.version.outputs.full }}
             ghcr.io/${{ github.repository }}/api:ci
           labels: |
-            org.opencontainers.image.version=${{ env.version }}
+            org.opencontainers.image.version=${{ steps.version.outputs.full }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
@@ -138,15 +153,15 @@ jobs:
           target: identity
           push: true
           build-args: |
-            version=${{ env.version }}
+            version=${{ steps.version.outputs.full }}
             build_branch=${{ github.ref }}
             build_sha=${{ github.sha }}
             build_uri=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           tags: |
-            ghcr.io/${{ github.repository }}/identity:${{ env.version }}
+            ghcr.io/${{ github.repository }}/identity:${{ steps.version.outputs.full }}
             ghcr.io/${{ github.repository }}/identity:ci
           labels: |
-            org.opencontainers.image.version=${{ env.version }}
+            org.opencontainers.image.version=${{ steps.version.outputs.full }}
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
@@ -162,6 +177,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Determine version
+        id: version
+        run: |
+          echo "push -> ${GITHUB_REF##*/}.${{ github.run_id }}"
+          echo "pr -> pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
+
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            version="pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
+          elif [ "${{ github.event_name }}" == "push" ]; then
+            version="${GITHUB_REF##*/}.${{ github.run_id }}"
+          else
+            echo "ERROR: there is no versioning strategy for event ${{ github.event_name }}"
+            exit 1
+          fi
+
+          echo "Setting version to $version"
+          echo "::set-output name=full::$version"
+
       - name: Login to AKS
         uses: azure/aks-set-context@v1.1
         with:
@@ -175,12 +208,12 @@ jobs:
       - name: Package Helm chart
         run: |
           helm package ./deploy \
-            --version ${{ env.version }} \
-            --app-version ${{ env.version }}
+            --version ${{ steps.version.outputs.full }} \
+            --app-version ${{ steps.version.outputs.full }}
 
       - name: Deploy Helm chart to AKS
         run: |
-          helm upgrade factorio-tech factorio-tech-${{ env.version }}.tgz \
+          helm upgrade factorio-tech factorio-tech-${{ steps.version.outputs.full }}.tgz \
             --install --atomic \
             --values deploy/values.yaml \
             --set-string hostNames.web=${{ secrets.HOSTNAME_WEB }} \
