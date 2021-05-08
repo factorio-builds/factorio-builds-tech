@@ -1,6 +1,7 @@
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
@@ -43,6 +44,7 @@ namespace FactorioTech.Core.Services
         }
 
         private readonly ILogger<ImageService> _logger;
+        private readonly IFileProvider _fileProvider;
         private readonly AppDbContext _dbContext;
         private readonly AppConfig _appConfig;
         private readonly FbsrClient _fbsrClient;
@@ -51,14 +53,16 @@ namespace FactorioTech.Core.Services
         private static readonly TimeSpan NewRenderingLoadTimeout = TimeSpan.FromSeconds(30);
 
         public ImageService(
-            ILogger<ImageService> logger,
             IOptions<AppConfig> appConfigMonitor,
+            ILogger<ImageService> logger,
+            IFileProvider fileProvider,
             AppDbContext dbContext,
             FbsrClient fbsrClient)
         {
-            _logger = logger;
-            _dbContext = dbContext;
             _appConfig = appConfigMonitor.Value;
+            _logger = logger;
+            _fileProvider = fileProvider;
+            _dbContext = dbContext;
             _fbsrClient = fbsrClient;
         }
 
@@ -304,6 +308,8 @@ namespace FactorioTech.Core.Services
 
             return new TempCoverHandle(_logger, GetCoverFqfn, meta);
         }
+
+        public IFileInfo GetCoverFileInfo(string fileName) => _fileProvider.GetFileInfo(GetCoverFqfn(fileName));
 
         private string GetRenderingFqfn(Hash hash, RenderingType type) =>
             Path.Combine(_appConfig.DataDir, "renderings", $"{hash}-{type}.png");
