@@ -2,7 +2,7 @@ import React, { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { DesktopOnly, MobileOnly } from "../../../design/helpers/media"
+import { Media } from "../../../design/styles/media"
 import Burger from "../../../icons/burger"
 import { IStoreState } from "../../../redux/store"
 import Container from "../Container"
@@ -24,11 +24,19 @@ const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
     <SC.HeaderWrapper ref={ref}>
       <Container>
         {router.pathname === "/" && (
-          <MobileOnly>
-            <SC.BurgerButton role="button" onClick={toggleSidebar}>
-              <Burger />
-            </SC.BurgerButton>
-          </MobileOnly>
+          <Media lessThan="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren ? (
+                <SC.BurgerButton
+                  className={mcx}
+                  role="button"
+                  onClick={toggleSidebar}
+                >
+                  <Burger />
+                </SC.BurgerButton>
+              ) : null
+            }}
+          </Media>
         )}
 
         <Link href="/">
@@ -38,11 +46,17 @@ const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
         </Link>
 
         <SC.StyledStacker orientation="horizontal" gutter={18}>
-          <DesktopOnly>
-            <Link href="/build/create">
-              <SC.CreateBuildButton>Add a build</SC.CreateBuildButton>
-            </Link>
-          </DesktopOnly>
+          <Media greaterThanOrEqual="sm">
+            {(mcx, renderChildren) => {
+              return renderChildren && user ? (
+                <Link href="/build/create">
+                  <SC.CreateBuildButton className={mcx}>
+                    Add a build
+                  </SC.CreateBuildButton>
+                </Link>
+              ) : null
+            }}
+          </Media>
 
           {!user && (
             <Link href="/api/auth/login" passHref>
