@@ -1,4 +1,4 @@
-name: Build and push Docker image
+name: CI
 on:
   push:
     branches:
@@ -14,8 +14,12 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.version.outputs.full }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -25,18 +29,14 @@ jobs:
       - name: Determine version
         id: version
         run: |
-          echo "push -> ${GITHUB_REF##*/}.${{ github.run_id }}"
-          echo "pr -> pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
-
           if [ "${{ github.event_name }}" == "pull_request" ]; then
-            version="pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
+            version="pr-${{ github.event.pull_request.number }}.${{ github.run_id }}"
           elif [ "${{ github.event_name }}" == "push" ]; then
             version="${GITHUB_REF##*/}.${{ github.run_id }}"
           else
             echo "ERROR: there is no versioning strategy for event ${{ github.event_name }}"
             exit 1
           fi
-
           echo "Setting version to $version"
           echo "::set-output name=full::$version"
 
@@ -167,33 +167,17 @@ jobs:
             org.opencontainers.image.ref.name=${{ github.ref }}
 
   deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: build
+
     environment:
       name: staging
       url: https://factorio.tech
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    if: ${{ github.ref == 'refs/heads/main' }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Determine version
-        id: version
-        run: |
-          echo "push -> ${GITHUB_REF##*/}.${{ github.run_id }}"
-          echo "pr -> pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
-
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            version="pr-${{ github.event.pull_request.number }}.${{ github.run_number }}.${{ github.run_id }}"
-          elif [ "${{ github.event_name }}" == "push" ]; then
-            version="${GITHUB_REF##*/}.${{ github.run_id }}"
-          else
-            echo "ERROR: there is no versioning strategy for event ${{ github.event_name }}"
-            exit 1
-          fi
-
-          echo "Setting version to $version"
-          echo "::set-output name=full::$version"
 
       - name: Login to AKS
         uses: azure/aks-set-context@v1.1
@@ -208,12 +192,12 @@ jobs:
       - name: Package Helm chart
         run: |
           helm package ./deploy \
-            --version ${{ steps.version.outputs.full }} \
-            --app-version ${{ steps.version.outputs.full }}
+            --version ${{ needs.build.outputs.version }} \
+            --app-version ${{ needs.build.outputs.version }}
 
       - name: Deploy Helm chart to AKS
         run: |
-          helm upgrade factorio-tech factorio-tech-${{ steps.version.outputs.full }}.tgz \
+          helm upgrade factorio-tech factorio-tech-${{ needs.build.outputs.version }}.tgz \
             --install --atomic \
             --values deploy/values.yaml \
             --set-string hostNames.web=${{ secrets.HOSTNAME_WEB }} \
