@@ -140,7 +140,7 @@ namespace FactorioTech.Api.Controllers
         {
             using var cover = request.Cover != null
                 ? await SaveTempCover(request.Cover)
-                : new NullTempCoverHandle();
+                : null;
 
             var result = await _buildService.Edit(new BuildService.EditRequest(
                 owner, slug, request.Title, request.Description, request.Tags), cover, User);
@@ -309,27 +309,6 @@ namespace FactorioTech.Api.Controllers
                 BuildService.CreateResult.BuildNotFound error => NotFound(error.ToProblem()),
                 {} error => BadRequest(error.ToProblem()),
             };
-        }
-
-        /// <summary>
-        /// Get the cover image of a build
-        /// </summary>
-        /// <param name="buildId" example="1c3828e3-de0d-41b8-9b3a-a15688f4217b">The id of the desired build</param>
-        /// <response code="200" type="image/*">The cover image of the requested build</response>
-        /// <response code="400" type="application/json">The request is malformed or invalid</response>
-        /// <response code="404" type="application/json">The requested build does not exist</response>
-        [HttpGet("{buildId}/cover")]
-        [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-        [ResponseCache(Duration = OneDayInSeconds, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetCover([Required]Guid buildId)
-        {
-            var (file, format) = await _imageService.TryLoadCover(buildId);
-            if (file == null)
-                return NotFound();
-
-            return File(file, format);
         }
 
         private async Task<ITempCoverHandle> SaveTempCover(CoverRequest cover)

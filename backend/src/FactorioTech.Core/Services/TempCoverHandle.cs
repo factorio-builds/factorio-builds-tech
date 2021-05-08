@@ -8,7 +8,7 @@ namespace FactorioTech.Core.Services
     public interface ITempCoverHandle : IDisposable
     {
         public ImageMeta Meta { get; }
-        public void Assign(Guid buildId);
+        public void Assign(Guid buildId, ImageMeta? curreImageMeta);
     }
 
     public sealed class TempCoverHandle : ITempCoverHandle
@@ -16,48 +16,66 @@ namespace FactorioTech.Core.Services
         public ImageMeta Meta { get; }
 
         private readonly ILogger<ImageService> _logger;
-        private readonly Func<Guid, string> _getCoverFqfn;
-        private readonly Guid _tempId;
+        private readonly Func<string, string> _getCoverFqfn;
+        private bool _isAssigned = false;
 
         public TempCoverHandle(
             ILogger<ImageService> logger,
-            Func<Guid, string> getCoverFqfn,
-            Guid tempId,
+            Func<string, string> getCoverFqfn,
             ImageMeta meta)
         {
             _getCoverFqfn = getCoverFqfn;
             _logger = logger;
-            _tempId = tempId;
             Meta = meta;
         }
 
-        public void Assign(Guid buildId) =>
-            File.Move(_getCoverFqfn(_tempId), _getCoverFqfn(buildId), true);
+        public void Assign(Guid buildId, ImageMeta? previousCover)
+        {
+            _isAssigned = true;
+
+            _logger.LogInformation("Assigned uploaded cover to build {BuildId}: {Path}",
+                buildId, _getCoverFqfn(Meta.FileName));
+
+            if (previousCover != null)
+            {
+                var previousFqfn = _getCoverFqfn(previousCover.FileName);
+                try
+                {
+                    File.Delete(previousFqfn);
+                    _logger.LogInformation("Deleted existing (previous) cover for build {BuildId}: {Path}",
+                        buildId, previousFqfn);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to delete existing (previous) cover for build {BuildId}: {Path}",
+                        buildId, previousFqfn);
+                }
+            }
+        }
 
         public void Dispose()
         {
-            try
+            if (!_isAssigned)
             {
-                File.Delete(_getCoverFqfn(_tempId));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to delete temporary cover {Id}", _tempId);
+                var fqfn = _getCoverFqfn(Meta.FileName);
+                _logger.LogWarning("Deleting uploaded cover image without assigning it to a build: {Path}", fqfn);
+
+                try
+                {
+                    File.Delete(fqfn);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to delete temporary cover {Path}", fqfn);
+                }
             }
         }
     }
 
     public sealed class NullTempCoverHandle : ITempCoverHandle
     {
-        public ImageMeta Meta => new()
-        {
-            Format = "none",
-            Width = 0,
-            Height = 0,
-            Size = 0,
-        };
-
-        public void Assign(Guid buildId) { }
+        public ImageMeta Meta => new(string.Empty, 0, 0, 0);
+        public void Assign(Guid buildId, ImageMeta? curreImageMeta) { }
         public void Dispose() { }
     }
 }

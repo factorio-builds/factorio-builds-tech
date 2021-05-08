@@ -33,11 +33,6 @@ namespace FactorioTech.Api.Services
 
         public static ThinBuildLinks BuildThinLinks(this IUrlHelper urlHelper, Build build)
         {
-            var buildIdValues = new
-            {
-                buildId = build.BuildId,
-            };
-
             var buildValues = new
             {
                 owner = build.OwnerSlug,
@@ -47,10 +42,11 @@ namespace FactorioTech.Api.Services
             return new()
             {
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
-                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues),
-                    build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size, build.CoverMeta.Format),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
+
+                Cover = new(urlHelper.ActionLink(nameof(CoverController.GetCover), "Cover", new { build.CoverMeta.FileName }),
+                    build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size),
 
                 AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(build)
                     ? new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues), HttpMethod.Post)
@@ -68,11 +64,6 @@ namespace FactorioTech.Api.Services
 
         public static FullBuildLinks BuildFullLinks(this IUrlHelper urlHelper, Build build, bool currentUserIsFollower)
         {
-            var buildIdValues = new
-            {
-                buildId = build.BuildId,
-            };
-
             var buildValues = new
             {
                 owner = build.OwnerSlug,
@@ -82,10 +73,11 @@ namespace FactorioTech.Api.Services
             return new()
             {
                 Self = new(urlHelper.ActionLink(nameof(BuildController.GetDetails), "Build", buildValues)),
-                Cover = new(urlHelper.ActionLink(nameof(BuildController.GetCover), "Build", buildIdValues),
-                    build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size, build.CoverMeta.Format),
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
+
+                Cover = new(urlHelper.ActionLink(nameof(CoverController.GetCover), "Cover", new { build.CoverMeta.FileName }),
+                    build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size),
 
                 AddFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower == false
                     ? new(urlHelper.ActionLink(nameof(BuildController.AddFavorite), "Build", buildValues), HttpMethod.Put)
