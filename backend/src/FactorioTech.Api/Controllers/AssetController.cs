@@ -14,7 +14,10 @@ namespace FactorioTech.Api.Controllers
 
         private readonly AssetService _assetService;
 
-        public AssetController(AssetService assetService) => _assetService = assetService;
+        public AssetController(AssetService assetService)
+        {
+            _assetService = assetService;
+        }
 
         /// <summary>
         /// Get a Factorio game icon

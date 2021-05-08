@@ -281,12 +281,12 @@ namespace FactorioTech.Core.Services
             await _dbContext.SaveChangesAsync();
             await tx.CommitAsync();
 
-            cover.Assign(success.Build.BuildId);
+            cover.Assign(success.Build.BuildId, existing?.CoverMeta);
 
             return result;
         }
 
-        public async Task<EditResult> Edit(EditRequest request, ITempCoverHandle cover, ClaimsPrincipal principal)
+        public async Task<EditResult> Edit(EditRequest request, ITempCoverHandle? cover, ClaimsPrincipal principal)
         {
             var build = await _dbContext.Builds
                 .Where(b => b.NormalizedOwnerSlug == request.Owner.ToUpperInvariant()
@@ -299,16 +299,18 @@ namespace FactorioTech.Core.Services
             if (!principal.CanEdit(build))
                 return new EditResult.NotAuthorized(principal.GetUserId());
 
+            var existingCover = build.CoverMeta;
+
             build.UpdateDetails(
                 SystemClock.Instance.GetCurrentInstant(),
                 request.Title,
                 request.Description,
                 request.Tags?.Where(_buildTags.Contains),
-                cover.Meta);
+                cover?.Meta);
 
             await _dbContext.SaveChangesAsync();
 
-            cover.Assign(build.BuildId);
+            cover?.Assign(build.BuildId, existingCover);
 
             return new EditResult.Success(build);
         }

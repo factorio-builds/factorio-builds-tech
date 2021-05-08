@@ -10,6 +10,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Core.Services
@@ -61,9 +62,9 @@ namespace FactorioTech.Core.Services
             _fbsrClient = fbsrClient;
         }
 
-        public async Task<(Stream? File, string? MimeType)> TryLoadCover(Guid buildId)
+        public async Task<(Stream? File, string? MimeType)> TryLoadCover(string fileName)
         {
-            var imageFqfn = GetCoverFqfn(buildId);
+            var imageFqfn = GetCoverFqfn(fileName);
             if (!File.Exists(imageFqfn))
                 return (null, null);
 
@@ -287,8 +288,9 @@ namespace FactorioTech.Core.Services
                     .Resize(resize));
             }
 
-            var tempId = Guid.NewGuid();
-            var imageFqfn = GetCoverFqfn(tempId);
+            var imageId = await Nanoid.Nanoid.GenerateAsync("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+            var fileName = $"{imageId}.{format.FileExtensions.First()}";
+            var imageFqfn = GetCoverFqfn(fileName);
             var baseDir = Path.GetDirectoryName(imageFqfn);
             if (baseDir != null && !Directory.Exists(baseDir))
             {
@@ -298,21 +300,15 @@ namespace FactorioTech.Core.Services
             await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
             await image.SaveAsync(outFile, format);
 
-            var meta = new ImageMeta
-            {
-                Width = image.Width,
-                Height = image.Height,
-                Size = outFile.Length,
-                Format = format.Name,
-            };
+            var meta = new ImageMeta(fileName, image.Width,image.Height, outFile.Length);
 
-            return new TempCoverHandle(_logger, GetCoverFqfn, tempId, meta);
+            return new TempCoverHandle(_logger, GetCoverFqfn, meta);
         }
 
         private string GetRenderingFqfn(Hash hash, RenderingType type) =>
             Path.Combine(_appConfig.DataDir, "renderings", $"{hash}-{type}.png");
 
-        private string GetCoverFqfn(Guid buildId) =>
-            Path.Combine(_appConfig.DataDir, "covers", buildId.ToString());
+        private string GetCoverFqfn(string fileName) =>
+            Path.Combine(_appConfig.DataDir, "covers", fileName);
     }
 }
