@@ -1,6 +1,7 @@
 import React from "react"
 import { usePress } from "@react-aria/interactions"
 import cx from "classnames"
+import getConfig from "next/config"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -8,6 +9,8 @@ import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
 import RichText from "../RichText"
 import * as SC from "./build-card.styles"
+
+const { publicRuntimeConfig } = getConfig()
 
 interface IBuildCardProps {
   title: IThinBuild["title"]
@@ -48,6 +51,9 @@ function BuildCard({
       >
         <SC.ImageWrapper>
           <Image
+            loader={({ src }) =>
+              `${publicRuntimeConfig.apiUrl}/images/covers/${src}?width=400&format=jpg&quality=75`
+            }
             src={image.href}
             alt=""
             width={image.width}
