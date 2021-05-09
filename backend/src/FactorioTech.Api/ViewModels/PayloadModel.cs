@@ -24,16 +24,13 @@ namespace FactorioTech.Api.ViewModels
         public LinkModel Raw { get; init; }
 
         /// <summary>
-        /// The absolute URL of this payload's full-size rendering.
+        /// The absolute URL of this payload's rendering.
         /// Only available if the payload is of type `blueprint`.
+        /// The image can be further processed using the query string API documented
+        /// here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
         /// </summary>
-        public LinkModel? RenderingFull { get; init; }
+        public LinkModel? Rendering { get; init; }
 
-        /// <summary>
-        /// The absolute URL of this payload's rendering thumbnail.
-        /// Only available if the payload is of type `blueprint`.
-        /// </summary>
-        public LinkModel? RenderingThumb { get; init; }
 
         /// <summary>
         /// The absolute URL of the API endpoint to delete this payload's renderings.

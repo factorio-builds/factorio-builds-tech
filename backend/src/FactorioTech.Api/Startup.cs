@@ -166,6 +166,7 @@ namespace FactorioTech.Api
 
             services.AddImageSharp()
                 .AddProvider<CoverProvider>()
+                .AddProvider<RenderingProvider>()
                 .RemoveProvider<PhysicalFileSystemProvider>()
                 .Configure<PhysicalFileSystemCacheOptions>(options =>
                 {

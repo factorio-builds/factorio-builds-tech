@@ -1,5 +1,5 @@
+using FactorioTech.Core;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.FileProviders;
 using SixLabors.ImageSharp.Web;
 using SixLabors.ImageSharp.Web.Providers;
@@ -14,18 +14,21 @@ namespace FactorioTech.Api.Services
     public class CoverProvider : IImageProvider
     {
         public ProcessingBehavior ProcessingBehavior => ProcessingBehavior.All;
-        public Func<HttpContext, bool> Match { get; set; } = ctx => ctx.Request.Path.StartsWithSegments("/covers");
-        public bool IsValidRequest(HttpContext context) => _formatUtilities.GetExtensionFromUri(context.Request.GetDisplayUrl()) != null;
+
+        public Func<HttpContext, bool> Match { get; set; } = context =>
+            context.Request.Path.StartsWithSegments("/images/covers");
+
+        public bool IsValidRequest(HttpContext context) =>
+            context.Request.Path.Value!.Split('/').LastOrDefault().Let(fileName => 
+                fileName != null
+                && Path.GetExtension(fileName) != string.Empty
+                && Path.GetFileNameWithoutExtension(fileName) != string.Empty);
 
         private readonly IFileProvider _fileProvider;
-        private readonly FormatUtilities _formatUtilities;
 
-        public CoverProvider(
-            IFileProvider fileProvider,
-            FormatUtilities formatUtilities)
+        public CoverProvider(IFileProvider fileProvider)
         {
             _fileProvider = fileProvider;
-            _formatUtilities = formatUtilities;
         }
 
         public Task<IImageResolver> GetAsync(HttpContext context)

@@ -19,6 +19,8 @@ namespace FactorioTech.Api.ViewModels
 
         /// <summary>
         /// The absolute URL of this build's cover image.
+        /// The image can be further processed using the query string API documented
+        /// here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
         /// </summary>
         [Required]
         public ImageLinkModel Cover { get; init; }
