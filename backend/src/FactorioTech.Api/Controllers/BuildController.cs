@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -73,7 +72,6 @@ namespace FactorioTech.Api.Controllers
         [Authorize]
         [HttpPost("")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateBuild([FromForm, Required]CreateBuildRequest request)
@@ -138,7 +136,6 @@ namespace FactorioTech.Api.Controllers
         [Authorize]
         [HttpPatch("{owner}/{slug}")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -292,7 +289,6 @@ namespace FactorioTech.Api.Controllers
         [Authorize]
         [HttpPost("{owner}/{slug}/versions")]
         [Produces(MediaTypeNames.Application.Json)]
-        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(FullVersionModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
