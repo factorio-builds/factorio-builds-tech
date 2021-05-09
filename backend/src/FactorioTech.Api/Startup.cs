@@ -52,6 +52,9 @@ namespace FactorioTech.Api
             var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
             services.AddSingleton(Options.Create(appConfig));
 
+            // todo: quick fix for ImageSharp.Web bug
+            _environment.WebRootPath = appConfig.DataDir;
+
             services.AddProblemDetails();
             services.AddHttpClient();
             services.AddControllers().AddJsonOptions(options =>

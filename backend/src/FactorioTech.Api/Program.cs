@@ -65,7 +65,6 @@ namespace FactorioTech.Api
             .ConfigureWebHostDefaults(builder =>
             {
                 builder.UseStartup<Startup>();
-                builder.UseWebRoot("wwwroot");
             });
     }
 }
