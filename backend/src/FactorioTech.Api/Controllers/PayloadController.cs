@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using SluggyUnidecode;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Api.Controllers
@@ -50,6 +51,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested payload does not exist</response>
         [HttpGet("{hash}")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(PayloadModelBase), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -84,6 +86,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested payload does not exist</response>
         [HttpGet("{hash}/raw")]
+        [Produces(MediaTypeNames.Text.Plain)]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -109,6 +112,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested payload does not exist</response>
         [HttpGet("{hash}/json")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -134,6 +138,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="204">The renderings have been deleted or do not exist</response>
         [Authorize(Roles = Role.Administrator)]
         [HttpDelete("{hash}/rendering")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult DeleteRendering([Required]Hash hash)
         {
@@ -147,6 +152,8 @@ namespace FactorioTech.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPut("")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(CreatePayloadResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePayload([FromBody, Required]CreatePayloadRequest request)

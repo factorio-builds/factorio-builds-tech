@@ -3,6 +3,7 @@
 # this script is temporary until the swagger-gen works in docker
 
 export ASPNETCORE_ENVIRONMENT=Development
+export AppConfig__DataDir="$(pwd)"
 
 pushd ./backend
 

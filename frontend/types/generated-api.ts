@@ -104,9 +104,9 @@ export interface paths {
       }
       requestBody: {
         content: {
-          "application/json": components["schemas"]["CreateBuildRequest"]
-          "text/json": components["schemas"]["CreateBuildRequest"]
-          "application/*+json": components["schemas"]["CreateBuildRequest"]
+          "application/json": components["schemas"]["CreateBuildRequest"] & {
+            [key: string]: any
+          }
         }
       }
     }
@@ -208,9 +208,9 @@ export interface paths {
       /** The request parameters */
       requestBody: {
         content: {
-          "application/json": components["schemas"]["EditBuildRequest"]
-          "text/json": components["schemas"]["EditBuildRequest"]
-          "application/*+json": components["schemas"]["EditBuildRequest"]
+          "application/json": components["schemas"]["EditBuildRequest"] & {
+            [key: string]: any
+          }
         }
       }
     }
@@ -368,44 +368,8 @@ export interface paths {
       /** The request parameters */
       requestBody: {
         content: {
-          "application/json": components["schemas"]["CreateVersionRequest"]
-          "text/json": components["schemas"]["CreateVersionRequest"]
-          "application/*+json": components["schemas"]["CreateVersionRequest"]
-        }
-      }
-    }
-  }
-  "/builds/{buildId}/cover": {
-    get: {
-      parameters: {
-        path: {
-          /** The id of the desired build */
-          buildId: string
-        }
-      }
-      responses: {
-        /** The cover image of the requested build */
-        200: {
-          content: {
-            "image/png": string
-            "image/jpeg": string
-            "image/gif": string
-          }
-        }
-        /** The request is malformed or invalid */
-        400: {
-          content: {
-            "image/png": components["schemas"]["ProblemDetails"]
-            "image/jpeg": components["schemas"]["ProblemDetails"]
-            "image/gif": components["schemas"]["ProblemDetails"]
-          }
-        }
-        /** The requested build does not exist */
-        404: {
-          content: {
-            "image/png": components["schemas"]["ProblemDetails"]
-            "image/jpeg": components["schemas"]["ProblemDetails"]
-            "image/gif": components["schemas"]["ProblemDetails"]
+          "application/json": components["schemas"]["CreateVersionRequest"] & {
+            [key: string]: any
           }
         }
       }
@@ -427,9 +391,10 @@ export interface paths {
         /** The details of the requested payload */
         200: {
           content: {
-            "application/json":
+            "application/json": (
               | components["schemas"]["BlueprintPayloadModel"]
               | components["schemas"]["BookPayloadModel"]
+            ) & { [key: string]: any }
           }
         }
         /** The request is malformed or invalid */
@@ -477,33 +442,31 @@ export interface paths {
       }
     }
   }
-  "/payloads/{hash}/rendering/{type}": {
+  "/payloads/{hash}/json": {
     get: {
       parameters: {
         path: {
           /** The hash of the desired payload */
           hash: string
-          /** The desired type */
-          type: "full" | "thumb"
         }
       }
       responses: {
-        /** The rendered blueprint image */
+        /** The decoded json body */
         200: {
           content: {
-            "image/png": string
+            "application/json": string
           }
         }
         /** The request is malformed or invalid */
         400: {
           content: {
-            "image/png": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested payload does not exist */
         404: {
           content: {
-            "image/png": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
@@ -549,9 +512,9 @@ export interface paths {
       }
       requestBody: {
         content: {
-          "application/json": components["schemas"]["CreatePayloadRequest"]
-          "text/json": components["schemas"]["CreatePayloadRequest"]
-          "application/*+json": components["schemas"]["CreatePayloadRequest"]
+          "application/json": components["schemas"]["CreatePayloadRequest"] & {
+            [key: string]: any
+          }
         }
       }
     }
@@ -737,35 +700,43 @@ export interface components {
        * All payloads that are included in this blueprint book.
        * Only set when the `include_children` query parameter is `true`.
        */
-      children: (
+      children: ((
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
-      )[]
+      ) & { [key: string]: any })[]
     }
     BuildsLinks: {
       /**
        * The absolute URL of the API endpoint to create a new build.
        * Only available if the call has been made with an authenticated user token.
        */
-      create_build?: components["schemas"]["LinkModel"] | null
+      create_build?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to add a payload.
        * Only available if the call has been made with an authenticated user token.
        */
-      create_payload?: components["schemas"]["LinkModel"] | null
+      create_payload?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the previous page of the results list.
        * Only available if the current page is not the first page.
        */
-      prev?: components["schemas"]["LinkModel"] | null
+      prev?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the next page of the results list.
        * Only available if there are more results to be returned.
        */
-      next?: components["schemas"]["LinkModel"] | null
+      next?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
     }
     BuildsModel: {
-      _links: components["schemas"]["BuildsLinks"]
+      _links: components["schemas"]["BuildsLinks"] & { [key: string]: any }
       /** The number of results on the current page. */
       current_count: number
       /**
@@ -796,7 +767,9 @@ export interface components {
        * An optional rectangle to specify how the image should be cropped before it is resized.
        * If unspecified, the image will not be cropped and only resized to fit the cover limits.
        */
-      crop?: components["schemas"]["CropRectangle"] | null
+      crop?:
+        | (components["schemas"]["CropRectangle"] & { [key: string]: any })
+        | null
     }
     CreateBuildRequest: {
       /**
@@ -811,12 +784,12 @@ export interface components {
       /** The build's tags. */
       tags: string[]
       /** Metadata for the version to be created. */
-      version: components["schemas"]["VersionRequest"]
+      version: components["schemas"]["VersionRequest"] & { [key: string]: any }
       /**
        * The build's cover image is either a file upload or an existing blueprint rendering,
        * along with a crop rectangle.
        */
-      cover: components["schemas"]["CoverRequest"]
+      cover: components["schemas"]["CoverRequest"] & { [key: string]: any }
       /**
        * The slug for the new build. It is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -829,14 +802,17 @@ export interface components {
     }
     CreatePayloadResult: {
       /** The full payload graph that was created in this operation. */
-      payload:
+      payload: (
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
+      ) & { [key: string]: any }
       /**
        * The primary blueprint's title (aka label) converted to slug,
        * including fields indicating whether the slug is valid and available for the authenticated user.
        */
-      extracted_slug: components["schemas"]["SlugValidationResult"]
+      extracted_slug: components["schemas"]["SlugValidationResult"] & {
+        [key: string]: any
+      }
     }
     CreateVersionRequest: {
       /**
@@ -851,12 +827,12 @@ export interface components {
       /** The build's tags. */
       tags: string[]
       /** Metadata for the version to be created. */
-      version: components["schemas"]["VersionRequest"]
+      version: components["schemas"]["VersionRequest"] & { [key: string]: any }
       /**
        * The build's cover image is either a file upload or an existing blueprint rendering,
        * along with a crop rectangle.
        */
-      cover: components["schemas"]["CoverRequest"]
+      cover: components["schemas"]["CoverRequest"] & { [key: string]: any }
       /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
       expected_previous_version_id: string
     }
@@ -892,50 +868,68 @@ export interface components {
        * along with a crop rectangle.
        * If unset (`null`), the existing value will not be changed.
        */
-      cover?: components["schemas"]["CoverRequest"] | null
+      cover?:
+        | (components["schemas"]["CoverRequest"] & { [key: string]: any })
+        | null
     }
     FullBuildLinks: {
       /** The absolute URL of this build's full details. */
-      self: components["schemas"]["LinkModel"]
-      /** The absolute URL of this build's cover image. */
-      cover: components["schemas"]["ImageLinkModel"]
+      self: components["schemas"]["LinkModel"] & { [key: string]: any }
+      /**
+       * The absolute URL of this build's cover image.
+       * The image can be further processed using the query string API documented
+       * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
+       */
+      cover: components["schemas"]["ImageLinkModel"] & { [key: string]: any }
       /** The absolute URL of the list of this build's versions. */
-      versions: components["schemas"]["LinkModel"]
+      versions: components["schemas"]["LinkModel"] & { [key: string]: any }
       /** The absolute URL of the list of this build's followers. */
-      followers: components["schemas"]["CollectionLinkModel"]
+      followers: components["schemas"]["CollectionLinkModel"] & {
+        [key: string]: any
+      }
       /**
        * The absolute URL of the API endpoint to add a version to this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user is the owner of the build.
        */
-      add_version?: components["schemas"]["LinkModel"] | null
+      add_version?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to edit this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      edit?: components["schemas"]["LinkModel"] | null
+      edit?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to delete this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      delete?: components["schemas"]["LinkModel"] | null
+      delete?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to **add** this build to the authenticated user's favorites.
        * Only available if the call has been made with an authenticated user token
        * and the user currently **does not** follow this build.
        */
-      add_favorite?: components["schemas"]["LinkModel"] | null
+      add_favorite?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to **remove** this build to the authenticated user's favorites.
        * Only available if the call has been made with an authenticated user token
        * and the user currently **does** follow this build.
        */
-      remove_favorite?: components["schemas"]["LinkModel"] | null
+      remove_favorite?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
     }
     FullBuildModel: {
-      _links: components["schemas"]["FullBuildLinks"]
+      _links: components["schemas"]["FullBuildLinks"] & { [key: string]: any }
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -952,15 +946,21 @@ export interface components {
       /** The build's description in Markdown. */
       description?: string | null
       /** The user who created the build. */
-      owner: components["schemas"]["FullUserModel"]
+      owner: components["schemas"]["FullUserModel"] & { [key: string]: any }
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
       /** The build's latest version's payload type. */
-      latest_type: "blueprint" | "blueprint-book"
+      latest_type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The build's tags. */
       tags: string[]
       /** The build's most recently added version. */
-      latest_version: components["schemas"]["FullVersionModel"]
+      latest_version: components["schemas"]["FullVersionModel"] & {
+        [key: string]: any
+      }
     }
     FullUserModel: {
       /**
@@ -977,11 +977,15 @@ export interface components {
       registered_at: string
     }
     FullVersionModel: {
-      _links: components["schemas"]["VersionLinks"]
+      _links: components["schemas"]["VersionLinks"] & { [key: string]: any }
       /** The version's payload hash. */
       hash: string
       /** The version's blueprint type. */
-      type: "blueprint" | "blueprint-book"
+      type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The timestamp in UTC at which the version was created. */
       created_at: string
       /** An optional name assigned to the version. */
@@ -989,9 +993,10 @@ export interface components {
       /** An optional description for the version. */
       description?: string | null
       /** The payload attached to the version. */
-      payload:
+      payload: (
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
+      ) & { [key: string]: any }
     }
     GameIcon: {
       type: "virtual" | "item"
@@ -1011,8 +1016,6 @@ export interface components {
       height: number
       /** The size in bytes of the linked image. */
       size: number
-      /** The format of the linked image. */
-      format: string
     }
     LinkModel: {
       /** The absolute URL of the linked resource. */
@@ -1025,30 +1028,35 @@ export interface components {
     }
     PayloadLinks: {
       /** The absolute URL of this payload's full details. */
-      self: components["schemas"]["LinkModel"]
+      self: components["schemas"]["LinkModel"] & { [key: string]: any }
       /** The absolute URL of this payload's raw encoded blueprint string for import in the game or other tools. */
-      raw: components["schemas"]["LinkModel"]
+      raw: components["schemas"]["LinkModel"] & { [key: string]: any }
       /**
-       * The absolute URL of this payload's full-size rendering.
+       * The absolute URL of this payload's rendering.
        * Only available if the payload is of type `blueprint`.
+       * The image can be further processed using the query string API documented
+       * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
        */
-      rendering_full?: components["schemas"]["LinkModel"] | null
-      /**
-       * The absolute URL of this payload's rendering thumbnail.
-       * Only available if the payload is of type `blueprint`.
-       */
-      rendering_thumb?: components["schemas"]["LinkModel"] | null
+      rendering?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to delete this payload's renderings.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      delete_rendering?: components["schemas"]["LinkModel"] | null
+      delete_rendering?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
     }
     PayloadModelBase: {
       /** The payload's blueprint type. */
-      type: "blueprint" | "blueprint-book"
-      _links: components["schemas"]["PayloadLinks"]
+      type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
+      _links: components["schemas"]["PayloadLinks"] & { [key: string]: any }
       /** The `md5` hash of the payload's encoded blueprint string. */
       hash: string
       /** The game version that was used to create the blueprint. */
@@ -1068,7 +1076,7 @@ export interface components {
       status?: number | null
       detail?: string | null
       instance?: string | null
-    } & { [key: string]: { [key: string]: any } }
+    } & { [key: string]: any }
     SlugValidationResult: {
       slug: string
       is_valid: boolean
@@ -1076,34 +1084,46 @@ export interface components {
     }
     ThinBuildLinks: {
       /** The absolute URL of this build's full details. */
-      self: components["schemas"]["LinkModel"]
-      /** The absolute URL of this build's cover image. */
-      cover: components["schemas"]["ImageLinkModel"]
+      self: components["schemas"]["LinkModel"] & { [key: string]: any }
+      /**
+       * The absolute URL of this build's cover image.
+       * The image can be further processed using the query string API documented
+       * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
+       */
+      cover: components["schemas"]["ImageLinkModel"] & { [key: string]: any }
       /** The absolute URL of the list of this build's versions. */
-      versions: components["schemas"]["LinkModel"]
+      versions: components["schemas"]["LinkModel"] & { [key: string]: any }
       /** The absolute URL of the list of this build's followers. */
-      followers: components["schemas"]["CollectionLinkModel"]
+      followers: components["schemas"]["CollectionLinkModel"] & {
+        [key: string]: any
+      }
       /**
        * The absolute URL of the API endpoint to add a version to this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user is the owner of the build.
        */
-      add_version?: components["schemas"]["LinkModel"] | null
+      add_version?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to edit this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      edit?: components["schemas"]["LinkModel"] | null
+      edit?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
       /**
        * The absolute URL of the API endpoint to delete this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      delete?: components["schemas"]["LinkModel"] | null
+      delete?:
+        | (components["schemas"]["LinkModel"] & { [key: string]: any })
+        | null
     }
     ThinBuildModel: {
-      _links: components["schemas"]["ThinBuildLinks"]
+      _links: components["schemas"]["ThinBuildLinks"] & { [key: string]: any }
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
@@ -1120,11 +1140,15 @@ export interface components {
       /** The build's description in Markdown. */
       description?: string | null
       /** The user who created the build. */
-      owner: components["schemas"]["ThinUserModel"]
+      owner: components["schemas"]["ThinUserModel"] & { [key: string]: any }
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
       /** The build's latest version's payload type. */
-      latest_type: "blueprint" | "blueprint-book"
+      latest_type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The build's tags. */
       tags: string[]
     }
@@ -1136,11 +1160,15 @@ export interface components {
       username: string
     }
     ThinVersionModel: {
-      _links: components["schemas"]["VersionLinks"]
+      _links: components["schemas"]["VersionLinks"] & { [key: string]: any }
       /** The version's payload hash. */
       hash: string
       /** The version's blueprint type. */
-      type: "blueprint" | "blueprint-book"
+      type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The timestamp in UTC at which the version was created. */
       created_at: string
       /** An optional name assigned to the version. */
@@ -1156,7 +1184,7 @@ export interface components {
     }
     VersionLinks: {
       /** The absolute URL of this version's full payload. */
-      payload: components["schemas"]["LinkModel"]
+      payload: components["schemas"]["LinkModel"] & { [key: string]: any }
     }
     VersionRequest: {
       /** The icons of the version to be created. */
