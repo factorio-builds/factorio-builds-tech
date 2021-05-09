@@ -26,7 +26,7 @@ interface IBaseBlueprintItemProps {
   title: IFullPayload["label"]
   icons: IFullPayload["icons"]
   description: IFullPayload["description"]
-  image: IFullPayload["_links"]["rendering_thumb"]
+  image: IFullPayload["_links"]["rendering"]
 }
 
 interface IBlueprintItemPropsBook extends IBaseBlueprintItemProps {
@@ -234,7 +234,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                     title={node.label}
                     icons={node.icons}
                     description={node.description}
-                    image={node._links.rendering_thumb}
+                    image={node._links.rendering}
                     nodes={node.children}
                   />
                 )
@@ -249,7 +249,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                   title={node.label}
                   icons={node.icons}
                   description={node.description}
-                  image={node._links.rendering_thumb}
+                  image={node._links.rendering}
                   raw={node._links.raw}
                   encoded={node.encoded}
                   entities={node.entities}

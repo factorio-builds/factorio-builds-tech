@@ -56,7 +56,7 @@ function BlueprintItemExplorer(
               title={bp.label}
               icons={bp.icons}
               description={bp.description}
-              image={bp._links?.rendering_thumb}
+              image={bp._links?.rendering}
               nodes={bp.children}
             />
           )
@@ -71,7 +71,7 @@ function BlueprintItemExplorer(
             title={bp.label}
             icons={bp.icons}
             description={bp.description}
-            image={bp._links?.rendering_thumb}
+            image={bp._links?.rendering}
             raw={bp._links?.raw}
             encoded={bp.encoded}
             entities={bp.entities}
