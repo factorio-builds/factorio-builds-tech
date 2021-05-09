@@ -4,667 +4,667 @@
  */
 
 export interface paths {
-  readonly "/assets/icon/{size}/{type}/{key}.png": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/assets/icon/{size}/{type}/{key}.png": {
+    get: {
+      parameters: {
+        path: {
           /** The desired size. Valid values are `64`, `32`, `16` and `8` */
-          readonly size: number
+          size: number
           /** The icon type */
-          readonly type: "item" | "virtual"
+          type: "item" | "virtual"
           /** The item's or signal's name */
-          readonly key: string
+          key: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The requested game icon */
-        readonly 200: {
-          readonly content: {
-            readonly "text/plain": string
-            readonly "application/json": string
-            readonly "text/json": string
+        200: {
+          content: {
+            "text/plain": string
+            "application/json": string
+            "text/json": string
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "text/plain": components["schemas"]["ProblemDetails"]
-            readonly "application/json": components["schemas"]["ProblemDetails"]
-            readonly "text/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
+            "text/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested icon does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "text/plain": components["schemas"]["ProblemDetails"]
-            readonly "application/json": components["schemas"]["ProblemDetails"]
-            readonly "text/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
+            "text/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
   }
-  readonly "/builds": {
-    readonly get: {
-      readonly parameters: {
-        readonly query: {
+  "/builds": {
+    get: {
+      parameters: {
+        query: {
           /** The desired page */
-          readonly page?: number
+          page?: number
           /** The desired field to sort the results */
-          readonly sort_field?: "title" | "created" | "updated" | "favorites"
+          sort_field?: "title" | "created" | "updated" | "favorites"
           /** The desired direction to sort the results */
-          readonly sort_direction?: "asc" | "desc"
+          sort_direction?: "asc" | "desc"
           /** An optional search term to filter the results by */
-          readonly q?: string
+          q?: string
           /** An optional list of tags to filter the results by */
-          readonly tags?: readonly string[]
+          tags?: string[]
           /** An optional game version to filter the results by */
-          readonly version?: string
+          version?: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The paged, filtered and ordered list of matching builds */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["BuildsModel"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["BuildsModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** Not Found */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
-    readonly post: {
-      readonly responses: {
+    post: {
+      responses: {
         /** Success */
-        readonly 201: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ThinBuildModel"]
+        201: {
+          content: {
+            "application/json": components["schemas"]["ThinBuildModel"]
           }
         }
         /** Bad Request */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": components["schemas"]["CreateBuildRequest"]
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["CreateBuildRequest"]
         }
       }
     }
   }
-  readonly "/builds/{owner}/{slug}": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/builds/{owner}/{slug}": {
+    get: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The details of the requested build */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["FullBuildModel"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["FullBuildModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
-    readonly delete: {
-      readonly parameters: {
-        readonly path: {
+    delete: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The build was deleted successfully */
-        readonly 204: never
+        204: never
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
-    readonly patch: {
-      readonly parameters: {
-        readonly path: {
+    patch: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The metadata to update. */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ThinBuildModel"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["ThinBuildModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
       /** The request parameters */
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": components["schemas"]["EditBuildRequest"]
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["EditBuildRequest"]
         }
       }
     }
   }
-  readonly "/builds/{owner}/{slug}/followers": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/builds/{owner}/{slug}/followers": {
+    get: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** An ordered list of followers */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["UsersModel"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["UsersModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
-    readonly put: {
-      readonly parameters: {
-        readonly path: {
+    put: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The build was added to the user's favorites */
-        readonly 204: never
+        204: never
         /** The request is malformed or invalid */
-        readonly 400: unknown
+        400: unknown
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
-    readonly delete: {
-      readonly parameters: {
-        readonly path: {
+    delete: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The build was removed from the user's favorites */
-        readonly 204: never
+        204: never
         /** The request is malformed or invalid */
-        readonly 400: unknown
+        400: unknown
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
   }
-  readonly "/builds/{owner}/{slug}/versions": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/builds/{owner}/{slug}/versions": {
+    get: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** An ordered list of versions */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["VersionsModel"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["VersionsModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
-    readonly post: {
-      readonly parameters: {
-        readonly path: {
+    post: {
+      parameters: {
+        path: {
           /** The username of the desired build's owner */
-          readonly owner: string
+          owner: string
           /** The slug of the desired build */
-          readonly slug: string
+          slug: string
         }
       }
-      readonly responses: {
+      responses: {
         /** An ordered list of versions */
-        readonly 200: unknown
+        200: unknown
         /** Success */
-        readonly 201: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["FullVersionModel"]
+        201: {
+          content: {
+            "application/json": components["schemas"]["FullVersionModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
         /** The requested build does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
       /** The request parameters */
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": components["schemas"]["CreateVersionRequest"]
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["CreateVersionRequest"]
         }
       }
     }
   }
-  readonly "/payloads/{hash}": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/payloads/{hash}": {
+    get: {
+      parameters: {
+        path: {
           /** The hash of the desired payload */
-          readonly hash: string
+          hash: string
         }
-        readonly query: {
+        query: {
           /** Specify whether to load the entire graph with all children or only the requested payload */
-          readonly include_children?: boolean
+          include_children?: boolean
         }
       }
-      readonly responses: {
+      responses: {
         /** The details of the requested payload */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json":
+        200: {
+          content: {
+            "application/json":
               | components["schemas"]["BlueprintPayloadModel"]
               | components["schemas"]["BookPayloadModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested payload does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
   }
-  readonly "/payloads/{hash}/raw": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/payloads/{hash}/raw": {
+    get: {
+      parameters: {
+        path: {
           /** The hash of the desired payload */
-          readonly hash: string
+          hash: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The raw encoded blueprint string */
-        readonly 200: {
-          readonly content: {
-            readonly "text/plain": string
+        200: {
+          content: {
+            "text/plain": string
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "text/plain": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested payload does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "text/plain": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "text/plain": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
   }
-  readonly "/payloads/{hash}/json": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/payloads/{hash}/json": {
+    get: {
+      parameters: {
+        path: {
           /** The hash of the desired payload */
-          readonly hash: string
+          hash: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The decoded json body */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": string
+        200: {
+          content: {
+            "application/json": string
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested payload does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
     }
   }
-  readonly "/payloads/{hash}/rendering": {
-    readonly delete: {
-      readonly parameters: {
-        readonly path: {
+  "/payloads/{hash}/rendering": {
+    delete: {
+      parameters: {
+        path: {
           /** The hash of the desired payload */
-          readonly hash: string
+          hash: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The renderings have been deleted or do not exist */
-        readonly 204: never
+        204: never
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
     }
   }
-  readonly "/payloads": {
-    readonly put: {
-      readonly responses: {
+  "/payloads": {
+    put: {
+      responses: {
         /** Success */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["CreatePayloadResult"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["CreatePayloadResult"]
           }
         }
         /** Bad Request */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": components["schemas"]["CreatePayloadRequest"]
+      requestBody: {
+        content: {
+          "application/json": components["schemas"]["CreatePayloadRequest"]
         }
       }
     }
   }
-  readonly "/rpc/validate-username": {
-    readonly post: {
-      readonly responses: {
+  "/rpc/validate-username": {
+    post: {
+      responses: {
         /** The validation result */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["SlugValidationResult"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["SlugValidationResult"]
           }
         }
       }
       /** The username to validate */
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": string
-          readonly "text/json": string
-          readonly "application/*+json": string
+      requestBody: {
+        content: {
+          "application/json": string
+          "text/json": string
+          "application/*+json": string
         }
       }
     }
   }
-  readonly "/rpc/validate-slug": {
-    readonly post: {
-      readonly responses: {
+  "/rpc/validate-slug": {
+    post: {
+      responses: {
         /** The validation result */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["SlugValidationResult"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["SlugValidationResult"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
       /** The slug to validate */
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": string
-          readonly "text/json": string
-          readonly "application/*+json": string
+      requestBody: {
+        content: {
+          "application/json": string
+          "text/json": string
+          "application/*+json": string
         }
       }
     }
   }
-  readonly "/rpc/convert-and-validate-title": {
-    readonly post: {
-      readonly responses: {
+  "/rpc/convert-and-validate-title": {
+    post: {
+      responses: {
         /** The converted title and validation result */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["SlugValidationResult"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["SlugValidationResult"]
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
       /** The title to convert and validate */
-      readonly requestBody: {
-        readonly content: {
-          readonly "application/json": string
-          readonly "text/json": string
-          readonly "application/*+json": string
+      requestBody: {
+        content: {
+          "application/json": string
+          "text/json": string
+          "application/*+json": string
         }
       }
     }
   }
-  readonly "/rpc/test-auth": {
-    readonly get: {
-      readonly responses: {
+  "/rpc/test-auth": {
+    get: {
+      responses: {
         /** Success */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": { readonly [key: string]: string }
+        200: {
+          content: {
+            "application/json": { [key: string]: string }
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
     }
   }
-  readonly "/rpc/test-moderator": {
-    readonly get: {
-      readonly responses: {
+  "/rpc/test-moderator": {
+    get: {
+      responses: {
         /** Success */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": { readonly [key: string]: string }
+        200: {
+          content: {
+            "application/json": { [key: string]: string }
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
     }
   }
-  readonly "/rpc/test-admin": {
-    readonly get: {
-      readonly responses: {
+  "/rpc/test-admin": {
+    get: {
+      responses: {
         /** Success */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": { readonly [key: string]: string }
+        200: {
+          content: {
+            "application/json": { [key: string]: string }
           }
         }
         /** Unauthorized */
-        readonly 401: unknown
+        401: unknown
         /** Forbidden */
-        readonly 403: unknown
+        403: unknown
       }
     }
   }
-  readonly "/users/{username}/builds": {
-    readonly get: {
-      readonly parameters: {
-        readonly path: {
+  "/users/{username}/builds": {
+    get: {
+      parameters: {
+        path: {
           /** The desired user's username */
-          readonly username: string
+          username: string
         }
-        readonly query: {
+        query: {
           /** The desired page */
-          readonly page?: number
+          page?: number
           /** The desired field to sort the results */
-          readonly sort_field?: "title" | "created" | "updated" | "favorites"
+          sort_field?: "title" | "created" | "updated" | "favorites"
           /** The desired direction to sort the results */
-          readonly sort_direction?: "asc" | "desc"
+          sort_direction?: "asc" | "desc"
           /** An optional search term to filter the results by */
-          readonly q?: string
+          q?: string
           /** An optional list of tags to filter the results by */
-          readonly tags?: readonly string[]
+          tags?: string[]
           /** An optional game version to filter the results by */
-          readonly version?: string
+          version?: string
         }
       }
-      readonly responses: {
+      responses: {
         /** The paged, filtered and ordered list of matching builds */
-        readonly 200: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["BuildsModel"]
+        200: {
+          content: {
+            "application/json": components["schemas"]["BuildsModel"]
           }
         }
         /** The request is malformed or invalid */
-        readonly 400: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        400: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested user does not exist */
-        readonly 404: {
-          readonly content: {
-            readonly "application/json": components["schemas"]["ProblemDetails"]
+        404: {
+          content: {
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
@@ -673,481 +673,481 @@ export interface paths {
 }
 
 export interface components {
-  readonly schemas: {
-    readonly BlueprintPayloadModel: components["schemas"]["PayloadModelBase"] & {
+  schemas: {
+    BlueprintPayloadModel: components["schemas"]["PayloadModelBase"] & {
       /**
        * A map of item `name` to `count` of all **entities** in this payload's blueprint.
        * Only items with a count greater than 0 are included.
        */
-      readonly entities: { readonly [key: string]: number }
+      entities: { [key: string]: number }
       /**
        * A map of item `name` to `count` of all **tiles** in this payload's blueprint.
        * Only items with a count greater than 0 are included.
        */
-      readonly tiles: { readonly [key: string]: number }
+      tiles: { [key: string]: number }
     }
-    readonly BookPayloadModel: components["schemas"]["PayloadModelBase"] & {
+    BookPayloadModel: components["schemas"]["PayloadModelBase"] & {
       /**
        * All payloads that are included in this blueprint book.
        * Only set when the `include_children` query parameter is `true`.
        */
-      readonly children: readonly (
+      children: (
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
       )[]
     }
-    readonly BuildsLinks: {
+    BuildsLinks: {
       /**
        * The absolute URL of the API endpoint to create a new build.
        * Only available if the call has been made with an authenticated user token.
        */
-      readonly create_build?: components["schemas"]["LinkModel"] | null
+      create_build?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to add a payload.
        * Only available if the call has been made with an authenticated user token.
        */
-      readonly create_payload?: components["schemas"]["LinkModel"] | null
+      create_payload?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the previous page of the results list.
        * Only available if the current page is not the first page.
        */
-      readonly prev?: components["schemas"]["LinkModel"] | null
+      prev?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the next page of the results list.
        * Only available if there are more results to be returned.
        */
-      readonly next?: components["schemas"]["LinkModel"] | null
+      next?: components["schemas"]["LinkModel"] | null
     }
-    readonly BuildsModel: {
-      readonly _links: components["schemas"]["BuildsLinks"]
+    BuildsModel: {
+      _links: components["schemas"]["BuildsLinks"]
       /** The number of results on the current page. */
-      readonly current_count: number
+      current_count: number
       /**
        * The total count of matching results.
        * TODO: currently this is the absolute total number of builds without any filtering applied.
        */
-      readonly total_count: number
+      total_count: number
       /** The paged, filtered and ordered list of matching builds. */
-      readonly builds: readonly components["schemas"]["ThinBuildModel"][]
+      builds: components["schemas"]["ThinBuildModel"][]
     }
-    readonly CollectionLinkModel: {
+    CollectionLinkModel: {
       /** The absolute URL of the linked resource. */
-      readonly href: string
+      href: string
       /**
        * The HTTP method to request the linked resource.
        * Defaults to `GET` if unset (`null`).
        */
-      readonly method?: string | null
+      method?: string | null
       /** The number of items in the linked collection. */
-      readonly count: number
+      count: number
     }
-    readonly CoverRequest: {
+    CoverRequest: {
       /** The uploaded cover image. */
-      readonly file?: File | null
+      file?: File | null
       /** The hash of an existing blueprint rendering. */
-      readonly hash?: string | null
+      hash?: string | null
       /**
        * An optional rectangle to specify how the image should be cropped before it is resized.
        * If unspecified, the image will not be cropped and only resized to fit the cover limits.
        */
-      readonly crop?: components["schemas"]["CropRectangle"] | null
+      crop?: components["schemas"]["CropRectangle"] | null
     }
-    readonly CreateBuildRequest: {
+    CreateBuildRequest: {
       /**
        * The hash of the payload that should be used to create this build version.
        * The payload must have been previously created.
        */
-      readonly hash: string
+      hash: string
       /** The title or display name of the build. */
-      readonly title: string
+      title: string
       /** The build description in Markdown. */
-      readonly description?: string | null
+      description?: string | null
       /** The build's tags. */
-      readonly tags: readonly string[]
+      tags: string[]
       /** Metadata for the version to be created. */
-      readonly version: components["schemas"]["VersionRequest"]
+      version: components["schemas"]["VersionRequest"]
       /**
        * The build's cover image is either a file upload or an existing blueprint rendering,
        * along with a crop rectangle.
        */
-      readonly cover: components["schemas"]["CoverRequest"]
+      cover: components["schemas"]["CoverRequest"]
       /**
        * The slug for the new build. It is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
        */
-      readonly slug: string
+      slug: string
     }
-    readonly CreatePayloadRequest: {
+    CreatePayloadRequest: {
       /** The encoded blueprint string. */
-      readonly encoded: string
+      encoded: string
     }
-    readonly CreatePayloadResult: {
+    CreatePayloadResult: {
       /** The full payload graph that was created in this operation. */
-      readonly payload:
+      payload:
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
       /**
        * The primary blueprint's title (aka label) converted to slug,
        * including fields indicating whether the slug is valid and available for the authenticated user.
        */
-      readonly extracted_slug: components["schemas"]["SlugValidationResult"]
+      extracted_slug: components["schemas"]["SlugValidationResult"]
     }
-    readonly CreateVersionRequest: {
+    CreateVersionRequest: {
       /**
        * The hash of the payload that should be used to create this build version.
        * The payload must have been previously created.
        */
-      readonly hash: string
+      hash: string
       /** The title or display name of the build. */
-      readonly title: string
+      title: string
       /** The build description in Markdown. */
-      readonly description?: string | null
+      description?: string | null
       /** The build's tags. */
-      readonly tags: readonly string[]
+      tags: string[]
       /** Metadata for the version to be created. */
-      readonly version: components["schemas"]["VersionRequest"]
+      version: components["schemas"]["VersionRequest"]
       /**
        * The build's cover image is either a file upload or an existing blueprint rendering,
        * along with a crop rectangle.
        */
-      readonly cover: components["schemas"]["CoverRequest"]
+      cover: components["schemas"]["CoverRequest"]
       /** The current (latest) version of the build. It must be specified to avoid concurrency issues. */
-      readonly expected_previous_version_id: string
+      expected_previous_version_id: string
     }
-    readonly CropRectangle: {
-      readonly x: number
-      readonly y: number
-      readonly width: number
-      readonly height: number
+    CropRectangle: {
+      x: number
+      y: number
+      width: number
+      height: number
     }
-    readonly EditBuildRequest: {
+    EditBuildRequest: {
       /**
        * The title or display name of the build.
        * If unset (`null`), the existing value will not be changed.
        */
-      readonly title?: string | null
+      title?: string | null
       /**
        * The build description in Markdown.
        * If unset (`null`), the existing value will not be changed.
        */
-      readonly description?: string | null
+      description?: string | null
       /**
        * The build's tags.
        * If unset (`null`), the existing value will not be changed.
        */
-      readonly tags?: readonly string[] | null
+      tags?: string[] | null
       /**
        * The build's icons.
        * If unset (`null`), the existing value will not be changed.
        */
-      readonly icons?: readonly components["schemas"]["GameIcon"][] | null
+      icons?: components["schemas"]["GameIcon"][] | null
       /**
        * The build's cover image is either a file upload or an existing blueprint rendering,
        * along with a crop rectangle.
        * If unset (`null`), the existing value will not be changed.
        */
-      readonly cover?: components["schemas"]["CoverRequest"] | null
+      cover?: components["schemas"]["CoverRequest"] | null
     }
-    readonly FullBuildLinks: {
+    FullBuildLinks: {
       /** The absolute URL of this build's full details. */
-      readonly self: components["schemas"]["LinkModel"]
+      self: components["schemas"]["LinkModel"]
       /**
        * The absolute URL of this build's cover image.
        * The image can be further processed using the query string API documented
        * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
        */
-      readonly cover: components["schemas"]["ImageLinkModel"]
+      cover: components["schemas"]["ImageLinkModel"]
       /** The absolute URL of the list of this build's versions. */
-      readonly versions: components["schemas"]["LinkModel"]
+      versions: components["schemas"]["LinkModel"]
       /** The absolute URL of the list of this build's followers. */
-      readonly followers: components["schemas"]["CollectionLinkModel"]
+      followers: components["schemas"]["CollectionLinkModel"]
       /**
        * The absolute URL of the API endpoint to add a version to this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user is the owner of the build.
        */
-      readonly add_version?: components["schemas"]["LinkModel"] | null
+      add_version?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to edit this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      readonly edit?: components["schemas"]["LinkModel"] | null
+      edit?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to delete this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      readonly delete?: components["schemas"]["LinkModel"] | null
+      delete?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to **add** this build to the authenticated user's favorites.
        * Only available if the call has been made with an authenticated user token
        * and the user currently **does not** follow this build.
        */
-      readonly add_favorite?: components["schemas"]["LinkModel"] | null
+      add_favorite?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to **remove** this build to the authenticated user's favorites.
        * Only available if the call has been made with an authenticated user token
        * and the user currently **does** follow this build.
        */
-      readonly remove_favorite?: components["schemas"]["LinkModel"] | null
+      remove_favorite?: components["schemas"]["LinkModel"] | null
     }
-    readonly FullBuildModel: {
-      readonly _links: components["schemas"]["FullBuildLinks"]
+    FullBuildModel: {
+      _links: components["schemas"]["FullBuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
        */
-      readonly slug: string
+      slug: string
       /** The timestamp in UTC of when the first version of the build was created. */
-      readonly created_at: string
+      created_at: string
       /** The timestamp in UTC of when the build was last updated. */
-      readonly updated_at: string
+      updated_at: string
       /** The build's icons. */
-      readonly icons: readonly components["schemas"]["GameIcon"][]
+      icons: components["schemas"]["GameIcon"][]
       /** The title or display name of the build. */
-      readonly title: string
+      title: string
       /** The build's description in Markdown. */
-      readonly description?: string | null
+      description?: string | null
       /** The user who created the build. */
-      readonly owner: components["schemas"]["FullUserModel"]
+      owner: components["schemas"]["FullUserModel"]
       /** The game version that was used to create the the most recently added version of this build. */
-      readonly latest_game_version: string
+      latest_game_version: string
       /** The build's latest version's payload type. */
-      readonly latest_type:
+      latest_type:
         | "blueprint"
         | "blueprint-book"
         | "deconstruction-planner"
         | "upgrade-planner"
       /** The build's tags. */
-      readonly tags: readonly string[]
+      tags: string[]
       /** The build's most recently added version. */
-      readonly latest_version: components["schemas"]["FullVersionModel"]
+      latest_version: components["schemas"]["FullVersionModel"]
     }
-    readonly FullUserModel: {
+    FullUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
        * It is used in URLs like the user's profile or build pages.
        */
-      readonly username: string
+      username: string
       /**
        * The user's display name can **optionally** be set by a user. It is meant to be displayed across the site in place of the `username`.
        * If the value is unset (`null`), the `username` should be displayed instead.
        */
-      readonly display_name?: string | null
+      display_name?: string | null
       /** The user's registration timestamp in UTC. */
-      readonly registered_at: string
+      registered_at: string
     }
-    readonly FullVersionModel: {
-      readonly _links: components["schemas"]["VersionLinks"]
+    FullVersionModel: {
+      _links: components["schemas"]["VersionLinks"]
       /** The version's payload hash. */
-      readonly hash: string
+      hash: string
       /** The version's blueprint type. */
-      readonly type:
+      type:
         | "blueprint"
         | "blueprint-book"
         | "deconstruction-planner"
         | "upgrade-planner"
       /** The timestamp in UTC at which the version was created. */
-      readonly created_at: string
+      created_at: string
       /** An optional name assigned to the version. */
-      readonly name?: string | null
+      name?: string | null
       /** An optional description for the version. */
-      readonly description?: string | null
+      description?: string | null
       /** The payload attached to the version. */
-      readonly payload:
+      payload:
         | components["schemas"]["BlueprintPayloadModel"]
         | components["schemas"]["BookPayloadModel"]
     }
-    readonly GameIcon: {
-      readonly type: "virtual" | "item"
-      readonly name: string
+    GameIcon: {
+      type: "virtual" | "item"
+      name: string
     }
-    readonly ImageLinkModel: {
+    ImageLinkModel: {
       /** The absolute URL of the linked resource. */
-      readonly href: string
+      href: string
       /**
        * The HTTP method to request the linked resource.
        * Defaults to `GET` if unset (`null`).
        */
-      readonly method?: string | null
+      method?: string | null
       /** The width of the linked image. */
-      readonly width: number
+      width: number
       /** The height of the linked image. */
-      readonly height: number
+      height: number
       /** The size in bytes of the linked image. */
-      readonly size: number
+      size: number
     }
-    readonly LinkModel: {
+    LinkModel: {
       /** The absolute URL of the linked resource. */
-      readonly href: string
+      href: string
       /**
        * The HTTP method to request the linked resource.
        * Defaults to `GET` if unset (`null`).
        */
-      readonly method?: string | null
+      method?: string | null
     }
-    readonly PayloadLinks: {
+    PayloadLinks: {
       /** The absolute URL of this payload's full details. */
-      readonly self: components["schemas"]["LinkModel"]
+      self: components["schemas"]["LinkModel"]
       /** The absolute URL of this payload's raw encoded blueprint string for import in the game or other tools. */
-      readonly raw: components["schemas"]["LinkModel"]
+      raw: components["schemas"]["LinkModel"]
       /**
        * The absolute URL of this payload's rendering.
        * Only available if the payload is of type `blueprint`.
        * The image can be further processed using the query string API documented
        * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
        */
-      readonly rendering?: components["schemas"]["LinkModel"] | null
+      rendering?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to delete this payload's renderings.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      readonly delete_rendering?: components["schemas"]["LinkModel"] | null
+      delete_rendering?: components["schemas"]["LinkModel"] | null
     }
-    readonly PayloadModelBase: {
+    PayloadModelBase: {
       /** The payload's blueprint type. */
-      readonly type:
+      type:
         | "blueprint"
         | "blueprint-book"
         | "deconstruction-planner"
         | "upgrade-planner"
-      readonly _links: components["schemas"]["PayloadLinks"]
+      _links: components["schemas"]["PayloadLinks"]
       /** The `md5` hash of the payload's encoded blueprint string. */
-      readonly hash: string
+      hash: string
       /** The game version that was used to create the blueprint. */
-      readonly game_version: string
+      game_version: string
       /** The raw encoded blueprint string for import in the game or other tools */
-      readonly encoded: string
+      encoded: string
       /** The ordered list of 1 to 4 icons that is included in the ingame blueprint payload. */
-      readonly icons: readonly components["schemas"]["GameIcon"][]
+      icons: components["schemas"]["GameIcon"][]
       /** An optional label that is included in the ingame blueprint payload. */
-      readonly label?: string | null
+      label?: string | null
       /** An optional description that is included in the ingame blueprint payload. */
-      readonly description?: string | null
+      description?: string | null
     }
-    readonly ProblemDetails: {
-      readonly type?: string | null
-      readonly title?: string | null
-      readonly status?: number | null
-      readonly detail?: string | null
-      readonly instance?: string | null
+    ProblemDetails: {
+      type?: string | null
+      title?: string | null
+      status?: number | null
+      detail?: string | null
+      instance?: string | null
     } & { [key: string]: any }
-    readonly SlugValidationResult: {
-      readonly slug: string
-      readonly is_valid: boolean
-      readonly is_available: boolean
+    SlugValidationResult: {
+      slug: string
+      is_valid: boolean
+      is_available: boolean
     }
-    readonly ThinBuildLinks: {
+    ThinBuildLinks: {
       /** The absolute URL of this build's full details. */
-      readonly self: components["schemas"]["LinkModel"]
+      self: components["schemas"]["LinkModel"]
       /**
        * The absolute URL of this build's cover image.
        * The image can be further processed using the query string API documented
        * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
        */
-      readonly cover: components["schemas"]["ImageLinkModel"]
+      cover: components["schemas"]["ImageLinkModel"]
       /** The absolute URL of the list of this build's versions. */
-      readonly versions: components["schemas"]["LinkModel"]
+      versions: components["schemas"]["LinkModel"]
       /** The absolute URL of the list of this build's followers. */
-      readonly followers: components["schemas"]["CollectionLinkModel"]
+      followers: components["schemas"]["CollectionLinkModel"]
       /**
        * The absolute URL of the API endpoint to add a version to this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user is the owner of the build.
        */
-      readonly add_version?: components["schemas"]["LinkModel"] | null
+      add_version?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to edit this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      readonly edit?: components["schemas"]["LinkModel"] | null
+      edit?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to delete this build.
        * Only available if the call has been made with an authenticated user token
        * and the authenticated user has the required permissions.
        */
-      readonly delete?: components["schemas"]["LinkModel"] | null
+      delete?: components["schemas"]["LinkModel"] | null
     }
-    readonly ThinBuildModel: {
-      readonly _links: components["schemas"]["ThinBuildLinks"]
+    ThinBuildModel: {
+      _links: components["schemas"]["ThinBuildLinks"]
       /**
        * The slug is used in the build's URL and must be unique per user.
        * It can consist only of latin alphanumeric characters, underscores and hyphens.
        */
-      readonly slug: string
+      slug: string
       /** The timestamp in UTC of when the first version of the build was created. */
-      readonly created_at: string
+      created_at: string
       /** The timestamp in UTC of when the build was last updated. */
-      readonly updated_at: string
+      updated_at: string
       /** The build's icons. */
-      readonly icons: readonly components["schemas"]["GameIcon"][]
+      icons: components["schemas"]["GameIcon"][]
       /** The title or display name of the build. */
-      readonly title: string
+      title: string
       /** The build's description in Markdown. */
-      readonly description?: string | null
+      description?: string | null
       /** The user who created the build. */
-      readonly owner: components["schemas"]["ThinUserModel"]
+      owner: components["schemas"]["ThinUserModel"]
       /** The game version that was used to create the the most recently added version of this build. */
-      readonly latest_game_version: string
+      latest_game_version: string
       /** The build's latest version's payload type. */
-      readonly latest_type:
+      latest_type:
         | "blueprint"
         | "blueprint-book"
         | "deconstruction-planner"
         | "upgrade-planner"
       /** The build's tags. */
-      readonly tags: readonly string[]
+      tags: string[]
     }
-    readonly ThinUserModel: {
+    ThinUserModel: {
       /**
        * The user's username, also known as **slug**. It can consist only of latin alphanumeric characters, underscores and hyphens.
        * It is used in URLs like the user's profile or build pages.
        */
-      readonly username: string
+      username: string
     }
-    readonly ThinVersionModel: {
-      readonly _links: components["schemas"]["VersionLinks"]
+    ThinVersionModel: {
+      _links: components["schemas"]["VersionLinks"]
       /** The version's payload hash. */
-      readonly hash: string
+      hash: string
       /** The version's blueprint type. */
-      readonly type:
+      type:
         | "blueprint"
         | "blueprint-book"
         | "deconstruction-planner"
         | "upgrade-planner"
       /** The timestamp in UTC at which the version was created. */
-      readonly created_at: string
+      created_at: string
       /** An optional name assigned to the version. */
-      readonly name?: string | null
+      name?: string | null
       /** An optional description for the version. */
-      readonly description?: string | null
+      description?: string | null
     }
-    readonly UsersModel: {
+    UsersModel: {
       /** The number of results on the current page. */
-      readonly count: number
+      count: number
       /** The paged, filtered and ordered list of matching users. */
-      readonly users: readonly components["schemas"]["FullUserModel"][]
+      users: components["schemas"]["FullUserModel"][]
     }
-    readonly VersionLinks: {
+    VersionLinks: {
       /** The absolute URL of this version's full payload. */
-      readonly payload: components["schemas"]["LinkModel"]
+      payload: components["schemas"]["LinkModel"]
     }
-    readonly VersionRequest: {
+    VersionRequest: {
       /** The icons of the version to be created. */
-      readonly icons: readonly components["schemas"]["GameIcon"][]
+      icons: components["schemas"]["GameIcon"][]
       /** An optional name for the version to be created. */
-      readonly name?: string | null
+      name?: string | null
       /** An optional description for the version to be created. */
-      readonly description?: string | null
+      description?: string | null
     }
-    readonly VersionsModel: {
+    VersionsModel: {
       /** The number of results on the current page. */
-      readonly count: number
+      count: number
       /** The paged, filtered and ordered list of matching versions. */
-      readonly versions: readonly components["schemas"]["ThinVersionModel"][]
+      versions: components["schemas"]["ThinVersionModel"][]
     }
   }
 }

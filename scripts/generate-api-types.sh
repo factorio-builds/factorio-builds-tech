@@ -20,10 +20,9 @@ sed -i 's/\[FromBody,Swashbuckle\.AspNetCore\.Annotations\.SwaggerRequestBody/\[
 popd
 
 pushd ./frontend
-npx openapi-typescript ../openapi.json \
+npx openapi-typescript@v3.2.3 ../openapi.json \
   --prettier-config .prettierrc \
-  --output types/generated-api.ts \
-  --immutable-types
+  --output types/generated-api.ts
 popd
 
 rm openapi.json
