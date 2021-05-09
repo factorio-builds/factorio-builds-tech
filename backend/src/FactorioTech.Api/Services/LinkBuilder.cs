@@ -133,6 +133,7 @@ namespace FactorioTech.Api.Services
                     ? new(urlHelper.ActionLink(nameof(PayloadController.DeleteRendering), "Payload", new { hash = payload.Hash, }), HttpMethod.Delete)
                     : null,
             };
+
         private static string AbsolueUrl(this IUrlHelper url, string path) =>
             url.ActionContext.HttpContext.Request
                 .Let(request => new Uri(new Uri($"{request.Scheme}://{request.Host.Value}"), path))
