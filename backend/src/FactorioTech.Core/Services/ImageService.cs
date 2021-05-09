@@ -1,6 +1,7 @@
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
@@ -8,7 +9,6 @@ using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,12 +17,6 @@ namespace FactorioTech.Core.Services
 {
     public class ImageService
     {
-        public enum RenderingType
-        {
-            Full,
-            Thumb,
-        }
-
         public sealed class CropRectangle
         {
             [Required]
@@ -43,118 +37,60 @@ namespace FactorioTech.Core.Services
         }
 
         private readonly ILogger<ImageService> _logger;
+        private readonly IFileProvider _fileProvider;
         private readonly AppDbContext _dbContext;
         private readonly AppConfig _appConfig;
         private readonly FbsrClient _fbsrClient;
 
-        private static readonly TimeSpan NewRenderingLoadInterval = TimeSpan.FromSeconds(2);
-        private static readonly TimeSpan NewRenderingLoadTimeout = TimeSpan.FromSeconds(30);
-
         public ImageService(
-            ILogger<ImageService> logger,
             IOptions<AppConfig> appConfigMonitor,
+            ILogger<ImageService> logger,
+            IFileProvider fileProvider,
             AppDbContext dbContext,
             FbsrClient fbsrClient)
         {
-            _logger = logger;
-            _dbContext = dbContext;
             _appConfig = appConfigMonitor.Value;
+            _logger = logger;
+            _fileProvider = fileProvider;
+            _dbContext = dbContext;
             _fbsrClient = fbsrClient;
         }
 
-        public async Task<(Stream? File, string? MimeType)> TryLoadCover(string fileName)
+        public async Task<IFileInfo> GetOrCreateRendering(Hash hash)
         {
-            var imageFqfn = GetCoverFqfn(fileName);
-            if (!File.Exists(imageFqfn))
-                return (null, null);
+            var fileInfo = GetRenderingFileInfo(hash);
+            if (fileInfo.Exists)
+                return fileInfo;
 
-            var file = new FileStream(imageFqfn, FileMode.Open, FileAccess.Read);
-            var format = await Image.DetectFormatAsync(file);
+            var payload = await _dbContext.Payloads.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Hash == hash);
 
-            return (file, format.DefaultMimeType);
-        }
-
-        public async Task<Stream?> TryLoadRendering(Hash hash, RenderingType type)
-        {
-            var sw = Stopwatch.StartNew();
-
-            do
+            if (payload == null)
             {
-                var image = await TryLoadRenderingInner(hash, type);
-                if (image != null)
-                    return image;
-
-                _logger.LogWarning("Rendering {Type} for {Hash} not found; will retry in {Interval}", type, hash, NewRenderingLoadInterval);
-                await Task.Delay(NewRenderingLoadInterval);
-            }
-            while (sw.Elapsed < NewRenderingLoadTimeout);
-
-            _logger.LogWarning("Rendering {Type} for {Hash} not found after {Timeout}; giving up", type, hash, NewRenderingLoadTimeout);
-            return null;
-        }
-
-        private async Task<Stream?> TryLoadRenderingInner(Hash hash, RenderingType type)
-        {
-            Stream? TryLoadIfExists()
-            {
-                var fqfn = GetRenderingFqfn(hash, type);
-
-                try
-                {
-                    return File.Exists(fqfn)
-                        ? new FileStream(fqfn, FileMode.Open, FileAccess.Read)
-                        : null;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Failed to read rendering {Type} for {Hash}", type, hash);
-                    return null;
-                }
+                _logger.LogWarning("Payload for {Hash} not found", hash);
+                return fileInfo;
             }
 
-            var image = TryLoadIfExists();
-            if (image != null)
-                return image;
+            await SaveRendering(payload);
 
-            switch (type)
-            {
-                case RenderingType.Full:
-                    var payload = await _dbContext.Payloads.AsNoTracking()
-                        .FirstOrDefaultAsync(x => x.Hash == hash);
-
-                    if (payload == null)
-                    {
-                        _logger.LogWarning("Payload for {Hash} not found", hash);
-                        return null;
-                    }
-
-                    await SaveRenderingFull(payload);
-                    break;
-
-                case RenderingType.Thumb:
-                    var rendering = await TryLoadRendering(hash, RenderingType.Full);
-                    if (rendering == null)
-                        return null;
-
-                    await SaveRenderingThumb(hash, rendering);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-
-            return TryLoadIfExists();
+            return GetRenderingFileInfo(hash);
         }
 
-        public async Task SaveRenderingFull(Payload payload)
+        public async Task SaveRendering(Payload payload)
         {
+            if (payload.Type != PayloadType.Blueprint)
+            {
+                _logger.LogWarning("Tried to create a rendering for {Hash}, but the payload is not blueprint: {Type}",
+                    payload.Hash, payload.Type);
+                return;
+            }
+
             _logger.LogInformation("Creating rendering for {Hash}", payload.Hash);
 
-            var imageFqfn = GetRenderingFqfn(payload.Hash, RenderingType.Full);
+            var imageFqfn = GetRenderingFqfn(payload.Hash);
             if (File.Exists(imageFqfn))
             {
-                _logger.LogWarning(
-                    "Attempted to save new blueprint rendering with hash {Hash}, but the file already exists at {ImageFqfn}",
+                _logger.LogWarning("Attempted to save new blueprint rendering with hash {Hash}, but the file already exists at {ImageFqfn}",
                     payload.Hash, imageFqfn);
                 return;
             }
@@ -185,82 +121,41 @@ namespace FactorioTech.Core.Services
                 if (fileSize == 0)
                     throw new Exception($"Wrote 0 bytes to {imageFqfn}");
 
-                _logger.LogInformation("Saved rendering {Type} for {Hash}: {Width}x{Height} - {FileSize} bytes",
-                    RenderingType.Full, payload.Hash, image.Width, image.Height, fileSize);
+                _logger.LogInformation("Saved rendering for {Hash}: {Width}x{Height} - {FileSize} bytes",
+                    payload.Hash, image.Width, image.Height, fileSize);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to fetch or save blueprint rendering {Type} for {Hash}",
-                    RenderingType.Full, payload.Hash);
+                _logger.LogError(ex, "Failed to fetch or save blueprint rendering for {Hash}", payload.Hash);
 
                 if (File.Exists(imageFqfn))
                 {
                     File.Delete(imageFqfn);
-                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}",
-                        RenderingType.Full, payload.Hash);
+                    _logger.LogWarning("Found and deleted existing blueprint rendering for failed {Hash}", payload.Hash);
                 }
             }
         }
 
         public void DeleteRendering(Hash hash)
         {
-            var types = new[] { RenderingType.Full, RenderingType.Thumb };
-            foreach (var type in types)
+            var path = GetRenderingFqfn(hash);
+            if (File.Exists(path))
             {
-                var path = GetRenderingFqfn(hash, type);
-                if (File.Exists(path))
-                {
-                    File.Delete(path);
-                    _logger.LogInformation("Deleted rendering {Type} for {Hash}", type, hash);
-                }
-            }
-        }
-
-        public async Task SaveRenderingThumb(Hash hash, Stream rendering)
-        {
-            var (image, format) = await Image.LoadWithFormatAsync(rendering);
-            image.Mutate(x => x.Resize(new ResizeOptions
-            {
-                Size = new Size(AppConfig.Cover.Width, AppConfig.Cover.Width),
-                Mode = ResizeMode.Max,
-            }));
-
-            var imageFqfn = GetRenderingFqfn(hash, RenderingType.Thumb);
-
-            try
-            {
-                await using var outFile = new FileStream(imageFqfn, FileMode.OpenOrCreate, FileAccess.Write);
-                await image.SaveAsync(outFile, format);
-
-                var fileSize = outFile.Length;
-                if (fileSize == 0)
-                    throw new Exception($"Wrote 0 bytes to {imageFqfn}");
-
-                _logger.LogInformation("Saved rendering {Type} for {Hash}: {Width}x{Height} - {FileSize} bytes",
-                    "Thumb", hash, image.Width, image.Height, fileSize);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to fetch or save blueprint rendering {Type} for {Hash}", RenderingType.Thumb, hash);
-
-                if (File.Exists(imageFqfn))
-                {
-                    File.Delete(imageFqfn);
-                    _logger.LogWarning("Found and deleted existing blueprint rendering {Type} for failed {Hash}", RenderingType.Thumb, hash);
-                }
+                File.Delete(path);
+                _logger.LogInformation("Deleted rendering for {Hash}", hash);
             }
         }
 
         public async Task<ITempCoverHandle> SaveCroppedCover(Hash hash, CropRectangle? crop = null)
         {
-            var rendering = await TryLoadRendering(hash, RenderingType.Full);
-            if (rendering == null)
+            var rendering = await GetOrCreateRendering(hash);
+            if (!rendering.Exists)
             {
                 throw new Exception($"Failed to load rendering with hash {hash} to create blueprint image");
             }
             else
             {
-                return await SaveCroppedCover(rendering, crop);
+                return await SaveCroppedCover(rendering.CreateReadStream(), crop);
             }
         }
 
@@ -305,8 +200,11 @@ namespace FactorioTech.Core.Services
             return new TempCoverHandle(_logger, GetCoverFqfn, meta);
         }
 
-        private string GetRenderingFqfn(Hash hash, RenderingType type) =>
-            Path.Combine(_appConfig.DataDir, "renderings", $"{hash}-{type}.png");
+        private IFileInfo GetRenderingFileInfo(Hash hash) =>
+            _fileProvider.GetFileInfo(Path.Combine("renderings", $"{hash}.png"));
+
+        private string GetRenderingFqfn(Hash hash) =>
+            Path.Combine(_appConfig.DataDir, "renderings", $"{hash}.png");
 
         private string GetCoverFqfn(string fileName) =>
             Path.Combine(_appConfig.DataDir, "covers", fileName);

@@ -2,8 +2,8 @@ using FactorioTech.Api.Controllers;
 using FactorioTech.Api.ViewModels;
 using FactorioTech.Core;
 using FactorioTech.Core.Domain;
-using FactorioTech.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
@@ -45,7 +45,7 @@ namespace FactorioTech.Api.Services
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
 
-                Cover = new(urlHelper.ActionLink(nameof(CoverController.GetCover), "Cover", new { build.CoverMeta.FileName }),
+                Cover = new(urlHelper.AbsolueUrl($"images/covers/{build.CoverMeta.FileName}"),
                     build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size),
 
                 AddVersion = urlHelper.ActionContext.HttpContext.User.CanAddVersion(build)
@@ -76,7 +76,7 @@ namespace FactorioTech.Api.Services
                 Versions = new(urlHelper.ActionLink(nameof(BuildController.GetVersions), "Build", buildValues)),
                 Followers = new (urlHelper.ActionLink(nameof(BuildController.GetFollowers), "Build", buildValues), build.FollowerCount),
 
-                Cover = new(urlHelper.ActionLink(nameof(CoverController.GetCover), "Cover", new { build.CoverMeta.FileName }),
+                Cover = new(urlHelper.AbsolueUrl($"images/covers/{build.CoverMeta.FileName}"),
                     build.CoverMeta.Width, build.CoverMeta.Height, build.CoverMeta.Size),
 
                 AddFavorite = urlHelper.ActionContext.HttpContext.User.Identity?.IsAuthenticated == true && currentUserIsFollower == false
@@ -125,25 +125,18 @@ namespace FactorioTech.Api.Services
                     hash = payload.Hash,
                 })),
 
-                RenderingFull = envelope.Blueprint != null
-                    ? new(urlHelper.ActionLink(nameof(PayloadController.GetRendering), "Payload", new
-                    {
-                        hash = payload.Hash,
-                        type = ImageService.RenderingType.Full.ToString().ToLowerInvariant(),
-                    }))
-                    : null,
-
-                RenderingThumb = envelope.Blueprint != null
-                    ? new(urlHelper.ActionLink(nameof(PayloadController.GetRendering), "Payload", new
-                    {
-                        hash = payload.Hash,
-                        type = ImageService.RenderingType.Thumb.ToString().ToLowerInvariant(),
-                    }))
+                Rendering = envelope.Blueprint != null
+                    ? new(urlHelper.AbsolueUrl($"images/renderings/{payload.Hash}"))
                     : null,
 
                 DeleteRendering = envelope.Blueprint != null && urlHelper.ActionContext.HttpContext.User.CanDeleteRendering(payload)
                     ? new(urlHelper.ActionLink(nameof(PayloadController.DeleteRendering), "Payload", new { hash = payload.Hash, }), HttpMethod.Delete)
                     : null,
             };
+
+        private static string AbsolueUrl(this IUrlHelper url, string path) =>
+            url.ActionContext.HttpContext.Request
+                .Let(request => new Uri(new Uri($"{request.Scheme}://{request.Host.Value}"), path))
+                .ToString();
     }
 }

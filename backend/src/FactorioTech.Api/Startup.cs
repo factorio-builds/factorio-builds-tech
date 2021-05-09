@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
@@ -22,6 +23,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+using SixLabors.ImageSharp.Web.Caching;
+using SixLabors.ImageSharp.Web.DependencyInjection;
+using SixLabors.ImageSharp.Web.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -160,6 +164,16 @@ namespace FactorioTech.Api
                     .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
             }
 
+            services.AddImageSharp()
+                .AddProvider<CoverProvider>()
+                .AddProvider<RenderingProvider>()
+                .RemoveProvider<PhysicalFileSystemProvider>()
+                .Configure<PhysicalFileSystemCacheOptions>(options =>
+                {
+                    options.CacheRoot = appConfig.DataDir;
+                    options.CacheFolder = "image-cache";
+                });
+
             services.AddTransient<FbsrClient>();
             services.AddTransient<BlueprintConverter>();
             services.AddTransient<BuildService>();
@@ -169,6 +183,7 @@ namespace FactorioTech.Api
             services.AddTransient<SlugService>();
 
             services.AddSingleton(BuildTags.Load());
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(appConfig.DataDir));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -206,6 +221,7 @@ namespace FactorioTech.Api
             app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseImageSharp();
 
             app.UseEndpoints(endpoints =>
             {

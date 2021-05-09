@@ -15,16 +15,14 @@ function useCanSave(
 } {
   const selectedImageHref = useMemo(() => {
     if (payloadData.type === "blueprint") {
-      return (
-        payloadData._links.rendering_thumb?.href || formikProps.values.cover.url
-      )
+      return payloadData._links.rendering?.href || formikProps.values.cover.url
     }
 
     return formikProps.values.cover.hash
       ? `${publicRuntimeConfig.apiUrl}/payloads/${formikProps.values.cover.hash}/rendering/thumb`
       : null
   }, [
-    payloadData._links.rendering_thumb?.href,
+    payloadData._links.rendering?.href,
     formikProps.values.cover.url,
     formikProps.values.cover.hash,
   ])

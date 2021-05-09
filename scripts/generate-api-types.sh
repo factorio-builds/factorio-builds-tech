@@ -3,6 +3,7 @@
 # this script is temporary until the swagger-gen works in docker
 
 export ASPNETCORE_ENVIRONMENT=Development
+export AppConfig__DataDir="$(pwd)"
 
 pushd ./backend
 
@@ -19,7 +20,9 @@ sed -i 's/\[FromBody,Swashbuckle\.AspNetCore\.Annotations\.SwaggerRequestBody/\[
 popd
 
 pushd ./frontend
-npx openapi-typescript ../openapi.json --prettier-config .prettierrc --output types/generated-api.ts
+npx openapi-typescript@v3.2.3 ../openapi.json \
+  --prettier-config .prettierrc \
+  --output types/generated-api.ts
 popd
 
 rm openapi.json

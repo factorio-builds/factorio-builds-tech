@@ -36,7 +36,6 @@ services:
 
   web:
     image: ghcr.io/factorio-builds/factorio-builds-tech/web:ci
-    #image: factorio-tech/web
     #build:
     #  context: frontend
     volumes:
@@ -57,7 +56,6 @@ services:
 
   identity:
     image: ghcr.io/factorio-builds/factorio-builds-tech/identity:ci
-    #image: factorio-tech/identity
     #build:
     #  context: backend
     #  target: identity
@@ -84,7 +82,6 @@ services:
 
   api:
     image: ghcr.io/factorio-builds/factorio-builds-tech/api:ci
-    #image: factorio-tech/api
     #build:
     #  context: backend
     #  target: api
@@ -117,7 +114,6 @@ services:
 
   fbsr:
     image: ghcr.io/factorio-builds/factorio-builds-tech/fbsr-wrapper:ci
-    # image: factorio-tech/fbsr-wrapper
     # build:
     #   context: fbsr-wrapper
     ports:

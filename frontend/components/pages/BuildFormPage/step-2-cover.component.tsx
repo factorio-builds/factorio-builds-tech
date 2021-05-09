@@ -99,10 +99,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
               </div>
             ) : (
               <SC.Rendered>
-                <img
-                  src={props.payloadData._links.rendering_thumb?.href}
-                  alt=""
-                />
+                <img src={props.payloadData._links.rendering?.href} alt="" />
               </SC.Rendered>
             )}
           </SC.RenderedCovers>

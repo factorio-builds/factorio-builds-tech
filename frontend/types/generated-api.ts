@@ -105,8 +105,6 @@ export interface paths {
       requestBody: {
         content: {
           "application/json": components["schemas"]["CreateBuildRequest"]
-          "text/json": components["schemas"]["CreateBuildRequest"]
-          "application/*+json": components["schemas"]["CreateBuildRequest"]
         }
       }
     }
@@ -209,8 +207,6 @@ export interface paths {
       requestBody: {
         content: {
           "application/json": components["schemas"]["EditBuildRequest"]
-          "text/json": components["schemas"]["EditBuildRequest"]
-          "application/*+json": components["schemas"]["EditBuildRequest"]
         }
       }
     }
@@ -369,44 +365,6 @@ export interface paths {
       requestBody: {
         content: {
           "application/json": components["schemas"]["CreateVersionRequest"]
-          "text/json": components["schemas"]["CreateVersionRequest"]
-          "application/*+json": components["schemas"]["CreateVersionRequest"]
-        }
-      }
-    }
-  }
-  "/builds/{buildId}/cover": {
-    get: {
-      parameters: {
-        path: {
-          /** The id of the desired build */
-          buildId: string
-        }
-      }
-      responses: {
-        /** The cover image of the requested build */
-        200: {
-          content: {
-            "image/png": string
-            "image/jpeg": string
-            "image/gif": string
-          }
-        }
-        /** The request is malformed or invalid */
-        400: {
-          content: {
-            "image/png": components["schemas"]["ProblemDetails"]
-            "image/jpeg": components["schemas"]["ProblemDetails"]
-            "image/gif": components["schemas"]["ProblemDetails"]
-          }
-        }
-        /** The requested build does not exist */
-        404: {
-          content: {
-            "image/png": components["schemas"]["ProblemDetails"]
-            "image/jpeg": components["schemas"]["ProblemDetails"]
-            "image/gif": components["schemas"]["ProblemDetails"]
-          }
         }
       }
     }
@@ -477,33 +435,31 @@ export interface paths {
       }
     }
   }
-  "/payloads/{hash}/rendering/{type}": {
+  "/payloads/{hash}/json": {
     get: {
       parameters: {
         path: {
           /** The hash of the desired payload */
           hash: string
-          /** The desired type */
-          type: "full" | "thumb"
         }
       }
       responses: {
-        /** The rendered blueprint image */
+        /** The decoded json body */
         200: {
           content: {
-            "image/png": string
+            "application/json": string
           }
         }
         /** The request is malformed or invalid */
         400: {
           content: {
-            "image/png": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
         /** The requested payload does not exist */
         404: {
           content: {
-            "image/png": components["schemas"]["ProblemDetails"]
+            "application/json": components["schemas"]["ProblemDetails"]
           }
         }
       }
@@ -550,8 +506,6 @@ export interface paths {
       requestBody: {
         content: {
           "application/json": components["schemas"]["CreatePayloadRequest"]
-          "text/json": components["schemas"]["CreatePayloadRequest"]
-          "application/*+json": components["schemas"]["CreatePayloadRequest"]
         }
       }
     }
@@ -897,7 +851,11 @@ export interface components {
     FullBuildLinks: {
       /** The absolute URL of this build's full details. */
       self: components["schemas"]["LinkModel"]
-      /** The absolute URL of this build's cover image. */
+      /**
+       * The absolute URL of this build's cover image.
+       * The image can be further processed using the query string API documented
+       * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
+       */
       cover: components["schemas"]["ImageLinkModel"]
       /** The absolute URL of the list of this build's versions. */
       versions: components["schemas"]["LinkModel"]
@@ -956,7 +914,11 @@ export interface components {
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
       /** The build's latest version's payload type. */
-      latest_type: "blueprint" | "blueprint-book"
+      latest_type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The build's tags. */
       tags: string[]
       /** The build's most recently added version. */
@@ -981,7 +943,11 @@ export interface components {
       /** The version's payload hash. */
       hash: string
       /** The version's blueprint type. */
-      type: "blueprint" | "blueprint-book"
+      type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The timestamp in UTC at which the version was created. */
       created_at: string
       /** An optional name assigned to the version. */
@@ -1011,8 +977,6 @@ export interface components {
       height: number
       /** The size in bytes of the linked image. */
       size: number
-      /** The format of the linked image. */
-      format: string
     }
     LinkModel: {
       /** The absolute URL of the linked resource. */
@@ -1029,15 +993,12 @@ export interface components {
       /** The absolute URL of this payload's raw encoded blueprint string for import in the game or other tools. */
       raw: components["schemas"]["LinkModel"]
       /**
-       * The absolute URL of this payload's full-size rendering.
+       * The absolute URL of this payload's rendering.
        * Only available if the payload is of type `blueprint`.
+       * The image can be further processed using the query string API documented
+       * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
        */
-      rendering_full?: components["schemas"]["LinkModel"] | null
-      /**
-       * The absolute URL of this payload's rendering thumbnail.
-       * Only available if the payload is of type `blueprint`.
-       */
-      rendering_thumb?: components["schemas"]["LinkModel"] | null
+      rendering?: components["schemas"]["LinkModel"] | null
       /**
        * The absolute URL of the API endpoint to delete this payload's renderings.
        * Only available if the call has been made with an authenticated user token
@@ -1047,7 +1008,11 @@ export interface components {
     }
     PayloadModelBase: {
       /** The payload's blueprint type. */
-      type: "blueprint" | "blueprint-book"
+      type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       _links: components["schemas"]["PayloadLinks"]
       /** The `md5` hash of the payload's encoded blueprint string. */
       hash: string
@@ -1068,7 +1033,7 @@ export interface components {
       status?: number | null
       detail?: string | null
       instance?: string | null
-    } & { [key: string]: { [key: string]: any } }
+    } & { [key: string]: any }
     SlugValidationResult: {
       slug: string
       is_valid: boolean
@@ -1077,7 +1042,11 @@ export interface components {
     ThinBuildLinks: {
       /** The absolute URL of this build's full details. */
       self: components["schemas"]["LinkModel"]
-      /** The absolute URL of this build's cover image. */
+      /**
+       * The absolute URL of this build's cover image.
+       * The image can be further processed using the query string API documented
+       * here: https://docs.sixlabors.com/articles/imagesharp.web/processingcommands.html
+       */
       cover: components["schemas"]["ImageLinkModel"]
       /** The absolute URL of the list of this build's versions. */
       versions: components["schemas"]["LinkModel"]
@@ -1124,7 +1093,11 @@ export interface components {
       /** The game version that was used to create the the most recently added version of this build. */
       latest_game_version: string
       /** The build's latest version's payload type. */
-      latest_type: "blueprint" | "blueprint-book"
+      latest_type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The build's tags. */
       tags: string[]
     }
@@ -1140,7 +1113,11 @@ export interface components {
       /** The version's payload hash. */
       hash: string
       /** The version's blueprint type. */
-      type: "blueprint" | "blueprint-book"
+      type:
+        | "blueprint"
+        | "blueprint-book"
+        | "deconstruction-planner"
+        | "upgrade-planner"
       /** The timestamp in UTC at which the version was created. */
       created_at: string
       /** An optional name assigned to the version. */

@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 
 namespace FactorioTech.Api.Controllers
@@ -21,8 +23,6 @@ namespace FactorioTech.Api.Controllers
     [ApiController]
     public class BuildController : ControllerBase
     {
-        private const int OneDayInSeconds = 86400;
-
         private readonly AppDbContext _dbContext;
         private readonly BlueprintConverter _blueprintConverter;
         private readonly BuildService _buildService;
@@ -49,6 +49,8 @@ namespace FactorioTech.Api.Controllers
         /// <response code="200" type="application/json">The paged, filtered and ordered list of matching builds</response>
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         [HttpGet("")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(BuildsModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -70,6 +72,8 @@ namespace FactorioTech.Api.Controllers
         /// </summary>
         [Authorize]
         [HttpPost("")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateBuild([FromForm, Required]CreateBuildRequest request)
@@ -108,6 +112,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [HttpGet("{owner}/{slug}")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(FullBuildModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -132,6 +137,8 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [Authorize]
         [HttpPatch("{owner}/{slug}")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(ThinBuildModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -163,6 +170,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [HttpGet("{owner}/{slug}/followers")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(UsersModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -185,6 +193,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [Authorize]
         [HttpPut("{owner}/{slug}/followers")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddFavorite([Required]string owner, [Required]string slug)
@@ -206,6 +215,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [Authorize]
         [HttpDelete("{owner}/{slug}/followers")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> RemoveFavorite([Required]string owner, [Required]string slug)
@@ -226,6 +236,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="400" type="application/json">The request is malformed or invalid</response>
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [HttpGet("{owner}/{slug}/versions")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(VersionsModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -254,6 +265,7 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [Authorize(Roles = Role.Administrator)]
         [HttpDelete("{owner}/{slug}")]
+        [Produces(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -279,6 +291,8 @@ namespace FactorioTech.Api.Controllers
         /// <response code="404" type="application/json">The requested build does not exist</response>
         [Authorize]
         [HttpPost("{owner}/{slug}/versions")]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(FullVersionModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
