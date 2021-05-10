@@ -4,8 +4,9 @@ import * as SC from "./build-image.styles"
 
 const generateSrcSet = (src: string) => {
   return Array.from({ length: 20 })
+    .map((_, index) => index)
     .slice(1)
-    .map((_, index) => {
+    .map((index) => {
       const width = index * 100
       return `${src}?width=${width}&format=jpg&quality=75 ${width}w`
     })
