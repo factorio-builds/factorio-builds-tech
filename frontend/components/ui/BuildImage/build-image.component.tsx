@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react"
+import useImage from "../../../hooks/useImage"
 import { IThinBuild } from "../../../types/models"
 import * as SC from "./build-image.styles"
 
@@ -20,6 +21,7 @@ interface IBuildImageProps {
 function BuildImage({ image }: IBuildImageProps): JSX.Element {
   const imageRef = useRef<HTMLImageElement | null>(null)
   const observerRef = useRef<ResizeObserver | null>(null)
+  const { error } = useImage(image.href)
 
   const srcSet = useMemo(() => {
     return generateSrcSet(image.href)
@@ -67,13 +69,15 @@ function BuildImage({ image }: IBuildImageProps): JSX.Element {
       style={{ "--ratio": image.width / image.height } as React.CSSProperties}
     >
       <SC.InnerWrapper>
-        <img
-          // TODO: use the upcoming blur as the default image
-          src={`${image.href}?width=500&format=jpg&quality=75`}
-          ref={imageRef}
-          style={{ width: "100%", height: "auto" }}
-          alt=""
-        />
+        {!error && (
+          <img
+            // TODO: use the upcoming blur as the default image
+            src={`${image.href}?width=500&format=jpg&quality=75`}
+            ref={imageRef}
+            style={{ width: "100%", height: "auto" }}
+            alt=""
+          />
+        )}
       </SC.InnerWrapper>
     </SC.OuterWrapper>
   )
