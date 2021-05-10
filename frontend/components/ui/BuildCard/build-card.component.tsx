@@ -1,16 +1,13 @@
 import React from "react"
 import { usePress } from "@react-aria/interactions"
 import cx from "classnames"
-import getConfig from "next/config"
-import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
+import BuildImage from "../BuildImage"
 import RichText from "../RichText"
 import * as SC from "./build-card.styles"
-
-const { publicRuntimeConfig } = getConfig()
 
 interface IBuildCardProps {
   title: IThinBuild["title"]
@@ -50,17 +47,7 @@ function BuildCard({
         className={cx({ "is-pressed": isPressed })}
       >
         <SC.ImageWrapper>
-          <Image
-            loader={({ src }) =>
-              `${publicRuntimeConfig.apiUrl}/images/covers/${src}?width=400&format=jpg&quality=75`
-            }
-            src={image.href}
-            alt=""
-            width={image.width}
-            height={image.height}
-            layout="responsive"
-            sizes="300px"
-          />
+          <BuildImage image={image} forcedWidth={400} />
         </SC.ImageWrapper>
         <SC.Content>
           <SC.Title orientation="horizontal" gutter={8}>

@@ -1,12 +1,11 @@
 import React, { useMemo } from "react"
 import { useToggle } from "react-use"
-import getConfig from "next/config"
-import Image from "next/image"
 import Link from "next/link"
 import { NextRouter } from "next/router"
 import { IFullBuild } from "../../../types/models"
 import { isBook } from "../../../utils/build"
 import BuildHeader from "../../ui/BuildHeader"
+import BuildImage from "../../ui/BuildImage"
 import Container from "../../ui/Container"
 import LayoutDefault from "../../ui/LayoutDefault"
 import Stacker from "../../ui/Stacker"
@@ -20,8 +19,6 @@ import DetailsTab from "./tabs/details-tab.component"
 import ImageMobileTab from "./tabs/image-mobile-tab.component"
 import RequiredItemsTab from "./tabs/required-items-tab.component"
 import usePayload from "./usePayload"
-
-const { publicRuntimeConfig } = getConfig()
 
 interface IBuildPageProps {
   build: IFullBuild
@@ -95,15 +92,9 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
     <SC.BuildImage>
       {build._links.cover ? (
         <SC.ImageWrapper role="button" onClick={toggleZoomedImage}>
-          <Image
-            loader={({ src }) =>
-              `${publicRuntimeConfig.apiUrl}/images/covers/${src}?width=1326&format=jpg&quality=75`
-            }
-            src={build._links.cover.href}
-            alt=""
-            width={build._links.cover.width}
-            height={build._links.cover.height}
-            layout="responsive"
+          <BuildImage
+            image={build._links.cover}
+            forcedWidth={zoomedImage ? 1326 : 400}
           />
         </SC.ImageWrapper>
       ) : (

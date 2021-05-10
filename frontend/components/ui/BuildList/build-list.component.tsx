@@ -1,17 +1,14 @@
 import * as React from "react"
 import { useState } from "react"
-import getConfig from "next/config"
-import Image from "next/image"
 import { useRouter } from "next/router"
 import Caret from "../../../icons/caret"
 import { IThinBuild } from "../../../types/models"
 import { formatDate, formatSince } from "../../../utils/date"
 import Avatar from "../Avatar"
+import BuildImage from "../BuildImage"
 import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
 import * as SC from "./build-list.styles"
-
-const { publicRuntimeConfig } = getConfig()
 
 interface IBuildListProps {
   items: IThinBuild[]
@@ -100,14 +97,13 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
               .map((item) => (
                 <tr key={item.slug}>
                   <td style={{ width: "1px" }}>
-                    <Image
-                      loader={({ src }) =>
-                        `${publicRuntimeConfig.apiUrl}/images/covers/${src}?width=64&format=jpg&quality=75`
-                      }
-                      src={item._links.cover.href}
-                      width={64}
-                      height={64}
-                      layout="fixed"
+                    <BuildImage
+                      image={{
+                        ...item._links.cover,
+                        width: 64,
+                        height: 64,
+                      }}
+                      forcedWidth={64}
                     />
                   </td>
                   <td>
