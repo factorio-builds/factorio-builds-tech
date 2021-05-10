@@ -92,10 +92,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
     <SC.BuildImage>
       {build._links.cover ? (
         <SC.ImageWrapper role="button" onClick={toggleZoomedImage}>
-          <BuildImage
-            image={build._links.cover}
-            forcedWidth={zoomedImage ? 1326 : 400}
-          />
+          <BuildImage image={build._links.cover} />
         </SC.ImageWrapper>
       ) : (
         "No image"

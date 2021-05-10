@@ -47,7 +47,7 @@ function BuildCard({
         className={cx({ "is-pressed": isPressed })}
       >
         <SC.ImageWrapper>
-          <BuildImage image={image} forcedWidth={400} />
+          <BuildImage image={image} />
         </SC.ImageWrapper>
         <SC.Content>
           <SC.Title orientation="horizontal" gutter={8}>

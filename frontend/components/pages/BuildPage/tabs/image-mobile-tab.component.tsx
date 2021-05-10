@@ -9,7 +9,7 @@ const ImageMobileTab: TTabComponent = (props) => {
     <Tab {...props}>
       <SC.BuildImage>
         {props.build._links.cover ? (
-          <BuildImage image={props.build._links.cover} forcedWidth={700} />
+          <BuildImage image={props.build._links.cover} />
         ) : (
           "No image"
         )}

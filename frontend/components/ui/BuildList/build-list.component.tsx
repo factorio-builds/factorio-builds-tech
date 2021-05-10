@@ -103,7 +103,6 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
                         width: 64,
                         height: 64,
                       }}
-                      forcedWidth={64}
                     />
                   </td>
                   <td>
