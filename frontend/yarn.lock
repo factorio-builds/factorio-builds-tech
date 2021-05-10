@@ -7,10 +7,10 @@
   resolved "https://registry.yarnpkg.com/@artsy/fresnel/-/fresnel-1.5.0.tgz#bfbdfed989515ac154dada47038a71f4ce966f19"
   integrity sha512-iINa/h9E28DlKsgCOkTAs3kNGDM3HBOASm9+qjl/x+YZsAu0fjKsQI4ryHzadyqOI2A0f3mKt0Q2BYsp/wiw4Q==
 
-"@auth0/nextjs-auth0@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@auth0/nextjs-auth0/-/nextjs-auth0-1.3.0.tgz#26b19359581fe16dd1e3a1366e53b80a67fdfba6"
-  integrity sha512-yWIhOmA2cI2jSF/pD8c/BxtKboUH2DsE3ksNJO7bW2mwa4p7NOa5rVTKcDBi0/PBwKBjiX9UnE+JyYAZgL+o3Q==
+"@auth0/nextjs-auth0@^1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@auth0/nextjs-auth0/-/nextjs-auth0-1.3.1.tgz#9e90d9eaa1105f816c3c3458c954c15eb03ffcd1"
+  integrity sha512-oO4YEaZ3PXNi5LM23nRM2zOfEs6rPAv2VCGPhGOzSIZbrVkHVkwa/+ySJt4OC1xZEbAvq8hjb/uBWYtowtQ9eQ==
   dependencies:
     base64url "^3.0.1"
     cookie "^0.4.1"
@@ -18,7 +18,7 @@
     futoin-hkdf "^1.3.2"
     http-errors "^1.8.0"
     joi "^17.4.0"
-    jose "^2.0.4"
+    jose "^2.0.5"
     on-headers "^1.0.2"
     openid-client "^4.2.3"
     tslib "^2.1.0"
@@ -5219,7 +5219,7 @@ joi@^17.4.0:
     "@sideway/formula" "^3.0.0"
     "@sideway/pinpoint" "^2.0.0"
 
-jose@^2.0.4, jose@^2.0.5:
+jose@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/jose/-/jose-2.0.5.tgz#29746a18d9fff7dcf9d5d2a6f62cb0c7cd27abd3"
   integrity sha512-BAiDNeDKTMgk4tvD0BbxJ8xHEHBZgpeRZ1zGPPsitSyMgjoMWiLGYAE7H7NpP5h0lPppQajQs871E8NHUrzVPA==
