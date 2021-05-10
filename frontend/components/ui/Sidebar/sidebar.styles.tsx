@@ -15,6 +15,23 @@ export const SidebarWrapper = styled.aside`
   bottom: 0;
   overflow-y: scroll;
 
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: ${COLOR.SIDEBAR};
+  }
+
+  &::-webkit-scrollbar {
+    width: 12px;
+    background-color: ${COLOR.SIDEBAR};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: ${COLOR.FADEDBLUE300};
+    border: 3px solid ${COLOR.SIDEBAR};
+  }
+
   @media screen and (max-width: 767px) {
     position: absolute;
     top: ${HEADER_HEIGHT}px;
