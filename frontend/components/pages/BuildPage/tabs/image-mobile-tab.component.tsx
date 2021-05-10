@@ -1,5 +1,5 @@
 import React from "react"
-import Image from "next/image"
+import BuildImage from "../../../ui/BuildImage"
 import * as SC from "../build-page.styles"
 import { TTabComponent } from "../tabs.component"
 import Tab from "./tab.component"
@@ -9,13 +9,7 @@ const ImageMobileTab: TTabComponent = (props) => {
     <Tab {...props}>
       <SC.BuildImage>
         {props.build._links.cover ? (
-          <Image
-            src={props.build._links.cover.href}
-            alt=""
-            width={props.build._links.cover.width}
-            height={props.build._links.cover.height}
-            layout="responsive"
-          />
+          <BuildImage image={props.build._links.cover} forcedWidth={700} />
         ) : (
           "No image"
         )}
