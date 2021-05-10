@@ -63,6 +63,7 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const [, executeGetPayload] = useApi<IFullPayload>(
     {
       url: `/payloads/${build?.latest_version.hash}`,
+      params: { include_children: true },
     },
     { manual: true }
   )
