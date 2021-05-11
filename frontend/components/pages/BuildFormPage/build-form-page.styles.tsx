@@ -153,6 +153,7 @@ export const Rendered = styled.div`
 
   img {
     display: block;
+    max-width: 100%;
     max-height: calc(100vh - 40px);
   }
 `
