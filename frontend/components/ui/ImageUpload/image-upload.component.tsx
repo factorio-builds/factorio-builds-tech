@@ -105,7 +105,7 @@ function ImageUpload(props: IImageUploadProps): JSX.Element | null {
 
   return (
     <SC.ImageUploadWrapper
-      className={cx({ "is-active": isDragActive, "has-image": imagePreview })}
+      className={cx({ "is-active": isDragActive, "has-image": image })}
     >
       <InputWrapper uid="build-image" label={props.label}>
         <SC.UploadZone {...getRootProps()}>
