@@ -19,7 +19,7 @@ function useCanSave(
     }
 
     return formikProps.values.cover.hash
-      ? `${publicRuntimeConfig.apiUrl}/payloads/${formikProps.values.cover.hash}/rendering/thumb`
+      ? `${publicRuntimeConfig.apiUrl}/images/renderings/${formikProps.values.cover.hash}`
       : null
   }, [
     payloadData._links.rendering?.href,
