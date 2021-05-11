@@ -67,9 +67,7 @@ export const GroupCount = styled.div`
   margin-left: 8px;
 `
 
-export const CoverWrapper = styled.div`
-  width: 716px;
-`
+export const CoverWrapper = styled.div``
 
 export const PageButton = styled(Stacker)`
   ${getTypo(ETypo.PAGE_SUBTITLE)};

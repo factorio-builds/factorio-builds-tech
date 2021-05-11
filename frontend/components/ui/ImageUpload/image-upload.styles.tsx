@@ -16,8 +16,6 @@ export const UploadZone = styled.div`
   align-items: center;
   flex-direction: column;
   box-sizing: border-box;
-  width: 716px;
-  height: 373px;
   border: 2px dashed ${COLOR.FADEDBLUE300};
   overflow-y: hidden;
   overflow-y: hidden;
@@ -73,6 +71,7 @@ export const NoImageBackdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  height: 373px;
   background: url("/img/image-backdrop.jpg");
   background-size: cover;
   background-position: 50% 50%;
