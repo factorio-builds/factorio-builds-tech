@@ -23,6 +23,8 @@ export const UploadZone = styled.div`
   cursor: pointer;
   background: ${COLOR.INPUT};
   padding: 8px;
+  width: 100%;
+  height: 373px;
 
   .has-image & {
     height: auto;
@@ -71,7 +73,6 @@ export const NoImageBackdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  height: 373px;
   background: url("/img/image-backdrop.jpg");
   background-size: cover;
   background-position: 50% 50%;
