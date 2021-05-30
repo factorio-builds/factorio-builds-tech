@@ -20,7 +20,7 @@
     "axios": "^0.21.1",
     "axios-hooks": "^2.6.3",
     "classnames": "^2.3.1",
-    "date-fns": "^2.21.3",
+    "date-fns": "^2.22.1",
     "dotenv": "^9.0.1",
     "formik": "^2.2.6",
     "intersection-observer": "^0.12.0",
