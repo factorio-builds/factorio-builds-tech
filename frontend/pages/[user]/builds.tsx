@@ -8,8 +8,8 @@ const UserBuildsPage: NextPage<IUserBuildListPageProps> = (props) => {
   return <UserBuildListPage builds={props.builds} />
 }
 
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  async (ctx) => {
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(() => async (ctx) => {
     const { user } = ctx.params!
 
     if (!user) {
@@ -28,7 +28,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     return {
       props: deserializedData,
     }
-  }
-)
+  })
 
 export default UserBuildsPage

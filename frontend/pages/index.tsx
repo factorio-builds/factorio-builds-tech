@@ -1,6 +1,6 @@
 import { GetServerSideProps, NextPage } from "next"
 import BuildListPage from "../components/pages/BuildListPage"
-import { wrapper } from "../redux/store"
+import { TStore, wrapper } from "../redux/store"
 import { ApiSearchBuild, SearchResponse } from "../types"
 import { IThinBuild } from "../types/models"
 import { axios } from "../utils/axios"
@@ -9,9 +9,9 @@ const IndexPage: NextPage = () => {
   return <BuildListPage />
 }
 
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps(
-  async (ctx) => {
-    const sort = ctx.store.getState().filters.sort
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps((store: TStore) => async () => {
+    const sort = store.getState().filters.sort
     const searchResults = await axios
       .get<ApiSearchBuild>("/builds", {
         params: {
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
       JSON.stringify(searchResults)
     )
 
-    ctx.store.dispatch({
+    store.dispatch({
       type: "SEARCH_BUILDS_SUCCESS",
       payload: {
         builds: deserializedSearchResults.builds,
@@ -38,7 +38,6 @@ export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps
     })
 
     return { props: {} }
-  }
-)
+  })
 
 export default IndexPage

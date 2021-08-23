@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useSelector } from "react-redux"
 import { SSRProvider } from "@react-aria/ssr"
 import { withApplicationInsights } from "next-applicationinsights"
-import type { AppContext, AppProps } from "next/app"
+import type { AppProps } from "next/app"
 import getConfig from "next/config"
 import Head from "next/head"
 import qs from "qs"
@@ -11,11 +11,18 @@ import { ThemeProvider } from "styled-components"
 import { GlobalStyle } from "../design/styles/global-style"
 import { MediaContextProvider } from "../design/styles/media"
 import { theme } from "../design/styles/theme"
-import { IStoreState, wrapper } from "../redux/store"
+import { IStoreState, TStore, wrapper } from "../redux/store"
 import auth, { login, sync as syncAuth } from "../utils/auth"
 import { axios } from "../utils/axios"
 
 const { publicRuntimeConfig } = getConfig()
+
+// @ts-ignore
+declare module "next/dist/next-server/lib/utils" {
+  export interface NextPageContext {
+    store: TStore
+  }
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   const user = useSelector((store: IStoreState) => store.auth.user)
@@ -66,23 +73,24 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
-  if (typeof window === "undefined") {
-    const session = auth.getSession(ctx.req!, ctx.res!)
-
-    if (session?.user) {
-      login(session, ctx.store.dispatch)
+MyApp.getInitialProps = wrapper.getInitialAppProps(
+  (store: TStore) =>
+    async ({ Component, ctx }) => {
+      if (typeof window === "undefined") {
+        const session = auth.getSession(ctx.req!, ctx.res!)
+        if (session?.user) {
+          login(session, store.dispatch)
+        }
+      }
+      return {
+        pageProps: {
+          ...(Component.getInitialProps
+            ? await Component.getInitialProps(ctx)
+            : {}),
+        },
+      }
     }
-  }
-
-  return {
-    pageProps: {
-      ...(Component.getInitialProps
-        ? await Component.getInitialProps(ctx)
-        : {}),
-    },
-  }
-}
+)
 
 export default compose(
   withApplicationInsights({

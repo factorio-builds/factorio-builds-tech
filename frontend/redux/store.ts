@@ -5,6 +5,7 @@ import {
   Action,
   combineReducers,
   Reducer,
+  Store,
 } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
 import thunk from "redux-thunk"
@@ -34,7 +35,9 @@ type TAction =
   | TLayoutAction
   | TSearchAction
 
-const makeStore: MakeStore<IStoreState, TAction> = () => {
+export type TStore = Store<IStoreState, TAction>
+
+const makeStore: MakeStore<TStore> = () => {
   const combinedReducer = combineReducers({
     ...reducers,
   })
@@ -69,6 +72,6 @@ const makeStore: MakeStore<IStoreState, TAction> = () => {
   return store
 }
 
-export const wrapper = createWrapper<IStoreState, TAction>(makeStore, {
+export const wrapper = createWrapper<TStore>(makeStore, {
   debug: process.env.DEBUG_REDUX === "true",
 })
