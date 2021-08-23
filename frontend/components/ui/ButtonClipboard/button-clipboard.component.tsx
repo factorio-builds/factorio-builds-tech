@@ -24,9 +24,8 @@ const CopyToClipboard = ({
   )
 }
 
-const MemoizedCopyToClipboard = React.memo<typeof CopyToClipboard>(
-  CopyToClipboard
-)
+const MemoizedCopyToClipboard =
+  React.memo<typeof CopyToClipboard>(CopyToClipboard)
 
 export const CopyStringToClipboard = ({
   toCopy,
