@@ -21,9 +21,10 @@ export type IParsedRichTextNode =
   | IParsedRichTextNodeText
   | IParsedRichTextNodeColor
 
-function parseItem(
-  text: string
-): { part: IParsedRichTextNodeItem | null; rest: string } {
+function parseItem(text: string): {
+  part: IParsedRichTextNodeItem | null
+  rest: string
+} {
   const itemRegex = new RegExp(/(\[(item)=([a-z-]+)\])/)
   const result = text.match(itemRegex)
 
@@ -39,9 +40,10 @@ function parseItem(
   return { part: null, rest: text }
 }
 
-function parseText(
-  text: string
-): { part: IParsedRichTextNodeText | null; rest: string } {
+function parseText(text: string): {
+  part: IParsedRichTextNodeText | null
+  rest: string
+} {
   // TODO: smarter regex to match value by type: https://wiki.factorio.com/Rich_text
   const regex = new RegExp(/(\[((item)|(color))=(.+?)\])/)
   const result = text.match(regex)
@@ -62,9 +64,10 @@ function parseText(
   return { part: { type: "text", value: value }, rest }
 }
 
-function parseColor(
-  text: string
-): { part: IParsedRichTextNodeColor | null; rest: string } {
+function parseColor(text: string): {
+  part: IParsedRichTextNodeColor | null
+  rest: string
+} {
   // TODO: smarter regex to match different kind of colors: https://wiki.factorio.com/Rich_text
   const colorRegex = new RegExp(/(\[(color)=(.+?)\](.+?)\[\/color\])/)
   const result = text.match(colorRegex)

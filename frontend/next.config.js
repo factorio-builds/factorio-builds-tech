@@ -18,7 +18,4 @@ module.exports = {
       new URL(process.env.CDN_URL || "https://api.local.factorio.tech/assets").hostname,
     ],
   },
-  future: {
-    webpack5: true,
-  },
 }
