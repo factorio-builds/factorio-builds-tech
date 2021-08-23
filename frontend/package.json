@@ -69,7 +69,7 @@
     "@types/text-encoding": "^0.0.36",
     "@types/yup": "^0.29.13",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
-    "@typescript-eslint/parser": "^4.25.0",
+    "@typescript-eslint/parser": "^4.29.2",
     "babel-plugin-styled-components": "^1.12.0",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "eslint": "^7.27.0",
