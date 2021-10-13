@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0.203-buster-slim AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.402-buster-slim AS build
 
 WORKDIR /app
 
