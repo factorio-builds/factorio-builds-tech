@@ -42,7 +42,7 @@ RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
 ENTRYPOINT [ "dotnet" ]
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.6-buster-slim as identity
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.13-buster-slim as identity
 ENV ASPNETCORE_URLS=http://*:8080
 EXPOSE 8080
 WORKDIR /app
@@ -50,7 +50,7 @@ COPY --from=build /app/publish/identity .
 ENTRYPOINT [ "dotnet", "FactorioTech.Identity.dll" ]
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.6-buster-slim as api
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.13-buster-slim as api
 ENV ASPNETCORE_URLS=http://*:8080
 EXPOSE 8080
 WORKDIR /app
