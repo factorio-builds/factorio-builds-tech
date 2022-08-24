@@ -63,7 +63,7 @@
     "@types/react": "^17.0.19",
     "@types/react-dom": "^17.0.9",
     "@types/react-redux": "^7.1.24",
-    "@types/react-select": "^4.0.17",
+    "@types/react-select": "^5.0.0",
     "@types/styled-components": "^4.4.3",
     "@types/text-encoding": "^0.0.36",
     "@types/yup": "^0.29.13",
