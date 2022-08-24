@@ -40,7 +40,7 @@
     "react-markdown": "^8.0.3",
     "react-redux": "^8.0.2",
     "react-select": "^5.4.0",
-    "react-uid": "^2.3.1",
+    "react-uid": "^2.3.2",
     "react-use": "^17.2.4",
     "redux": "^4.1.1",
     "redux-devtools-extension": "^2.13.9",
