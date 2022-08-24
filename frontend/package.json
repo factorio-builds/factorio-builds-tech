@@ -23,7 +23,7 @@
     "date-fns": "^2.29.2",
     "dotenv": "^16.0.1",
     "formik": "^2.2.9",
-    "intersection-observer": "^0.12.0",
+    "intersection-observer": "^0.12.2",
     "json-form-data": "^1.7.2",
     "lodash": "^4.17.21",
     "next": "latest",
