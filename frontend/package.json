@@ -67,7 +67,7 @@
     "@types/styled-components": "^4.4.3",
     "@types/text-encoding": "^0.0.36",
     "@types/yup": "^0.29.14",
-    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
     "@typescript-eslint/parser": "^4.29.2",
     "babel-plugin-styled-components": "^1.13.2",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
