@@ -7,7 +7,7 @@ import Head from "next/head"
 import qs from "qs"
 import { compose } from "redux"
 import { ThemeProvider } from "styled-components"
-import { GlobalStyle } from "../design/styles/global-style"
+import { globalStyles } from "../design/stitches.config"
 import { MediaContextProvider } from "../design/styles/media"
 import { theme } from "../design/styles/theme"
 import { TStore, useAppSelector, wrapper } from "../redux/store"
@@ -60,7 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#1a161d" />
         <meta name="theme-color" content="#1a161d" />
       </Head>
-      <GlobalStyle />
+      {globalStyles()}
       <ThemeProvider theme={theme}>
         <MediaContextProvider>
           <SSRProvider>
