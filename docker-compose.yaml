@@ -35,9 +35,9 @@ services:
       - "traefik.http.routers.traefik=true"
 
   web:
-    image: ghcr.io/factorio-builds/factorio-builds-tech/web:ci
-    #build:
-    #  context: frontend
+#    image: ghcr.io/factorio-builds/factorio-builds-tech/web:ci
+    build:
+      context: frontend
     volumes:
       - /etc/localtime:/etc/localtime:ro
     environment:
@@ -55,10 +55,10 @@ services:
       - api
 
   identity:
-    image: ghcr.io/factorio-builds/factorio-builds-tech/identity:ci
-    #build:
-    #  context: backend
-    #  target: identity
+#    image: ghcr.io/factorio-builds/factorio-builds-tech/identity:ci
+    build:
+      context: backend
+      target: identity
     volumes:
       - ./.local/dev-certificate.pfx:/mnt/keys/certificate.pfx:ro
       - ./.local/volumes/identity/protected:/mnt/protected
@@ -81,10 +81,10 @@ services:
       - postgres
 
   api:
-    image: ghcr.io/factorio-builds/factorio-builds-tech/api:ci
-    #build:
-    #  context: backend
-    #  target: api
+#    image: ghcr.io/factorio-builds/factorio-builds-tech/api:ci
+    build:
+      context: backend
+      target: api
     volumes:
       - ./.local/dev-certificate.pfx:/mnt/keys/certificate.pfx:ro
       - ./.local/volumes/api/data:/mnt/data
@@ -94,6 +94,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: staging
       ConnectionStrings__Postgres: "Host=postgres;Database=postgres;Username=postgres;Password=postgres"
+      ConnectionStrings__Storage: "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
       AppConfig__DataDir: "/mnt/data"
       AppConfig__ProtectedDataDir: "/mnt/protected"
       AppConfig__FactorioDir: "/mnt/factorio"
@@ -113,9 +114,9 @@ services:
       - fbsr
 
   fbsr:
-    image: ghcr.io/factorio-builds/factorio-builds-tech/fbsr-wrapper:ci
-    # build:
-    #   context: fbsr-wrapper
+#    image: ghcr.io/factorio-builds/factorio-builds-tech/fbsr-wrapper:ci
+    build:
+      context: fbsr-wrapper
     ports:
       - "8080:8080"
     volumes:
@@ -123,7 +124,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   postgres:
-    image: postgres:13-alpine
+    image: postgres
     ports:
       - "5432:5432"
     volumes:
@@ -132,3 +133,10 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000  # blob
+      - 10001:10001  # queue
+      - 10002:10002  # table

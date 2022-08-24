@@ -1,81 +1,71 @@
+using Azure.Storage.Blobs;
 using FactorioTech.Core.Domain;
 using Microsoft.Extensions.Logging;
-using System;
-using System.IO;
 
-namespace FactorioTech.Core.Services
+namespace FactorioTech.Core.Services;
+
+public interface ITempCoverHandle : IAsyncDisposable
 {
-    public interface ITempCoverHandle : IDisposable
+    public ImageMeta Meta { get; }
+    public ValueTask Assign(Guid buildId, ImageMeta? curreImageMeta);
+}
+
+[AutoConstructor]
+public sealed partial class TempCoverHandle : ITempCoverHandle
+{
+    public ImageMeta Meta { get; }
+
+    private readonly BlobContainerClient containerClient;
+    private readonly ILogger<ImageService> logger;
+
+    private bool isAssigned = false;
+
+    public async ValueTask Assign(Guid buildId, ImageMeta? previousCover)
     {
-        public ImageMeta Meta { get; }
-        public void Assign(Guid buildId, ImageMeta? curreImageMeta);
-    }
+        isAssigned = true;
 
-    public sealed class TempCoverHandle : ITempCoverHandle
-    {
-        public ImageMeta Meta { get; }
+        logger.LogInformation("Assigned uploaded cover to build {BuildId}: {ImageId}",
+            buildId, Meta.ImageId);
 
-        private readonly ILogger<ImageService> _logger;
-        private readonly Func<string, string> _getCoverFqfn;
-        private bool _isAssigned = false;
-
-        public TempCoverHandle(
-            ILogger<ImageService> logger,
-            Func<string, string> getCoverFqfn,
-            ImageMeta meta)
+        if (previousCover != null)
         {
-            _getCoverFqfn = getCoverFqfn;
-            _logger = logger;
-            Meta = meta;
-        }
-
-        public void Assign(Guid buildId, ImageMeta? previousCover)
-        {
-            _isAssigned = true;
-
-            _logger.LogInformation("Assigned uploaded cover to build {BuildId}: {Path}",
-                buildId, _getCoverFqfn(Meta.FileName));
-
-            if (previousCover != null)
+            try
             {
-                var previousFqfn = _getCoverFqfn(previousCover.FileName);
-                try
-                {
-                    File.Delete(previousFqfn);
-                    _logger.LogInformation("Deleted existing (previous) cover for build {BuildId}: {Path}",
-                        buildId, previousFqfn);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to delete existing (previous) cover for build {BuildId}: {Path}",
-                        buildId, previousFqfn);
-                }
+                var blob = containerClient.GetBlobClient(ImageService.GetCoverBlobPath(previousCover.ImageId));
+                await blob.DeleteAsync();
+                logger.LogInformation("Deleted existing (previous) cover for build {BuildId}: {BlobUri}",
+                    buildId, blob.Uri);
             }
-        }
-
-        public void Dispose()
-        {
-            if (!_isAssigned)
+            catch (Exception ex)
             {
-                var fqfn = _getCoverFqfn(Meta.FileName);
-                _logger.LogWarning("Deleting uploaded cover image without assigning it to a build: {Path}", fqfn);
-
-                try
-                {
-                    File.Delete(fqfn);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to delete temporary cover {Path}", fqfn);
-                }
+                logger.LogError(ex, "Failed to delete existing (previous) cover for build {BuildId}: {ImageId}",
+                    buildId, previousCover.ImageId);
             }
         }
     }
 
-    public sealed class NullTempCoverHandle : ITempCoverHandle
+    public async ValueTask DisposeAsync()
     {
-        public ImageMeta Meta => new(string.Empty, 0, 0, 0);
-        public void Assign(Guid buildId, ImageMeta? curreImageMeta) { }
-        public void Dispose() { }
+        if (!isAssigned)
+        {
+            logger.LogWarning("Deleting uploaded cover image without assigning it to a build: {ImageId}", Meta.ImageId);
+
+            try
+            {
+                var blob = containerClient.GetBlobClient(ImageService.GetCoverBlobPath(Meta.ImageId));
+                await blob.DeleteAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to delete temporary cover {ImageId}", Meta.ImageId);
+            }
+        }
     }
+}
+
+public sealed class NullTempCoverHandle : ITempCoverHandle
+{
+    public ImageMeta Meta => new(string.Empty, 0, 0, 0);
+    public ValueTask Assign(Guid buildId, ImageMeta? curreImageMeta) => ValueTask.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

@@ -1,42 +1,39 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace FactorioTech.Api.Extensions
+namespace FactorioTech.Api.Extensions;
+
+public class OAuthResponsesOperationFilter : IOperationFilter
 {
-    public class OAuthResponsesOperationFilter : IOperationFilter
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
+        var authAttributes = context.MethodInfo?.DeclaringType?.GetCustomAttributes(true)
+            .Union(context.MethodInfo.GetCustomAttributes(true))
+            .OfType<AuthorizeAttribute>();
+
+        if (authAttributes?.Any() == true)
         {
-            var authAttributes = context.MethodInfo?.DeclaringType?.GetCustomAttributes(true)
-                .Union(context.MethodInfo.GetCustomAttributes(true))
-                .OfType<AuthorizeAttribute>();
+            operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+            operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
 
-            if (authAttributes?.Any() == true)
+            operation.Security = new List<OpenApiSecurityRequirement>
             {
-                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
-                operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
-
-                operation.Security = new List<OpenApiSecurityRequirement>
+                new()
                 {
-                    new()
-                    {
-                        [
-                            new OpenApiSecurityScheme
+                    [
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
                             {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = SecuritySchemeType.OAuth2.ToString(),
-                                },
-                            }
-                        ] = new[] { "openid profile" },
-                    },
-                };
+                                Type = ReferenceType.SecurityScheme,
+                                Id = SecuritySchemeType.OAuth2.ToString(),
+                            },
+                        }
+                    ] = new[] { "openid profile" },
+                },
+            };
 
-            }
         }
     }
 }

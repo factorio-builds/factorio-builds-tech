@@ -1,8 +1,7 @@
-namespace FactorioTech.Core.Domain
+namespace FactorioTech.Core.Domain;
+
+public enum IconType
 {
-    public enum IconType
-    {
-        Virtual,
-        Item,
-    }
+    Virtual,
+    Item,
 }

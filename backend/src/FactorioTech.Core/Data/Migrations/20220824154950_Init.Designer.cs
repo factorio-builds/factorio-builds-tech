@@ -9,19 +9,22 @@ using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
 
+#nullable disable
+
 namespace FactorioTech.Core.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210508135502_AddCoverFileName")]
-    partial class AddCoverFileName
+    [Migration("20220824154950_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.5")
-                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
                 {
@@ -35,7 +38,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -53,7 +56,7 @@ namespace FactorioTech.Core.Data.Migrations
 
                     b.Property<DateTime?>("Expiration")
                         .IsRequired()
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SessionId")
                         .HasMaxLength(100)
@@ -84,7 +87,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -111,9 +114,11 @@ namespace FactorioTech.Core.Data.Migrations
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
                 {
-                    b.Property<string>("Key")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ClientId")
                         .IsRequired()
@@ -121,10 +126,10 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<DateTime?>("ConsumedTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -136,7 +141,11 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<DateTime?>("Expiration")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("SessionId")
                         .HasMaxLength(100)
@@ -151,17 +160,80 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.HasKey("Key");
+                    b.HasKey("Id");
 
                     b.HasIndex("ConsumedTime");
 
                     b.HasIndex("Expiration");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
 
                     b.HasIndex("SubjectId", "ClientId", "Type");
 
                     b.HasIndex("SubjectId", "SessionId", "Type");
 
                     b.ToTable("PersistedGrants", "identity");
+                });
+
+            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.ServerSideSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("Expires")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("Renewed")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Scheme")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SubjectId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisplayName");
+
+                    b.HasIndex("Expires");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("ServerSideSession", "identity");
                 });
 
             modelBuilder.Entity("FactorioTech.Core.Domain.Build", b =>
@@ -171,7 +243,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -233,7 +305,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<Instant>("UpdatedAt")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("BuildId");
 
@@ -241,8 +313,9 @@ namespace FactorioTech.Core.Data.Migrations
 
                     b.HasIndex("LatestVersionId");
 
-                    b.HasIndex("SearchVector")
-                        .HasMethod("GIN");
+                    b.HasIndex("SearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.ToTable("Builds");
                 });
@@ -257,7 +330,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -300,7 +373,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Instant>("CreatedAt")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId", "BuildId");
 
@@ -364,14 +437,14 @@ namespace FactorioTech.Core.Data.Migrations
                         new
                         {
                             Id = new Guid("52a39ea9-ab54-40ab-8ee0-98c069504f69"),
-                            ConcurrencyStamp = "cd33d4d5-838c-4a02-910c-410e5d95f02f",
+                            ConcurrencyStamp = "bc16f20d-e7b6-483f-a4da-25909c39ff44",
                             Name = "Moderator",
                             NormalizedName = "MODERATOR"
                         },
                         new
                         {
                             Id = new Guid("3d15ca3a-584e-4d30-94df-b43d2303a4f4"),
-                            ConcurrencyStamp = "9c45149c-90f8-4ea8-aae7-1762ad4af2f5",
+                            ConcurrencyStamp = "b770c2f0-f26f-4519-81ba-76965982ae17",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });
@@ -429,7 +502,7 @@ namespace FactorioTech.Core.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<Instant>("RegisteredAt")
-                        .HasColumnType("timestamp");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
@@ -461,8 +534,9 @@ namespace FactorioTech.Core.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -484,8 +558,9 @@ namespace FactorioTech.Core.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("text");
@@ -576,12 +651,12 @@ namespace FactorioTech.Core.Data.Migrations
                             b1.Property<Guid>("BuildId")
                                 .HasColumnType("uuid");
 
-                            b1.Property<string>("FileName")
-                                .IsRequired()
-                                .HasColumnType("text");
-
                             b1.Property<int>("Height")
                                 .HasColumnType("integer");
+
+                            b1.Property<string>("ImageId")
+                                .IsRequired()
+                                .HasColumnType("text");
 
                             b1.Property<long>("Size")
                                 .HasColumnType("bigint");

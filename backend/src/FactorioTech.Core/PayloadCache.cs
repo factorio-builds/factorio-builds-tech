@@ -1,43 +1,40 @@
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace FactorioTech.Core
+namespace FactorioTech.Core;
+
+public sealed class PayloadCache : Dictionary<FactorioApi.BlueprintEnvelope, Payload>
 {
-    public sealed class PayloadCache : Dictionary<FactorioApi.BlueprintEnvelope, Payload>
+    public async Task EnsureInitializedGraph(FactorioApi.BlueprintEnvelope envelope)
     {
-        public async Task EnsureInitializedGraph(FactorioApi.BlueprintEnvelope envelope)
-        {
-            await EnsureInitialized(envelope);
+        await EnsureInitialized(envelope);
 
-            if (envelope.BlueprintBook?.Blueprints != null)
+        if (envelope.BlueprintBook?.Blueprints != null)
+        {
+            foreach (var inner in envelope.BlueprintBook.Blueprints)
             {
-                foreach (var inner in envelope.BlueprintBook.Blueprints)
-                {
-                    await EnsureInitializedGraph(inner);
-                }
+                await EnsureInitializedGraph(inner);
             }
         }
+    }
 
-        public async Task<Payload> EnsureInitialized(FactorioApi.BlueprintEnvelope envelope)
+    public async Task<Payload> EnsureInitialized(FactorioApi.BlueprintEnvelope envelope)
+    {
+        if (TryGetValue(envelope, out var payload))
         {
-            if (TryGetValue(envelope, out var payload))
-            {
-                return payload;
-            }
-
-            var converter = new BlueprintConverter();
-            var encoded = await converter.Encode(envelope);
-
-            payload = new Payload(
-                Hash.Compute(encoded),
-                converter.ParseType(envelope.Entity.Item),
-                converter.DecodeGameVersion(envelope.Entity.Version),
-                encoded);
-
-            TryAdd(envelope, payload);
             return payload;
         }
+
+        var converter = new BlueprintConverter();
+        var encoded = await converter.Encode(envelope);
+
+        payload = new Payload(
+            Hash.Compute(encoded),
+            converter.ParseType(envelope.Entity.Item),
+            converter.DecodeGameVersion(envelope.Entity.Version),
+            encoded);
+
+        TryAdd(envelope, payload);
+        return payload;
     }
 }

@@ -4,53 +4,46 @@ using Duende.IdentityServer.Services;
 using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Configuration;
 using Microsoft.AspNetCore.Identity;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace FactorioTech.Identity.Extensions
+namespace FactorioTech.Identity.Extensions;
+
+[AutoConstructor]
+public partial class CustomProfileService : IProfileService
 {
-    public class CustomProfileService : IProfileService
+    private readonly UserManager<User> userManager;
+
+    public async Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
-        private readonly UserManager<User> _userManager;
+        var user = await userManager.GetUserAsync(context.Subject);
 
-        public CustomProfileService(UserManager<User> userManager)
+        if (context.RequestedResources.RawScopeValues.Contains(IdentityServerConstants.StandardScopes.Email))
         {
-            _userManager = userManager;
+            context.IssuedClaims.Add(new Claim(ClaimTypes.Email, user.Email));
         }
 
-        public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+        if (context.RequestedResources.RawScopeValues.Contains(IdentityServerConstants.StandardScopes.Profile))
         {
-            var user = await _userManager.GetUserAsync(context.Subject);
+            context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.UserName, user.UserName));
+            context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.RegisteredAt, user.RegisteredAt.ToDateTimeUtc().ToString("O")));
 
-            if (context.RequestedResources.RawScopeValues.Contains(IdentityServerConstants.StandardScopes.Email))
+            if (user.DisplayName != null)
             {
-                context.IssuedClaims.Add(new Claim(ClaimTypes.Email, user.Email));
+                context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.DisplayName, user.DisplayName));
             }
 
-            if (context.RequestedResources.RawScopeValues.Contains(IdentityServerConstants.StandardScopes.Profile))
+            if (user.TimeZone != null)
             {
-                context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.UserName, user.UserName));
-                context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.RegisteredAt, user.RegisteredAt.ToDateTimeUtc().ToString("O")));
-
-                if (user.DisplayName != null)
-                {
-                    context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.DisplayName, user.DisplayName));
-                }
-
-                if (user.TimeZone != null)
-                {
-                    context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.TimeZone, user.TimeZone.Id));
-                }
-
-                var roles = await _userManager.GetRolesAsync(user);
-                context.IssuedClaims.AddRange(roles.Select(role => new Claim(IdentityConfig.ClaimTypes.Role, role)));
+                context.IssuedClaims.Add(new Claim(IdentityConfig.ClaimTypes.TimeZone, user.TimeZone.Id));
             }
-        }
 
-        public async Task IsActiveAsync(IsActiveContext context)
-        {
-            context.IsActive = await _userManager.GetUserAsync(context.Subject) != null;
+            var roles = await userManager.GetRolesAsync(user);
+            context.IssuedClaims.AddRange(roles.Select(role => new Claim(IdentityConfig.ClaimTypes.Role, role)));
         }
+    }
+
+    public async Task IsActiveAsync(IsActiveContext context)
+    {
+        context.IsActive = await userManager.GetUserAsync(context.Subject) != null;
     }
 }

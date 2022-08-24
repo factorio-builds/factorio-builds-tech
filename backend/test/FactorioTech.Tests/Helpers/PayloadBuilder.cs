@@ -1,44 +1,41 @@
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
-using System;
-using System.Threading.Tasks;
 
-namespace FactorioTech.Tests.Helpers
+namespace FactorioTech.Tests.Helpers;
+
+public class PayloadBuilder
 {
-    public class PayloadBuilder
+    private string encoded = TestData.SimpleBlueprintEncoded;
+    private Hash? hash;
+
+    public PayloadBuilder WithEncoded(string encoded)
     {
-        private string _encoded = TestData.SimpleBlueprintEncoded;
-        private Hash? _hash;
+        this.encoded = encoded;
+        return this;
+    }
 
-        public PayloadBuilder WithEncoded(string encoded)
+    public PayloadBuilder WithRandomHash()
+    {
+        hash = Hash.Compute(Guid.NewGuid().ToString());
+        return this;
+    }
+
+    public async Task<Payload> Save(AppDbContext dbContext, bool clearCache = true)
+    {
+        var payload = new Payload(
+            hash ?? Hash.Compute(encoded),
+            PayloadType.Book,
+            Version.Parse("1.0.0.0"),
+            encoded);
+
+        dbContext.Add(payload);
+        await dbContext.SaveChangesAsync();
+
+        if (clearCache)
         {
-            _encoded = encoded;
-            return this;
+            dbContext.ClearCache();
         }
 
-        public PayloadBuilder WithRandomHash()
-        {
-            _hash = Hash.Compute(Guid.NewGuid().ToString());
-            return this;
-        }
-
-        public async Task<Payload> Save(AppDbContext dbContext, bool clearCache = true)
-        {
-            var payload = new Payload(
-                _hash ?? Hash.Compute(_encoded),
-                PayloadType.Book,
-                Version.Parse("1.0.0.0"),
-                _encoded);
-
-            dbContext.Add(payload);
-            await dbContext.SaveChangesAsync();
-
-            if (clearCache)
-            {
-                dbContext.ClearCache();
-            }
-
-            return payload;
-        }
+        return payload;
     }
 }

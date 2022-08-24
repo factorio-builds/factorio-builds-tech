@@ -4,180 +4,185 @@ using FactorioTech.Core.Domain;
 using FactorioTech.Identity.Configuration;
 using FactorioTech.Identity.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
-namespace FactorioTech.Identity
+namespace FactorioTech.Identity;
+
+public class Startup
 {
-    public class Startup
+    private readonly IConfiguration configuration;
+    private readonly IWebHostEnvironment environment;
+
+    public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
+        this.configuration = configuration;
+        this.environment = environment;
+    }
 
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+    public void ConfigureServices(IServiceCollection services)
+    {
+        var appConfig = configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
+        services.AddSingleton(Options.Create(appConfig));
+
+        services.AddRazorPages();
+        services.Configure<RouteOptions>(options =>
         {
-            _configuration = configuration;
-            _environment = environment;
+            options.LowercaseUrls = true;
+        });
+
+        services.AddDatabaseDeveloperPageExceptionFilter();
+        services.AddDbContext<AppDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("Postgres"),
+                o => o.UseNodaTime());
+
+            if (environment.IsDevelopment())
+            {
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
+                options.ConfigureWarnings(w => w.Log(
+                    CoreEventId.FirstWithoutOrderByAndFilterWarning,
+                    CoreEventId.RowLimitingOperationWithoutOrderByWarning,
+                    CoreEventId.DistinctAfterOrderByWithoutRowLimitingOperatorWarning));
+            }
+        });
+
+        services.AddIdentity<User, Role>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+            options.User.AllowedUserNameCharacters = AppConfig.Policies.Slug.AllowedCharacters;
+        });
+
+        services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
+
+        var oAuthClientConfig = configuration.Get<OAuthClientConfig>() ?? new OAuthClientConfig();
+
+        services.AddIdentityServer(options =>
+            {
+                options.UserInteraction.ErrorUrl = "/errors/500";
+                // todo
+                // options.KeyManagement.KeyPath = Path.Join(appConfig.ProtectedDataDir, "keys");
+            })
+            .AddAspNetIdentity<User>()
+            .AddProfileService<CustomProfileService>()
+            .AddOperationalStore<AppDbContext>()
+            .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
+            .AddInMemoryClients(IdentityConfig.GetClients(environment, appConfig, oAuthClientConfig.OAuthClients));
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/login";
+            options.LogoutPath = "/logout";
+            options.AccessDeniedPath = "/errors/403";
+            options.ReturnUrlParameter = "returnurl";
+        });
+
+        var authenticationBuilder = services.AddAuthentication();
+        var oAuthProviderConfig = configuration.Get<OAuthProviderConfig>();
+        if (oAuthProviderConfig?.OAuthProviders?.Any() == true)
+        {
+            if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("GitHub", out var gitHubCredentials))
+            {
+                authenticationBuilder.AddGitHub(options =>
+                {
+                    options.ClientId = gitHubCredentials.ClientId;
+                    options.ClientSecret = gitHubCredentials.ClientSecret;
+                    options.Scope.Add("user:email");
+                });
+            }
+
+            if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("Discord", out var discordCredentials))
+            {
+                authenticationBuilder.AddDiscord(options =>
+                {
+                    options.ClientId = discordCredentials.ClientId;
+                    options.ClientSecret = discordCredentials.ClientSecret;
+                    options.Scope.Add("email");
+                });
+            }
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        services.AddCors(options =>
         {
-            var appConfig = _configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
-            services.AddSingleton(Options.Create(appConfig));
+            options.AddDefaultPolicy(builder =>
+                builder.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .Let(b => environment.IsProduction()
+                        ? b.WithOrigins($"{appConfig.ApiUri.Scheme}://{appConfig.ApiUri.Authority}")
+                        : b.WithOrigins($"{appConfig.ApiUri.Scheme}://{appConfig.ApiUri.Authority}",
+                            "https://api.local.factorio.tech", "https://localhost:5101")));
+        });
 
-            services.AddRazorPages();
-            services.Configure<RouteOptions>(options =>
-            {
-                options.LowercaseUrls = true;
-            });
+        services.AddApplicationInsightsTelemetry(options =>
+        {
+            options.ApplicationVersion = BuildInformation.Version;
+        });
 
-            services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddDbContext<AppDbContext>(options =>
-            {
-                options.UseNpgsql(_configuration.GetConnectionString("Postgres"), o => o.UseNodaTime());
-            });
+        services.AddSingleton<ITelemetryInitializer, CloudRoleInitializer>();
+        services.AddSingleton<ITelemetryInitializer, UserInitializer>();
 
-            services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
-
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.User.RequireUniqueEmail = true;
-                options.User.AllowedUserNameCharacters = AppConfig.Policies.Slug.AllowedCharacters;
-            });
-
-            services.AddTransient<IUserValidator<User>, CustomUserNamePolicy>();
-
-            var oAuthClientConfig = _configuration.Get<OAuthClientConfig>() ?? new OAuthClientConfig();
-
-            services.AddIdentityServer(options =>
-                {
-                    options.UserInteraction.ErrorUrl = "/errors/500";
-                    options.KeyManagement.KeyPath = Path.Join(appConfig.ProtectedDataDir, "keys");
-                })
-                .AddAspNetIdentity<User>()
-                .AddProfileService<CustomProfileService>()
-                .AddOperationalStore<AppDbContext>()
-                .AddInMemoryIdentityResources(IdentityConfig.GetIdentityResources())
-                .AddInMemoryClients(IdentityConfig.GetClients(_environment, appConfig, oAuthClientConfig.OAuthClients));
-
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/login";
-                options.LogoutPath = "/logout";
-                options.AccessDeniedPath = "/errors/403";
-                options.ReturnUrlParameter = "returnurl";
-            });
-
-            var authenticationBuilder = services.AddAuthentication();
-            var oAuthProviderConfig = _configuration.Get<OAuthProviderConfig>();
-            if (oAuthProviderConfig?.OAuthProviders?.Any() == true)
-            {
-                if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("GitHub", out var gitHubCredentials))
-                {
-                    authenticationBuilder.AddGitHub(options =>
-                    {
-                        options.ClientId = gitHubCredentials.ClientId;
-                        options.ClientSecret = gitHubCredentials.ClientSecret;
-                        options.Scope.Add("user:email");
-                    });
-                }
-
-                if (oAuthProviderConfig!.OAuthProviders!.TryGetValue("Discord", out var discordCredentials))
-                {
-                    authenticationBuilder.AddDiscord(options =>
-                    {
-                        options.ClientId = discordCredentials.ClientId;
-                        options.ClientSecret = discordCredentials.ClientSecret;
-                        options.Scope.Add("email");
-                    });
-                }
-            }
-
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                    builder.AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials()
-                        .Let(b => _environment.IsProduction()
-                            ? b.WithOrigins($"{appConfig.ApiUri.Scheme}://{appConfig.ApiUri.Authority}")
-                            : b.WithOrigins($"{appConfig.ApiUri.Scheme}://{appConfig.ApiUri.Authority}",
-                                "https://api.local.factorio.tech", "https://localhost:5101")));
-            });
-
-            services.AddApplicationInsightsTelemetry(options =>
-            {
-                options.ApplicationVersion = BuildInformation.Version;
-            });
-
-            services.AddSingleton<ITelemetryInitializer, CloudRoleInitializer>();
-            services.AddSingleton<ITelemetryInitializer, UserInitializer>();
-
-            if (!_environment.IsProduction())
-            {
-                services.AddTransient<DevDataSeeder>();
-            }
-
-            if (!_environment.IsDevelopment())
-            {
-                services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "dataprotection")))
-                    .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
-            }
-
+        if (!environment.IsProduction())
+        {
             services.AddTransient<DevDataSeeder>();
-            services.AddTransient<CustomProfileService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        if (!environment.IsDevelopment())
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedProto,
-            });
+            // todo
+            // services.AddDataProtection()
+            //     .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(appConfig.ProtectedDataDir, "dataprotection")))
+            //     .ProtectKeysWithCertificate(new X509Certificate2("/mnt/keys/certificate.pfx"));
+        }
 
-            if (!env.IsProduction())
-            {
-                IdentityModelEventSource.ShowPII = true;
-                app.UseDeveloperExceptionPage();
-            }
+        services.AddTransient<DevDataSeeder>();
+        services.AddTransient<CustomProfileService>();
+    }
 
-            if (!env.IsDevelopment())
-            {
-                app.UseHsts();
-            }
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedProto,
+        });
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseCors();
-            app.UseIdentityServer();
-            app.UseAuthorization();
+        if (!env.IsProduction())
+        {
+            IdentityModelEventSource.ShowPII = true;
+            app.UseDeveloperExceptionPage();
+        }
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-            });
+        if (!env.IsDevelopment())
+        {
+            app.UseHsts();
+        }
 
-            if (!_environment.IsProduction())
-            {
-                app.EnsureDevelopmentDataIsSeeded();
-            }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseCors();
+        app.UseIdentityServer();
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapRazorPages();
+        });
+
+        if (!environment.IsProduction())
+        {
+            app.EnsureDevelopmentDataIsSeeded();
         }
     }
 }

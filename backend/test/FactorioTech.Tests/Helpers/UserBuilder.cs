@@ -1,38 +1,35 @@
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using NodaTime;
-using System;
-using System.Threading.Tasks;
 
-namespace FactorioTech.Tests.Helpers
+namespace FactorioTech.Tests.Helpers;
+
+public class UserBuilder
 {
-    public class UserBuilder
+    private Guid userId;
+
+    public async Task<User> Save(AppDbContext dbContext, bool clearCache = true)
     {
-        private Guid _userId;
-
-        public async Task<User> Save(AppDbContext dbContext, bool clearCache = true)
+        userId = Guid.NewGuid();
+        var user = new User
         {
-            _userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = _userId,
-                Email = $"test-{_userId}@factorio.tech",
-                NormalizedEmail = $"test-{_userId}@factorio.tech".ToUpperInvariant(),
-                UserName = $"test-{_userId}",
-                NormalizedUserName = $"test-{_userId}".ToUpperInvariant(),
-                DisplayName = $"Test: {_userId}",
-                RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
-            };
+            Id = userId,
+            Email = $"test-{userId}@factorio.tech",
+            NormalizedEmail = $"test-{userId}@factorio.tech".ToUpperInvariant(),
+            UserName = $"test-{userId}",
+            NormalizedUserName = $"test-{userId}".ToUpperInvariant(),
+            DisplayName = $"Test: {userId}",
+            RegisteredAt = SystemClock.Instance.GetCurrentInstant(),
+        };
 
-            dbContext.Add(user);
-            await dbContext.SaveChangesAsync();
+        dbContext.Add(user);
+        await dbContext.SaveChangesAsync();
 
-            if (clearCache)
-            {
-                dbContext.ClearCache();
-            }
-
-            return user;
+        if (clearCache)
+        {
+            dbContext.ClearCache();
         }
+
+        return user;
     }
 }

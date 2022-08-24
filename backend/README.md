@@ -1,11 +1,14 @@
 # Factorio Builds Backend
 
-factorio.tech is an [ASP.NET Core 5](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core?view=aspnetcore-5.0) application. For local development you need the [.NET 5 SDK](https://dotnet.microsoft.com/download) installed on your machine along with a compatible IDE such as [Visual Studio Code](https://code.visualstudio.com), [Visual Studio Community](https://visualstudio.microsoft.com/vs/community) or [Rider](https://www.jetbrains.com/rider).
+factorio.tech is an [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/introduction-to-aspnet-core)
+application. For local development you need the [.NET SDK](https://dotnet.microsoft.com/download)
+installed on your machine along with a compatible IDE such as [Visual Studio Code](https://code.visualstudio.com),
+[Visual Studio](https://visualstudio.microsoft.com/vs) or [Rider](https://www.jetbrains.com/rider).
 
 ## Components
 
--   REST (mostly) API: [FactorioTech.Api](src/FactorioTech.Api) powered by [ASP.NET Core 5 MVC Controllers](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-5.0)
--   Identity Provider: [FactorioTech.Identity](src/FactorioTech.Identity) powered by [IdentityServer](https://identityserver.io)
+-   REST (mostly) API: [FactorioTech.Api](src/FactorioTech.Api) powered by [ASP.NET Core MVC Controllers](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/actions)
+-   Identity Provider: [FactorioTech.Identity](src/FactorioTech.Identity) powered by [IdentityServer](https://duendesoftware.com/products/identityserver)
 -   Database: [PostgreSQL](https://www.postgresql.org) via [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core) with [Npgsql](https://www.npgsql.org/efcore/index.html)
 
 ## Contributing
@@ -31,7 +34,7 @@ dotnet test --filter Type=Slow
 ### Create a migration
 
 ```bash
-dotnet ef migrations add "xxx" -o Data/Migrations -p src/FactorioTech.Core/FactorioTech.Core.csproj
+dotnet ef migrations add "xxx" -o Data/Migrations -c AppDbContext -p src/FactorioTech.Core/FactorioTech.Core.csproj
 ```
 
 ### Apply migrations

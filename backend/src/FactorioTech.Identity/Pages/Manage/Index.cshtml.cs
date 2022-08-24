@@ -7,79 +7,77 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
-namespace FactorioTech.Identity.Pages.Manage
+namespace FactorioTech.Identity.Pages.Manage;
+
+[Authorize]
+[SecurityHeaders]
+public class IndexModel : PageModel
 {
-    [Authorize]
-    [SecurityHeaders]
-    public class IndexModel : PageModel
+    private readonly UserManager<User> userManager;
+    private readonly SignInManager<User> signInManager;
+
+    public IndexModel(
+        UserManager<User> userManager,
+        SignInManager<User> signInManager)
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
+        this.userManager = userManager;
+        this.signInManager = signInManager;
+    }
 
-        public IndexModel(
-            UserManager<User> userManager,
-            SignInManager<User> signInManager)
+    [TempData]
+    public string? StatusMessage { get; set; }
+
+    [BindProperty]
+    public InputModel Input { get; set; } = new();
+
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
+        [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
+        [DisplayName("Username")]
+        public string UserName { get; set; } = string.Empty;
+
+        [StringLength(100, MinimumLength = 3)]
+        [DisplayName("Display name")]
+        public string? DisplayName { get; set; }
+    }
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var user = await userManager.GetUserAsync(User);
+        if (user == null)
+            return NotFound($"Unable to load user with ID '{userManager.GetUserId(User)}'.");
+
+        Input = new InputModel
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+            Email = user.Email,
+            UserName = user.UserName,
+            DisplayName = user.DisplayName,
+        };
 
-        [TempData]
-        public string? StatusMessage { get; set; }
+        return Page();
+    }
 
-        [BindProperty]
-        public InputModel Input { get; set; } = new();
+    public async Task<IActionResult> OnPostAsync()
+    {
+        var user = await userManager.GetUserAsync(User);
+        if (user == null)
+            return NotFound($"Unable to load user with ID '{userManager.GetUserId(User)}'.");
 
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; } = string.Empty;
-
-            [Required]
-            [StringLength(AppConfig.Policies.Slug.MaximumLength, MinimumLength = AppConfig.Policies.Slug.MinimumLength)]
-            [RegularExpression(AppConfig.Policies.Slug.AllowedCharactersRegex)]
-            [DisplayName("Username")]
-            public string UserName { get; set; } = string.Empty;
-
-            [StringLength(100, MinimumLength = 3)]
-            [DisplayName("Display name")]
-            public string? DisplayName { get; set; }
-        }
-
-        public async Task<IActionResult> OnGetAsync()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-
-            Input = new InputModel
-            {
-                Email = user.Email,
-                UserName = user.UserName,
-                DisplayName = user.DisplayName,
-            };
-
+        if (!ModelState.IsValid)
             return Page();
-        }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        user.DisplayName = Input.DisplayName;
 
-            if (!ModelState.IsValid)
-                return Page();
-
-            user.DisplayName = Input.DisplayName;
-
-            await _userManager.UpdateAsync(user);
-            await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
-            return RedirectToPage();
-        }
+        await userManager.UpdateAsync(user);
+        await signInManager.RefreshSignInAsync(user);
+        StatusMessage = "Your profile has been updated";
+        return RedirectToPage();
     }
 }
