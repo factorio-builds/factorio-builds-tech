@@ -29,7 +29,7 @@ export const searchBuildsAsync = (): ThunkAction<
   void,
   IStoreState,
   unknown,
-  Action
+  TSearchBuildsSuccessAction
 > => {
   return async function (dispatch, getState) {
     const state = getState()

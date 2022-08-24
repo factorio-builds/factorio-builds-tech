@@ -1,8 +1,7 @@
 import React, { useCallback, useState } from "react"
-import { useSelector } from "react-redux"
 import cx from "classnames"
 import { useApi } from "../../../hooks/useApi"
-import { IStoreState } from "../../../redux/store"
+import { useAppSelector } from "../../../redux/store"
 import { IFullBuild } from "../../../types/models"
 import { IButtonProps } from "../Button/button.component"
 import * as SC from "./favorite-button.styles"
@@ -17,7 +16,7 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
 }) => {
   const links = build._links
 
-  const authUser = useSelector((state: IStoreState) => state.auth?.user)
+  const authUser = useAppSelector((state) => state.auth?.user)
   const [{ loading, error }, execute] = useApi(
     { url: links.followers.href },
     { manual: true }

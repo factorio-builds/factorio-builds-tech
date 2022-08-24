@@ -1,7 +1,6 @@
 import React from "react"
-import { useSelector } from "react-redux"
 import { HEADER_HEIGHT } from "../../../design/tokens/layout"
-import { IStoreState } from "../../../redux/store"
+import { useAppSelector } from "../../../redux/store"
 import * as SC from "./sidebar.styles"
 
 interface ISidebarProps {
@@ -9,7 +8,7 @@ interface ISidebarProps {
 }
 
 function Sidebar(props: ISidebarProps): JSX.Element {
-  const headerHeight = useSelector((state: IStoreState) =>
+  const headerHeight = useAppSelector((state) =>
     state.layout.header.init ? state.layout.header.height : HEADER_HEIGHT
   )
 

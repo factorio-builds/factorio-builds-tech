@@ -1,8 +1,7 @@
 import React, { ReactNode, useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
 import { useLockBodyScroll } from "react-use"
 import { Media } from "../../../design/styles/media"
-import { IStoreState } from "../../../redux/store"
+import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Container from "../Container"
 import Layout from "../Layout"
 import Sidebar from "../Sidebar"
@@ -19,10 +18,8 @@ const LayoutSidebar: React.FC<ILayoutSidebarProps> = ({
   sidebar,
   title,
 }) => {
-  const dispatch = useDispatch()
-  const sidebarActive = useSelector(
-    (state: IStoreState) => state.layout.sidebar
-  )
+  const dispatch = useAppDispatch()
+  const sidebarActive = useAppSelector((state) => state.layout.sidebar)
   const closeSidebar = useCallback(() => {
     dispatch({
       type: "SET_SIDEBAR",

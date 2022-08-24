@@ -1,14 +1,13 @@
 import React, { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
 import { useDebouncedEffect } from "../../../hooks/useDebouncedEffect"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
-import { IStoreState } from "../../../redux/store"
+import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Input from "../../form/Input"
 import * as SC from "./search.styles"
 
 const Search = (): JSX.Element => {
-  const dispatch = useDispatch()
-  const query = useSelector((state: IStoreState) => state.filters.query)
+  const dispatch = useAppDispatch()
+  const query = useAppSelector((state) => state.filters.query)
   const [input, setInput] = useState(query)
 
   useDebouncedEffect(

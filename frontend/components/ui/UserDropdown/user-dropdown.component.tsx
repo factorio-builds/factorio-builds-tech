@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
-import { useDispatch } from "react-redux"
 import { useRouter } from "next/router"
 import { Media } from "../../../design/styles/media"
+import { useAppDispatch } from "../../../redux/store"
 import { IStoreUser } from "../../../types/models"
 import { logout } from "../../../utils/auth"
 import Avatar from "../Avatar"
@@ -14,7 +14,7 @@ interface IUserDropdownProps {
 
 function UserDropdown(props: IUserDropdownProps): JSX.Element {
   const router = useRouter()
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const links = useMemo(
     () => [

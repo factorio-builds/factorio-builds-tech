@@ -1,6 +1,5 @@
 import * as React from "react"
 import { useCallback } from "react"
-import { useDispatch } from "react-redux"
 import { useToggle } from "react-use"
 import { usePress } from "@react-aria/interactions"
 import { useOverlay } from "@react-aria/overlays"
@@ -8,6 +7,7 @@ import cx from "classnames"
 import { COLOR } from "../../../design/tokens/color"
 import Caret from "../../../icons/caret"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
+import { useAppDispatch } from "../../../redux/store"
 import { ESortDirection, ESortType } from "../../../types"
 import * as SC from "./build-list-sort.styles"
 
@@ -95,7 +95,7 @@ const SortDropdown: React.FC<{
 }
 
 const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   function set(sortType: ESortType, sortDirection: ESortDirection) {
     dispatch({

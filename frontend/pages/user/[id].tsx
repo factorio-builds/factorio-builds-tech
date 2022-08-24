@@ -37,7 +37,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     if (!user) throw new Error("User not found")
 
     return { props: { user } }
-  } catch (err) {
+  } catch (err: any) {
     return { props: { errors: err.message } }
   }
 }
