@@ -1,5 +1,5 @@
 import * as React from "react"
-import * as SC from "./build-list-lookup-stats.styles"
+import * as S from "./build-list-lookup-stats.styles"
 
 interface IBuildListLookupStatProps {
   count: number
@@ -11,11 +11,11 @@ const BuildListLookupStats: React.FC<IBuildListLookupStatProps> = ({
   totalCount,
 }) => {
   return (
-    <SC.BuildListLookupStatWrapper>
-      <SC.Count>
+    <S.BuildListLookupStatWrapper>
+      <S.Count>
         Displaying {count} out of {totalCount} builds
-      </SC.Count>
-    </SC.BuildListLookupStatWrapper>
+      </S.Count>
+    </S.BuildListLookupStatWrapper>
   )
 }
 

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { Media } from "../../../design/styles/media"
 import { IFullBuild } from "../../../types/models"
 import Container from "../../ui/Container"
-import * as SC from "./build-page.styles"
+import * as S from "./build-page.styles"
 import { TPayload } from "./usePayload"
 
 export type ITabComponentProps = {
@@ -45,10 +45,10 @@ const Tabs = (props: ITabsProps): JSX.Element => {
   )
 
   return (
-    <SC.TabsWrapper className={cx({ "is-zoomed": props.isZoomedIn })}>
-      <SC.TabsInnerWrapper>
+    <S.TabsWrapper className={cx({ "is-zoomed": props.isZoomedIn })}>
+      <S.TabsInnerWrapper>
         <Container size="medium">
-          <SC.TabsItems orientation="horizontal" gutter={32}>
+          <S.TabsItems orientation="horizontal" gutter={32}>
             {props.tabs.map((tab) => {
               const Tab = (innerProps: { className?: string }) => (
                 <Link
@@ -59,9 +59,9 @@ const Tabs = (props: ITabsProps): JSX.Element => {
                   }}
                   passHref
                 >
-                  <SC.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
+                  <S.Tab className={cx({ "is-active": isCurrentTab(tab) })}>
                     {tab.label}
-                  </SC.Tab>
+                  </S.Tab>
                 </Link>
               )
 
@@ -77,15 +77,15 @@ const Tabs = (props: ITabsProps): JSX.Element => {
 
               return <Tab key={tab.label} />
             })}
-          </SC.TabsItems>
+          </S.TabsItems>
         </Container>
-      </SC.TabsInnerWrapper>
+      </S.TabsInnerWrapper>
 
       {props.before}
 
       <Container direction="column" size="medium">
-        <SC.TabsContent>
-          <SC.TabsContentInner>
+        <S.TabsContent>
+          <S.TabsContentInner>
             {props.tabs.map((tab) => {
               const { tab: Tab } = tab
 
@@ -98,17 +98,17 @@ const Tabs = (props: ITabsProps): JSX.Element => {
                 />
               )
             })}
-          </SC.TabsContentInner>
+          </S.TabsContentInner>
           <Media greaterThanOrEqual="sm">
             {(mcx, renderChildren) => {
               return renderChildren ? (
-                <SC.TabsAside className={mcx}>{props.aside}</SC.TabsAside>
+                <S.TabsAside className={mcx}>{props.aside}</S.TabsAside>
               ) : null
             }}
           </Media>
-        </SC.TabsContent>
+        </S.TabsContent>
       </Container>
-    </SC.TabsWrapper>
+    </S.TabsWrapper>
   )
 }
 

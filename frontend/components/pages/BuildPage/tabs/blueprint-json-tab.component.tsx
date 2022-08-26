@@ -1,6 +1,6 @@
 import React from "react"
 import { decodeBlueprint } from "../../../../utils/blueprint"
-import * as SC from "../build-page.styles"
+import * as S from "../build-page.styles"
 import { TTabComponent } from "../tabs.component"
 import Tab from "./tab.component"
 
@@ -16,7 +16,7 @@ const BlueprintJsonTab: TTabComponent = (props) => {
 
   return (
     <Tab {...props}>
-      <SC.BlueprintData
+      <S.BlueprintData
         value={parsed.stringified}
         readOnly
         onClick={(e) => e.currentTarget.select()}

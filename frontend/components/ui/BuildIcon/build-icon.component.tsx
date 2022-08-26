@@ -2,7 +2,7 @@ import React from "react"
 import cx from "classnames"
 import { IIcon } from "../../../types/models"
 import ItemIcon from "../ItemIcon"
-import * as SC from "./build-icon.styles"
+import * as S from "./build-icon.styles"
 
 interface IBuildIconProps {
   icons: IIcon[]
@@ -11,7 +11,7 @@ interface IBuildIconProps {
 
 function BuildIcon({ icons, size = "medium" }: IBuildIconProps): JSX.Element {
   return (
-    <SC.BuildIconWrapper
+    <S.BuildIconWrapper
       className={cx({
         "large-icons": icons.length === 1,
         "medium-icons": icons.length > 1,
@@ -22,7 +22,7 @@ function BuildIcon({ icons, size = "medium" }: IBuildIconProps): JSX.Element {
       {icons.map((icon, index) => (
         <ItemIcon key={index} type={icon.type} name={icon.name} />
       ))}
-    </SC.BuildIconWrapper>
+    </S.BuildIconWrapper>
   )
 }
 

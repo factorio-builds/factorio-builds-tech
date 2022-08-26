@@ -1,5 +1,5 @@
 import cx from "classnames"
-import * as SC from "./radio.styles"
+import * as S from "./radio.styles"
 
 interface IRadioProps {
   id: string
@@ -21,25 +21,25 @@ const Radio: React.FC<IRadioProps> = ({
   inline,
 }) => {
   return (
-    <SC.RadioWrapper className={cx({ "is-checked": checked })}>
-      <SC.HiddenRadio
+    <S.RadioWrapper className={cx({ "is-checked": checked })}>
+      <S.HiddenRadio
         id={id}
         type="radio"
         value={value}
         checked={checked}
         onChange={onChange}
       />
-      <SC.Label htmlFor={id} className={cx({ "is-inline": inline })}>
+      <S.Label htmlFor={id} className={cx({ "is-inline": inline })}>
         {checked}
-        <SC.Square />
+        <S.Square />
         {label && (
-          <SC.Text>
-            {prefix && <SC.Prefix>{prefix}</SC.Prefix>}
+          <S.Text>
+            {prefix && <S.Prefix>{prefix}</S.Prefix>}
             {label}
-          </SC.Text>
+          </S.Text>
         )}
-      </SC.Label>
-    </SC.RadioWrapper>
+      </S.Label>
+    </S.RadioWrapper>
   )
 }
 

@@ -2,7 +2,7 @@ import React, { ReactNode } from "react"
 import Container from "../Container"
 import Layout from "../Layout"
 import Links from "../Links"
-import * as SC from "./layout-default.styles"
+import * as S from "./layout-default.styles"
 
 interface ILayoutProps {
   children?: ReactNode
@@ -12,17 +12,17 @@ interface ILayoutProps {
 const LayoutDefault: React.FC<ILayoutProps> = ({ children, title }) => {
   return (
     <Layout title={title}>
-      <SC.ContentWrapper>
-        <SC.BodyWrapper>
-          <SC.Content>{children}</SC.Content>
-        </SC.BodyWrapper>
+      <S.ContentWrapper>
+        <S.BodyWrapper>
+          <S.Content>{children}</S.Content>
+        </S.BodyWrapper>
 
-        <SC.Footer>
+        <S.Footer>
           <Container size="medium">
             <Links orientation="horizontal" />
           </Container>
-        </SC.Footer>
-      </SC.ContentWrapper>
+        </S.Footer>
+      </S.ContentWrapper>
     </Layout>
   )
 }

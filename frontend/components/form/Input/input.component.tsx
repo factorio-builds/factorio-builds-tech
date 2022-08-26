@@ -1,6 +1,6 @@
 import { useState } from "react"
 import cx from "classnames"
-import * as SC from "./input.styles"
+import * as S from "./input.styles"
 
 interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string
@@ -47,10 +47,10 @@ const Text: React.FC<ITextProps> = ({
   }
 
   return (
-    <SC.StyledInputWrapper className={cx({ "is-focused": focused })}>
-      {customPrefix && <SC.Prefix>{customPrefix}</SC.Prefix>}
+    <S.StyledInputWrapper className={cx({ "is-focused": focused })}>
+      {customPrefix && <S.Prefix>{customPrefix}</S.Prefix>}
       {icon}
-      <SC.StyledInput
+      <S.StyledInput
         {...restProps}
         id={id}
         name={name}
@@ -63,7 +63,7 @@ const Text: React.FC<ITextProps> = ({
         onFocus={setFocus}
         onBlur={clearFocus}
       />
-    </SC.StyledInputWrapper>
+    </S.StyledInputWrapper>
   )
 }
 
@@ -77,7 +77,7 @@ const Textarea: React.FC<ITextareaProps> = ({
   ...restProps
 }) => {
   return (
-    <SC.StyledTextarea
+    <S.StyledTextarea
       {...restProps}
       name={name}
       id={id}

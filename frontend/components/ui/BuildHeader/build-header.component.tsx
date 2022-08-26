@@ -13,7 +13,7 @@ import FavoriteButton from "../FavoriteButton"
 import RichText from "../RichText"
 import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
-import * as SC from "./build-header.styles"
+import * as S from "./build-header.styles"
 
 interface IBuildheader {
   build: IFullBuild
@@ -23,18 +23,18 @@ interface IBuildheader {
 function Buildheader(props: IBuildheader): JSX.Element {
   return (
     <>
-      <SC.SubHeader>
+      <S.SubHeader>
         <Container>
           <Stacker orientation="horizontal" gutter={8}>
             <Link href={`/${props.build.owner.username}/builds`} passHref>
-              <SC.SubHeaderLink>{props.build.owner.username}</SC.SubHeaderLink>
+              <S.SubHeaderLink>{props.build.owner.username}</S.SubHeaderLink>
             </Link>
             <span>/</span>
             <span>{props.build.slug}</span>
           </Stacker>
         </Container>
-      </SC.SubHeader>
-      <SC.BuildHeaderWrapper>
+      </S.SubHeader>
+      <S.BuildHeaderWrapper>
         <Container size="medium">
           <Stacker orientation="vertical" gutter={16}>
             <Stacker orientation="horizontal" gutter={16}>
@@ -42,25 +42,23 @@ function Buildheader(props: IBuildheader): JSX.Element {
                 <BuildIcon icons={props.build.icons} size="large" />
               )}
               <Stacker orientation="vertical" gutter={8}>
-                <SC.BuildTitle>
+                <S.BuildTitle>
                   <RichText input={props.build.title} />
-                </SC.BuildTitle>
-                <SC.BuildTags>
+                </S.BuildTitle>
+                <S.BuildTags>
                   {props.build.tags.map((tag) => {
                     return (
-                      <SC.BuildHeaderMeta key={tag}>{tag}</SC.BuildHeaderMeta>
+                      <S.BuildHeaderMeta key={tag}>{tag}</S.BuildHeaderMeta>
                     )
                   })}
-                </SC.BuildTags>
+                </S.BuildTags>
               </Stacker>
             </Stacker>
             <Stacker orientation="horizontal" gutter={16}>
               <span>
                 by{" "}
                 <Link href={`/${props.build.owner.username}/builds`} passHref>
-                  <SC.StyledLink>
-                    {props.build.owner.display_name}
-                  </SC.StyledLink>
+                  <S.StyledLink>{props.build.owner.display_name}</S.StyledLink>
                 </Link>
               </span>
               <span>
@@ -76,7 +74,7 @@ function Buildheader(props: IBuildheader): JSX.Element {
                 </Tooltip>
               </span>
             </Stacker>
-            <SC.Buttons>
+            <S.Buttons>
               <FavoriteButton build={props.build} size="small" />
               <Link href={props.payload.data?._links.raw.href || ""} passHref>
                 <Button
@@ -110,10 +108,10 @@ function Buildheader(props: IBuildheader): JSX.Element {
                 variant="cta"
                 size="small"
               />
-            </SC.Buttons>
+            </S.Buttons>
           </Stacker>
         </Container>
-      </SC.BuildHeaderWrapper>
+      </S.BuildHeaderWrapper>
     </>
   )
 }

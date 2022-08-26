@@ -2,7 +2,7 @@ import React, { useMemo } from "react"
 import cx from "classnames"
 import ThumbsUp from "../../../icons/thumbs-up"
 import Stacker from "../../ui/Stacker"
-import * as SC from "./build-form-page.styles"
+import * as S from "./build-form-page.styles"
 
 export type TPage = "data" | "cover"
 
@@ -39,7 +39,7 @@ const PageButton = (props: IPageButton): JSX.Element => {
   }, [props.isValid, props.isOptional])
 
   return (
-    <SC.PageButton
+    <S.PageButton
       role="button"
       tabIndex={0}
       orientation="horizontal"
@@ -47,10 +47,10 @@ const PageButton = (props: IPageButton): JSX.Element => {
       className={cx({ "is-active": props.isActive })}
       onClick={props.onClick}
     >
-      <SC.PageNumber>{props.number}</SC.PageNumber>
-      <SC.PageBody orientation="vertical" gutter={4}>
+      <S.PageNumber>{props.number}</S.PageNumber>
+      <S.PageBody orientation="vertical" gutter={4}>
         <span>{props.title}</span>
-        <SC.PageFeedback
+        <S.PageFeedback
           orientation="horizontal"
           gutter={8}
           className={cx({
@@ -59,9 +59,9 @@ const PageButton = (props: IPageButton): JSX.Element => {
           })}
         >
           {status}
-        </SC.PageFeedback>
-      </SC.PageBody>
-    </SC.PageButton>
+        </S.PageFeedback>
+      </S.PageBody>
+    </S.PageButton>
   )
 }
 

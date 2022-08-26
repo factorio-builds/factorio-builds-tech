@@ -3,7 +3,7 @@ import { useCheckbox } from "@react-aria/checkbox"
 import { VisuallyHidden } from "@react-aria/visually-hidden"
 import { useToggleState } from "@react-stately/toggle"
 import cx from "classnames"
-import * as SC from "./checkbox.styles"
+import * as S from "./checkbox.styles"
 
 interface ICheckboxProps {
   id: string
@@ -21,24 +21,21 @@ const Checkbox: React.FC<ICheckboxProps> = (props) => {
   const { inputProps } = useCheckbox(props, state, ref)
 
   return (
-    <SC.CheckboxWrapper className={cx({ "is-checked": state.isSelected })}>
+    <S.CheckboxWrapper className={cx({ "is-checked": state.isSelected })}>
       <VisuallyHidden>
         <input id={props.id} {...inputProps} ref={ref} />
       </VisuallyHidden>
-      <SC.Label
-        htmlFor={props.id}
-        className={cx({ "is-inline": props.inline })}
-      >
+      <S.Label htmlFor={props.id} className={cx({ "is-inline": props.inline })}>
         {state.isSelected}
-        <SC.Square />
+        <S.Square />
         {props.label && (
-          <SC.Text>
-            {props.prefix && <SC.Prefix>{props.prefix}</SC.Prefix>}
+          <S.Text>
+            {props.prefix && <S.Prefix>{props.prefix}</S.Prefix>}
             {props.label}
-          </SC.Text>
+          </S.Text>
         )}
-      </SC.Label>
-    </SC.CheckboxWrapper>
+      </S.Label>
+    </S.CheckboxWrapper>
   )
 }
 

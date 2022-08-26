@@ -20,7 +20,7 @@ import Button from "../../ui/Button"
 import RichText from "../../ui/RichText"
 import Stacker from "../../ui/Stacker"
 import { IFormValues } from "./build-form-page.d"
-import * as SC from "./build-form-page.styles"
+import * as S from "./build-form-page.styles"
 
 interface IBlueprintData {
   label: string
@@ -174,7 +174,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
   }
 
   return (
-    <SC.Content>
+    <S.Content>
       <Stacker>
         <p>
           Get started with a blueprint string, we will parse your blueprint to
@@ -210,7 +210,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
 
         {error && <FormError error={error} />}
 
-        <SC.ButtonsStack gutter={24} orientation="horizontal">
+        <S.ButtonsStack gutter={24} orientation="horizontal">
           <Button
             variant="success"
             type="button"
@@ -219,9 +219,9 @@ const Step1: React.FC<IStep1Props> = (props) => {
           >
             Continue
           </Button>
-        </SC.ButtonsStack>
+        </S.ButtonsStack>
       </Stacker>
-    </SC.Content>
+    </S.Content>
   )
 }
 

@@ -4,7 +4,7 @@ import cx from "classnames"
 import Lamp from "../../../icons/lamp"
 import ThumbsUp from "../../../icons/thumbs-up"
 import InputWrapper from "../../form/InputWrapper"
-import * as SC from "./image-upload.styles"
+import * as S from "./image-upload.styles"
 
 export interface IImageUpload {
   file: File | null
@@ -104,48 +104,48 @@ function ImageUpload(props: IImageUploadProps): JSX.Element | null {
   }
 
   return (
-    <SC.ImageUploadWrapper
+    <S.ImageUploadWrapper
       className={cx({ "is-active": isDragActive, "has-image": image })}
     >
       <InputWrapper uid="build-image" label={props.label}>
-        <SC.UploadZone {...getRootProps()}>
+        <S.UploadZone {...getRootProps()}>
           <input {...getInputProps()} />
           {image ? (
-            <SC.ImagePreview src={image} />
+            <S.ImagePreview src={image} />
           ) : (
-            <SC.NoImageBackdrop>
-              <SC.Hint>
+            <S.NoImageBackdrop>
+              <S.Hint>
                 {isDragActive ? "(drop image here)" : "(click or drag image)"}
-              </SC.Hint>
-            </SC.NoImageBackdrop>
+              </S.Hint>
+            </S.NoImageBackdrop>
           )}
-        </SC.UploadZone>
+        </S.UploadZone>
 
-        <SC.Recommended>
-          <SC.StyledLamp />
+        <S.Recommended>
+          <S.StyledLamp />
           We recommended using a tall image, if possible, share the build image
           vertically.
-        </SC.Recommended>
+        </S.Recommended>
 
         {image && suggestRotating && (
-          <SC.Feedback className="variant-warning">
+          <S.Feedback className="variant-warning">
             <Lamp />
             Consider rotating the image
-          </SC.Feedback>
+          </S.Feedback>
         )}
 
         {image && !suggestRotating && (
-          <SC.Feedback className="variant-positive">
+          <S.Feedback className="variant-positive">
             <ThumbsUp />
             This looks perfect
-          </SC.Feedback>
+          </S.Feedback>
         )}
       </InputWrapper>
-      {/* <SC.TopRow>
-        <SC.Label>{props.label}</SC.Label>
-        {/* {image && <SC.SwapImage onClick={removeImage}>swap image</SC.SwapImage>} 
-      </SC.TopRow> */}
-    </SC.ImageUploadWrapper>
+      {/* <S.TopRow>
+        <S.Label>{props.label}</S.Label>
+        {/* {image && <S.SwapImage onClick={removeImage}>swap image</S.SwapImage>}
+      </S.TopRow> */}
+    </S.ImageUploadWrapper>
   )
 }
 

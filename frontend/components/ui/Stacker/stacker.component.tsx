@@ -1,5 +1,5 @@
 import React from "react"
-import * as SC from "./stacker.styles"
+import * as S from "./stacker.styles"
 
 interface IStackerProps extends React.ComponentPropsWithoutRef<"div"> {
   children: React.ReactNode
@@ -14,7 +14,7 @@ function Stacker({
   ...restProps
 }: IStackerProps): JSX.Element {
   return (
-    <SC.StackerWrapper
+    <S.StackerWrapper
       {...restProps}
       css={{
         "--gutter": `${gutter}px`,
@@ -23,7 +23,7 @@ function Stacker({
       className={restProps.className}
     >
       {children}
-    </SC.StackerWrapper>
+    </S.StackerWrapper>
   )
 }
 

@@ -6,7 +6,7 @@ import { IStoreUser } from "../../../types/models"
 import { logout } from "../../../utils/auth"
 import Avatar from "../Avatar"
 import Dropdown from "../Dropdown"
-import * as SC from "./user-dropdown.styles"
+import * as S from "./user-dropdown.styles"
 
 interface IUserDropdownProps {
   user: IStoreUser
@@ -22,14 +22,14 @@ function UserDropdown(props: IUserDropdownProps): JSX.Element {
         action: () => {
           router.push(`/${props.user.username}/builds`)
         },
-        body: <SC.InnerLink>my builds</SC.InnerLink>,
+        body: <S.InnerLink>my builds</S.InnerLink>,
       },
       {
         action: () => {
           logout(dispatch)
           router.push("/api/auth/logout")
         },
-        body: <SC.InnerLinkLogOff>log off</SC.InnerLinkLogOff>,
+        body: <S.InnerLinkLogOff>log off</S.InnerLinkLogOff>,
       },
     ],
     [props.user.username]

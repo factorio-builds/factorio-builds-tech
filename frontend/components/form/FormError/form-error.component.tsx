@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { AxiosError } from "axios"
-import * as SC from "./form-error.styles"
+import * as S from "./form-error.styles"
 
 interface IFormErrorProps {
   error: AxiosError
@@ -20,7 +20,7 @@ const FormError = (props: IFormErrorProps): JSX.Element => {
     return "Error: something unexpected happened."
   }, [props.error, props.message])
 
-  return <SC.FormErrorWrapper>{message}</SC.FormErrorWrapper>
+  return <S.FormErrorWrapper>{message}</S.FormErrorWrapper>
 }
 
 export default FormError

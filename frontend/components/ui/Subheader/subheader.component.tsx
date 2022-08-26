@@ -1,7 +1,7 @@
 import React from "react"
 import Container from "../Container"
 import Stacker from "../Stacker"
-import * as SC from "./subheader.styles"
+import * as S from "./subheader.styles"
 
 interface ISubheader {
   title: JSX.Element | string
@@ -10,14 +10,14 @@ interface ISubheader {
 
 function Subheader(props: ISubheader): JSX.Element {
   return (
-    <SC.HeaderWrapper>
+    <S.HeaderWrapper>
       <Container>
         <Stacker gutter={4}>
-          <SC.Title>{props.title}</SC.Title>
-          <SC.Subtitle>{props.subtitle}</SC.Subtitle>
+          <S.Title>{props.title}</S.Title>
+          <S.Subtitle>{props.subtitle}</S.Subtitle>
         </Stacker>
       </Container>
-    </SC.HeaderWrapper>
+    </S.HeaderWrapper>
   )
 }
 

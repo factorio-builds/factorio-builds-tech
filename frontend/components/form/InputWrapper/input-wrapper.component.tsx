@@ -2,7 +2,7 @@ import React from "react"
 import cx from "classnames"
 import ThumbsUp from "../../../icons/thumbs-up"
 import ErrorMessage from "../ErrorMessage"
-import * as SC from "./input-wrapper.styles"
+import * as S from "./input-wrapper.styles"
 
 interface IInputWrapper extends React.ComponentPropsWithoutRef<"div"> {
   uid: string
@@ -18,17 +18,17 @@ const InputWrapper: React.FC<IInputWrapper> = (props) => {
   })
 
   return (
-    <SC.StyledInputWrapper className={classNames}>
-      {props.label && <SC.Label htmlFor={props.uid}>{props.label}</SC.Label>}
+    <S.StyledInputWrapper className={classNames}>
+      {props.label && <S.Label htmlFor={props.uid}>{props.label}</S.Label>}
       {props.children}
       {props.error && <ErrorMessage>{props.error}</ErrorMessage>}
       {props.validFeedback && (
-        <SC.ValidMessage>
+        <S.ValidMessage>
           <ThumbsUp />
           {props.validFeedback}
-        </SC.ValidMessage>
+        </S.ValidMessage>
       )}
-    </SC.StyledInputWrapper>
+    </S.StyledInputWrapper>
   )
 }
 

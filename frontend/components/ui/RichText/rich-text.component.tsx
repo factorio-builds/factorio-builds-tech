@@ -1,6 +1,6 @@
 import React from "react"
 import ItemIcon from "../ItemIcon"
-import * as SC from "./rich-text.styles"
+import * as S from "./rich-text.styles"
 import useParseRichText, { IParsedRichTextNode } from "./useParseRichText.hook"
 
 interface IRichText {
@@ -45,9 +45,9 @@ function RichText(props: IRichText): JSX.Element {
   }, [props.input])
 
   return (
-    <SC.RichTextWrapper>
+    <S.RichTextWrapper>
       {props.prefix} {formatted}
-    </SC.RichTextWrapper>
+    </S.RichTextWrapper>
   )
 }
 

@@ -1,5 +1,5 @@
 import React from "react"
-import * as SC from "./tooltip.styles"
+import * as S from "./tooltip.styles"
 
 interface ITooltipProps {
   content: JSX.Element | React.ReactText
@@ -7,10 +7,10 @@ interface ITooltipProps {
 
 const Tooltip: React.FC<ITooltipProps> = ({ children, content }) => {
   return (
-    <SC.TooltipWrapper>
+    <S.TooltipWrapper>
       {children}
-      <SC.TooltipContent>{content}</SC.TooltipContent>
-    </SC.TooltipWrapper>
+      <S.TooltipContent>{content}</S.TooltipContent>
+    </S.TooltipWrapper>
   )
 }
 

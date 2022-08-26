@@ -1,6 +1,6 @@
 import React from "react"
 import cx from "classnames"
-import * as SC from "./button.styles"
+import * as S from "./button.styles"
 
 export interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   as?: keyof JSX.IntrinsicElements
@@ -18,14 +18,14 @@ const Button: React.FC<IButtonProps> = ({
   ...restProps
 }) => {
   return (
-    <SC.ButtonWrapper
+    <S.ButtonWrapper
       {...restProps}
       as={as}
       className={cx(restProps.className, `variant-${variant} size-${size}`)}
     >
-      <SC.ButtonInner>{children}</SC.ButtonInner>
-      {counter !== undefined && <SC.Counter>{counter}</SC.Counter>}
-    </SC.ButtonWrapper>
+      <S.ButtonInner>{children}</S.ButtonInner>
+      {counter !== undefined && <S.Counter>{counter}</S.Counter>}
+    </S.ButtonWrapper>
   )
 }
 
