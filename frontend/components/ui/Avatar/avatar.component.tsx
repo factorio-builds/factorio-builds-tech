@@ -1,6 +1,6 @@
 import React from "react"
 import cx from "classnames"
-import * as SC from "./avatar.styles"
+import * as S from "./avatar.styles"
 
 interface IAvatarProps {
   username: string
@@ -9,14 +9,14 @@ interface IAvatarProps {
 
 function Avatar({ username, size }: IAvatarProps): JSX.Element {
   return (
-    <SC.AvatarWrapper
+    <S.AvatarWrapper
       className={cx({
         "size-medium": size === "medium",
         "size-large": size === "large",
       })}
     >
       {username[0]}
-    </SC.AvatarWrapper>
+    </S.AvatarWrapper>
   )
 }
 

@@ -3,7 +3,7 @@ import { useDebouncedEffect } from "../../../hooks/useDebouncedEffect"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Input from "../../form/Input"
-import * as SC from "./search.styles"
+import * as S from "./search.styles"
 
 const Search = (): JSX.Element => {
   const dispatch = useAppDispatch()
@@ -29,7 +29,7 @@ const Search = (): JSX.Element => {
       id="filter-search"
       value={input}
       placeholder="Search"
-      icon={<SC.StyledSearchIcon />}
+      icon={<S.StyledSearchIcon />}
       onChange={handleOnChange}
     />
   )

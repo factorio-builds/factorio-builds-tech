@@ -1,70 +1,65 @@
-import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
 import Stacker from "../Stacker"
 
-export const BuildListWrapper = styled.div`
-  margin: 20px 0;
-  width: 100%;
-`
+export const BuildListWrapper = styled("div", {
+  margin: "20px 0",
+  width: "100%",
+})
 
-export const Title = styled(Stacker)`
-  ${getTypo(ETypo.PAGE_HEADER)};
-  align-items: center;
-  font-weight: 400;
-`
+export const Title = styled(Stacker, getTypo(ETypo.PAGE_HEADER), {
+  alignItems: "center",
+  fontWeight: 400,
+})
 
-export const Subtitle = styled.div`
-  ${getTypo(ETypo.PAGE_SUBTITLE)};
-  font-weight: 400;
-`
+export const Subtitle = styled("div", getTypo(ETypo.PAGE_SUBTITLE), {
+  fontWeight: 400,
+})
 
-export const Sort = styled.button`
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  color: #fff;
-`
+export const Sort = styled("button", {
+  cursor: "pointer",
+  background: "transparent",
+  border: "none",
+  color: "#fff",
+})
 
-export const Table = styled.table`
-  width: 100%;
-  text-align: left;
-  border-spacing: 0px;
+export const Table = styled("table", {
+  width: "100%",
+  textAlign: "left",
+  borderSpacing: 0,
 
-  thead th {
-    padding-bottom: 10px !important;
-  }
+  "thead th": {
+    paddingBottom: "10px !important",
+  },
 
-  thead th svg {
-    margin-right: 4px;
-  }
+  "thead th svg": {
+    marginRight: "4px",
+  },
 
-  tr th,
-  tr td {
-    border-bottom: 1px solid ${COLOR.FADEDBLUE300};
-  }
+  "tr th, tr td": {
+    borderBottom: "1px solid $fadedBlue300",
+  },
 
-  th,
-  td {
-    padding: 8px;
-  }
+  "th, td": {
+    padding: "8px",
+  },
 
-  tr:nth-child(odd) td {
-    background: ${COLOR.SUB};
-  }
+  "tr:nth-child(odd) td": {
+    background: "$sub",
+  },
 
-  img {
-    display: block;
-  }
+  img: {
+    display: "block",
+  },
 
-  a {
-    color: #fff;
-    font-weight: 700;
-    text-decoration: none;
-  }
+  a: {
+    color: "#fff",
+    fontWeight: 700,
+    textDecoration: "none",
+  },
 
-  a:hover {
-    border-bottom: 2px solid #fff;
-  }
-`
+  "a:hover": {
+    borderBottom: "2px solid #fff",
+  },
+})

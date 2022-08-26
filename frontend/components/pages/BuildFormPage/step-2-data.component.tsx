@@ -11,7 +11,7 @@ import RichText from "../../ui/RichText"
 import useParseRichText from "../../ui/RichText/useParseRichText.hook"
 import Stacker from "../../ui/Stacker"
 import { IFormValues } from "./build-form-page.d"
-import * as SC from "./build-form-page.styles"
+import * as S from "./build-form-page.styles"
 
 interface ICollapsableGroupProps {
   group: string
@@ -38,17 +38,17 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
   }, [collapsed])
 
   return (
-    <SC.CollapsableGroupWrapper>
+    <S.CollapsableGroupWrapper>
       <InputGroup
         key={props.group}
         legend={
-          <SC.GroupTitle type="button" onClick={expand}>
+          <S.GroupTitle type="button" onClick={expand}>
             <Caret inverted={collapsed} />
             {startCase(props.group)}
             {selectedTags.length > 0 && (
-              <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
+              <S.GroupCount>{selectedTags.length}</S.GroupCount>
             )}
-          </SC.GroupTitle>
+          </S.GroupTitle>
         }
       >
         {!collapsed && (
@@ -68,7 +68,7 @@ const CollapsableGroup = (props: ICollapsableGroupProps): JSX.Element => {
           </Stacker>
         )}
       </InputGroup>
-    </SC.CollapsableGroupWrapper>
+    </S.CollapsableGroupWrapper>
   )
 }
 
@@ -96,9 +96,9 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
       />
 
       {titleHasRichText && (
-        <SC.InputHint>
+        <S.InputHint>
           <RichText input={props.formikProps.values.title}></RichText>
-        </SC.InputHint>
+        </S.InputHint>
       )}
 
       <Field
@@ -111,11 +111,11 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
         prefix={<>{user?.username} /</>}
       />
 
-      <SC.InputHint>
+      <S.InputHint>
         {props.type === "CREATE"
           ? "Be mindful of your slug, as it cannot be edited at the moment."
           : "The slug cannot be edited at the moment."}
-      </SC.InputHint>
+      </S.InputHint>
 
       <Field
         name="description"

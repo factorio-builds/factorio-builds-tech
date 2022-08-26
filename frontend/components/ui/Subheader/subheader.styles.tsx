@@ -1,37 +1,34 @@
-import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
-import { ContainerWrapper as Container } from "../Container/container.styles"
+import Container from "../Container"
 
-export const HeaderWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  background: ${COLOR.SUBHEADER};
-  color: ${COLOR.FADEDBLUE900};
-  padding: 25px 20px;
+export const HeaderWrapper = styled("div", {
+  display: "flex",
+  alignItems: "center",
+  background: "$subHeader",
+  color: "$fadedBlue900",
+  padding: "25px 20px",
 
-  ${Container} {
-    flex-direction: column;
-    justify-content: center;
-  }
-`
+  [`${Container}`]: {
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+})
 
-export const Title = styled.h1`
-  ${getTypo(ETypo.PAGE_HEADER)};
-  display: flex;
-  align-items: center;
-  color: #fff;
-  margin: 0;
+export const Title = styled("h1", getTypo(ETypo.PAGE_HEADER), {
+  display: "flex",
+  alignItems: "center",
+  color: "#fff",
+  margin: 0,
 
-  img {
-    width: 32px;
-    height: auto;
-    margin-right: 8px;
-  }
-`
+  img: {
+    width: "32px",
+    height: "auto",
+    marginRight: "8px",
+  },
+})
 
-export const Subtitle = styled.div`
-  ${getTypo(ETypo.PAGE_SUBTITLE)};
-  color: #a392b5;
-`
+export const Subtitle = styled("div", getTypo(ETypo.PAGE_SUBTITLE), {
+  color: "#a392b5",
+})

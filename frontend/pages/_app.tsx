@@ -6,10 +6,8 @@ import getConfig from "next/config"
 import Head from "next/head"
 import qs from "qs"
 import { compose } from "redux"
-import { ThemeProvider } from "styled-components"
-import { GlobalStyle } from "../design/styles/global-style"
+import { globalStyles } from "../design/stitches.config"
 import { MediaContextProvider } from "../design/styles/media"
-import { theme } from "../design/styles/theme"
 import { TStore, useAppSelector, wrapper } from "../redux/store"
 import auth, { login, sync as syncAuth } from "../utils/auth"
 import { axios } from "../utils/axios"
@@ -60,14 +58,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#1a161d" />
         <meta name="theme-color" content="#1a161d" />
       </Head>
-      <GlobalStyle />
-      <ThemeProvider theme={theme}>
-        <MediaContextProvider>
-          <SSRProvider>
-            <Component {...pageProps} />
-          </SSRProvider>
-        </MediaContextProvider>
-      </ThemeProvider>
+      {globalStyles()}
+      <MediaContextProvider>
+        <SSRProvider>
+          <Component {...pageProps} />
+        </SSRProvider>
+      </MediaContextProvider>
     </>
   )
 }

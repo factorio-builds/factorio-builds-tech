@@ -1,26 +1,25 @@
-import styled from "styled-components"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import Stacker from "../Stacker"
 
-export const LinksWrapper = styled(Stacker)`
-  align-items: flex-start;
-`
+export const LinksWrapper = styled(Stacker, {
+  alignItems: "flex-start",
+})
 
-export const StyledLink = styled.a`
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  color: ${COLOR.FADEDBLUE700};
-  font-weight: 700;
-  text-decoration: none;
+export const StyledLink = styled("a", {
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  color: "$fadedBlue700",
+  fontWeight: 700,
+  textDecoration: "none",
 
-  &:hover {
-    text-decoration: underline;
-  }
+  "&:hover": {
+    textDecoration: "underline",
+  },
 
-  svg {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
-  }
-`
+  svg: {
+    marginRight: "8px",
+    width: "16px",
+    height: "16px",
+  },
+})

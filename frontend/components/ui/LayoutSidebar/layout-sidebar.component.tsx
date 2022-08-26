@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Container from "../Container"
 import Layout from "../Layout"
 import Sidebar from "../Sidebar"
-import * as SC from "./layout-sidebar.styles"
+import * as S from "./layout-sidebar.styles"
 
 interface ILayoutSidebarProps {
   children?: ReactNode
@@ -31,12 +31,12 @@ const LayoutSidebar: React.FC<ILayoutSidebarProps> = ({
 
   return (
     <Layout title={title}>
-      <SC.ContentWrapper>
+      <S.ContentWrapper>
         <Container>
           <Media lessThan="sm">
             {(mcx, renderChildren) => {
               return (
-                <SC.BodyWrapper
+                <S.BodyWrapper
                   className={mcx}
                   orientation="vertical"
                   gutter={0}
@@ -45,21 +45,21 @@ const LayoutSidebar: React.FC<ILayoutSidebarProps> = ({
                     <>
                       {sidebarActive && (
                         <>
-                          <SC.Backdrop onClick={closeSidebar} />
+                          <S.Backdrop onClick={closeSidebar} />
                           <Sidebar>{sidebar}</Sidebar>
                         </>
                       )}
-                      <SC.Content>{children}</SC.Content>
+                      <S.Content>{children}</S.Content>
                     </>
                   ) : null}
-                </SC.BodyWrapper>
+                </S.BodyWrapper>
               )
             }}
           </Media>
           <Media greaterThanOrEqual="sm">
             {(mcx, renderChildren) => {
               return renderChildren ? (
-                <SC.BodyWrapper
+                <S.BodyWrapper
                   className={mcx}
                   orientation="horizontal"
                   gutter={20}
@@ -67,15 +67,15 @@ const LayoutSidebar: React.FC<ILayoutSidebarProps> = ({
                   {renderChildren ? (
                     <>
                       <Sidebar>{sidebar}</Sidebar>
-                      <SC.Content>{children}</SC.Content>
+                      <S.Content>{children}</S.Content>
                     </>
                   ) : null}
-                </SC.BodyWrapper>
+                </S.BodyWrapper>
               ) : null
             }}
           </Media>
         </Container>
-      </SC.ContentWrapper>
+      </S.ContentWrapper>
     </Layout>
   )
 }

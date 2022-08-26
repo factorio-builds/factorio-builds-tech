@@ -6,7 +6,7 @@ import Burger from "../../../icons/burger"
 import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Container from "../Container"
 import UserDropdown from "../UserDropdown"
-import * as SC from "./header.styles"
+import * as S from "./header.styles"
 
 const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
   const dispatch = useAppDispatch()
@@ -20,19 +20,19 @@ const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
   }, [])
 
   return (
-    <SC.HeaderWrapper ref={ref}>
+    <S.HeaderWrapper ref={ref}>
       <Container>
         {router.pathname === "/" && (
           <Media lessThan="sm">
             {(mcx, renderChildren) => {
               return renderChildren ? (
-                <SC.BurgerButton
+                <S.BurgerButton
                   className={mcx}
                   role="button"
                   onClick={toggleSidebar}
                 >
                   <Burger />
-                </SC.BurgerButton>
+                </S.BurgerButton>
               ) : null
             }}
           </Media>
@@ -40,18 +40,18 @@ const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
 
         <Link href="/">
           <a aria-label="Factorio Builds">
-            <SC.StyledLogo />
+            <S.StyledLogo />
           </a>
         </Link>
 
-        <SC.StyledStacker orientation="horizontal" gutter={18}>
+        <S.StyledStacker orientation="horizontal" gutter={18}>
           <Media greaterThanOrEqual="sm">
             {(mcx, renderChildren) => {
               return renderChildren && user ? (
                 <Link href="/build/create">
-                  <SC.CreateBuildButton className={mcx}>
+                  <S.CreateBuildButton className={mcx}>
                     Add a build
-                  </SC.CreateBuildButton>
+                  </S.CreateBuildButton>
                 </Link>
               ) : null
             }}
@@ -59,14 +59,14 @@ const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
 
           {!user && (
             <Link href="/api/auth/login" passHref>
-              <SC.InnerLink>Login</SC.InnerLink>
+              <S.InnerLink>Login</S.InnerLink>
             </Link>
           )}
 
           {user && <UserDropdown user={user} />}
-        </SC.StyledStacker>
+        </S.StyledStacker>
       </Container>
-    </SC.HeaderWrapper>
+    </S.HeaderWrapper>
   )
 })
 

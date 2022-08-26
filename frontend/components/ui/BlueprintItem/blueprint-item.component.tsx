@@ -17,7 +17,7 @@ import { CopyStringToClipboard } from "../ButtonClipboard/button-clipboard.compo
 import RichText from "../RichText"
 import Spinner from "../Spinner"
 import Stacker from "../Stacker"
-import * as SC from "./blueprint-item.styles"
+import * as S from "./blueprint-item.styles"
 
 interface IBaseBlueprintItemProps {
   hash: IFullPayload["hash"]
@@ -99,7 +99,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
     }
 
     return (
-      <SC.ImageWrapper>
+      <S.ImageWrapper>
         {imageIsLoaded ? (
           <img
             {...pressProps}
@@ -109,17 +109,19 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
             width={200}
           />
         ) : (
-          <SC.SpinnerWrapper>
+          <S.SpinnerWrapper>
             <Spinner />
-          </SC.SpinnerWrapper>
+          </S.SpinnerWrapper>
         )}
-      </SC.ImageWrapper>
+      </S.ImageWrapper>
     )
   }
 
   return (
-    <SC.BlueprintItemWrapper
-      depth={props.depth}
+    <S.BlueprintItemWrapper
+      css={{
+        marginLeft: `${props.depth > 0 ? 40 : 0}px`,
+      }}
       className={cx({
         "is-expanded": expanded,
         "is-highlighted":
@@ -128,30 +130,30 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
           bpItemExplorer.selectedHash === props.hash,
       })}
     >
-      <SC.BlueprintItemInner>
-        <SC.Content>
-          <SC.Title orientation="horizontal" gutter={8}>
+      <S.BlueprintItemInner>
+        <S.Content>
+          <S.Title orientation="horizontal" gutter={8}>
             {props.icons.length > 0 && <BuildIcon icons={props.icons} />}
             <Stacker orientation="vertical" gutter={4}>
               <RichText input={title} />
               {props.isBook ? (
-                <SC.Meta>Contains {props.nodes.length} blueprints</SC.Meta>
+                <S.Meta>Contains {props.nodes.length} blueprints</S.Meta>
               ) : (
-                <SC.Meta>{renderEntities(props.entities, props.tiles)}</SC.Meta>
+                <S.Meta>{renderEntities(props.entities, props.tiles)}</S.Meta>
               )}
             </Stacker>
             {isExpandable && (
-              <SC.Expand type="button" onClick={expand}>
+              <S.Expand type="button" onClick={expand}>
                 expand <Caret inverted={expanded} />
-              </SC.Expand>
+              </S.Expand>
             )}
-          </SC.Title>
+          </S.Title>
           {expanded && (props.image || props.description) && (
             <>
               {!props.isBook &&
                 bpItemExplorer.type === "readOnly" &&
                 (props.raw || props.encoded) && (
-                  <SC.Buttons>
+                  <S.Buttons gutter={8} orientation="horizontal">
                     {!props.isBook && props.raw && (
                       <Link href={props.raw.href} passHref>
                         <Button as="a" variant="default" size="small">
@@ -178,50 +180,50 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                         size="small"
                       />
                     )}
-                  </SC.Buttons>
+                  </S.Buttons>
                 )}
               {props.image && zoomedImage && (
-                <SC.ZoomedImage>{renderImage()}</SC.ZoomedImage>
+                <S.ZoomedImage>{renderImage()}</S.ZoomedImage>
               )}
-              <SC.Info>
+              <S.Info>
                 {props.image && !zoomedImage && renderImage()}
-                <SC.InnerContent orientation="vertical" gutter={16}>
+                <S.InnerContent orientation="vertical" gutter={16}>
                   {props.description && (
-                    <SC.Description>
+                    <S.Description>
                       {props.description.split("\n").map((text) => (
                         <>
                           {text}
                           <br />
                         </>
                       ))}
-                    </SC.Description>
+                    </S.Description>
                   )}
                   {!props.isBook && (props.entities || props.tiles) && (
-                    <SC.RequiredItems>
-                      <SC.Subtitle>Required items</SC.Subtitle>
+                    <S.RequiredItems>
+                      <S.Subtitle>Required items</S.Subtitle>
                       <BlueprintRequiredItems
                         entities={props.entities}
                         tiles={props.tiles}
                       />
-                    </SC.RequiredItems>
+                    </S.RequiredItems>
                   )}
                   {!props.isBook && bpItemExplorer.type === "selectable" && (
-                    <SC.SelectRenderButton
+                    <S.SelectRenderButton
                       variant="alt"
                       type="button"
                       onClick={(e) => bpItemExplorer.onSelect(e, props.hash)}
                     >
                       Select render
-                    </SC.SelectRenderButton>
+                    </S.SelectRenderButton>
                   )}
-                </SC.InnerContent>
-              </SC.Info>
+                </S.InnerContent>
+              </S.Info>
             </>
           )}
-        </SC.Content>
-      </SC.BlueprintItemInner>
+        </S.Content>
+      </S.BlueprintItemInner>
       {props.isBook && expanded && (
-        <SC.Expanded>
+        <S.Expanded>
           {props.nodes &&
             props.nodes.map((node) => {
               if (isBook(node)) {
@@ -257,9 +259,9 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
                 />
               )
             })}
-        </SC.Expanded>
+        </S.Expanded>
       )}
-    </SC.BlueprintItemWrapper>
+    </S.BlueprintItemWrapper>
   )
 }
 

@@ -7,7 +7,7 @@ import { IThinBuild } from "../../../types/models"
 import BuildCard from "../BuildCard"
 import BuildListLookupStats from "../BuildListLookupStats"
 import BuildListSort from "../BuildListSort"
-import * as SC from "./build-card-list.styles"
+import * as S from "./build-card-list.styles"
 
 interface IBuildCardListProps {
   items: IThinBuild[]
@@ -76,12 +76,12 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
   }, [columns, items, containerWidth])
 
   return (
-    <SC.BuildCardListWrapper>
-      <SC.Header>
+    <S.BuildCardListWrapper>
+      <S.Header>
         <BuildListLookupStats count={count} totalCount={totalCount} />
         <BuildListSort sort={sort} />
-      </SC.Header>
-      <SC.Columns
+      </S.Header>
+      <S.Columns
         ref={ref}
         style={
           {
@@ -91,12 +91,12 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
         }
       >
         {columns.map((items, i) => (
-          <SC.Column key={i}>
+          <S.Column key={i}>
             {items.map((item, i2) => {
               const slug = `${item.owner.username}/${item.slug}`
 
               return (
-                <SC.Item key={`${item.slug}_${i}_${i2}`}>
+                <S.Item key={`${item.slug}_${i}_${i2}`}>
                   <BuildCard
                     tabIndex={
                       tabIndexes.findIndex((index) => index.slug === slug) + 1
@@ -110,13 +110,13 @@ const BuildCardList: React.FC<IBuildCardListProps> = ({
                     image={item._links.cover}
                     link={slug}
                   />
-                </SC.Item>
+                </S.Item>
               )
             })}
-          </SC.Column>
+          </S.Column>
         ))}
-      </SC.Columns>
-    </SC.BuildCardListWrapper>
+      </S.Columns>
+    </S.BuildCardListWrapper>
   )
 }
 

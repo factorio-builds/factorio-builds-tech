@@ -6,7 +6,7 @@ import Button from "../../ui/Button"
 import Spinner from "../../ui/Spinner"
 import Stacker from "../../ui/Stacker"
 import { IFormValues, ISubmitStatus } from "./build-form-page.d"
-import * as SC from "./build-form-page.styles"
+import * as S from "./build-form-page.styles"
 import Pager from "./pager.component"
 import { TPage } from "./pager.component"
 import Step2Cover from "./step-2-cover.component"
@@ -45,7 +45,7 @@ const Step2: React.FC<IStep2Props> = (props) => {
   }
 
   return (
-    <SC.Content>
+    <S.Content>
       <Stacker>
         <Pager
           currentPage={page}
@@ -73,16 +73,16 @@ const Step2: React.FC<IStep2Props> = (props) => {
         )}
 
         {!canSave && waitingForRender && (
-          <SC.WaitingForRender>
+          <S.WaitingForRender>
             Blueprint image is still rendering, please be patient.
-          </SC.WaitingForRender>
+          </S.WaitingForRender>
         )}
 
         {props.submitStatus.error && (
           <FormError error={props.submitStatus.error} />
         )}
 
-        <SC.ButtonsStack gutter={24} orientation="horizontal">
+        <S.ButtonsStack gutter={24} orientation="horizontal">
           <Button variant="success" disabled={!canSave}>
             <Stacker gutter={10} orientation="horizontal">
               <span>Save build</span>
@@ -90,13 +90,13 @@ const Step2: React.FC<IStep2Props> = (props) => {
             </Stacker>
           </Button>
           {page === "data" && (
-            <SC.TextButton onClick={() => setPage("cover")}>
+            <S.TextButton onClick={() => setPage("cover")}>
               pick cover image
-            </SC.TextButton>
+            </S.TextButton>
           )}
-        </SC.ButtonsStack>
+        </S.ButtonsStack>
       </Stacker>
-    </SC.Content>
+    </S.Content>
   )
 }
 

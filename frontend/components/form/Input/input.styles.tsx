@@ -1,75 +1,73 @@
-import styled, { css } from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { css, styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
 
-const BaseInput = css`
-  padding: 5px 14px;
-  background: ${COLOR.INPUT};
-  border: 2px solid ${COLOR.FADEDBLUE500};
-  color: ${COLOR.FADEDBLUE700};
+const baseInput = css({
+  padding: "5px 14px",
+  background: "$input",
+  border: "2px solid $fadedBlue500",
+  color: "$fadedBlue700",
 
-  &:hover {
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
-  }
+  "&:hover": {
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.2)",
+  },
 
-  .is-error & {
-    border-color: ${COLOR.DANGER} !important;
-  }
+  ".is-error &": {
+    borderColor: "$danger !important",
+  },
 
-  &:focus,
-  &:focus-within {
-    box-shadow: 0 0 0 3px #aad1ff;
-    outline: none;
-  }
-`
+  "&:focus, &:focus-within": {
+    boxShadow: "0 0 0 3px #aad1ff",
+    outline: "none",
+  },
+})
 
-export const StyledInputWrapper = styled.div`
-  ${BaseInput};
-  display: flex;
-  align-items: center;
-  border-radius: 6px;
-`
+export const StyledInputWrapper = styled("div", baseInput, {
+  display: "flex",
+  alignItems: "center",
+  borderRadius: "6px",
+})
 
-export const StyledInput = styled.input`
-  ${getTypo(ETypo.FORM_INPUT)};
-  line-height: 1.8;
-  border: 0;
-  background: transparent;
-  color: ${COLOR.FADEDBLUE700};
-  flex: 1 0 auto;
+export const StyledInput = styled("input", getTypo(ETypo.FORM_INPUT), {
+  lineHeight: 1.8,
+  border: 0,
+  background: "transparent",
+  color: "$fadedBlue700",
+  flex: "1 0 auto",
 
-  &:focus {
-    outline: 0;
-  }
+  "&:focus": {
+    outline: 0,
+  },
 
-  &::placeholder {
-    color: ${COLOR.FADEDBLUE500};
-  }
+  "&::placeholder": {
+    color: "$fadedBlue500",
+  },
 
   // fix for chrome autocomplete
-  &:-webkit-autofill,
-  &:-internal-autofill-selected {
-    box-shadow: 0 0 0 50px ${COLOR.INPUT} inset;
-    -webkit-text-fill-color: ${COLOR.FADEDBLUE700};
+  "&:-webkit-autofill, &:-internal-autofill-selected": {
+    boxShadow: "0 0 0 50px $input inset",
+    "-webkit-text-fill-color": "$fadedBlue700",
+  },
+})
+
+export const StyledTextarea = styled(
+  "textarea",
+  getTypo(ETypo.FORM_INPUT),
+  baseInput,
+  {
+    padding: "11px 14px",
+    resize: "vertical",
+    minHeight: "200px",
+    borderRadius: "6px",
+
+    "&::placeholder": {
+      color: "$fadedBlue500",
+    },
   }
-`
+)
 
-export const StyledTextarea = styled.textarea`
-  ${getTypo(ETypo.FORM_INPUT)};
-  ${BaseInput};
-  padding: 11px 14px;
-  resize: vertical;
-  min-height: 200px;
-  border-radius: 6px;
-
-  &::placeholder {
-    color: ${COLOR.FADEDBLUE500};
-  }
-`
-
-export const Prefix = styled.div`
-  pointer-events: none;
-  color: ${COLOR.FADEDBLUE500};
-  padding-right: 4px;
-`
+export const Prefix = styled("div", {
+  pointerEvents: "none",
+  color: "$fadedBlue500",
+  paddingRight: "4px",
+})

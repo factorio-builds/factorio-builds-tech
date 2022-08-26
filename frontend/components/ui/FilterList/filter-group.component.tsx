@@ -3,7 +3,7 @@ import startCase from "lodash/startCase"
 import { ITag } from "../../../redux/reducers/filters"
 import { useAppSelector } from "../../../redux/store"
 import Filter from "../Filter"
-import * as SC from "./filter-list.styles"
+import * as S from "./filter-list.styles"
 
 interface IFilterGroupProps {
   name: ITag["group"]
@@ -27,17 +27,17 @@ function FilterGroup(props: IFilterGroupProps): JSX.Element {
   }, [tags])
 
   return (
-    <SC.FilterGroup>
-      <SC.GroupName onClick={toggle}>
+    <S.FilterGroup>
+      <S.GroupName onClick={toggle}>
         {startCase(props.name)}
         {selectedTags.length > 0 && (
-          <SC.GroupCount>{selectedTags.length}</SC.GroupCount>
+          <S.GroupCount>{selectedTags.length}</S.GroupCount>
         )}
-        <SC.StyledCaret inverted={expanded} />
-      </SC.GroupName>
+        <S.StyledCaret inverted={expanded} />
+      </S.GroupName>
 
       {expanded && (
-        <SC.GroupFilters orientation="vertical" gutter={2}>
+        <S.GroupFilters orientation="vertical" gutter={2}>
           {tags.map((node, index) => {
             return (
               <Filter
@@ -49,9 +49,9 @@ function FilterGroup(props: IFilterGroupProps): JSX.Element {
               />
             )
           })}
-        </SC.GroupFilters>
+        </S.GroupFilters>
       )}
-    </SC.FilterGroup>
+    </S.FilterGroup>
   )
 }
 

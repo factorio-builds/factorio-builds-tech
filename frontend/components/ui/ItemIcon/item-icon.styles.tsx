@@ -1,3 +1,3 @@
-import styled from "styled-components"
+import { styled } from "../../../design/stitches.config"
 
-export const ItemIconWrapper = styled.img``
+export const ItemIconWrapper = styled("img")

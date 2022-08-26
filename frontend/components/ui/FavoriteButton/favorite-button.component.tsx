@@ -4,7 +4,7 @@ import { useApi } from "../../../hooks/useApi"
 import { useAppSelector } from "../../../redux/store"
 import { IFullBuild } from "../../../types/models"
 import { IButtonProps } from "../Button/button.component"
-import * as SC from "./favorite-button.styles"
+import * as S from "./favorite-button.styles"
 
 interface IFavoriteButtonProps extends IButtonProps {
   build: IFullBuild
@@ -35,7 +35,7 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
   }, [isFavorite])
 
   return (
-    <SC.FavoriteButtonWrapper
+    <S.FavoriteButtonWrapper
       onClick={authUser ? toggle : undefined}
       className={cx({
         "is-error": error,
@@ -46,7 +46,7 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
     >
       {isFavorite ? "Unfavorite" : "Favorite"}
       {loading && "..."}
-    </SC.FavoriteButtonWrapper>
+    </S.FavoriteButtonWrapper>
   )
 }
 

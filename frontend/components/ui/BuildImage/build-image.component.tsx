@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from "react"
 import useImage from "../../../hooks/useImage"
 import { IThinBuild } from "../../../types/models"
-import * as SC from "./build-image.styles"
+import * as S from "./build-image.styles"
 
 const generateSrcSet = (src: string) => {
   return Array.from({ length: 20 })
@@ -65,10 +65,10 @@ function BuildImage({ image }: IBuildImageProps): JSX.Element {
   }, [])
 
   return (
-    <SC.OuterWrapper
+    <S.OuterWrapper
       style={{ "--ratio": image.width / image.height } as React.CSSProperties}
     >
-      <SC.InnerWrapper>
+      <S.InnerWrapper>
         {!error && (
           <img
             // TODO: use the upcoming blur as the default image
@@ -78,8 +78,8 @@ function BuildImage({ image }: IBuildImageProps): JSX.Element {
             alt=""
           />
         )}
-      </SC.InnerWrapper>
-    </SC.OuterWrapper>
+      </S.InnerWrapper>
+    </S.OuterWrapper>
   )
 }
 

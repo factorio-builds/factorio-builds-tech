@@ -9,7 +9,7 @@ import BuildImage from "../../ui/BuildImage"
 import Container from "../../ui/Container"
 import LayoutDefault from "../../ui/LayoutDefault"
 import Stacker from "../../ui/Stacker"
-import * as SC from "./build-page.styles"
+import * as S from "./build-page.styles"
 import Glow from "./glow.component"
 import Tabs from "./tabs.component"
 import BlueprintJsonTab from "./tabs/blueprint-json-tab.component"
@@ -89,19 +89,19 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
   }, [build.latest_version.hash, payload.data])
 
   const buildImage = (
-    <SC.BuildImage>
+    <S.BuildImage>
       {build._links.cover ? (
-        <SC.ImageWrapper role="button" onClick={toggleZoomedImage}>
+        <S.ImageWrapper role="button" onClick={toggleZoomedImage}>
           <BuildImage image={build._links.cover} />
-        </SC.ImageWrapper>
+        </S.ImageWrapper>
       ) : (
         "No image"
       )}
-    </SC.BuildImage>
+    </S.BuildImage>
   )
 
   return (
-    <SC.LayoutWrapper>
+    <S.LayoutWrapper>
       <LayoutDefault title={build.title}>
         <BuildHeader build={build} payload={payload} />
 
@@ -113,21 +113,21 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           isZoomedIn={zoomedImage}
           before={
             zoomedImage ? (
-              <SC.ZoomedImage>
+              <S.ZoomedImage>
                 <Container size="medium">
                   {buildImage}
-                  <SC.GlowWrapper>
+                  <S.GlowWrapper>
                     <Glow color1="blue" color2="green" color3="red" />
-                  </SC.GlowWrapper>
+                  </S.GlowWrapper>
                 </Container>
-              </SC.ZoomedImage>
+              </S.ZoomedImage>
             ) : undefined
           }
           aside={
             <Stacker orientation="vertical" gutter={16}>
               {build._links.edit && (
                 <Link href={`/${build.owner.username}/${build.slug}/edit`}>
-                  <SC.EditBuild>{"edit build"}</SC.EditBuild>
+                  <S.EditBuild>{"edit build"}</S.EditBuild>
                 </Link>
               )}
               {!zoomedImage && buildImage}
@@ -135,7 +135,7 @@ function BuildPage({ build, router }: IBuildPageProps): JSX.Element {
           }
         />
       </LayoutDefault>
-    </SC.LayoutWrapper>
+    </S.LayoutWrapper>
   )
 }
 

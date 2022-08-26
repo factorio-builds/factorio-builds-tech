@@ -7,7 +7,7 @@ import { IThinBuild } from "../../../types/models"
 import BuildIcon from "../BuildIcon"
 import BuildImage from "../BuildImage"
 import RichText from "../RichText"
-import * as SC from "./build-card.styles"
+import * as S from "./build-card.styles"
 
 interface IBuildCardProps {
   title: IThinBuild["title"]
@@ -39,18 +39,18 @@ function BuildCard({
 
   return (
     <Link href={link}>
-      <SC.BuildCardWrapper
+      <S.BuildCardWrapper
         {...pressProps}
         {...restProps}
         role="button"
         tabIndex={tabIndex}
         className={cx({ "is-pressed": isPressed })}
       >
-        <SC.ImageWrapper>
+        <S.ImageWrapper>
           <BuildImage image={image} />
-        </SC.ImageWrapper>
-        <SC.Content>
-          <SC.Title orientation="horizontal" gutter={8}>
+        </S.ImageWrapper>
+        <S.Content>
+          <S.Title orientation="horizontal" gutter={8}>
             {icons.length > 0 && <BuildIcon icons={icons} />}
             <RichText
               input={title}
@@ -60,14 +60,14 @@ function BuildCard({
                 ) : undefined
               }
             />
-          </SC.Title>
-          <SC.Categories orientation="horizontal" gutter={8}>
+          </S.Title>
+          <S.Categories orientation="horizontal" gutter={8}>
             {categories.map((category) => {
-              return <SC.Category key={category}>{category}</SC.Category>
+              return <S.Category key={category}>{category}</S.Category>
             })}
-          </SC.Categories>
-        </SC.Content>
-      </SC.BuildCardWrapper>
+          </S.Categories>
+        </S.Content>
+      </S.BuildCardWrapper>
     </Link>
   )
 }

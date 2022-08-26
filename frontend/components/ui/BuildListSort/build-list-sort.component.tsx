@@ -9,7 +9,7 @@ import Caret from "../../../icons/caret"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { useAppDispatch } from "../../../redux/store"
 import { ESortDirection, ESortType } from "../../../types"
-import * as SC from "./build-list-sort.styles"
+import * as S from "./build-list-sort.styles"
 
 interface IBuildListSortProps {
   sort: {
@@ -65,16 +65,16 @@ const SortDropdown: React.FC<{
   )
 
   return (
-    <SC.SortDropdownWapper ref={overlayRef} {...overlayProps}>
-      <SC.DropdownTrigger {...pressProps}>
+    <S.SortDropdownWapper ref={overlayRef} {...overlayProps}>
+      <S.DropdownTrigger {...pressProps}>
         {props.selected.name} <Caret color={COLOR.FADEDBLUE900} />
-      </SC.DropdownTrigger>
+      </S.DropdownTrigger>
       {isOpen && (
-        <SC.DropdownMenu>
+        <S.DropdownMenu>
           {Object.keys(sortOptions).map((key) => {
             const typedKey = key as keyof typeof sortOptions
             return (
-              <SC.DropdownItem
+              <S.DropdownItem
                 key={typedKey}
                 className={cx({
                   "is-selected": typedKey === props.selected.key,
@@ -85,12 +85,12 @@ const SortDropdown: React.FC<{
                 }}
               >
                 {sortOptions[typedKey].name}
-              </SC.DropdownItem>
+              </S.DropdownItem>
             )
           })}
-        </SC.DropdownMenu>
+        </S.DropdownMenu>
       )}
-    </SC.SortDropdownWapper>
+    </S.SortDropdownWapper>
   )
 }
 
@@ -109,7 +109,7 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
   }
 
   return (
-    <SC.BuildListSortWrapper>
+    <S.BuildListSortWrapper>
       Sorted by
       <SortDropdown
         handleSelect={set}
@@ -117,7 +117,7 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
       >
         {sortOptions[sort.type].name}
       </SortDropdown>
-    </SC.BuildListSortWrapper>
+    </S.BuildListSortWrapper>
   )
 }
 

@@ -1,13 +1,12 @@
-import styled from "styled-components"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 
-export const InnerLink = styled.div`
-  display: inline-block;
-  cursor: pointer;
-  color: ${COLOR.FADEDBLUE900};
-  text-decoration: none;
-`
+export const InnerLink = styled("div", {
+  display: "inline-block",
+  cursor: "pointer",
+  color: "$fadedBlue900",
+  textDecoration: "none",
+})
 
-export const InnerLinkLogOff = styled(InnerLink as any)`
-  color: ${COLOR.DANGER};
-`
+export const InnerLinkLogOff = styled(InnerLink, {
+  color: "$danger",
+})

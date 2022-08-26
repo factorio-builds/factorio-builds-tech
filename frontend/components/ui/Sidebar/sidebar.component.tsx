@@ -1,7 +1,7 @@
 import React from "react"
 import { HEADER_HEIGHT } from "../../../design/tokens/layout"
 import { useAppSelector } from "../../../redux/store"
-import * as SC from "./sidebar.styles"
+import * as S from "./sidebar.styles"
 
 interface ISidebarProps {
   children: React.ReactNode
@@ -13,13 +13,13 @@ function Sidebar(props: ISidebarProps): JSX.Element {
   )
 
   return (
-    <SC.SidebarWrapper
+    <S.SidebarWrapper
       role="search"
       style={{ "--headerHeight": `${headerHeight}px` } as React.CSSProperties}
     >
-      <SC.SidebarContent>{props.children}</SC.SidebarContent>
-      <SC.SidebarBG />
-    </SC.SidebarWrapper>
+      <S.SidebarContent>{props.children}</S.SidebarContent>
+      <S.SidebarBG />
+    </S.SidebarWrapper>
   )
 }
 

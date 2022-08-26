@@ -8,7 +8,7 @@ import Avatar from "../Avatar"
 import BuildImage from "../BuildImage"
 import Stacker from "../Stacker"
 import Tooltip from "../Tooltip"
-import * as SC from "./build-list.styles"
+import * as S from "./build-list.styles"
 
 interface IBuildListProps {
   items: IThinBuild[]
@@ -42,47 +42,47 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
   }
 
   return (
-    <SC.BuildListWrapper>
+    <S.BuildListWrapper>
       <Stacker gutter={4}>
-        <SC.Title orientation="horizontal" gutter={8}>
+        <S.Title orientation="horizontal" gutter={8}>
           <span>Builds by </span>
           <Avatar username={router.query.user as string} size="large" />
           <b>{router.query.user}</b>
-        </SC.Title>
+        </S.Title>
 
-        <SC.Subtitle>
+        <S.Subtitle>
           <b>{items.length}</b> builds
-        </SC.Subtitle>
+        </S.Subtitle>
       </Stacker>
 
       {items.length ? (
-        <SC.Table>
+        <S.Table>
           <thead>
             <tr>
               <th></th>
               <th>
-                <SC.Sort onClick={() => toggleSort("title")}>
+                <S.Sort onClick={() => toggleSort("title")}>
                   {sortBy.key === "title" && (
                     <Caret inverted={sortBy.direction === "asc"} />
                   )}
                   Build title
-                </SC.Sort>
+                </S.Sort>
               </th>
               <th>
-                <SC.Sort onClick={() => toggleSort("created_at")}>
+                <S.Sort onClick={() => toggleSort("created_at")}>
                   {sortBy.key === "created_at" && (
                     <Caret inverted={sortBy.direction === "asc"} />
                   )}
                   Created at
-                </SC.Sort>
+                </S.Sort>
               </th>
               <th>
-                <SC.Sort onClick={() => toggleSort("updated_at")}>
+                <S.Sort onClick={() => toggleSort("updated_at")}>
                   {sortBy.key === "updated_at" && (
                     <Caret inverted={sortBy.direction === "asc"} />
                   )}
                   Updated at
-                </SC.Sort>
+                </S.Sort>
               </th>
             </tr>
           </thead>
@@ -123,11 +123,11 @@ const BuildList: React.FC<IBuildListProps> = ({ items }) => {
                 </tr>
               ))}
           </tbody>
-        </SC.Table>
+        </S.Table>
       ) : (
         "No builds"
       )}
-    </SC.BuildListWrapper>
+    </S.BuildListWrapper>
   )
 }
 

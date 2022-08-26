@@ -13,7 +13,7 @@ import { MenuTriggerProps } from "@react-types/menu"
 import { CollectionChildren, Node, FocusStrategy } from "@react-types/shared"
 import cx from "classnames"
 import Caret from "../../../icons/caret"
-import * as SC from "./dropdown.styles"
+import * as S from "./dropdown.styles"
 
 type TUknownObject = Record<string, unknown>
 
@@ -53,13 +53,13 @@ function MenuButton(props: IMenuButton): JSX.Element {
   const { buttonProps } = useButton(menuTriggerProps, ref)
 
   return (
-    <SC.StyledMenuButton>
-      <SC.MenuTrigger {...buttonProps} ref={ref}>
-        <SC.InnerMenuTrigger orientation="horizontal" gutter={10}>
+    <S.StyledMenuButton>
+      <S.MenuTrigger {...buttonProps} ref={ref}>
+        <S.InnerMenuTrigger orientation="horizontal" gutter={10}>
           {props.triggerElement}
           <Caret aria-hidden="true" />
-        </SC.InnerMenuTrigger>
-      </SC.MenuTrigger>
+        </S.InnerMenuTrigger>
+      </S.MenuTrigger>
       {state.isOpen && (
         <MenuPopup
           {...props}
@@ -69,7 +69,7 @@ function MenuButton(props: IMenuButton): JSX.Element {
           onClose={() => state.close()}
         />
       )}
-    </SC.StyledMenuButton>
+    </S.StyledMenuButton>
   )
 }
 
@@ -102,10 +102,7 @@ function MenuPopup(props: IMenuProps) {
     <FocusScope restoreFocus>
       <div {...overlayProps} ref={overlayRef}>
         <DismissButton onDismiss={props.onClose} />
-        <SC.StyledMenuPopup
-          {...mergeProps(menuProps, props.domProps)}
-          ref={ref}
-        >
+        <S.StyledMenuPopup {...mergeProps(menuProps, props.domProps)} ref={ref}>
           {[...state.collection].map((item) => (
             <MenuItem
               key={item.key}
@@ -115,7 +112,7 @@ function MenuPopup(props: IMenuProps) {
               onClose={props.onClose}
             />
           ))}
-        </SC.StyledMenuPopup>
+        </S.StyledMenuPopup>
         <DismissButton onDismiss={props.onClose} />
       </div>
     </FocusScope>
@@ -150,13 +147,13 @@ function MenuItem({ item, state, onAction, onClose }: IMenuItem) {
   const { focusProps } = useFocus({ onFocusChange: setFocused })
 
   return (
-    <SC.StyledMenuItem
+    <S.StyledMenuItem
       {...mergeProps(menuItemProps, focusProps)}
       ref={ref}
       className={cx({ "is-focused": isFocused })}
     >
       {item.rendered}
-    </SC.StyledMenuItem>
+    </S.StyledMenuItem>
   )
 }
 

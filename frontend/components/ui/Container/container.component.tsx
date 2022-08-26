@@ -1,6 +1,6 @@
 import React from "react"
 import cx from "classnames"
-import * as SC from "./container.styles"
+import * as S from "./container.styles"
 
 interface IContainerProps {
   children: React.ReactNode
@@ -14,7 +14,7 @@ function Container({
   size = "large",
 }: IContainerProps): JSX.Element {
   return (
-    <SC.ContainerWrapper
+    <S.ContainerWrapper
       className={cx({
         "dir-row": direction === "row",
         "dir-column": direction !== "row",
@@ -24,7 +24,7 @@ function Container({
       })}
     >
       {children}
-    </SC.ContainerWrapper>
+    </S.ContainerWrapper>
   )
 }
 

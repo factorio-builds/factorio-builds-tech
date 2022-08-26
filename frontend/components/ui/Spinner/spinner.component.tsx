@@ -1,9 +1,9 @@
 import React from "react"
-import * as SC from "./spinner.styles"
+import * as S from "./spinner.styles"
 
 const Spinner: React.FC = () => (
   <div>
-    <SC.SpinnerWrapper />
+    <S.SpinnerWrapper />
   </div>
 )
 

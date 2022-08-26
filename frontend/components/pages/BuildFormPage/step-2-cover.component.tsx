@@ -9,7 +9,7 @@ import ImageUpload from "../../ui/ImageUpload"
 import { IImageUpload } from "../../ui/ImageUpload/image-upload.component"
 import Stacker from "../../ui/Stacker"
 import { IFormValues } from "./build-form-page.d"
-import * as SC from "./build-form-page.styles"
+import * as S from "./build-form-page.styles"
 
 interface IStep2CoverProps {
   formikProps: FormikProps<IFormValues>
@@ -58,7 +58,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
         />
 
         {props.formikProps.values.cover.type === "file" && (
-          <SC.CoverWrapper>
+          <S.CoverWrapper>
             <ImageUpload
               imageFile={props.formikProps.values.cover.file || null}
               imageUrl={props.formikProps.values.cover.url || null}
@@ -70,7 +70,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
                   {props.formikProps.errors.cover.file}
                 </ErrorMessage>
               )}
-          </SC.CoverWrapper>
+          </S.CoverWrapper>
         )}
 
         <Radio
@@ -86,7 +86,7 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
         />
 
         {props.formikProps.values.cover.type === "hash" && (
-          <SC.RenderedCovers>
+          <S.RenderedCovers>
             {isBook(props.payloadData) ? (
               <div>
                 <BlueprintItemExplorer
@@ -98,11 +98,11 @@ const Step2Cover: React.FC<IStep2CoverProps> = (props) => {
                 </BlueprintItemExplorer>
               </div>
             ) : (
-              <SC.Rendered>
+              <S.Rendered>
                 <img src={props.payloadData._links.rendering?.href} alt="" />
-              </SC.Rendered>
+              </S.Rendered>
             )}
-          </SC.RenderedCovers>
+          </S.RenderedCovers>
         )}
       </Stacker>
     </Stacker>

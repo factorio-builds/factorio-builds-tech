@@ -2,14 +2,14 @@ import React from "react"
 import tags from "../../../tags.json"
 import Stacker from "../Stacker"
 import FilterGroup from "./filter-group.component"
-import * as SC from "./filter-list.styles"
+import * as S from "./filter-list.styles"
 
 // TODO: typesafe the tags JSON
 
 function FilterList(): JSX.Element {
   return (
-    <SC.FilterListWrapper>
-      <SC.Title>Filter builds</SC.Title>
+    <S.FilterListWrapper>
+      <S.Title>Filter builds</S.Title>
       <Stacker gutter={0}>
         {Object.keys(tags).map((tagCategory) => {
           const tagGroup = tags[tagCategory as keyof typeof tags]
@@ -26,7 +26,7 @@ function FilterList(): JSX.Element {
           )
         })}
       </Stacker>
-    </SC.FilterListWrapper>
+    </S.FilterListWrapper>
   )
 }
 

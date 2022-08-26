@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { IBlueprintPayload } from "../../../types/models"
 import Stacker from "../Stacker"
-import * as SC from "./blueprint-required-items.styles"
+import * as S from "./blueprint-required-items.styles"
 
 const countAndSort = (
   items: IBlueprintPayload["entities"] | IBlueprintPayload["tiles"]
@@ -22,11 +22,11 @@ const countAndSort = (
 
 const RequiredItem: React.FC<{ itemName: string; count: number }> = (props) => {
   return (
-    <SC.WithRequiredItem orientation="horizontal" gutter={5}>
-      <SC.IconImg type="item" name={props.itemName} />
+    <S.WithRequiredItem orientation="horizontal" gutter={5}>
+      <S.IconImg type="item" name={props.itemName} />
       <span>{props.itemName.replace(/-/g, " ")}</span>
       <span>× {props.count}</span>
-    </SC.WithRequiredItem>
+    </S.WithRequiredItem>
   )
 }
 
