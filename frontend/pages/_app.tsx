@@ -59,7 +59,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="theme-color" content="#1a161d" />
       </Head>
       {globalStyles()}
-      <MediaContextProvider>
+      <MediaContextProvider disableDynamicMediaQueries>
         <SSRProvider>
           <Component {...pageProps} />
         </SSRProvider>
