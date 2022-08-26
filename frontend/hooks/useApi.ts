@@ -1,8 +1,7 @@
-import { useSelector } from "react-redux"
-import { AxiosRequestConfig } from "axios"
+import { AxiosRequestConfig, AxiosRequestHeaders } from "axios"
 import useAxios, { Options } from "axios-hooks"
 import getConfig from "next/config"
-import { IStoreState } from "../redux/store"
+import { useAppSelector } from "../redux/store"
 import { IProblemDetails } from "../types/models"
 
 const { publicRuntimeConfig } = getConfig()
@@ -20,19 +19,22 @@ const isManual = (config: AxiosRequestConfig, options?: Options) => {
 }
 
 export function useApi<T = any>(config: AxiosRequestConfig, options?: Options) {
-  const accessToken = useSelector(
-    (store: IStoreState) => store.auth?.user?.accessToken
-  )
+  const accessToken = useAppSelector((store) => store.auth?.user?.accessToken)
+
+  const headers: AxiosRequestHeaders = {
+    ...config.headers,
+    "content-type": config?.headers?.["content-type"] || "application/json",
+  }
+
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`
+  }
 
   return useAxios<T, IProblemDetails>(
     {
       ...config,
       baseURL: publicRuntimeConfig.apiUrl,
-      headers: {
-        ...config.headers,
-        "content-type": config?.headers?.["content-type"] || "application/json",
-        Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
-      },
+      headers,
     },
     {
       manual: isManual(config, options),

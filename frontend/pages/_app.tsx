@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-import { useSelector } from "react-redux"
 import { SSRProvider } from "@react-aria/ssr"
 import { withApplicationInsights } from "next-applicationinsights"
 import type { AppProps } from "next/app"
@@ -11,7 +10,7 @@ import { ThemeProvider } from "styled-components"
 import { GlobalStyle } from "../design/styles/global-style"
 import { MediaContextProvider } from "../design/styles/media"
 import { theme } from "../design/styles/theme"
-import { IStoreState, TStore, wrapper } from "../redux/store"
+import { TStore, useAppSelector, wrapper } from "../redux/store"
 import auth, { login, sync as syncAuth } from "../utils/auth"
 import { axios } from "../utils/axios"
 
@@ -25,7 +24,7 @@ declare module "next/dist/next-server/lib/utils" {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const user = useSelector((store: IStoreState) => store.auth.user)
+  const user = useAppSelector((store) => store.auth.user)
 
   useEffect(() => {
     axios.defaults.paramsSerializer = (params) =>

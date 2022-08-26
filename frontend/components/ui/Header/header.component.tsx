@@ -1,17 +1,16 @@
 import React, { useCallback } from "react"
-import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { Media } from "../../../design/styles/media"
 import Burger from "../../../icons/burger"
-import { IStoreState } from "../../../redux/store"
+import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Container from "../Container"
 import UserDropdown from "../UserDropdown"
 import * as SC from "./header.styles"
 
 const Header = React.forwardRef<HTMLElement>(function Header(_, ref) {
-  const dispatch = useDispatch()
-  const user = useSelector((state: IStoreState) => state.auth.user)
+  const dispatch = useAppDispatch()
+  const user = useAppSelector((state) => state.auth.user)
   const router = useRouter()
 
   const toggleSidebar = useCallback(() => {

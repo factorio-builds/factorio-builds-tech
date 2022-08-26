@@ -1,6 +1,5 @@
 import React from "react"
-import { useSelector } from "react-redux"
-import { IStoreState } from "../../../redux/store"
+import { useAppSelector } from "../../../redux/store"
 import BuildCardList from "../../ui/BuildCardList"
 import FilterList from "../../ui/FilterList"
 import LayoutSidebar from "../../ui/LayoutSidebar"
@@ -9,7 +8,7 @@ import Search from "../../ui/Search"
 import Stacker from "../../ui/Stacker"
 
 function BuildListPage(): JSX.Element {
-  const { search, sort } = useSelector((store: IStoreState) => ({
+  const { search, sort } = useAppSelector((store) => ({
     search: store.search,
     sort: store.filters.sort,
   }))

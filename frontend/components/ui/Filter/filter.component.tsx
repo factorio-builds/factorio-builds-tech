@@ -1,8 +1,8 @@
 import React from "react"
-import { useDispatch } from "react-redux"
 import upperFirst from "lodash/upperFirst"
 import { ITag } from "../../../redux/reducers/filters"
 import { searchBuildsAsync } from "../../../redux/reducers/search"
+import { useAppDispatch } from "../../../redux/store"
 import Checkbox from "../../form/Checkbox"
 
 interface IFilterProps {
@@ -14,7 +14,7 @@ interface IFilterProps {
 }
 
 function Filter(props: IFilterProps): JSX.Element {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   function toggleChecked(): void {
     dispatch({

@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from "react"
-import { useSelector } from "react-redux"
 import startCase from "lodash/startCase"
 import { ITag } from "../../../redux/reducers/filters"
-import { IStoreState } from "../../../redux/store"
+import { useAppSelector } from "../../../redux/store"
 import Filter from "../Filter"
 import * as SC from "./filter-list.styles"
 
@@ -12,7 +11,7 @@ interface IFilterGroupProps {
 }
 
 function FilterGroup(props: IFilterGroupProps): JSX.Element {
-  const tags = useSelector((store: IStoreState) =>
+  const tags = useAppSelector((store) =>
     store.filters.tags.filter(
       (tag) => tag.group === props.name && props.nodes.includes(tag.name)
     )

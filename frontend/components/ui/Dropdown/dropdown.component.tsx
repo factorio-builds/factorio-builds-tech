@@ -36,7 +36,7 @@ interface IMenuProps extends TreeProps<TUknownObject> {
 interface IMenuButton
   extends Omit<IDropdownProps, "children">,
     MenuTriggerProps {
-  trigger: React.ReactNode
+  triggerElement: React.ReactNode
   children: CollectionChildren<TUknownObject>
   onAction: (key?: any) => void
 }
@@ -56,7 +56,7 @@ function MenuButton(props: IMenuButton): JSX.Element {
     <SC.StyledMenuButton>
       <SC.MenuTrigger {...buttonProps} ref={ref}>
         <SC.InnerMenuTrigger orientation="horizontal" gutter={10}>
-          {props.trigger}
+          {props.triggerElement}
           <Caret aria-hidden="true" />
         </SC.InnerMenuTrigger>
       </SC.MenuTrigger>
@@ -164,7 +164,7 @@ function Dropdown({ children, ...restProps }: IDropdownProps): JSX.Element {
   return (
     <MenuButton
       {...restProps}
-      trigger={children}
+      triggerElement={children}
       onAction={(index) => restProps.links[index].action()}
     >
       {restProps.links.map((link, index) => (

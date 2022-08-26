@@ -102,7 +102,7 @@ const Step1: React.FC<IStep1Props> = (props) => {
     }
 
     const res = await execute({
-      data: JSON.stringify({ encoded }),
+      data: { encoded },
     }).catch((err) => {
       // TODO: handle error
       console.error(err)

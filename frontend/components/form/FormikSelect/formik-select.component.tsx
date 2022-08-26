@@ -3,7 +3,7 @@ import ReactSelect, { Props as ReactSelectProps } from "react-select"
 import { FieldProps } from "formik"
 import { COLOR } from "../../../design/tokens/color"
 
-interface ISelect extends ReactSelectProps, FieldProps {
+interface ISelect extends Omit<ReactSelectProps, "form">, FieldProps {
   id: string
   placeholder: string
 }

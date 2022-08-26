@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return {
       props: { build: JSON.parse(JSON.stringify(build)) },
     }
-  } catch (err) {
+  } catch (err: any) {
     return { props: { errors: err.message } }
   }
 }

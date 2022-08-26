@@ -1,3 +1,4 @@
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux"
 import { createWrapper, HYDRATE, MakeStore } from "next-redux-wrapper"
 import {
   createStore,
@@ -8,7 +9,7 @@ import {
   Store,
 } from "redux"
 import { composeWithDevTools } from "redux-devtools-extension"
-import thunk from "redux-thunk"
+import thunk, { ThunkDispatch } from "redux-thunk"
 import reducers from "./reducer"
 import { IStoreAuthState, TAuthAction } from "./reducers/auth"
 import { IStoreFiltersState, TFiltersAction } from "./reducers/filters"
@@ -71,6 +72,12 @@ const makeStore: MakeStore<TStore> = () => {
 
   return store
 }
+
+// TStore["dispatch"]
+type AppDispatch = ThunkDispatch<IStoreState, undefined, TAction>
+
+export const useAppDispatch: () => AppDispatch = useDispatch
+export const useAppSelector: TypedUseSelectorHook<IStoreState> = useSelector
 
 export const wrapper = createWrapper<TStore>(makeStore, {
   debug: process.env.DEBUG_REDUX === "true",

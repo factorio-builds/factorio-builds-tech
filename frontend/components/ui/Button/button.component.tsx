@@ -3,7 +3,7 @@ import cx from "classnames"
 import * as SC from "./button.styles"
 
 export interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
-  as?: React.ElementType | keyof JSX.IntrinsicElements
+  as?: keyof JSX.IntrinsicElements
   variant?: "success" | "alt" | "cta" | "default"
   size?: "medium" | "small"
   counter?: React.ReactText
