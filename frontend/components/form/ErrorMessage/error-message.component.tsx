@@ -1,6 +1,10 @@
 import * as S from "./error-message.styles"
 
-const ErrorMessage: React.FC = (props) => {
+interface ErrorMessageProps {
+  children: React.ReactNode
+}
+
+const ErrorMessage: React.FC<ErrorMessageProps> = (props) => {
   return <S.ErrorMessageWrapper>{props.children}</S.ErrorMessageWrapper>
 }
 

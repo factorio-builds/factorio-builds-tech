@@ -4,6 +4,7 @@ import Stacker from "../../ui/Stacker"
 import * as S from "./input-group.styles"
 
 interface IInputGroup {
+  children?: React.ReactNode
   legend: string | JSX.Element
   error?: any
 }

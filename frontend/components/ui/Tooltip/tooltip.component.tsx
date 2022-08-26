@@ -2,7 +2,8 @@ import React from "react"
 import * as S from "./tooltip.styles"
 
 interface ITooltipProps {
-  content: JSX.Element | React.ReactText
+  children: React.ReactNode
+  content: React.ReactNode
 }
 
 const Tooltip: React.FC<ITooltipProps> = ({ children, content }) => {

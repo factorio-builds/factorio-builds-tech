@@ -8,6 +8,7 @@ import * as S from "./build-page.styles"
 import { TPayload } from "./usePayload"
 
 export type ITabComponentProps = {
+  children?: React.ReactNode
   build: IFullBuild
   isActive: boolean
   payload: TPayload

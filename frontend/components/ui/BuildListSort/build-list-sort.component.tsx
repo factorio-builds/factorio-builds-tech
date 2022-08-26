@@ -45,6 +45,7 @@ const sortOptions: ISortOptions = {
 const SortDropdown: React.FC<{
   handleSelect: (sortType: ESortType, sortDirection: ESortDirection) => void
   selected: { key: ESortType; name: string }
+  children: React.ReactNode
 }> = (props) => {
   const [isOpen, setIsOpen] = useToggle(false)
   const { pressProps } = usePress({

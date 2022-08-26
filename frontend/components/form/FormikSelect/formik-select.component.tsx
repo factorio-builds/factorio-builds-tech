@@ -3,7 +3,12 @@ import ReactSelect, { Props as ReactSelectProps } from "react-select"
 import { FieldProps } from "formik"
 import { COLOR } from "../../../design/tokens/color"
 
-interface ISelect extends Omit<ReactSelectProps, "form">, FieldProps {
+interface IOption {
+  value: string
+  label: string
+}
+
+interface ISelect extends Omit<ReactSelectProps<IOption>, "form">, FieldProps {
   id: string
   placeholder: string
 }
@@ -17,6 +22,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
       return null
     }
 
+    // @ts-ignore
     return props.options.find((option) => option.value === field.value)
   }, [field.value])
 
@@ -26,6 +32,7 @@ const Select: React.FC<ISelect> = ({ field, form, ...props }) => {
       options={props.options}
       menuPlacement="auto"
       onChange={(fieldValue) => {
+        // @ts-ignore
         const value = fieldValue ? fieldValue.value : null
         form.setFieldValue(field.name, value)
       }}
