@@ -1,13 +1,11 @@
-import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
 
-export const BuildListLookupStatWrapper = styled.div`
-  ${getTypo(ETypo.BODY)};
-  font-size: 16px;
-`
+export const BuildListLookupStatWrapper = styled("div", getTypo(ETypo.BODY), {
+  fontSize: "16px",
+})
 
-export const Count = styled.div`
-  color: ${COLOR.FADEDBLUE700};
-`
+export const Count = styled("div", {
+  color: "$fadedBlue700",
+})

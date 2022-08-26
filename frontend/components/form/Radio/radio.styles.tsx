@@ -1,83 +1,79 @@
-import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
 
-export const Square = styled.div`
-  position: relative;
-  box-sizing: border-box;
-  background: ${COLOR.INPUT};
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: 2px solid ${COLOR.FADEDBLUE500};
+export const Square = styled("div", {
+  position: "relative",
+  boxSizing: "border-box",
+  background: "$input",
+  width: "34px",
+  height: "34px",
+  borderRadius: "50%",
+  border: "2px solid $fadedBlue500",
 
-  &::after {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    right: 3px;
-    bottom: 3px;
-    border-radius: 50%;
-    background: transparent;
-  }
-`
+  "&::after": {
+    content: "",
+    position: "absolute",
+    top: "3px",
+    left: "3px",
+    right: "3px",
+    bottom: "3px",
+    borderRadius: "50%",
+    background: "transparent",
+  },
+})
 
-export const HiddenRadio = styled.input`
-  display: none;
-`
+export const HiddenRadio = styled("input", {
+  display: "none",
+})
 
-export const Label = styled.label`
-  ${getTypo(ETypo.FORM_LABEL)};
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+export const Label = styled("label", getTypo(ETypo.FORM_LABEL), {
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
 
-  &.is-inline {
-    font-weight: 400;
-  }
-`
+  "&.is-inline": {
+    fontWeight: 400,
+  },
+})
 
-export const RadioWrapper = styled.div`
-  display: flex;
+export const RadioWrapper = styled("div", {
+  display: "flex",
 
-  &:hover ${Square} {
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
-  }
+  [`&:hover ${Square}`]: {
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.2)",
+  },
 
-  &:hover ${Square}::after {
-    background: ${COLOR.FADEDBLUE500};
-  }
+  [`&:hover ${Square}::after`]: {
+    background: "$fadedBlue500",
+  },
 
-  &:focus-within ${Square} {
-    box-shadow: 0 0 0 3px ${COLOR.FOCUSED};
-    outline: none;
-  }
+  [`&:focus-within ${Square}`]: {
+    boxShadow: "0 0 0 3px $focused",
+    outline: "none",
+  },
 
-  &.is-checked ${Square}::after {
-    background: ${COLOR.SELECTED};
-  }
+  [`&.is-checked ${Square}::after`]: {
+    background: "$selected",
+  },
 
-  .is-error ${Square} {
-    border-color: ${COLOR.DANGER} !important;
-  }
-`
+  [`.is-error ${Square}`]: {
+    borderColor: "$danger !important",
+  },
+})
 
-export const Text = styled.div`
-  ${getTypo(ETypo.FORM_LABEL)};
-  display: flex;
-  align-items: center;
-  margin-left: 12px;
-`
+export const Text = styled("div", getTypo(ETypo.FORM_LABEL), {
+  display: "flex",
+  alignitems: "center",
+  marginLeft: "12px",
+})
 
-export const Prefix = styled.div`
-  display: flex;
-  width: 24px;
-  margin-right: 12px;
+export const Prefix = styled("div", {
+  display: "flex",
+  width: "24px",
+  marginRight: "12px",
 
-  & img,
-  & svg {
-    width: 100%;
-  }
-`
+  "& img, & svg": {
+    width: "100%",
+  },
+})

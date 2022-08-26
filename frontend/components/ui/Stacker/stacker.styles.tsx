@@ -1,21 +1,18 @@
-import styled from "styled-components"
+import { styled } from "../../../design/stitches.config"
 
-export const StackerWrapper = styled.div<{ gutter: number }>`
-  display: flex;
+export const StackerWrapper = styled("div", {
+  display: "flex",
+  gap: "var(--gutter)",
 
-  &.dir-horizontal {
-    flex-direction: row;
-  }
+  variants: {
+    orientation: {
+      horizontal: {
+        flexDirection: "row",
+      },
 
-  &.dir-horizontal > * + * {
-    margin-left: ${(props) => props.gutter}px;
-  }
-
-  &.dir-vertical {
-    flex-direction: column;
-  }
-
-  &.dir-vertical > * + * {
-    margin-top: ${(props) => props.gutter}px;
-  }
-`
+      vertical: {
+        flexDirection: "column",
+      },
+    },
+  },
+})

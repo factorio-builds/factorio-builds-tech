@@ -1,18 +1,16 @@
-import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
 
-export const StyledInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+export const StyledInputGroup = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+})
 
-export const Legend = styled.div`
-  ${getTypo(ETypo.FORM_LABEL)};
-  color: ${COLOR.FADEDBLUE900};
+export const Legend = styled("div", getTypo(ETypo.FORM_LABEL), {
+  color: "$fadedBlue900",
 
-  span {
-    font-weight: 400;
-  }
-`
+  span: {
+    fontWeight: 400,
+  },
+})

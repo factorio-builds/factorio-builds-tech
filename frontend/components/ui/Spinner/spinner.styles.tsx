@@ -1,49 +1,44 @@
-import styled from "styled-components"
+import { styled, keyframes } from "../../../design/stitches.config"
 
-export const SpinnerWrapper = styled.div`
-  & {
-    color: #fff;
-    font-size: 3px;
-    position: relative;
-    transform: translateZ(0);
-    animation-delay: -0.16s;
-    margin: 0 3.5em;
-  }
+const loading = keyframes({
+  "0%, 80%, 100%": {
+    boxShadow: "0 2.5em 0 -1.3em",
+    "40%": {
+      boxShadow: "0 2.5em 0 0",
+    },
+  },
+})
 
-  &,
-  &:before,
-  &:after {
-    border-radius: 50%;
-    width: 2.5em;
-    height: 2.5em;
-    animation-fill-mode: both;
-    animation: loading 1.8s infinite ease-in-out;
-  }
+export const SpinnerWrapper = styled("div", {
+  "&": {
+    color: "#fff",
+    fontSize: "3px",
+    position: "relative",
+    transform: "translateZ(0)",
+    animationDelay: "-0.16s",
+    margin: "0 3.5em",
+  },
 
-  &:before,
-  &:after {
-    content: "";
-    position: absolute;
-    top: 0;
-  }
+  "&, &:before, &:after": {
+    borderRadius: "50%",
+    width: "2.5em",
+    height: "2.5em",
+    animationFillMode: "both",
+    animation: `${loading} 1.8s infinite ease-in-out`,
+  },
 
-  &:before {
-    left: -3.5em;
-    animation-delay: -0.32s;
-  }
+  "&:before, &:after": {
+    content: "",
+    position: "absolute",
+    top: 0,
+  },
 
-  &:after {
-    left: 3.5em;
-  }
+  "&:before": {
+    left: "-3.5em",
+    animationDelay: "-0.32s",
+  },
 
-  @keyframes loading {
-    0%,
-    80%,
-    100% {
-      box-shadow: 0 2.5em 0 -1.3em;
-    }
-    40% {
-      box-shadow: 0 2.5em 0 0;
-    }
-  }
-`
+  "&:after": {
+    left: "3.5em",
+  },
+})

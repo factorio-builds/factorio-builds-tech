@@ -1,5 +1,4 @@
 import React from "react"
-import cx from "classnames"
 import * as SC from "./stacker.styles"
 
 interface IStackerProps extends React.ComponentPropsWithoutRef<"div"> {
@@ -17,11 +16,11 @@ function Stacker({
   return (
     <SC.StackerWrapper
       {...restProps}
-      gutter={gutter}
-      className={cx(restProps.className, {
-        "dir-horizontal": orientation === "horizontal",
-        "dir-vertical": orientation !== "horizontal",
-      })}
+      css={{
+        "--gutter": `${gutter}px`,
+      }}
+      orientation={orientation}
+      className={restProps.className}
     >
       {children}
     </SC.StackerWrapper>

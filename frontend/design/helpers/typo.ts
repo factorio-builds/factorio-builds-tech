@@ -1,4 +1,5 @@
-import { css, FlattenSimpleInterpolation } from "styled-components"
+import { CssComponent } from "@stitches/react/types/styled-component"
+import { css } from "../stitches.config"
 import { EFontScale, ETypo, TYPO } from "../tokens/typo"
 
 function typoMapper(typo: ETypo): EFontScale {
@@ -24,34 +25,18 @@ function typoMapper(typo: ETypo): EFontScale {
   }
 }
 
-function getStyles(fontScale: EFontScale): FlattenSimpleInterpolation {
+function getStyles(fontScale: EFontScale) {
   const styles = TYPO[fontScale]
 
-  return css`
-    font-size: ${styles.SIZE};
-    line-height: ${styles.LINE_HEIGHT};
-    font-weight: ${styles.WEIGHT};
-    font-family: ${styles.FAMILY};
-  `
-}
-
-function getRawStyles(fontScale: EFontScale): React.CSSProperties {
-  const styles = TYPO[fontScale]
-
-  return {
+  return css({
     fontSize: styles.SIZE,
     lineHeight: styles.LINE_HEIGHT,
     fontWeight: styles.WEIGHT,
     fontFamily: styles.FAMILY,
-  }
+  })
 }
 
-export function getTypo(typo: ETypo): FlattenSimpleInterpolation {
+export function getTypo(typo: ETypo): CssComponent {
   const mappedTypo = typoMapper(typo)
   return getStyles(mappedTypo)
-}
-
-export function getRawTypo(typo: ETypo): React.CSSProperties {
-  const mappedTypo = typoMapper(typo)
-  return getRawStyles(mappedTypo)
 }

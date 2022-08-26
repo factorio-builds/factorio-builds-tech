@@ -119,7 +119,9 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
 
   return (
     <SC.BlueprintItemWrapper
-      depth={props.depth}
+      css={{
+        marginLeft: `${props.depth > 0 ? 40 : 0}px`,
+      }}
       className={cx({
         "is-expanded": expanded,
         "is-highlighted":
@@ -151,7 +153,7 @@ function BlueprintItem(props: IBlueprintItemProps): JSX.Element {
               {!props.isBook &&
                 bpItemExplorer.type === "readOnly" &&
                 (props.raw || props.encoded) && (
-                  <SC.Buttons>
+                  <SC.Buttons gutter={8} orientation="horizontal">
                     {!props.isBook && props.raw && (
                       <Link href={props.raw.href} passHref>
                         <Button as="a" variant="default" size="small">

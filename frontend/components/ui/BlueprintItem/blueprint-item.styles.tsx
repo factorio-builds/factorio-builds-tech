@@ -1,139 +1,126 @@
-import { lighten } from "polished"
-import styled from "styled-components"
 import { getTypo } from "../../../design/helpers/typo"
-import { COLOR } from "../../../design/tokens/color"
+import { styled } from "../../../design/stitches.config"
 import { ETypo } from "../../../design/tokens/typo"
 import Button from "../Button"
-import { ButtonWrapper } from "../Button/button.styles"
 import Stacker from "../Stacker"
 
-export const BlueprintItemWrapper = styled.div<{ depth: number }>`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-  margin-left: ${(props) => (props.depth > 0 ? 40 : 0)}px;
-`
+export const BlueprintItemWrapper = styled("div", {
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-end",
+  overflow: "hidden",
+})
 
-export const BlueprintItemInner = styled.div``
+export const BlueprintItemInner = styled("div")
 
-export const ImageWrapper = styled.div`
-  width: 200px;
+export const ImageWrapper = styled("div", {
+  width: "200px",
 
-  img {
-    cursor: zoom-in;
-  }
+  img: {
+    cursor: "zoom-in",
+  },
 
-  img.is-zoomed {
-    cursor: zoom-out;
-  }
-`
+  "img.is-zoomed": {
+    cursor: "zoom-out",
+  },
+})
 
-export const SpinnerWrapper = styled.div`
-  background: ${COLOR.FADEDBLUE100};
-  height: 200px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
+export const SpinnerWrapper = styled("div", {
+  background: "$fadedBlue100",
+  height: "200px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+})
 
-export const InnerContent = styled(Stacker)`
-  flex-grow: 1;
-`
+export const InnerContent = styled(Stacker, {
+  flexGrow: 1,
+})
 
-export const Content = styled.div`
-  padding: 16px;
-  color: ${COLOR.FADEDBLUE900};
-  margin: 4px 0;
-  background: ${COLOR.CARD};
-  border-radius: 5px;
-  border: 2px solid ${COLOR.CARD};
+export const Content = styled("div", {
+  padding: "16px",
+  color: "$fadedBlue900",
+  margin: "4px 0",
+  background: "$card",
+  borderRadius: "5px",
+  border: "2px solid $card",
 
-  .is-highlighted & {
-    border: 2px solid ${COLOR.SELECTED} !important;
-  }
-`
+  ".is-highlighted &": {
+    border: "2px solid $selected !important",
+  },
+})
 
-export const Buttons = styled.div`
-  display: flex;
-  margin: 16px -4px 0;
+export const Buttons = styled(Stacker, {
+  display: "flex",
+  marginTop: "16px",
+})
 
-  ${ButtonWrapper} {
-    margin: 4px;
-  }
-`
+export const ZoomedImage = styled("div", {
+  marginTop: "16px",
 
-export const ZoomedImage = styled.div`
-  margin-top: 16px;
+  [`${ImageWrapper}, img`]: {
+    width: "100%",
+  },
+})
 
-  ${ImageWrapper},
-  img {
-    width: 100%;
-  }
-`
+export const Info = styled("div", {
+  display: "flex",
+  gap: "16px",
+  marginTop: "16px",
+  color: "$fadedBlue900",
+})
 
-export const Info = styled.div`
-  display: flex;
-  gap: 16px;
-  margin-top: 16px;
-  color: ${COLOR.FADEDBLUE900};
-`
+export const Title = styled(Stacker, getTypo(ETypo.CARD_TITLE), {
+  lineHeight: 1.1,
+  display: "flex",
+  alignItems: "center",
+  minHeight: "28px",
 
-export const Title = styled(Stacker)`
-  ${getTypo(ETypo.CARD_TITLE)};
-  line-height: 1.1;
-  display: flex;
-  align-items: center;
-  min-height: 28px;
+  a: {
+    color: "#fff",
+  },
+})
 
-  a {
-    color: #fff;
-  }
-`
+export const Meta = styled("small", {
+  color: "$fadedBlue500",
+  fontWeight: 400,
+})
 
-export const Meta = styled.small`
-  color: ${COLOR.FADEDBLUE500};
-  font-weight: 400;
-`
+export const Expand = styled("button", {
+  margin: 0,
+  border: 0,
+  padding: 0,
+  background: "transparent",
+  color: "$link",
+  marginLeft: "auto !important",
+  cursor: "pointer",
+  flex: "0 0 auto",
 
-export const Expand = styled.button`
-  margin: 0;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: ${COLOR.LINK};
-  margin-left: auto !important;
-  cursor: pointer;
-  flex: 0 0 auto;
+  "&:hover": {
+    color: "${lighten(0.05, COLOR.LINK)}",
+  },
+})
 
-  &:hover {
-    color: ${lighten(0.05, COLOR.LINK)};
-  }
-`
+export const Expanded = styled("div")
 
-export const Expanded = styled.div``
+export const Description = styled("p", {
+  margin: 0,
+  fontSize: "15px",
 
-export const Description = styled.p`
-  margin: 0;
-  font-size: 15px;
+  "& + &": {
+    margin: "16px 0 0 0",
+  },
+})
 
-  & + & {
-    margin: 16px 0 0 0;
-  }
-`
+export const RequiredItems = styled("div")
 
-export const RequiredItems = styled.div`
-  //
-`
+export const Subtitle = styled("h3", getTypo(ETypo.METADATA_TITLE), {
+  fontSize: "16px",
+  marginTop: 0,
+})
 
-export const Subtitle = styled.h3`
-  ${getTypo(ETypo.METADATA_TITLE)};
-  font-size: 16px;
-  margin-top: 0;
-`
-
-export const SelectRenderButton = styled(Button)`
-  margin-top: 8px;
-  align-self: flex-end;
-`
+export const SelectRenderButton = styled(Button, {
+  marginTop: "8px",
+  alignSelf: "flex-end",
+})
