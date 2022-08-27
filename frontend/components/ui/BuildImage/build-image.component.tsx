@@ -21,7 +21,8 @@ interface IBuildImageProps {
 function BuildImage({ image }: IBuildImageProps): JSX.Element {
   const imageRef = useRef<HTMLImageElement | null>(null)
   const observerRef = useRef<ResizeObserver | null>(null)
-  const { error } = useImage(image.href)
+  const imageHref = `${image.href}?width=500&format=jpg&quality=75`
+  const { error } = useImage(imageHref)
 
   const srcSet = useMemo(() => {
     return generateSrcSet(image.href)
@@ -72,7 +73,7 @@ function BuildImage({ image }: IBuildImageProps): JSX.Element {
         {!error && (
           <img
             // TODO: use the upcoming blur as the default image
-            src={`${image.href}?width=500&format=jpg&quality=75`}
+            src={imageHref}
             ref={imageRef}
             style={{ width: "100%", height: "auto" }}
             alt=""
