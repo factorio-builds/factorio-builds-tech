@@ -1,5 +1,4 @@
-import { useState } from "react"
-import cx from "classnames"
+import React from "react"
 import * as S from "./input.styles"
 
 interface ITextProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -36,22 +35,21 @@ const Text: React.FC<ITextProps> = ({
   onKeyPress,
   ...restProps
 }) => {
-  const [focused, setFocused] = useState(false)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
-  function setFocus(): void {
-    setFocused(true)
-  }
-
-  function clearFocus(): void {
-    setFocused(false)
+  function focus(): void {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
   }
 
   return (
-    <S.StyledInputWrapper className={cx({ "is-focused": focused })}>
+    <S.StyledInputWrapper onClick={focus}>
       {customPrefix && <S.Prefix>{customPrefix}</S.Prefix>}
       {icon}
       <S.StyledInput
         {...restProps}
+        ref={inputRef}
         id={id}
         name={name}
         value={value}
@@ -60,8 +58,6 @@ const Text: React.FC<ITextProps> = ({
         readOnly={readOnly}
         onChange={onChange}
         onKeyPress={onKeyPress}
-        onFocus={setFocus}
-        onBlur={clearFocus}
       />
     </S.StyledInputWrapper>
   )
