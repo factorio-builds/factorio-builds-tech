@@ -49,7 +49,7 @@ export const RadioWrapper = styled("div", {
   },
 
   [`&:focus-within ${Square}`]: {
-    boxShadow: "0 0 0 3px $focused",
+    boxShadow: "0 0 0 3px $colors$focused",
     outline: "none",
   },
 
