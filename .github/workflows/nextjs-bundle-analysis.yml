@@ -9,10 +9,6 @@ on:
       - frontend/**
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./frontend
-
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -35,22 +31,26 @@ jobs:
         env:
           cache-name: cache-next-build
         with:
-          path: .next/cache
+          path: frontend/.next/cache
           key: ${{ runner.os }}-build-${{ env.cache-name }}
 
       - name: Build next.js app
         run: yarn build
+        with:
+          working-directory: ./frontend
 
       # Here's the first place where next-bundle-analysis' own script is used
       # This step pulls the raw bundle stats for the current bundle
       - name: Analyze bundle
         run: npx -p nextjs-bundle-analysis report
+        with:
+          working-directory: ./frontend
 
       - name: Upload bundle
         uses: actions/upload-artifact@v2
         with:
           name: bundle
-          path: .next/analyze/__bundle_analysis.json
+          path: frontend/.next/analyze/__bundle_analysis.json
 
       - name: Download base branch bundle stats
         uses: dawidd6/action-download-artifact@v2
@@ -58,7 +58,7 @@ jobs:
         with:
           workflow: nextjs-bundle-analysis.yml
           branch: ${{ github.event.pull_request.base.ref }}
-          path: .next/analyze/base
+          path: frontend/.next/analyze/base
 
       # And here's the second place - this runs after we have both the current and
       # base branch bundle stats, and will compare them to determine what changed.
@@ -75,13 +75,13 @@ jobs:
       # entry in your package.json file.
       - name: Compare with base branch bundle
         if: success() && github.event.number
-        run: ls -laR .next/analyze/base && npx -p nextjs-bundle-analysis compare
+        run: ls -laR frontend/.next/analyze/base && npx -p nextjs-bundle-analysis compare
 
       - name: Get comment body
         id: get-comment-body
         if: success() && github.event.number
         run: |
-          body=$(cat .next/analyze/__bundle_analysis_comment.txt)
+          body=$(cat frontend/.next/analyze/__bundle_analysis_comment.txt)
           body="${body//'%'/'%25'}"
           body="${body//$'\n'/'%0A'}"
           body="${body//$'\r'/'%0D'}"
