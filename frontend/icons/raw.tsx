@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useUID } from "react-uid"
 import { COLOR } from "../design/tokens/color"
 
 interface IRawProps extends React.SVGProps<SVGSVGElement> {
@@ -10,7 +9,7 @@ const Raw = ({
   color = COLOR.FADEDBLUE700,
   ...restProps
 }: IRawProps): JSX.Element => {
-  const uid = useUID()
+  const uid = React.useId()
   const id = `raw-${uid}`
 
   return (

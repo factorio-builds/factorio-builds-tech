@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useUID } from "react-uid"
 import { COLOR } from "../design/tokens/color"
 
 interface IGithubProps extends React.SVGProps<SVGSVGElement> {
@@ -10,7 +9,7 @@ const GitHub = ({
   color = COLOR.FADEDBLUE700,
   ...restProps
 }: IGithubProps): JSX.Element => {
-  const uid = useUID()
+  const uid = React.useId()
   const id = `github-${uid}`
 
   return (
