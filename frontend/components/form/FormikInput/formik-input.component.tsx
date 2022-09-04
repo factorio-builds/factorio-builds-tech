@@ -1,10 +1,15 @@
 import React from "react"
 import { FieldProps, useField } from "formik"
+import dynamic from "next/dynamic"
 import Input from "../Input"
+
+const DynamicMarkdownEditor = dynamic(() => import("../MarkdownEditor"), {
+  ssr: false,
+})
 
 interface IFormikInputProps extends FieldProps {
   id: string
-  type: "text" | "textarea"
+  type: "text" | "textarea" | "markdown"
   spellCheck?: boolean
   readOnly?: boolean
   onKeyPress?: (
@@ -33,6 +38,20 @@ const FormikInput: React.FC<IFormikInputProps> = ({
         value={field.value}
         spellCheck={restProps.spellCheck}
         readOnly={restProps.readOnly}
+      />
+    )
+  }
+
+  if (type === "markdown") {
+    return (
+      <DynamicMarkdownEditor
+        id={id}
+        name={field.name}
+        value={field.value}
+        onChange={(value) => {
+          restProps.form.setFieldValue(field.name, value)
+          restProps.form.setFieldTouched(field.name)
+        }}
       />
     )
   }

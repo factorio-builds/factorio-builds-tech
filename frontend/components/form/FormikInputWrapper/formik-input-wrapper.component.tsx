@@ -10,7 +10,7 @@ interface IFormikInputProps extends FieldProps {
   label: string
   prefix: JSX.Element
   placeholder: string
-  type: "text" | "textarea" | "checkbox" | "select"
+  type: "text" | "textarea" | "markdown" | "checkbox" | "select"
   size: "small" | "large"
   required?: boolean
   spellCheck?: boolean
@@ -55,7 +55,7 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
       validFeedback={isTouched && !error ? props.validFeedback : undefined}
       uid={uid}
     >
-      {(type === "text" || type === "textarea") && (
+      {(type === "text" || type === "textarea" || type === "markdown") && (
         <FormikInput
           {...props}
           {...formikProps}

@@ -2214,12 +2214,31 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
+"@types/codemirror@0.0.109":
+  version "0.0.109"
+  resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-0.0.109.tgz#89d575ff1c7b462c4c3b8654f8bb38e5622e9036"
+  integrity sha512-cSdiHeeLjvGn649lRTNeYrVCDOgDrtP+bDDSFDd1TF+i0jKGPDRozno2NOJ9lTniso+taiv4kiVS8dgM8Jm5lg==
+  dependencies:
+    "@types/tern" "*"
+
+"@types/codemirror@^5.60.4":
+  version "5.60.5"
+  resolved "https://registry.yarnpkg.com/@types/codemirror/-/codemirror-5.60.5.tgz#5b989a3b4bbe657458cf372c92b6bfda6061a2b7"
+  integrity sha512-TiECZmm8St5YxjFUp64LK0c8WU5bxMDt9YaAek1UqUb9swrSCoJhh92fWu1p3mTEqlHjhB5sY7OFBhWroJXZVg==
+  dependencies:
+    "@types/tern" "*"
+
 "@types/debug@^4.0.0":
   version "4.1.7"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.7.tgz#7cc0ea761509124709b8b2d1090d8f6c17aadb82"
   integrity sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==
   dependencies:
     "@types/ms" "*"
+
+"@types/estree@*":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.0.tgz#5fb2e536c1ae9bf35366eed879e827fa59ca41c2"
+  integrity sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ==
 
 "@types/graceful-fs@^4.1.3":
   version "4.1.5"
@@ -2311,6 +2330,16 @@
   version "4.14.184"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.184.tgz#23f96cd2a21a28e106dc24d825d4aa966de7a9fe"
   integrity sha512-RoZphVtHbxPZizt4IcILciSWiC6dcn+eZ8oX9IWEYfDMcocdd42f7NPI6fQj+6zI8y4E0L7gu2pcZKLGTRaV9Q==
+
+"@types/marked@^2.0.2":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-2.0.5.tgz#453e27f1e97199d45bb25297b0dd2b9bbc1e05ea"
+  integrity sha512-shRZ7XnYFD/8n8zSjKvFdto1QNSf4tONZIlNEZGrJe8GsOE8DL/hG1Hbl8gZlfLnjS7+f5tZGIaTgfpyW38h4w==
+
+"@types/marked@^4.0.1":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-4.0.6.tgz#9ca544c1057f3c8b3f649b5e8e56d9241e3ca22d"
+  integrity sha512-ITAVUzsnVbhy5afxhs4PPPbrv2hKVEDH5BhhaQNQlVG0UNu+9A18XSdYr53nBdHZ0ADEQLl+ciOjXbs7eHdiQQ==
 
 "@types/mdast@^3.0.0":
   version "3.0.10"
@@ -2420,6 +2449,13 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
+
+"@types/tern@*":
+  version "0.23.4"
+  resolved "https://registry.yarnpkg.com/@types/tern/-/tern-0.23.4.tgz#03926eb13dbeaf3ae0d390caf706b2643a0127fb"
+  integrity sha512-JAUw1iXGO1qaWwEOzxTKJZ/5JxVeON9kvGZ/osgZaJImBnyjyn0cjovPsf6FNLmyGY8Vw9DoXZCMlfMkMwHRWg==
+  dependencies:
+    "@types/estree" "*"
 
 "@types/text-encoding@^0.0.36":
   version "0.0.36"
@@ -2979,6 +3015,18 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==
 
+codemirror-spell-checker@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/codemirror-spell-checker/-/codemirror-spell-checker-1.1.2.tgz#1c660f9089483ccb5113b9ba9ca19c3f4993371e"
+  integrity sha512-2Tl6n0v+GJRsC9K3MLCdLaMOmvWL0uukajNJseorZJsslaxZyZMgENocPU8R0DyoTAiKsyqiemSOZo7kjGV0LQ==
+  dependencies:
+    typo-js "*"
+
+codemirror@^5.63.1:
+  version "5.65.8"
+  resolved "https://registry.yarnpkg.com/codemirror/-/codemirror-5.65.8.tgz#50f145ba7eb725091110c31f3a7c1fdef6bdc721"
+  integrity sha512-TNGkSkkoAsmZSf6W6g35LMVQJBHKasc2CKwhr/fTxSYun7cn6J+CbtyNjV/MYlFVkNTsqZoviegyCZimWhoMMA==
+
 collect-v8-coverage@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/collect-v8-coverage/-/collect-v8-coverage-1.0.1.tgz#cc2c8e94fc18bbdffe64d6534570c8a673b27f59"
@@ -3262,6 +3310,17 @@ dotenv@^16.0.1:
   version "16.0.1"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.1.tgz#8f8f9d94876c35dac989876a5d3a82a267fdce1d"
   integrity sha512-1K6hR6wtk2FviQ4kEiSjFiH5rpzEVi8WW0x96aztHVMhEspNpc4DVOUTEHtEva5VThQ8IaBX1Pe4gSzpVVUsKQ==
+
+easymde@^2.17.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/easymde/-/easymde-2.17.0.tgz#07954ec374b2e4f873c505c2b7d82b08e8d7053c"
+  integrity sha512-xerjhBh6G+FDfU2EBfKNEVqawYGqnK2zACKtyQlZKnxPoaesncRbHiSX5Yrf3Ur8KjEX1BvG7Ysccrd8hKTkig==
+  dependencies:
+    "@types/codemirror" "^5.60.4"
+    "@types/marked" "^4.0.1"
+    codemirror "^5.63.1"
+    codemirror-spell-checker "1.1.2"
+    marked "^4.0.18"
 
 electron-to-chromium@^1.4.202:
   version "1.4.232"
@@ -4902,6 +4961,11 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
+marked@^4.0.18:
+  version "4.0.19"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.19.tgz#d36198d1ac1255525153c351c68c75bc1d7aee46"
+  integrity sha512-rgQF/OxOiLcvgUAj1Q1tAf4Bgxn5h5JZTp04Fx4XUkVhs7B+7YA9JEWJhJpoO8eJt8MkZMwqLCNeNqj1bCREZQ==
+
 mdast-util-definitions@^5.0.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/mdast-util-definitions/-/mdast-util-definitions-5.1.1.tgz#2c1d684b28e53f84938bb06317944bee8efa79db"
@@ -5749,9 +5813,9 @@ react-is@^16.13.1, react-is@^16.7.0:
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-is@^17.0.1:
-  version "17.0.2"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
-  integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
+  integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
 
 react-is@^18.0.0:
   version "18.2.0"
@@ -5803,6 +5867,14 @@ react-select@*, react-select@^5.4.0:
     memoize-one "^5.0.0"
     prop-types "^15.6.0"
     react-transition-group "^4.3.0"
+
+react-simplemde-editor@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/react-simplemde-editor/-/react-simplemde-editor-5.0.2.tgz#0e18cdc8f1e15824c595e6328d6808fcbceb75ce"
+  integrity sha512-yaqZSaUBf6B0kQY0mH8WP/nHnvJFz48aO8cMYCL1e/AFiuB/H8UDuyZFP9/exOtwVpaG373HYR1YedKMtCh+Kw==
+  dependencies:
+    "@types/codemirror" "0.0.109"
+    "@types/marked" "^2.0.2"
 
 react-transition-group@^4.3.0:
   version "4.4.5"
@@ -6436,6 +6508,11 @@ typescript@4.8:
   version "4.8.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.2.tgz#e3b33d5ccfb5914e4eeab6699cf208adee3fd790"
   integrity sha512-C0I1UsrrDHo2fYI5oaCGbSejwX4ch+9Y5jTQELvovfmFkK3HHSZJB8MSJcWLmCUBzQBchCrZ9rMRV6GuNrvGtw==
+
+typo-js@*:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/typo-js/-/typo-js-1.2.2.tgz#340484d81fe518e77c81a5a770162b14492f183b"
+  integrity sha512-C7pYBQK17EjSg8tVNY91KHdUt5Nf6FMJ+c3js076quPmBML57PmNMzAcIq/2kf/hSYtFABNDIYNYlJRl5BJhGw==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"

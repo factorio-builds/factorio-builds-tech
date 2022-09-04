@@ -120,7 +120,7 @@ const Step2Data: React.FC<IStep2DataProps> = (props) => {
       <Field
         name="description"
         label="Description"
-        type="textarea"
+        type="markdown"
         rows="5"
         component={Input}
       />
