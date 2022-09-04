@@ -1,8 +1,7 @@
 import * as React from "react"
-import { useUID } from "react-uid"
 
 const Lamp = (props: React.SVGProps<SVGSVGElement>): JSX.Element => {
-  const uid = useUID()
+  const uid = React.useId()
   const id = `lamp-${uid}`
 
   return (

@@ -1,5 +1,4 @@
 import React from "react"
-import { useUID } from "react-uid"
 import { FieldProps } from "formik"
 import FormikCheckbox from "../FormikCheckbox"
 import FormikInput from "../FormikInput"
@@ -32,7 +31,7 @@ const FormikInputWrapper: React.FC<IFormikInputProps> = ({
   onKeyPress,
   ...props
 }) => {
-  const uid = useUID()
+  const uid = React.useId()
 
   const isTouched = form.touched[field.name]
   const error = isTouched && form.errors[field.name]
