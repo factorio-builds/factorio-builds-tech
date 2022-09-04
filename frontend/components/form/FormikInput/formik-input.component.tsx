@@ -49,7 +49,7 @@ const FormikInput: React.FC<IFormikInputProps> = ({
         name={field.name}
         value={field.value}
         onChange={(value) => {
-          field.onChange(value)
+          restProps.form.setFieldValue(field.name, value)
           restProps.form.setFieldTouched(field.name)
         }}
       />
