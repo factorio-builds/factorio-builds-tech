@@ -1,7 +1,11 @@
 import React from "react"
 import { FieldProps, useField } from "formik"
+import dynamic from "next/dynamic"
 import Input from "../Input"
-import MarkdownEditor from "../MarkdownEditor"
+
+const DynamicMarkdownEditor = dynamic(() => import("../MarkdownEditor"), {
+  ssr: false,
+})
 
 interface IFormikInputProps extends FieldProps {
   id: string
@@ -40,7 +44,7 @@ const FormikInput: React.FC<IFormikInputProps> = ({
 
   if (type === "markdown") {
     return (
-      <MarkdownEditor
+      <DynamicMarkdownEditor
         id={id}
         name={field.name}
         value={field.value}
