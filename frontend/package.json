@@ -32,7 +32,6 @@
     "next-applicationinsights": "^1.0.4",
     "next-redux-wrapper": "^7.0.5",
     "pako": "^2.0.4",
-    "polished": "^4.2.2",
     "qs": "^6.11.0",
     "react": "^18.2.0",
     "react-aria": "^3.19.0",
