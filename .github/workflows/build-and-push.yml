@@ -50,7 +50,7 @@ jobs:
         run: diff frontend/tags.json backend/tags.json
 
       - name: Build backend base image
-        uses: docker/build-push-action@v2.4.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -73,7 +73,7 @@ jobs:
             --verbosity normal --logger trx --filter Type=Fast
 
       - name: Build and push - fbsr-wrapper
-        uses: docker/build-push-action@v2.4.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./fbsr-wrapper
           file: ./fbsr-wrapper/Dockerfile
@@ -90,7 +90,7 @@ jobs:
             org.opencontainers.image.ref.name=${{ github.ref }}
 
       - name: Build and push - web
-        uses: docker/build-push-action@v2.4.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
@@ -110,7 +110,7 @@ jobs:
             org.opencontainers.image.ref.name=${{ github.ref }}
 
       - name: Build and push - api
-        uses: docker/build-push-action@v2.4.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -131,7 +131,7 @@ jobs:
             org.opencontainers.image.ref.name=${{ github.ref }}
 
       - name: Build and push - identity
-        uses: docker/build-push-action@v2.4.0
+        uses: docker/build-push-action@v3.2.0
         with:
           context: ./backend
           file: ./backend/Dockerfile
