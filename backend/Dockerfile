@@ -42,7 +42,7 @@ RUN dotnet build --no-restore --configuration Release /p:DebugType=None \
 ENTRYPOINT [ "dotnet" ]
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 as identity
+FROM mcr.microsoft.com/dotnet/aspnet:7.0.0 as identity
 ENV ASPNETCORE_URLS=http://*:8080
 EXPOSE 8080
 WORKDIR /app
@@ -50,7 +50,7 @@ COPY --from=build /app/publish/identity .
 ENTRYPOINT [ "dotnet", "FactorioTech.Identity.dll" ]
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 as api
+FROM mcr.microsoft.com/dotnet/aspnet:7.0.0 as api
 ENV ASPNETCORE_URLS=http://*:8080
 EXPOSE 8080
 WORKDIR /app
