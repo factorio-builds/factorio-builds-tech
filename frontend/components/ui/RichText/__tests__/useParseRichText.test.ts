@@ -12,6 +12,12 @@ describe("useParseRichText", () => {
     expect(result.current).toEqual([{ type: "text", value: "simple string" }])
   })
 
+  it("parses an unicode character", () => {
+    const { result } = setupHook("☢")
+
+    expect(result.current).toEqual([{ type: "text", value: "☢" }])
+  })
+
   it("parses a single icon", () => {
     const { result } = setupHook("[item=stone-furnace]")
 
@@ -24,6 +30,15 @@ describe("useParseRichText", () => {
     expect(result.current).toEqual([
       { type: "item", value: "stone-furnace" },
       { type: "item", value: "transport-belt" },
+    ])
+  })
+
+  it("parses an unicode character + icon", () => {
+    const { result } = setupHook("☢ [item=stone-furnace]")
+
+    expect(result.current).toEqual([
+      { type: "text", value: "☢ " },
+      { type: "item", value: "stone-furnace" },
     ])
   })
 
@@ -104,23 +119,45 @@ describe("useParseRichText", () => {
     ])
   })
 
-  it("parses a string inside a color, with multiple colors", () => {
+  it("preserves a unicode variation selector in trailing text after a color", () => {
+    const { result } = setupHook("[color=yellow]a[/color] ️Power")
+
+    expect(result.current).toEqual([
+      {
+        type: "color",
+        value: "yellow",
+        children: [{ type: "text", value: "a" }],
+      },
+      { type: "text", value: " ️Power" },
+    ])
+  })
+
+  it("parses two adjacent colors separated by text", () => {
     const { result } = setupHook(
-      "[color=yellow]☀[/color] ️Power [color=green]☢[/color]"
+      "[color=yellow]a[/color] ️Power [color=green]b[/color]"
     )
 
     expect(result.current).toEqual([
       {
         type: "color",
         value: "yellow",
-        children: [{ type: "text", value: "☀" }],
+        children: [{ type: "text", value: "a" }],
       },
       { type: "text", value: " ️Power " },
       {
         type: "color",
         value: "green",
-        children: [{ type: "text", value: "☢" }],
+        children: [{ type: "text", value: "b" }],
       },
+    ])
+  })
+
+  it("does not infinite loop on a dangling color tag (issue #603)", () => {
+    const { result } = setupHook("[item=rail] My blueprint [color=red]")
+
+    expect(result.current).toEqual([
+      { type: "item", value: "rail" },
+      { type: "text", value: " My blueprint [color=red]" },
     ])
   })
 
