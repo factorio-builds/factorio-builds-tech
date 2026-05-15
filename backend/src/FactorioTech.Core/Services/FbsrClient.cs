@@ -16,6 +16,11 @@ public partial class FbsrClient
         public bool ShowInfoPanels { get; init; } = true;
         public int? MaxWidth { get; init; }
         public int? MaxHeight { get; init; }
+
+        // Tells upstream FBSR's WebAPIService to return the rendered PNG
+        // bytes directly in the response body instead of a JSON envelope
+        // pointing at a hosted image link.
+        public bool ReturnSingleImage { get; init; } = true;
     }
 
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
