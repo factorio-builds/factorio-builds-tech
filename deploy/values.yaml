@@ -10,7 +10,7 @@ replicas:
   web: 1
   api: 1
   identity: 1
-  fbsrWrapper: 1
+  fbsr: 1
 
 postgres:
   image: postgres:13-alpine

@@ -75,16 +75,16 @@ jobs:
             --no-restore --no-build --configuration Release \
             --verbosity normal --logger trx --filter Type=Fast
 
-      - name: Build and push - fbsr-wrapper
+      - name: Build and push - fbsr
         uses: docker/build-push-action@v2.4.0
         with:
-          context: ./fbsr-wrapper
-          file: ./fbsr-wrapper/Dockerfile
+          context: ./fbsr
+          file: ./fbsr/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/fbsr-wrapper:${{ env.version }}
-            ghcr.io/${{ github.repository }}/fbsr-wrapper:ci
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/fbsr-wrapper:ci
+            ghcr.io/${{ github.repository }}/fbsr:${{ env.version }}
+            ghcr.io/${{ github.repository }}/fbsr:ci
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}/fbsr:ci
           cache-to: type=inline
           labels: |
             org.opencontainers.image.version=${{ env.version }}

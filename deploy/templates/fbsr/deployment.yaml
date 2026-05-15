@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+  name: {{ include "factorio-tech.fullname" . }}-fbsr
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
-    app.kubernetes.io/component: fbsr-wrapper
+    app.kubernetes.io/component: fbsr
 spec:
-  replicas: {{ .Values.replicas.fbsrWrapper }}
+  replicas: {{ .Values.replicas.fbsr }}
   selector:
     matchLabels:
       {{- include "factorio-tech.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: fbsr-wrapper
+      app.kubernetes.io/component: fbsr
   template:
     metadata:
       labels:
         {{- include "factorio-tech.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: fbsr-wrapper
+        app.kubernetes.io/component: fbsr
     spec:
       imagePullSecrets:
         - name: default-container-registry
       securityContext:
         fsGroup: 2000
       containers:
-        - name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
-          image: "{{ .Values.imageNamespace }}/fbsr-wrapper:{{ .Chart.AppVersion }}"
+        - name: {{ include "factorio-tech.fullname" . }}-fbsr
+          image: "{{ .Values.imageNamespace }}/fbsr:{{ .Chart.AppVersion }}"
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -50,7 +50,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+            name: {{ include "factorio-tech.fullname" . }}-fbsr
         - name: factorio-data
           azureFile:
             secretName: factorio-data-share

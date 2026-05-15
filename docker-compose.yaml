@@ -114,13 +114,21 @@ services:
       - fbsr
 
   fbsr:
-#    image: ghcr.io/factorio-builds/factorio-builds-tech/fbsr-wrapper:ci
     build:
-      context: fbsr-wrapper
+      context: fbsr
     ports:
       - "8080:8080"
+    environment:
+      FACTORIO_INSTALL: /mnt/factorio
+      MODPORTAL_USERNAME: ${MODPORTAL_USERNAME:-}
+      MODPORTAL_PASSWORD: ${MODPORTAL_PASSWORD:-}
     volumes:
-      - ./.local/volumes/factorio:/mnt/factorio:ro
+      # Factorio install — RW because FBSR shells out to the binary to dump
+      # data.raw on first build (writes under script-output/).
+      - ./.local/volumes/factorio:/mnt/factorio
+      # Cached profiles/build/assets — first boot is heavy, subsequent boots
+      # reuse this volume and skip straight to bot-run.
+      - fbsr-data:/data
       - /etc/localtime:/etc/localtime:ro
 
   postgres:
@@ -140,3 +148,6 @@ services:
       - 10000:10000  # blob
       - 10001:10001  # queue
       - 10002:10002  # table
+
+volumes:
+  fbsr-data:

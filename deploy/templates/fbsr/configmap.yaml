@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "factorio-tech.fullname" . }}-fbsr-wrapper
+  name: {{ include "factorio-tech.fullname" . }}-fbsr
   labels:
     {{- include "factorio-tech.labels" . | nindent 4 }}
-    app.kubernetes.io/component: fbsr-wrapper
+    app.kubernetes.io/component: fbsr
 data:
   config.json: |
     {
