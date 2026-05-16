@@ -1,0 +1,111 @@
+name: Frontend Dependency Stats
+
+on:
+  pull_request:
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-dependency-stats.yml
+      - .github/scripts/collect-frontend-stats.sh
+      - .github/scripts/generate-frontend-stats-report.js
+  push:
+    branches:
+      - main
+    paths:
+      - frontend/**
+      - .github/workflows/frontend-dependency-stats.yml
+      - .github/scripts/collect-frontend-stats.sh
+      - .github/scripts/generate-frontend-stats-report.js
+  workflow_dispatch:
+
+jobs:
+  stats:
+    name: Collect & report
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "16.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+        working-directory: ./frontend
+
+      - name: Restore Next.js build cache
+        uses: actions/cache@v3
+        with:
+          path: frontend/.next/cache
+          key: ${{ runner.os }}-frontend-stats-nextcache-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-stats-nextcache-
+
+      - name: Build
+        run: npm run build
+        working-directory: ./frontend
+
+      - name: Collect stats
+        run: |
+          chmod +x .github/scripts/collect-frontend-stats.sh
+          .github/scripts/collect-frontend-stats.sh
+
+      - name: Upload baseline stats (push to main only)
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dependency-stats-${{ github.ref_name }}
+          path: .github/stats/frontend.json
+          retention-days: 30
+
+      - name: Download baseline stats (PR only)
+        if: github.event_name == 'pull_request'
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: frontend-dependency-stats.yml
+          branch: ${{ github.event.pull_request.base.ref }}
+          name: frontend-dependency-stats-${{ github.event.pull_request.base.ref }}
+          path: stats-baseline
+          if_no_artifact_found: warn
+
+      - name: Generate report
+        id: report
+        run: |
+          mkdir -p stats-current
+          cp .github/stats/frontend.json stats-current/frontend.json
+          if [ -f "stats-baseline/frontend.json" ]; then
+            node .github/scripts/generate-frontend-stats-report.js stats-current stats-baseline > report.md
+          else
+            node .github/scripts/generate-frontend-stats-report.js stats-current > report.md
+          fi
+          {
+            echo "report<<REPORT_EOF"
+            cat report.md
+            echo "REPORT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Find existing comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "<!-- frontend-dependency-stats-report -->"
+
+      - name: Create or update PR comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.report.outputs.report }}
+          edit-mode: replace
