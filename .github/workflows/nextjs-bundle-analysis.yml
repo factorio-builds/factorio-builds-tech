@@ -42,8 +42,7 @@ jobs:
       # This step pulls the raw bundle stats for the current bundle
       - name: Analyze bundle
         run: npx -p nextjs-bundle-analysis report
-        with:
-          working-directory: ./frontend
+        working-directory: ./frontend
 
       - name: Upload bundle
         uses: actions/upload-artifact@v2
