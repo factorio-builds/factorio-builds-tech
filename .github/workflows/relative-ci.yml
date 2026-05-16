@@ -1,0 +1,46 @@
+name: RelativeCI Bundle Analysis
+
+on:
+  pull_request:
+    paths:
+      - frontend/**
+      - .github/workflows/relative-ci.yml
+  push:
+    branches:
+      - main
+    paths:
+      - frontend/**
+      - .github/workflows/relative-ci.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Send bundle stats to RelativeCI
+        uses: relative-ci/agent-action@v3
+        with:
+          webpackStatsFile: ./frontend/webpack-stats.json
+          key: ${{ secrets.RELATIVE_CI_KEY }}
+          token: ${{ secrets.GITHUB_TOKEN }}

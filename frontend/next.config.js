@@ -1,5 +1,19 @@
 /* eslint-disable no-undef */
+const { StatsWriterPlugin } = require("webpack-stats-plugin")
+
 module.exports = {
+  eslint: { ignoreDuringBuilds: true },
+  webpack: (config, { dev, isServer }) => {
+    if (!dev && !isServer) {
+      config.plugins.push(
+        new StatsWriterPlugin({
+          filename: "../webpack-stats.json",
+          stats: { assets: true, chunks: true, modules: true },
+        })
+      )
+    }
+    return config
+  },
   serverRuntimeConfig: {
     clientId: process.env.CLIENT_ID || "frontend",
     clientSecret: process.env.CLIENT_SECRET || "511536EF-F270-4058-80CA-1C89C192F69A",
