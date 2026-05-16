@@ -10,10 +10,8 @@ This project aims to be a website and tool to share and browse [blueprints](http
 
 ### Pre-requisites
 
-- Node (12.19.0)<br />
-  https://nodejs.org/download/release/v12.19.0/ or via `nvm`<br />
-- Yarn<br />
-  https://classic.yarnpkg.com/lang/en/
+- Node 16<br />
+  https://nodejs.org/ or via `nvm`
 
 ### Get started
 
@@ -28,13 +26,13 @@ From the terminal, in the checked out directory:
   `DISCORD_CLIENT_ID=""`<br />
   `DISCORD_CLIENT_SECRET=""`
 - Install dependencies<br />
-  `yarn`
+  `npm install`
 - Start Docker<br />
   `docker-compose -f docker-compose.yml up`
 - Migrate/seed the database<br />
-  `yarn typeorm schema:sync`<br />
-  `yarn db:seed:run`
+  `npm run typeorm schema:sync`<br />
+  `npm run db:seed:run`
 - Start the dev server<br />
-  `yarn dev`
+  `npm run dev`
 
 Having problems with setting up the project? Open an issue!
