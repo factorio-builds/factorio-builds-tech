@@ -50,7 +50,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Ensure tags are in sync
-        run: diff frontend/tags.json backend/tags.json
+        run: diff frontend/src/tags.json backend/tags.json
 
       - name: Build backend base image
         uses: docker/build-push-action@v2.4.0

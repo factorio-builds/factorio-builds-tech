@@ -38,9 +38,13 @@ jobs:
 
       - run: npm run build
 
+      # Vite/Rollup emits a webpack-stats-compatible JSON via
+      # rollup-plugin-webpack-stats (wired in vite.config.ts). The TanStack
+      # Start build produces both a client and a server bundle — only the
+      # client one is what end users download, so that's what we ship.
       - name: Send bundle stats to RelativeCI
         uses: relative-ci/agent-action@v3
         with:
-          webpackStatsFile: ./frontend/webpack-stats.json
+          webpackStatsFile: ./frontend/dist/client/webpack-stats.json
           key: ${{ secrets.RELATIVE_CI_KEY }}
           token: ${{ secrets.GITHUB_TOKEN }}

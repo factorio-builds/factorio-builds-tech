@@ -7,7 +7,7 @@ Guidance for Claude Code when working in this repository.
 Monorepo with three deployable components plus infra:
 
 - **`backend/`** — ASP.NET Core 6, three projects: `FactorioTech.Api` (REST), `FactorioTech.Identity` (Duende IdentityServer), `FactorioTech.Core` (domain + EF). Tests in `backend/test/FactorioTech.Tests`.
-- **`frontend/`** — Next.js + React + TypeScript.
+- **`frontend/`** — TanStack Start + Vite + React + TypeScript. Routes are file-based under `src/routes/`. Stitches for CSS-in-JS. Auth0 via `@auth0/auth0-spa-js` (client) and a server route handler at `src/routes/api/auth.$.ts`.
 - **`fbsr-wrapper/`** — Spring Boot HTTP wrapper around Factorio-FBSR for blueprint rendering.
 - **`infrastructure/`**, **`deploy/`**, **`scripts/`**, **`.local/`** — infra-as-code, deploy configs, dev scripts, local secrets/volumes.
 

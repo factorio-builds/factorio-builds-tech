@@ -16,17 +16,16 @@
 # typescript
 tsconfig.tsbuildinfo
 
-# next.js
-/.next/
-/out/
-webpack-stats.json
-
-# production
+# build output
+/dist
+/.output
+/.tanstack
 /build
 
 # misc
 .DS_Store
 *.pem
+*.log
 public/img/icons
 
 # debug
