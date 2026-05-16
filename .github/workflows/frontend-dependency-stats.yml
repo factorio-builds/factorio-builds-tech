@@ -58,7 +58,8 @@ jobs:
           chmod +x .github/scripts/collect-frontend-stats.sh
           .github/scripts/collect-frontend-stats.sh
 
-      - name: Upload stats artifact
+      - name: Upload baseline stats (push to main only)
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dependency-stats-${{ github.ref_name }}
