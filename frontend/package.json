@@ -2,6 +2,10 @@
   "name": "with-typescript",
   "version": "1.0.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=22 <23",
+    "npm": ">=10 <12"
+  },
   "scripts": {
     "analyze": "ANALYZE=true NODE_ENV=production next build && node scripts/bundle-size.js",
     "build": "next build",

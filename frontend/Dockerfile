@@ -1,8 +1,8 @@
-FROM node:lts-alpine AS build
+FROM node:22-alpine AS build
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 
 COPY . .
@@ -13,7 +13,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 
-FROM node:lts-alpine AS app
+FROM node:22-alpine AS app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

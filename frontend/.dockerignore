@@ -1,4 +1,5 @@
 **/.*
+!.npmrc
 **/*.*proj.user
 **/azds.yaml
 **/charts
