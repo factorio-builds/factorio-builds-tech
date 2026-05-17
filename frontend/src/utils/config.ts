@@ -25,6 +25,10 @@ export const serverRuntimeConfig = {
   clientId: read("CLIENT_ID") ?? "frontend",
   clientSecret:
     read("CLIENT_SECRET") ?? "511536EF-F270-4058-80CA-1C89C192F69A",
+  // HMAC key for the auth transaction + session cookies. Dev default is
+  // intentionally well-known; override COOKIE_SECRET in any deployed env.
+  cookieSecret:
+    read("COOKIE_SECRET") ?? "dev-cookie-secret-change-me-in-prod",
 }
 
 export default function getConfig() {
