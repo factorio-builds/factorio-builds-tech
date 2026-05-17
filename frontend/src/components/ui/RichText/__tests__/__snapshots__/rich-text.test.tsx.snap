@@ -1,0 +1,48 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<RichText /> > parses a title with item icon 1`] = `
+<div>
+  <span
+    class="c-cnxnCS"
+  >
+     
+    <img
+      class="PJLV"
+      data-testid="item-icon"
+      name="transport-belt"
+      src="https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png"
+      type="item"
+    />
+    <span>
+       build name
+    </span>
+  </span>
+</div>
+`;
+
+exports[`<RichText /> > parses a title with multiple item icons 1`] = `
+<div>
+  <span
+    class="c-cnxnCS"
+  >
+     
+    <img
+      class="PJLV"
+      data-testid="item-icon"
+      name="transport-belt"
+      src="https://api.local.factorio.tech/assets/icon/64/item/transport-belt.png"
+      type="item"
+    />
+    <span>
+       build name 
+    </span>
+    <img
+      class="PJLV"
+      data-testid="item-icon"
+      name="fast-transport-belt"
+      src="https://api.local.factorio.tech/assets/icon/64/item/fast-transport-belt.png"
+      type="item"
+    />
+  </span>
+</div>
+`;
