@@ -1,30 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router"
+import * as client from "openid-client"
 import { publicRuntimeConfig, serverRuntimeConfig } from "../../utils/config"
+import { signCookie, verifyCookie } from "../../utils/signed-cookie"
 
-// Auth0/OIDC compat layer that mirrors the four endpoints the Next baseline
-// exposed under /api/auth/[...auth0]:
-//   login    -> 302 to the IdentityServer authorize endpoint
-//   callback -> exchange code for tokens, set a session cookie
-//   logout   -> clear cookie + 302 to IdentityServer end-session endpoint
-//   me       -> return the decoded user from the session cookie
-//
-// Notes / scope:
-// - Uses raw fetch against IdentityServer's well-known OIDC endpoints. The
-//   real @auth0/nextjs-auth0 SDK does the same flow under the hood.
-// - Without OAuth provider secrets configured (.local/secrets/), the
-//   IdentityServer login page won't show GitHub/Discord. The login redirect
-//   still works; the flow just can't complete.
-// - State/PKCE is intentionally omitted for now — IdentityServer accepts the
-//   simple code flow with client_secret. Add PKCE before going to prod.
+// OIDC auth flow against IdentityServer. Four actions under /api/auth/$:
+//   login    -> generates PKCE + state, sets tx cookie, 302 to authorize
+//   callback -> validates state, exchanges code (with PKCE), sets session cookie
+//   logout   -> clears session, 302 to end_session
+//   me       -> returns decoded user from the (signed) session cookie
 
+const TX_COOKIE = "auth_tx"
 const SESSION_COOKIE = "factorio_session"
+const TX_MAX_AGE_S = 600
+const REDIRECT_PATH = "/api/auth/callback"
 
-interface TokenResponse {
+interface TxCookie {
+  state: string
+  code_verifier: string
+}
+
+interface SessionCookie {
   access_token: string
   id_token: string
-  token_type: string
-  expires_in: number
   refresh_token?: string
+  expires_at: number
 }
 
 interface IdTokenClaims {
@@ -35,136 +34,176 @@ interface IdTokenClaims {
   [k: string]: unknown
 }
 
-function b64UrlDecode(s: string): string {
-  const padded = s.replace(/-/g, "+").replace(/_/g, "/")
-  const pad = padded.length % 4 === 0 ? "" : "=".repeat(4 - (padded.length % 4))
-  if (typeof atob === "function") return atob(padded + pad)
-  return Buffer.from(padded + pad, "base64").toString("binary")
-}
+let configPromise: Promise<client.Configuration> | undefined
 
-function decodeJwt(token: string): IdTokenClaims | null {
-  try {
-    const [, payload] = token.split(".")
-    return JSON.parse(b64UrlDecode(payload)) as IdTokenClaims
-  } catch {
-    return null
+function getOidcConfig(): Promise<client.Configuration> {
+  if (!configPromise) {
+    configPromise = client.discovery(
+      new URL(publicRuntimeConfig.identityUrl),
+      serverRuntimeConfig.clientId,
+      undefined,
+      client.ClientSecretPost(serverRuntimeConfig.clientSecret)
+    )
   }
+  return configPromise
 }
 
-function readSessionCookie(request: Request): TokenResponse | null {
+function redirectUri(): string {
+  return `${publicRuntimeConfig.webUrl}${REDIRECT_PATH}`
+}
+
+function readCookie(request: Request, name: string): string | null {
   const header = request.headers.get("cookie") ?? ""
   for (const part of header.split(/;\s*/)) {
-    if (part.startsWith(`${SESSION_COOKIE}=`)) {
-      try {
-        return JSON.parse(
-          decodeURIComponent(part.slice(SESSION_COOKIE.length + 1))
-        ) as TokenResponse
-      } catch {
-        return null
-      }
+    if (part.startsWith(`${name}=`)) {
+      return decodeURIComponent(part.slice(name.length + 1))
     }
   }
   return null
 }
 
-function setSessionCookie(tokens: TokenResponse): string {
-  const value = encodeURIComponent(JSON.stringify(tokens))
-  // SameSite=Lax so the cookie is sent on the post-login redirect back from
-  // the identity server. HttpOnly so JS can't read access tokens.
+function setCookieHeader(name: string, value: string, maxAgeSeconds: number): string {
   return [
-    `${SESSION_COOKIE}=${value}`,
+    `${name}=${encodeURIComponent(value)}`,
     "Path=/",
     "HttpOnly",
     "SameSite=Lax",
-    `Max-Age=${tokens.expires_in ?? 3600}`,
+    `Max-Age=${maxAgeSeconds}`,
   ].join("; ")
 }
 
-function clearSessionCookie(): string {
-  return `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+function clearCookieHeader(name: string): string {
+  return `${name}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`
+}
+
+function decodeIdTokenPayload(idToken: string): IdTokenClaims | null {
+  // The session cookie's HMAC signature is our integrity check — the id_token
+  // inside was already JWKS-verified by openid-client at callback time.
+  try {
+    const [, payload] = idToken.split(".")
+    const padded = payload.replace(/-/g, "+").replace(/_/g, "/")
+    const pad = padded.length % 4 === 0 ? "" : "=".repeat(4 - (padded.length % 4))
+    return JSON.parse(atob(padded + pad)) as IdTokenClaims
+  } catch {
+    return null
+  }
 }
 
 async function handleLogin(): Promise<Response> {
-  const authorize = new URL("/connect/authorize", publicRuntimeConfig.identityUrl)
-  authorize.searchParams.set("client_id", serverRuntimeConfig.clientId)
-  authorize.searchParams.set("response_type", "code")
-  authorize.searchParams.set("scope", "openid profile email api offline_access")
-  authorize.searchParams.set(
-    "redirect_uri",
-    `${publicRuntimeConfig.webUrl}/api/auth/callback`
+  const config = await getOidcConfig()
+  const code_verifier = client.randomPKCECodeVerifier()
+  const code_challenge = await client.calculatePKCECodeChallenge(code_verifier)
+  const state = client.randomState()
+
+  const url = client.buildAuthorizationUrl(config, {
+    redirect_uri: redirectUri(),
+    scope: "openid profile email api offline_access",
+    code_challenge,
+    code_challenge_method: "S256",
+    state,
+  })
+
+  const txCookie = await signCookie<TxCookie>(
+    { state, code_verifier },
+    serverRuntimeConfig.cookieSecret
   )
-  return Response.redirect(authorize.toString(), 302)
+
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: url.toString(),
+      "set-cookie": setCookieHeader(TX_COOKIE, txCookie, TX_MAX_AGE_S),
+    },
+  })
 }
 
 async function handleCallback(request: Request): Promise<Response> {
-  const url = new URL(request.url)
-  const code = url.searchParams.get("code")
-  if (!code) {
-    return new Response("Missing authorization code", { status: 400 })
+  const signedTx = readCookie(request, TX_COOKIE)
+  if (!signedTx) {
+    return new Response("Missing auth transaction cookie", { status: 400 })
+  }
+  const tx = await verifyCookie<TxCookie>(
+    signedTx,
+    serverRuntimeConfig.cookieSecret
+  )
+  if (!tx) {
+    return new Response("Invalid auth transaction cookie", { status: 400 })
   }
 
-  const tokenUrl = new URL("/connect/token", publicRuntimeConfig.identityUrl)
-  const body = new URLSearchParams({
-    grant_type: "authorization_code",
-    code,
-    client_id: serverRuntimeConfig.clientId,
-    client_secret: serverRuntimeConfig.clientSecret,
-    redirect_uri: `${publicRuntimeConfig.webUrl}/api/auth/callback`,
-  })
+  const config = await getOidcConfig()
+  const tokens = await client.authorizationCodeGrant(
+    config,
+    new URL(request.url),
+    {
+      expectedState: tx.state,
+      pkceCodeVerifier: tx.code_verifier,
+    }
+  )
 
-  const res = await fetch(tokenUrl, {
-    method: "POST",
-    headers: { "content-type": "application/x-www-form-urlencoded" },
-    body,
-  })
-
-  if (!res.ok) {
-    const text = await res.text()
-    return new Response(`Token exchange failed: ${text}`, { status: 502 })
+  if (!tokens.id_token) {
+    return new Response("Token response missing id_token", { status: 502 })
   }
 
-  const tokens = (await res.json()) as TokenResponse
+  const session: SessionCookie = {
+    access_token: tokens.access_token,
+    id_token: tokens.id_token,
+    refresh_token: tokens.refresh_token,
+    expires_at: Math.floor(Date.now() / 1000) + (tokens.expires_in ?? 3600),
+  }
+  const signedSession = await signCookie<SessionCookie>(
+    session,
+    serverRuntimeConfig.cookieSecret
+  )
+
+  const headers = new Headers({ Location: publicRuntimeConfig.webUrl })
+  headers.append(
+    "set-cookie",
+    setCookieHeader(SESSION_COOKIE, signedSession, tokens.expires_in ?? 3600)
+  )
+  headers.append("set-cookie", clearCookieHeader(TX_COOKIE))
+
+  return new Response(null, { status: 302, headers })
+}
+
+async function handleLogout(request: Request): Promise<Response> {
+  const config = await getOidcConfig()
+  const signedSession = readCookie(request, SESSION_COOKIE)
+  const session = signedSession
+    ? await verifyCookie<SessionCookie>(
+        signedSession,
+        serverRuntimeConfig.cookieSecret
+      )
+    : null
+
+  const url = client.buildEndSessionUrl(config, {
+    post_logout_redirect_uri: publicRuntimeConfig.webUrl,
+    ...(session?.id_token ? { id_token_hint: session.id_token } : {}),
+  })
+
   return new Response(null, {
     status: 302,
     headers: {
-      Location: publicRuntimeConfig.webUrl,
-      "set-cookie": setSessionCookie(tokens),
+      Location: url.toString(),
+      "set-cookie": clearCookieHeader(SESSION_COOKIE),
     },
   })
 }
 
-async function handleLogout(): Promise<Response> {
-  const endSession = new URL(
-    "/connect/endsession",
-    publicRuntimeConfig.identityUrl
-  )
-  endSession.searchParams.set(
-    "post_logout_redirect_uri",
-    publicRuntimeConfig.webUrl
-  )
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: endSession.toString(),
-      "set-cookie": clearSessionCookie(),
-    },
-  })
-}
-
-function handleMe(request: Request): Response {
-  const tokens = readSessionCookie(request)
-  if (!tokens) {
-    return new Response(JSON.stringify(null), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    })
+async function handleMe(request: Request): Promise<Response> {
+  const signedSession = readCookie(request, SESSION_COOKIE)
+  if (!signedSession) {
+    return Response.json(null, { status: 401 })
   }
-  const claims = decodeJwt(tokens.id_token)
+  const session = await verifyCookie<SessionCookie>(
+    signedSession,
+    serverRuntimeConfig.cookieSecret
+  )
+  if (!session || session.expires_at <= Math.floor(Date.now() / 1000)) {
+    return Response.json(null, { status: 401 })
+  }
+  const claims = decodeIdTokenPayload(session.id_token)
   if (!claims) {
-    return new Response(JSON.stringify(null), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    })
+    return Response.json(null, { status: 401 })
   }
   return Response.json({
     user: {
@@ -174,7 +213,7 @@ function handleMe(request: Request): Response {
         (claims.preferred_username as string) ??
         claims.name,
     },
-    accessToken: tokens.access_token,
+    accessToken: session.access_token,
   })
 }
 
@@ -189,7 +228,7 @@ export const Route = createFileRoute("/api/auth/$")({
           case "callback":
             return handleCallback(request)
           case "logout":
-            return handleLogout()
+            return handleLogout(request)
           case "me":
             return handleMe(request)
           default:
