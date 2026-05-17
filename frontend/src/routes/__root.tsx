@@ -12,7 +12,8 @@ import { getCssText, globalStyles } from "../design/stitches.config"
 import { mediaStyles, MediaContextProvider } from "../design/styles/media"
 import { makeStore } from "../redux/store"
 import { publicRuntimeConfig } from "../utils/config"
-import { initAppInsights } from "../lib/appInsights"
+import { AppInsightsContext } from "@microsoft/applicationinsights-react-js"
+import { initAppInsights, reactPlugin } from "../lib/appInsights"
 
 // Inject the static global styles into Stitches' registry at module load so
 // getCssText() picks them up on first render.
@@ -54,13 +55,15 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <ReduxProvider store={store}>
-        <MediaContextProvider disableDynamicMediaQueries>
-          <SSRProvider>
-            <Outlet />
-          </SSRProvider>
-        </MediaContextProvider>
-      </ReduxProvider>
+      <AppInsightsContext.Provider value={reactPlugin}>
+        <ReduxProvider store={store}>
+          <MediaContextProvider disableDynamicMediaQueries>
+            <SSRProvider>
+              <Outlet />
+            </SSRProvider>
+          </MediaContextProvider>
+        </ReduxProvider>
+      </AppInsightsContext.Provider>
     </RootDocument>
   )
 }
