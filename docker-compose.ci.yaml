@@ -1,0 +1,36 @@
+# CI override for E2E. Pairs with docker-compose.yaml:
+#
+#   docker compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d
+#
+# - Pulls pre-built api/identity/web from GHCR instead of building from source.
+#   IMAGE_TAG defaults to "ci" (latest main); the e2e job overrides it to the
+#   version tag pushed by the same workflow run so we test the PR's images.
+# - Disables fbsr — runtime needs a Factorio install we can't ship to CI. The
+#   tested pages render text/metadata; <img> tags pointing at the rendering
+#   endpoint will 500 but don't fail the assertions.
+
+services:
+  web:
+    build: !reset null
+    image: ghcr.io/${IMAGE_REPO:-factorio-builds/factorio-builds-tech}/web:${IMAGE_TAG:-ci}
+    pull_policy: always
+
+  identity:
+    build: !reset null
+    image: ghcr.io/${IMAGE_REPO:-factorio-builds/factorio-builds-tech}/identity:${IMAGE_TAG:-ci}
+    pull_policy: always
+
+  api:
+    build: !reset null
+    image: ghcr.io/${IMAGE_REPO:-factorio-builds/factorio-builds-tech}/api:${IMAGE_TAG:-ci}
+    pull_policy: always
+    # !override (not the default !merge) so fbsr — disabled below — is dropped
+    # from the union'd dependency list. Without this, Compose complains about
+    # an "undefined service fbsr".
+    depends_on: !override
+      - traefik
+      - postgres
+      - identity
+
+  fbsr:
+    profiles: ["disabled"]
