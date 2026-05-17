@@ -6,7 +6,6 @@ import { useOverlay } from "@react-aria/overlays"
 import cx from "classnames"
 import { COLOR } from "../../../design/tokens/color"
 import Caret from "../../../icons/caret"
-import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { useAppDispatch } from "../../../redux/store"
 import { ESortDirection, ESortType } from "../../../types"
 import * as S from "./build-list-sort.styles"
@@ -106,7 +105,6 @@ const BuildListSort: React.FC<IBuildListSortProps> = ({ sort }) => {
         direction: sortDirection,
       },
     })
-    dispatch(searchBuildsAsync())
   }
 
   return (

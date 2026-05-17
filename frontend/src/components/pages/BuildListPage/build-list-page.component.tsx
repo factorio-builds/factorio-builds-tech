@@ -1,4 +1,5 @@
 import React from "react"
+import { useBuildsSearch } from "../../../hooks/useBuildsSearch"
 import { useAppSelector } from "../../../redux/store"
 import BuildCardList from "../../ui/BuildCardList"
 import FilterList from "../../ui/FilterList"
@@ -8,10 +9,8 @@ import Search from "../../ui/Search"
 import Stacker from "../../ui/Stacker"
 
 function BuildListPage(): JSX.Element {
-  const { search, sort } = useAppSelector((store) => ({
-    search: store.search,
-    sort: store.filters.sort,
-  }))
+  const sort = useAppSelector((store) => store.filters.sort)
+  const { data } = useBuildsSearch()
 
   return (
     <LayoutSidebar
@@ -24,9 +23,9 @@ function BuildListPage(): JSX.Element {
       }
     >
       <BuildCardList
-        items={search.builds}
-        count={search.current_count}
-        totalCount={search.total_count}
+        items={data?.builds ?? []}
+        count={data?.current_count ?? 0}
+        totalCount={data?.total_count ?? 0}
         sort={sort}
       />
     </LayoutSidebar>

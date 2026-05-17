@@ -1,7 +1,6 @@
 import React from "react"
 import upperFirst from "lodash/upperFirst"
 import { ITag } from "../../../redux/reducers/filters"
-import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { useAppDispatch } from "../../../redux/store"
 import Checkbox from "../../form/Checkbox"
 
@@ -24,7 +23,6 @@ function Filter(props: IFilterProps): JSX.Element {
         name: props.name,
       },
     })
-    dispatch(searchBuildsAsync())
   }
 
   return (

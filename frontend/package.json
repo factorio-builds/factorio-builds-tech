@@ -36,10 +36,9 @@
     "@react-stately/toggle": "^3.10.0",
     "@react-stately/tree": "^3.10.0",
     "@stitches/react": "^1.2.8",
+    "@tanstack/react-query": "^5.100.10",
     "@tanstack/react-router": "^1.170.1",
     "@tanstack/react-start": "^1.168.1",
-    "axios": "^1.7.7",
-    "axios-hooks": "^5.1.1",
     "classnames": "^2.5.1",
     "date-fns": "^2.30.0",
     "easymde": "^2.18.0",
@@ -61,7 +60,6 @@
     "react-simplemde-editor": "^5.2.0",
     "react-use": "^17.5.1",
     "redux": "^4.2.1",
-    "redux-thunk": "^2.4.2",
     "yup": "^0.32.11"
   },
   "optionalDependencies": {

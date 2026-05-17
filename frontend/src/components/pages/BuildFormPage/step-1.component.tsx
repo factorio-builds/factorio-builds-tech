@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 import { FormikProps } from "formik"
-import { useApi } from "../../../hooks/useApi"
+import { useAppSelector } from "../../../redux/store"
 import {
   IDecodedBlueprintBookData,
   IDecodedBlueprintData,
 } from "../../../types"
 import { ICreatePayloadResult, IFullPayload } from "../../../types/models"
+import { http, HttpError } from "../../../utils/http"
 import {
   decodeBlueprint,
   isBlueprintItem,
@@ -61,10 +63,21 @@ interface IStep1Props {
 
 const Step1: React.FC<IStep1Props> = (props) => {
   const [encoded, setEncoded] = useState("")
-  const [{ error }, execute] = useApi<ICreatePayloadResult>({
-    url: "/payloads",
-    method: "PUT",
+  const accessToken = useAppSelector((s) => s.auth?.user?.accessToken)
+  const createPayloadMutation = useMutation<
+    ICreatePayloadResult,
+    HttpError,
+    { encoded: string }
+  >({
+    mutationFn: async (data) => {
+      const res = await http.put<ICreatePayloadResult>("/payloads", {
+        data,
+        accessToken,
+      })
+      return res.data
+    },
   })
+  const error = createPayloadMutation.error ?? undefined
 
   const stepState: TStepState = useMemo(() => {
     const isValid = isValidBlueprint(encoded)
@@ -101,14 +114,15 @@ const Step1: React.FC<IStep1Props> = (props) => {
       return
     }
 
-    const res = await execute({
-      data: { encoded },
-    }).catch((err) => {
-      // TODO: handle error
-      console.error(err)
-    })
+    const data = await createPayloadMutation
+      .mutateAsync({ encoded })
+      .catch((err) => {
+        // TODO: handle error
+        console.error(err)
+        return undefined
+      })
 
-    if (!res) {
+    if (!data) {
       return
     }
 
@@ -119,18 +133,18 @@ const Step1: React.FC<IStep1Props> = (props) => {
     props.formikProps.setFieldValue("isBook", stepState.isBook)
     props.formikProps.setFieldValue("title", bp.label)
     // TODO: set validity/availability of slug
-    props.formikProps.setFieldValue("slug", res.data.extracted_slug.slug)
+    props.formikProps.setFieldValue("slug", data.extracted_slug.slug)
     props.formikProps.setFieldValue("description", bp.description || "")
-    props.formikProps.setFieldValue("hash", res.data.payload.hash)
+    props.formikProps.setFieldValue("hash", data.payload.hash)
     props.formikProps.setFieldValue("tags", stepState.tags)
-    props.formikProps.setFieldValue("version.icons", res.data.payload.icons)
+    props.formikProps.setFieldValue("version.icons", data.payload.icons)
 
     if (!stepState.isBook) {
       props.formikProps.setFieldValue("cover.type", "hash")
-      props.formikProps.setFieldValue("cover.hash", res.data.payload.hash)
+      props.formikProps.setFieldValue("cover.hash", data.payload.hash)
     }
 
-    props.goToNextStep(res.data.payload)
+    props.goToNextStep(data.payload)
   }
 
   function handleOnChange(e: React.ChangeEvent<HTMLTextAreaElement>): void {

@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import { useDebouncedEffect } from "../../../hooks/useDebouncedEffect"
-import { searchBuildsAsync } from "../../../redux/reducers/search"
 import { useAppDispatch, useAppSelector } from "../../../redux/store"
 import Input from "../../form/Input"
 import * as S from "./search.styles"
@@ -13,7 +12,6 @@ const Search = (): JSX.Element => {
   useDebouncedEffect(
     () => {
       dispatch({ type: "SET_QUERY", payload: input })
-      dispatch(searchBuildsAsync())
     },
     250,
     [input]
