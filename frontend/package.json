@@ -16,6 +16,9 @@
     "start": "next start",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report",
     "type-check": "tsc"
   },
   "dependencies": {
@@ -57,6 +60,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.18.10",
     "@babel/plugin-transform-runtime": "^7.18.10",
+    "@playwright/test": "^1.60.0",
     "@testing-library/react": "^13.3.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.0.0",

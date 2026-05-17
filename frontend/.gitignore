@@ -8,6 +8,14 @@
 # testing
 /coverage
 
+# playwright
+/playwright-report
+/test-results
+/playwright/.cache
+
+# typescript
+tsconfig.tsbuildinfo
+
 # next.js
 /.next/
 /out/
