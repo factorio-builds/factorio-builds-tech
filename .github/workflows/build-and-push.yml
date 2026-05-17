@@ -154,12 +154,104 @@ jobs:
             org.opencontainers.image.revision=${{ github.sha }}
             org.opencontainers.image.ref.name=${{ github.ref }}
 
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    permissions:
+      contents: read
+      packages: read
+    env:
+      IMAGE_REPO: ${{ github.repository }}
+      IMAGE_TAG: 1.0.0-ci${{ github.run_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate dev TLS certificate
+        # docker-compose mounts .local/dev-certificate.pfx into the api +
+        # identity containers as their data-protection key. Generate a throwaway
+        # one for CI — never committed to the repo.
+        run: |
+          cd .local
+          bash ../scripts/generate-certificate.sh
+          mv certificate.pfx dev-certificate.pfx
+
+      - name: Map local.factorio.tech hostnames to localhost
+        run: |
+          echo "127.0.0.1 local.factorio.tech api.local.factorio.tech identity.local.factorio.tech" \
+            | sudo tee -a /etc/hosts
+
+      - name: Start stack
+        run: |
+          docker compose -f docker-compose.yaml -f docker-compose.ci.yaml up -d
+
+      - name: Wait for API to be seeded
+        # Poll the test fixture's own endpoint — a 200 here proves both that
+        # the API is up AND that DevDataSeeder ran successfully. A bare /builds
+        # check would pass with an empty list if the seed gist fetch silently
+        # failed (the seeder logs and returns rather than throwing).
+        run: |
+          for i in $(seq 1 60); do
+            if curl -ksfo /dev/null https://api.local.factorio.tech/builds/brian-white/brians-bootstrap; then
+              echo "API seeded after ${i} attempts"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::API did not seed within 5 minutes"
+          docker compose -f docker-compose.yaml -f docker-compose.ci.yaml logs --tail=200 api identity
+          exit 1
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        working-directory: frontend
+        env:
+          E2E_BASE_URL: https://local.factorio.tech
+          NODE_TLS_REJECT_UNAUTHORIZED: "0"
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Dump compose logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.yaml -f docker-compose.ci.yaml logs --tail=500
+
   deploy:
     environment:
       name: staging
       url: https://factorio.tech
     runs-on: ubuntu-latest
-    needs: build-and-push
+    needs:
+      - build-and-push
+      - e2e
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Checkout
