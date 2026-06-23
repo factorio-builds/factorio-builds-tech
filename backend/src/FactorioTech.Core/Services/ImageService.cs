@@ -171,7 +171,7 @@ public partial class ImageService
                 .Resize(resize));
         }
 
-        var imageId = await Nanoid.Nanoid.GenerateAsync("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        var imageId = await NanoidDotNet.Nanoid.GenerateAsync("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
         var containerClient = blobServiceClient.GetBlobContainerClient(AppConfig.StorageContainers.Data);
         await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 

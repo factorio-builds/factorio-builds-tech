@@ -1,5 +1,5 @@
 using FactorioTech.Core.Domain;
-using IdentityModel;
+using Duende.IdentityModel;
 using System.Security.Claims;
 
 namespace FactorioTech.Core;

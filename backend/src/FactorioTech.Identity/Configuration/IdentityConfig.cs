@@ -1,7 +1,7 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using FactorioTech.Core;
-using IdentityModel;
+using Duende.IdentityModel;
 
 namespace FactorioTech.Identity.Configuration;
 

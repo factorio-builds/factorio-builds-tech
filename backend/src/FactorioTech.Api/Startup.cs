@@ -41,7 +41,7 @@ public class Startup
         var appConfig = configuration.GetSection(nameof(AppConfig)).Get<AppConfig>() ?? new AppConfig();
         services.AddSingleton(Options.Create(appConfig));
 
-        services.AddProblemDetails();
+        Hellang.Middleware.ProblemDetails.ProblemDetailsExtensions.AddProblemDetails(services);
         services.AddHttpClient();
         services.AddControllers().AddJsonOptions(options =>
         {
