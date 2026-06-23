@@ -1,6 +1,3 @@
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
 using FactorioTech.Core.Data;
 using FactorioTech.Core.Domain;
 using FactorioTech.Core.Services;
@@ -8,6 +5,7 @@ using FactorioTech.Tests.Helpers;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace FactorioTech.Tests;
@@ -15,22 +13,20 @@ namespace FactorioTech.Tests;
 public class BuildsServiceTests : IAsyncLifetime
 {
     private AppDbContext dbContext = null!;
-    private PostgreSqlTestcontainer postgresContainer = null!;
+    private PostgreSqlContainer postgresContainer = null!;
     private BuildService service = null!;
 
     public async Task InitializeAsync()
     {
-        postgresContainer = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-            .WithDatabase(new PostgreSqlTestcontainerConfiguration("postgres:latest")
-            {
-                Database = "postgres",
-                Username = "postgres",
-                Password = "postgres",
-            }).Build();
+        postgresContainer = new PostgreSqlBuilder("postgres:latest")
+            .WithDatabase("postgres")
+            .WithUsername("postgres")
+            .WithPassword("postgres")
+            .Build();
 
         await postgresContainer.StartAsync();
 
-        dbContext = AppDbContextFactory.CreateDbContext(postgresContainer.ConnectionString);
+        dbContext = AppDbContextFactory.CreateDbContext(postgresContainer.GetConnectionString());
         await dbContext.Database.MigrateAsync();
 
         service = new BuildService(new NullLogger<BuildService>(), dbContext, TestUtils.Tags.Value);
@@ -39,8 +35,6 @@ public class BuildsServiceTests : IAsyncLifetime
     public async Task DisposeAsync()
     {
         await dbContext.DisposeAsync();
-        await postgresContainer.StopAsync();
-        await postgresContainer.CleanUpAsync();
         await postgresContainer.DisposeAsync();
     }
 

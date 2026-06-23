@@ -16,6 +16,7 @@ public class PersistedGrantIdentityContext : IdentityDbContext<User, Role, Guid>
     public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; } = null!;
     public DbSet<ServerSideSession> ServerSideSessions { get; set; } = null!;
     public DbSet<Key> Keys { get; set; } = null!;
+    public DbSet<PushedAuthorizationRequest> PushedAuthorizationRequests { get; set; } = null!;
 
     private const string IdentitySchema = "identity";
     private readonly IOptions<OperationalStoreOptions> operationalStoreOptions;
@@ -67,6 +68,7 @@ public class PersistedGrantIdentityContext : IdentityDbContext<User, Role, Guid>
                 Id = Guid.Parse("52a39ea9-ab54-40ab-8ee0-98c069504f69"),
                 Name = "Moderator",
                 NormalizedName = "MODERATOR",
+                ConcurrencyStamp = "bc16f20d-e7b6-483f-a4da-25909c39ff44",
             });
 
             entity.HasData(new Role
@@ -74,6 +76,7 @@ public class PersistedGrantIdentityContext : IdentityDbContext<User, Role, Guid>
                 Id = Guid.Parse("3d15ca3a-584e-4d30-94df-b43d2303a4f4"),
                 Name = "Administrator",
                 NormalizedName = "ADMINISTRATOR",
+                ConcurrencyStamp = "b770c2f0-f26f-4519-81ba-76965982ae17",
             });
         });
 
@@ -91,5 +94,6 @@ public class PersistedGrantIdentityContext : IdentityDbContext<User, Role, Guid>
         builder.Entity<DeviceFlowCodes>().ToTable(nameof(DeviceFlowCodes), IdentitySchema);
         builder.Entity<ServerSideSession>().ToTable(nameof(ServerSideSession), IdentitySchema);
         builder.Entity<Key>().ToTable(nameof(Keys), IdentitySchema);
+        builder.Entity<PushedAuthorizationRequest>().ToTable(nameof(PushedAuthorizationRequests), IdentitySchema);
     }
 }
