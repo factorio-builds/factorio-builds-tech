@@ -18,8 +18,9 @@ The full stack runs locally via `docker-compose up --detach --build --remove-orp
 Read the relevant doc before making non-trivial changes in a component:
 
 - **Backend** — [`.claude/backend-architecture.md`](.claude/backend-architecture.md). Conventions for the ASP.NET Core projects: layering, `[AutoConstructor]` DI, sealed-record service results, rich domain entities, EF/Postgres patterns, view-model + HAL `_links` mapping, NodaTime, testing tiers.
+- **Frontend testing** — [`.claude/frontend-testing.md`](.claude/frontend-testing.md). Vitest + RTL conventions: query priority, components-vs-hooks rules, TanStack Router/Query patterns, MSW guidance, and the test helpers worth adding as the suite grows.
 
-(Frontend and fbsr-wrapper docs not yet written — ask before authoring one.)
+(Frontend architecture and fbsr-wrapper docs not yet written — ask before authoring one.)
 
 ## General
 
