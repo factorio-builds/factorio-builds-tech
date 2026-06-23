@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router"
 import UserBuildListPage from "../../components/pages/UserBuildListPage"
 import type { IUserBuildListPageProps } from "../../components/pages/UserBuildListPage/user-build-list-page.component"
-import { axios } from "../../utils/axios"
+import { http } from "../../utils/http"
 
 export const Route = createFileRoute("/$user/builds")({
   loader: async ({ params }) => {
     const { user } = params
     try {
-      const res = await axios.get<IUserBuildListPageProps>(
+      const res = await http.get<IUserBuildListPageProps>(
         `/users/${user}/builds`
       )
       return { builds: res.data.builds }

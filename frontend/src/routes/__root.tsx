@@ -2,8 +2,9 @@ import {
   HeadContent,
   Outlet,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
 } from "@tanstack/react-router"
+import { QueryClientProvider } from "@tanstack/react-query"
 import { SSRProvider } from "@react-aria/ssr"
 import type { ReactNode } from "react"
 import { Provider as ReduxProvider } from "react-redux"
@@ -11,6 +12,7 @@ import { useEffect, useMemo } from "react"
 import { getCssText, globalStyles } from "../design/stitches.config"
 import { mediaStyles, MediaContextProvider } from "../design/styles/media"
 import { makeStore } from "../redux/store"
+import type { RouterContext } from "../router"
 import { publicRuntimeConfig } from "../utils/config"
 import { AppInsightsContext } from "@microsoft/applicationinsights-react-js"
 import { initAppInsights, reactPlugin } from "../lib/appInsights"
@@ -19,7 +21,7 @@ import { initAppInsights, reactPlugin } from "../lib/appInsights"
 // getCssText() picks them up on first render.
 globalStyles()
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -45,6 +47,7 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
+  const { queryClient } = Route.useRouteContext()
   const store = useMemo(() => makeStore(), [])
 
   useEffect(() => {
@@ -56,13 +59,15 @@ function RootComponent() {
   return (
     <RootDocument>
       <AppInsightsContext.Provider value={reactPlugin}>
-        <ReduxProvider store={store}>
-          <MediaContextProvider disableDynamicMediaQueries>
-            <SSRProvider>
-              <Outlet />
-            </SSRProvider>
-          </MediaContextProvider>
-        </ReduxProvider>
+        <QueryClientProvider client={queryClient}>
+          <ReduxProvider store={store}>
+            <MediaContextProvider disableDynamicMediaQueries>
+              <SSRProvider>
+                <Outlet />
+              </SSRProvider>
+            </MediaContextProvider>
+          </ReduxProvider>
+        </QueryClientProvider>
       </AppInsightsContext.Provider>
     </RootDocument>
   )

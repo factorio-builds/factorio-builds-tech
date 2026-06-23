@@ -1,4 +1,4 @@
-import { AxiosError } from "axios"
+import { HttpError } from "../../../utils/http"
 import { ICreateBuildRequest } from "../../../types/models"
 
 export interface IFormValues {
@@ -58,7 +58,7 @@ interface ISubmitStatusLoading {
 
 interface ISubmitStatusError {
   loading: false
-  error: AxiosError
+  error: HttpError
 }
 
 export type ISubmitStatus =

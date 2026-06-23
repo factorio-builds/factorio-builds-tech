@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router"
 import BuildFormPage from "../../../components/pages/BuildFormPage"
 import LayoutDefault from "../../../components/ui/LayoutDefault"
 import type { IFullBuild } from "../../../types/models"
-import { axios } from "../../../utils/axios"
+import { http } from "../../../utils/http"
 
 export const Route = createFileRoute("/$user/$slug/edit")({
   loader: async ({ params }) => {
     const { user, slug } = params
     try {
-      const res = await axios.get<IFullBuild>(`/builds/${user}/${slug}`)
+      const res = await http.get<IFullBuild>(`/builds/${user}/${slug}`)
       if (!res.data) throw new Error("Build not found")
       return { build: res.data, errors: undefined }
     } catch (err) {

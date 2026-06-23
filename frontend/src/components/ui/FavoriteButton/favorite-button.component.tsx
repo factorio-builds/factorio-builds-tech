@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
 import cx from "classnames"
-import { useApi } from "../../../hooks/useApi"
 import { useAppSelector } from "../../../redux/store"
 import { IFullBuild } from "../../../types/models"
+import { http } from "../../../utils/http"
 import { IButtonProps } from "../Button/button.component"
 import * as S from "./favorite-button.styles"
 
@@ -16,36 +17,41 @@ const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
 }) => {
   const links = build._links
 
-  const authUser = useAppSelector((state) => state.auth?.user)
-  const [{ loading, error }, execute] = useApi(
-    { url: links.followers.href },
-    { manual: true }
-  )
-
+  const accessToken = useAppSelector((state) => state.auth?.user?.accessToken)
   const [count, setCount] = useState(build._links.followers.count)
   const [isFavorite, setIsFavorite] = useState(Boolean(links.remove_favorite))
 
-  const toggle = useCallback(() => {
-    execute({ method: isFavorite ? "DELETE" : "PUT" }).then(() => {
-      setIsFavorite((prevFavorite) => !prevFavorite)
-      execute().then((res) => {
-        setCount(res.data.count)
+  const mutation = useMutation({
+    mutationFn: async (nextFavorite: boolean) => {
+      const verb = nextFavorite ? http.put : http.delete
+      await verb<unknown>(links.followers.href, { accessToken })
+      const res = await http.get<{ count: number }>(links.followers.href, {
+        accessToken,
       })
-    })
-  }, [isFavorite])
+      return { nextFavorite, count: res.data.count }
+    },
+    onSuccess: ({ nextFavorite, count: nextCount }) => {
+      setIsFavorite(nextFavorite)
+      setCount(nextCount)
+    },
+  })
+
+  const toggle = useCallback(() => {
+    mutation.mutate(!isFavorite)
+  }, [mutation, isFavorite])
 
   return (
     <S.FavoriteButtonWrapper
-      onClick={authUser ? toggle : undefined}
+      onClick={accessToken ? toggle : undefined}
       className={cx({
-        "is-error": error,
-        "is-clickable": authUser,
+        "is-error": mutation.isError,
+        "is-clickable": Boolean(accessToken),
       })}
       counter={count}
       {...restProps}
     >
       {isFavorite ? "Unfavorite" : "Favorite"}
-      {loading && "..."}
+      {mutation.isPending && "..."}
     </S.FavoriteButtonWrapper>
   )
 }

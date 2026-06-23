@@ -3,13 +3,13 @@ import BuildPage from "../../../components/pages/BuildPage"
 import LayoutDefault from "../../../components/ui/LayoutDefault"
 import { useRouter } from "../../../lib/router"
 import type { IFullBuild } from "../../../types/models"
-import { axios } from "../../../utils/axios"
+import { http } from "../../../utils/http"
 
 export const Route = createFileRoute("/$user/$slug/")({
   loader: async ({ params }) => {
     const { user, slug } = params
     try {
-      const res = await axios.get<IFullBuild>(`/builds/${user}/${slug}`)
+      const res = await http.get<IFullBuild>(`/builds/${user}/${slug}`)
       if (!res.data) throw new Error("Build not found")
       return { build: res.data, errors: undefined }
     } catch (err) {

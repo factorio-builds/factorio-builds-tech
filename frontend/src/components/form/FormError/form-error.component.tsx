@@ -1,9 +1,9 @@
 import { useMemo } from "react"
-import { AxiosError } from "axios"
+import { HttpError } from "../../../utils/http"
 import * as S from "./form-error.styles"
 
 interface IFormErrorProps {
-  error: AxiosError
+  error: HttpError
   message?: string
 }
 
@@ -13,7 +13,7 @@ const FormError = (props: IFormErrorProps): JSX.Element => {
       return `Error: ${props.message}`
     }
 
-    if (props.error.response?.status === 401) {
+    if (props.error.response.status === 401) {
       return "Error: unauthentified, please log in."
     }
 

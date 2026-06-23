@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { AxiosError } from "axios"
+import React, { useCallback, useMemo, useState } from "react"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { Form, Formik } from "formik"
 import { useRouter } from "../../../lib/router"
-import { useApi } from "../../../hooks/useApi"
+import { useAppSelector } from "../../../redux/store"
 import { IFullBuild, IFullPayload, IThinBuild } from "../../../types/models"
+import { http, HttpError } from "../../../utils/http"
 import Container from "../../ui/Container"
 import LayoutDefault from "../../ui/LayoutDefault"
 import {
@@ -35,62 +36,48 @@ type TBuildFormPage = IBuildFormPageCreating | IBuildFormPageEditing
 const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
   const router = useRouter()
   const [step, setStep] = useState<1 | 2>(1)
-  const [build, setBuild] = useState<IFullBuild | undefined>(props.build)
-  const [payloadData, setPayloadData] = useState<IFullPayload>()
+  const [step1Payload, setStep1Payload] = useState<IFullPayload>()
   const [submit, setSubmit] = useState<ISubmitStatus>({
     loading: false,
     error: false,
   })
 
-  const [, executePostPatch] = useApi<IThinBuild>(
-    {
-      url: props.type === "CREATE" ? "/builds" : props.build._links.self.href,
-      method: props.type === "CREATE" ? "POST" : "PATCH",
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    },
-    { manual: true }
-  )
+  const accessToken = useAppSelector((s) => s.auth?.user?.accessToken)
+  const editHash =
+    props.type === "EDIT" ? props.build.latest_version.hash : undefined
 
-  const [, executeGetBuild] = useApi<IFullBuild>(
-    {
-      url: `/builds/${router.query.user}/${router.query.slug}`,
-    },
-    { manual: true }
-  )
-
-  const [, executeGetPayload] = useApi<IFullPayload>(
-    {
-      url: `/payloads/${build?.latest_version.hash}`,
-      params: { include_children: true },
-    },
-    { manual: true }
-  )
-
-  useEffect(() => {
-    if (props.type === "EDIT" && !build) {
-      executeGetBuild().then((res) => {
-        setBuild(res.data)
+  const payloadQuery = useQuery({
+    queryKey: ["payload", editHash, { includeChildren: true }],
+    queryFn: async ({ signal }) => {
+      const res = await http.get<IFullPayload>(`/payloads/${editHash}`, {
+        params: { include_children: true },
+        signal,
+        accessToken,
       })
-    }
-  }, [props.type, build])
+      return res.data
+    },
+    enabled: props.type === "EDIT" && Boolean(editHash),
+  })
 
-  useEffect(() => {
-    if (props.type === "EDIT" && !payloadData) {
-      executeGetPayload().then((res) => {
-        setPayloadData(res.data)
-      })
-    }
-  }, [props.type, payloadData])
+  const payloadData = step1Payload ?? payloadQuery.data
+
+  const postPatchMutation = useMutation<IThinBuild, HttpError, FormData>({
+    mutationFn: async (data) => {
+      const url =
+        props.type === "CREATE" ? "/builds" : props.build._links.self.href
+      const method = props.type === "CREATE" ? http.post : http.patch
+      const res = await method<IThinBuild>(url, { data, accessToken })
+      return res.data
+    },
+  })
 
   const initialValues = useMemo(() => {
-    return createInitialValues(props.build || build)
-  }, [props.build, build])
+    return createInitialValues(props.build)
+  }, [props.build])
 
   const goToNextStep = useCallback((fullPayload: IFullPayload) => {
     setStep(2)
-    setPayloadData(fullPayload)
+    setStep1Payload(fullPayload)
   }, [])
 
   const title = props.type === "CREATE" ? "Create a build" : "Edit build"
@@ -101,29 +88,20 @@ const BuildFormPage: React.FC<TBuildFormPage> = (props) => {
       validationSchema={validationSchema}
       validateOnMount={true}
       onSubmit={(values) => {
-        setSubmit({
-          loading: true,
-          error: false,
+        setSubmit({ loading: true, error: false })
+        const formData =
+          props.type === "CREATE"
+            ? toFormData(values as IValidFormValues)
+            : toPatchFormData(values as IValidFormValues)
+        postPatchMutation.mutate(formData, {
+          onSuccess: (data) => {
+            setSubmit({ loading: false, error: false })
+            router.push(`/${data.owner.username}/${data.slug}`)
+          },
+          onError: (err) => {
+            setSubmit({ loading: false, error: err })
+          },
         })
-        executePostPatch({
-          data:
-            props.type === "CREATE"
-              ? toFormData(values as IValidFormValues)
-              : toPatchFormData(values as IValidFormValues),
-        })
-          .then((res) => {
-            setSubmit({
-              loading: false,
-              error: false,
-            })
-            router.push(`/${res.data.owner.username}/${res.data.slug}`)
-          })
-          .catch((err: AxiosError) => {
-            setSubmit({
-              loading: false,
-              error: err,
-            })
-          })
       }}
     >
       {(formikProps) => {
